@@ -40,6 +40,92 @@ export function getImageUrl(imageUrlOrFilename: string | null | undefined): stri
 }
 
 /**
+ * Gets optimized image URL from Supabase Storage with transformations
+ * Uses Supabase Storage's built-in image transformation features
+ * 
+ * @param imageUrlOrFilename - The image URL or filename
+ * @param options - Transformation options
+ * @returns Optimized image URL with transformations
+ */
+export function getOptimizedImageUrl(
+  imageUrlOrFilename: string | null | undefined,
+  options: {
+    width?: number
+    height?: number
+    quality?: number
+    format?: 'webp' | 'avif' | 'jpg' | 'png'
+    resize?: 'cover' | 'contain' | 'fill'
+  } = {}
+): string | null {
+  if (!imageUrlOrFilename) {
+    return null
+  }
+
+  // Default options
+  const {
+    width = 1200,
+    quality = 80,
+    format = 'webp',
+    resize = 'cover',
+  } = options
+
+  // If it's already a full URL, try to add transformations
+  if (imageUrlOrFilename.startsWith('http://') || imageUrlOrFilename.startsWith('https://')) {
+    // Check if it's a Supabase Storage URL
+    if (imageUrlOrFilename.includes('.supabase.co/storage/v1/object/public/')) {
+      // Add transformation query parameters
+      const url = new URL(imageUrlOrFilename)
+      url.searchParams.set('width', width.toString())
+      if (options.height) {
+        url.searchParams.set('height', options.height.toString())
+      }
+      url.searchParams.set('quality', quality.toString())
+      url.searchParams.set('format', format)
+      url.searchParams.set('resize', resize)
+      return url.toString()
+    }
+    // For non-Supabase URLs, return as-is (Next.js Image will handle optimization)
+    return imageUrlOrFilename
+  }
+
+  // Construct Supabase Storage URL with transformations
+  try {
+    const { data } = supabase.storage
+      .from('yacht-images')
+      .getPublicUrl(imageUrlOrFilename, {
+        transform: {
+          width,
+          height: options.height,
+          quality,
+          format,
+          resize,
+        },
+      })
+
+    return data.publicUrl
+  } catch (error) {
+    console.error('[ImageUtils] Error constructing optimized image URL:', {
+      input: imageUrlOrFilename,
+      error,
+    })
+    // Fallback to regular URL
+    return getImageUrl(imageUrlOrFilename)
+  }
+}
+
+/**
+ * Gets thumbnail URL for an image
+ * Optimized for small previews (800px width, 70% quality)
+ */
+export function getThumbnailUrl(imageUrlOrFilename: string | null | undefined): string | null {
+  return getOptimizedImageUrl(imageUrlOrFilename, {
+    width: 800,
+    quality: 70,
+    format: 'webp',
+  })
+}
+
+/**
  * Converts YouTube URLs to embed format for iframe use
  * Handles:
  * - https://www.youtube.com/watch?v=VIDEO_ID

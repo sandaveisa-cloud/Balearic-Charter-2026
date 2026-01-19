@@ -48,9 +48,8 @@ export default function LanguageSwitcher() {
       pathWithoutLocale = '/' + pathWithoutLocale
     }
     
-    // Navigate to new locale
+    // Navigate to new locale (router.push handles the refresh automatically)
     router.push(`/${newLocale}${pathWithoutLocale}`)
-    router.refresh()
   }
 
   return (

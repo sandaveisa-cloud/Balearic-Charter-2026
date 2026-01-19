@@ -1,6 +1,8 @@
 'use client'
 
+import Image from 'next/image'
 import type { CrewMember } from '@/types/database'
+import { getOptimizedImageUrl } from '@/lib/imageUtils'
 
 interface CrewSectionProps {
   crew: CrewMember[]
@@ -24,33 +26,44 @@ export default function CrewSection({ crew }: CrewSectionProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-          {crew.map((member) => (
-            <div key={member.id} className="text-center">
-              {member.image_url ? (
-                <div className="mb-6 aspect-square max-w-xs mx-auto overflow-hidden rounded-full">
-                  <img
-                    src={member.image_url}
-                    alt={member.name}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="mb-6 aspect-square max-w-xs mx-auto rounded-full bg-gradient-to-br from-luxury-blue to-luxury-gold flex items-center justify-center">
-                  <span className="text-white text-3xl font-serif">
-                    {member.name.split(' ').map(n => n[0]).join('')}
-                  </span>
-                </div>
-              )}
+          {crew.map((member) => {
+            const imageUrl = getOptimizedImageUrl(member.image_url, {
+              width: 800,
+              quality: 80,
+              format: 'webp',
+            })
 
-              <h3 className="font-serif text-2xl font-bold text-luxury-blue mb-1">
-                {member.name}
-              </h3>
-              <p className="text-luxury-gold font-semibold mb-4">{member.role}</p>
-              {member.bio && (
-                <p className="text-gray-600">{member.bio}</p>
-              )}
-            </div>
-          ))}
+            return (
+              <div key={member.id} className="text-center">
+                {imageUrl ? (
+                  <div className="mb-6 aspect-square max-w-xs mx-auto overflow-hidden rounded-full relative">
+                    <Image
+                      src={imageUrl}
+                      alt={member.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 400px"
+                      className="object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                ) : (
+                  <div className="mb-6 aspect-square max-w-xs mx-auto rounded-full bg-gradient-to-br from-luxury-blue to-luxury-gold flex items-center justify-center">
+                    <span className="text-white text-3xl font-serif">
+                      {member.name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                )}
+
+                <h3 className="font-serif text-2xl font-bold text-luxury-blue mb-1">
+                  {member.name}
+                </h3>
+                <p className="text-luxury-gold font-semibold mb-4">{member.role}</p>
+                {member.bio && (
+                  <p className="text-gray-600">{member.bio}</p>
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>

@@ -29,6 +29,10 @@ export interface Fleet {
   currency: string
   capacity: number | null
   length: number | null
+  apa_percentage: number | null
+  crew_service_fee: number | null
+  cleaning_fee: number | null
+  tax_percentage: number | null
   is_featured: boolean
   is_active: boolean
   created_at: string

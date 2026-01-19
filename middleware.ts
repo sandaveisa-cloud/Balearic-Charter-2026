@@ -15,6 +15,12 @@ export default createMiddleware({
 export const config = {
   // Match only internationalized pathnames
   matcher: [
-    '/((?!api|admin|_next|_vercel|.*\\..*).*)'
+    // Match all pathnames except for
+    // - api routes
+    // - _next (Next.js internals)
+    // - _vercel (Vercel internals)
+    // - files with extensions (e.g. .ico, .png)
+    // Note: admin routes are now inside [locale], so they're included
+    '/((?!api|_next|_vercel|.*\\..*).*)'
   ]
 }

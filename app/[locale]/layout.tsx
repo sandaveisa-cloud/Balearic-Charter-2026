@@ -2,7 +2,7 @@ import React from 'react'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
-import { locales } from '@/i18n'
+import { locales } from '../../i18n'
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import '../globals.css'
@@ -14,14 +14,15 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfa
 
 type Props = {
   children: React.ReactNode
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
 }
 
-export async function generateMetadata({ params: { locale } }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
   
   const titles: Record<string, string> = {
@@ -66,31 +67,38 @@ export async function generateMetadata({ params: { locale } }: Props): Promise<M
   }
 }
 
-export default async function LocaleLayout({ children, params: { locale } }: Props) {
-  // Validate locale
-  if (!locales.includes(locale as any)) {
-    notFound()
+export default async function LocaleLayout({ children, params }: Props) {
+  try {
+    const { locale } = await params
+    
+    // Validate locale
+    if (!locales.includes(locale as any)) {
+      notFound()
+    }
+
+    // Load messages for the locale
+    const messages = await getMessages({ locale })
+
+    return (
+      <>
+        {/* Language Switcher in Header */}
+        <header className="fixed top-0 left-0 right-0 z-50 bg-luxury-blue/95 backdrop-blur-sm shadow-md">
+          <div className="container mx-auto px-4 py-4 flex justify-end">
+            <LanguageSwitcher />
+          </div>
+        </header>
+        
+        <NextIntlClientProvider messages={messages}>
+          <div className="pt-16">
+            {children}
+          </div>
+        </NextIntlClientProvider>
+        
+        <Footer />
+      </>
+    )
+  } catch (error) {
+    console.error('[LocaleLayout] Error:', error)
+    throw error
   }
-
-  // Load messages for the locale
-  const messages = await getMessages({ locale })
-
-  return (
-    <>
-      {/* Language Switcher in Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-luxury-blue/95 backdrop-blur-sm shadow-md">
-        <div className="container mx-auto px-4 py-4 flex justify-end">
-          <LanguageSwitcher />
-        </div>
-      </header>
-      
-      <NextIntlClientProvider messages={messages}>
-        <div className="pt-16">
-          {children}
-        </div>
-      </NextIntlClientProvider>
-      
-      <Footer />
-    </>
-  )
 }

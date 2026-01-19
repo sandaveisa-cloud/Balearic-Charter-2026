@@ -1,6 +1,8 @@
 'use client'
 
+import Image from 'next/image'
 import type { Review } from '@/types/database'
+import { getOptimizedImageUrl } from '@/lib/imageUtils'
 
 interface ReviewCardProps {
   review: Review
@@ -16,6 +18,12 @@ export default function ReviewCard({ review }: ReviewCardProps) {
       return dateString
     }
   }
+
+  const profileImageUrl = getOptimizedImageUrl(review.profile_image_url, {
+    width: 96,
+    quality: 80,
+    format: 'webp',
+  })
 
   return (
     <div className="bg-gray-50 rounded-lg p-8 shadow-md hover:shadow-lg transition-shadow h-full flex flex-col">
@@ -38,12 +46,23 @@ export default function ReviewCard({ review }: ReviewCardProps) {
 
       {/* Customer Info */}
       <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
-        {review.profile_image_url && (
-          <img
-            src={review.profile_image_url}
-            alt={review.guest_name}
-            className="w-12 h-12 rounded-full object-cover border-2 border-luxury-blue"
-          />
+        {profileImageUrl ? (
+          <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-luxury-blue flex-shrink-0">
+            <Image
+              src={profileImageUrl}
+              alt={review.guest_name}
+              fill
+              sizes="48px"
+              className="object-cover"
+              loading="lazy"
+            />
+          </div>
+        ) : (
+          <div className="w-12 h-12 rounded-full bg-luxury-blue flex items-center justify-center border-2 border-luxury-blue flex-shrink-0">
+            <span className="text-white text-sm font-semibold">
+              {review.guest_name.split(' ').map(n => n[0]).join('')}
+            </span>
+          </div>
         )}
         <div className="flex-grow">
           <p className="font-semibold text-luxury-blue">{review.guest_name}</p>

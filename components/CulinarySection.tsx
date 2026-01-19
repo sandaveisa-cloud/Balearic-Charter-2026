@@ -1,6 +1,8 @@
 'use client'
 
+import Image from 'next/image'
 import type { CulinaryExperience } from '@/types/database'
+import { getOptimizedImageUrl } from '@/lib/imageUtils'
 
 interface CulinarySectionProps {
   experiences: CulinaryExperience[]
@@ -24,35 +26,46 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {experiences.map((experience) => (
-            <div
-              key={experience.id}
-              className="bg-gray-50 rounded-lg overflow-hidden shadow-md transition-transform hover:scale-105"
-            >
-              {experience.image_url ? (
-                <div className="aspect-square overflow-hidden">
-                  <img
-                    src={experience.image_url}
-                    alt={experience.title}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="aspect-square bg-gradient-to-br from-luxury-gold-light to-luxury-gold flex items-center justify-center">
-                  <span className="text-luxury-blue text-xl font-serif text-center px-4">{experience.title}</span>
-                </div>
-              )}
+          {experiences.map((experience) => {
+            const imageUrl = getOptimizedImageUrl(experience.image_url, {
+              width: 800,
+              quality: 80,
+              format: 'webp',
+            })
 
-              <div className="p-6">
-                <h3 className="font-serif text-xl font-bold text-luxury-blue mb-2">
-                  {experience.title}
-                </h3>
-                {experience.description && (
-                  <p className="text-gray-600 text-sm">{experience.description}</p>
+            return (
+              <div
+                key={experience.id}
+                className="bg-gray-50 rounded-lg overflow-hidden shadow-md transition-transform hover:scale-105"
+              >
+                {imageUrl ? (
+                  <div className="aspect-square overflow-hidden relative">
+                    <Image
+                      src={imageUrl}
+                      alt={experience.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                ) : (
+                  <div className="aspect-square bg-gradient-to-br from-luxury-gold-light to-luxury-gold flex items-center justify-center">
+                    <span className="text-luxury-blue text-xl font-serif text-center px-4">{experience.title}</span>
+                  </div>
                 )}
+
+                <div className="p-6">
+                  <h3 className="font-serif text-xl font-bold text-luxury-blue mb-2">
+                    {experience.title}
+                  </h3>
+                  {experience.description && (
+                    <p className="text-gray-600 text-sm">{experience.description}</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

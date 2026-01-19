@@ -1,149 +1,156 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import dynamic from 'next/dynamic'
+import { useEffect, useState, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
-import { getEmbedUrl } from '@/lib/imageUtils'
-
-// Dynamically import react-player to avoid SSR issues
-const ReactPlayer = dynamic(() => import('react-player'), { ssr: false }) as any
 
 interface HeroProps {
   settings: Record<string, string>
 }
 
-export default function Hero({ settings }: HeroProps) {
-  const t = useTranslations('hero')
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const playerRef = useRef<any>(null)
-  const [videoError, setVideoError] = useState(false)
-  const [isClient, setIsClient] = useState(false)
+// Default YouTube video ID (hardcoded fallback)
+const DEFAULT_VIDEO_ID = 'v3ejpQjaScg'
 
-  const videoUrl = settings.hero_video_url || ''
-  
-  // Use getEmbedUrl to process the video URL
-  const { embedUrl, isYouTube, isValid } = getEmbedUrl(videoUrl)
-  
-  const showVideo = videoUrl && isValid && !videoError
-  
-  console.log('[Hero] Video URL processing:', {
-    raw: videoUrl,
-    embedUrl,
-    isYouTube,
-    isValid,
-    showVideo,
+// Extract YouTube video ID from various URL formats
+function extractYouTubeId(url: string | null | undefined): string | null {
+  if (!url || typeof url !== 'string') return null
+
+  // If it's already just an ID, return it
+  if (/^[a-zA-Z0-9_-]{11}$/.test(url.trim())) {
+    return url.trim()
+  }
+
+  // Try to extract from different YouTube URL formats
+  const patterns = [
+    /(?:youtube\.com\/embed\/|youtu\.be\/|youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/.*[?&]v=([a-zA-Z0-9_-]{11})/,
+  ]
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match && match[1]) {
+      return match[1]
+    }
+  }
+
+  return null
+}
+
+// Build YouTube embed URL with all required parameters
+function buildYouTubeEmbedUrl(videoId: string): string {
+  const params = new URLSearchParams({
+    autoplay: '1',
+    mute: '1',
+    loop: '1',
+    playlist: videoId, // Required for loop to work
+    controls: '0',
+    rel: '0',
+    showinfo: '0',
+    iv_load_policy: '3',
+    modestbranding: '1',
+    playsinline: '1',
+    enablejsapi: '1',
+    start: '0',
   })
 
-  // Ensure we're on the client side for react-player
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+  return `https://www.youtube.com/embed/${videoId}?${params.toString()}`
+}
 
+export default function Hero({ settings }: HeroProps) {
+  const t = useTranslations('hero')
+  const [isMounted, setIsMounted] = useState(false)
+  const [videoError, setVideoError] = useState(false)
+
+  // Memoize video ID extraction to prevent unnecessary recalculations
+  const videoId = useMemo(() => {
+    const heroVideoUrl = settings.hero_video_url || ''
+    const extractedId = extractYouTubeId(heroVideoUrl)
+    return extractedId || DEFAULT_VIDEO_ID
+  }, [settings.hero_video_url])
+
+  // Memoize embed URL to prevent unnecessary recalculations
+  const embedUrl = useMemo(() => {
+    return buildYouTubeEmbedUrl(videoId)
+  }, [videoId])
+
+  // Hydration fix: Only set mounted state once on client side
+  // Lazy load video after initial page paint to improve LCP
   useEffect(() => {
-    console.log('[Hero] Component mounted with settings:', settings)
-    
-    // Auto-play direct video URLs
-    if (showVideo && !isYouTube && videoRef.current) {
-      videoRef.current.play().catch((error) => {
-        console.log('[Hero] Autoplay prevented:', error)
-        setVideoError(true)
-      })
+    // Use requestIdleCallback or setTimeout to defer video loading
+    if (typeof window !== 'undefined') {
+      // Wait for initial paint to complete
+      const timer = setTimeout(() => {
+        setIsMounted(true)
+      }, 100) // Small delay to allow initial content to render first
+
+      return () => clearTimeout(timer)
     }
-  }, [settings, showVideo, isYouTube])
+  }, [])
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
-      {/* Direct Video URL (not YouTube) */}
-      {showVideo && !isYouTube && embedUrl && (
-        <video
-          ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
-          autoPlay
-          loop
-          muted
-          playsInline
-          onError={(e) => {
-            console.error('[Hero] Video element error:', {
-              error: e,
-              videoUrl: embedUrl,
-            })
-            setVideoError(true)
-          }}
-          onLoadedData={() => {
-            console.log('[Hero] Video loaded successfully:', embedUrl)
-            setVideoError(false)
+      {/* YouTube Video Background - Client-side only to prevent hydration errors */}
+      {isMounted && !videoError && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: -1,
+            overflow: 'hidden',
+            pointerEvents: 'none',
           }}
         >
-          <source src={embedUrl} type="video/mp4" />
-        </video>
-      )}
-
-      {/* YouTube Video using react-player */}
-      {showVideo && isYouTube && videoUrl && isClient && (
-        <div className="absolute inset-0 h-full w-full pointer-events-none">
-          <ReactPlayer
-            ref={playerRef}
-            url={videoUrl}
-            playing={true}
-            loop={true}
-            muted={true}
-            controls={false}
-            width="100%"
-            height="100%"
-            playsinline={true}
+          <div
             style={{
               position: 'absolute',
-              top: 0,
-              left: 0,
+              top: '50%',
+              left: '50%',
+              width: '177.77777778vh', // 16:9 aspect ratio width
+              height: '100vh',
+              minWidth: '100%',
+              minHeight: '56.25vw', // 16:9 aspect ratio height
+              transform: 'translate(-50%, -50%) scale(1.1)', // Scale up to cover without black bars
               pointerEvents: 'none',
             }}
-            config={{
-              youtube: {
-                playerVars: {
-                  autoplay: 1,
-                  controls: 0,
-                  rel: 0,
-                  modestbranding: 1,
-                  playsinline: 1,
-                  loop: 1,
-                  // Extract video ID for playlist parameter (required for loop)
-                  playlist: (() => {
-                    try {
-                      if (videoUrl.includes('watch?v=')) {
-                        const url = new URL(videoUrl)
-                        return url.searchParams.get('v') || ''
-                      } else if (videoUrl.includes('youtu.be/')) {
-                        const match = videoUrl.match(/youtu\.be\/([^?&#]+)/)
-                        return match ? match[1] : ''
-                      } else if (videoUrl.includes('embed/')) {
-                        const match = videoUrl.match(/embed\/([^?&#]+)/)
-                        return match ? match[1] : ''
-                      }
-                      return ''
-                    } catch {
-                      return ''
-                    }
-                  })(),
-                },
-              },
-            } as any}
-            onError={(error: any) => {
-              console.error('[Hero] ReactPlayer error:', error)
-              setVideoError(true)
-            }}
-            onReady={() => {
-              console.log('[Hero] ReactPlayer ready, YouTube video loaded successfully')
-              setVideoError(false)
-            }}
-          />
+          >
+            <iframe
+              src={embedUrl}
+              title="Hero Background Video"
+              allow="autoplay; encrypted-media"
+              allowFullScreen={false}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                pointerEvents: 'none',
+              }}
+              onError={() => {
+                console.error('[Hero] YouTube iframe failed to load')
+                setVideoError(true)
+              }}
+              onLoad={() => {
+                console.log('[Hero] YouTube iframe loaded successfully')
+              }}
+            />
+          </div>
         </div>
       )}
 
-      {/* Fallback luxury yacht background when no video URL or video failed */}
-      {(!videoUrl || !isValid || videoError) && (
-        <div 
-          className="absolute inset-0 h-full w-full"
+      {/* Fallback Background - Professional yacht-themed gradient */}
+      {(!isMounted || videoError) && (
+        <div
           style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: -1,
             background: 'linear-gradient(135deg, #002366 0%, #003d99 50%, #D4AF37 100%)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -155,22 +162,34 @@ export default function Hero({ settings }: HeroProps) {
         />
       )}
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
+      {/* Dark Overlay for text readability */}
+      <div className="absolute inset-0 bg-black/40 z-[1]" />
 
-      {/* Content */}
+      {/* Content Overlay */}
       <div className="relative z-10 flex h-full items-center justify-center px-4 text-center">
         <div className="max-w-4xl space-y-6">
-          <h1 className="font-serif text-5xl font-bold text-white md:text-7xl lg:text-8xl">
-            {settings.hero_title || t('title')}
+          {/* Main Title */}
+          <h1 className="font-serif text-5xl font-bold text-white md:text-7xl lg:text-8xl drop-shadow-lg">
+            Experience Luxury at Sea
           </h1>
-          <p className="text-xl text-white md:text-2xl lg:text-3xl">
+
+          {/* Subtitle */}
+          <p className="text-xl text-white md:text-2xl lg:text-3xl drop-shadow-md">
             {settings.hero_subtitle || t('subtitle')}
           </p>
+
+          {/* Description */}
+          <div className="pt-4 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-white/95 leading-relaxed drop-shadow-md">
+              We provide premium yacht charters in the Balearic Islands and Costa Blanca with professional crew and tailored experiences.
+            </p>
+          </div>
+
+          {/* CTA Button */}
           <div className="pt-8">
             <a
               href="#fleet"
-              className="inline-block rounded-lg bg-luxury-gold px-8 py-4 text-lg font-semibold text-luxury-blue transition-colors hover:bg-luxury-gold-dark"
+              className="inline-block rounded-lg bg-luxury-gold px-8 py-4 text-lg font-semibold text-luxury-blue transition-colors hover:bg-luxury-gold-dark shadow-lg"
             >
               {t('cta')}
             </a>

@@ -3,11 +3,12 @@ import { getFleetBySlug } from '@/lib/data'
 import FleetDetail from '@/components/FleetDetail'
 
 type Props = {
-  params: { slug: string; locale: string }
+  params: Promise<{ slug: string; locale: string }>
 }
 
 export async function generateMetadata({ params }: Props) {
-  const yacht = await getFleetBySlug(params.slug)
+  const { slug } = await params
+  const yacht = await getFleetBySlug(slug)
 
   if (!yacht) {
     return {
@@ -22,7 +23,8 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function FleetPage({ params }: Props) {
-  const yacht = await getFleetBySlug(params.slug)
+  const { slug } = await params
+  const yacht = await getFleetBySlug(slug)
 
   if (!yacht) {
     notFound()

@@ -12,22 +12,28 @@ import CrewSection from '@/components/CrewSection'
 export const revalidate = 0
 
 type Props = {
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }
 
-export default async function Home({ params: { locale } }: Props) {
-  const content = await getSiteContent()
+export default async function Home({ params }: Props) {
+  try {
+    const { locale } = await params
+    const content = await getSiteContent()
 
-  return (
-    <main className="min-h-screen pt-16">
-      <Hero settings={content.settings} />
-      <MissionSection />
-      <StatsSection stats={content.stats} />
-      <FleetSection fleet={content.fleet} />
-      <DestinationsSection destinations={content.destinations} />
-      <CulinarySection experiences={content.culinaryExperiences} />
-      <CrewSection crew={content.crew} />
-      <ReviewsSection reviews={content.reviews} />
-    </main>
-  )
+    return (
+      <main className="min-h-screen pt-16">
+        <Hero settings={content.settings} />
+        <MissionSection />
+        <StatsSection stats={content.stats || []} />
+        <FleetSection fleet={content.fleet || []} />
+        <DestinationsSection destinations={content.destinations || []} />
+        <CulinarySection experiences={content.culinaryExperiences || []} />
+        <CrewSection crew={content.crew || []} />
+        <ReviewsSection reviews={content.reviews || []} />
+      </main>
+    )
+  } catch (error) {
+    console.error('[Home] Error rendering page:', error)
+    throw error
+  }
 }

@@ -1,6 +1,8 @@
 'use client'
 
+import Image from 'next/image'
 import type { Destination } from '@/types/database'
+import { getOptimizedImageUrl } from '@/lib/imageUtils'
 
 interface DestinationsSectionProps {
   destinations: Destination[]
@@ -24,35 +26,48 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {destinations.map((destination) => (
-            <div
-              key={destination.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform hover:scale-105"
-            >
-              {destination.image_urls && destination.image_urls.length > 0 ? (
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={destination.image_urls[0]}
-                    alt={destination.title}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="aspect-[4/3] bg-gradient-to-br from-luxury-blue to-luxury-gold flex items-center justify-center">
-                  <span className="text-white text-2xl font-serif">{destination.title}</span>
-                </div>
-              )}
+          {destinations.map((destination) => {
+            const firstImageUrl = destination.image_urls && destination.image_urls.length > 0
+              ? getOptimizedImageUrl(destination.image_urls[0], {
+                  width: 1200,
+                  quality: 80,
+                  format: 'webp',
+                })
+              : null
 
-              <div className="p-6">
-                <h3 className="font-serif text-2xl font-bold text-luxury-blue mb-3">
-                  {destination.title}
-                </h3>
-                {destination.description && (
-                  <p className="text-gray-600">{destination.description}</p>
+            return (
+              <div
+                key={destination.id}
+                className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform hover:scale-105"
+              >
+                {firstImageUrl ? (
+                  <div className="aspect-[4/3] overflow-hidden relative">
+                    <Image
+                      src={firstImageUrl}
+                      alt={destination.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                ) : (
+                  <div className="aspect-[4/3] bg-gradient-to-br from-luxury-blue to-luxury-gold flex items-center justify-center">
+                    <span className="text-white text-2xl font-serif">{destination.title}</span>
+                  </div>
                 )}
+
+                <div className="p-6">
+                  <h3 className="font-serif text-2xl font-bold text-luxury-blue mb-3">
+                    {destination.title}
+                  </h3>
+                  {destination.description && (
+                    <p className="text-gray-600">{destination.description}</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
