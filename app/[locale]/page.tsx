@@ -4,6 +4,7 @@ import Hero from '@/components/Hero'
 import MissionSection from '@/components/MissionSection'
 import FleetSection from '@/components/FleetSection'
 import DestinationsSection from '@/components/DestinationsSection'
+import Testimonials from '@/components/Testimonials'
 import ReviewsSection from '@/components/ReviewsSection'
 import StatsSection from '@/components/StatsSection'
 import CulinarySection from '@/components/CulinarySection'
@@ -28,6 +29,7 @@ export default async function Home({ params }: Props) {
         <StatsSection stats={content.stats || []} />
         <FleetSection fleet={content.fleet || []} />
         <DestinationsSection destinations={content.destinations || []} />
+        <Testimonials reviews={content.reviews || []} />
         <CulinarySection experiences={content.culinaryExperiences || []} />
         <CrewSection crew={content.crew || []} />
         <ReviewsSection reviews={content.reviews || []} />

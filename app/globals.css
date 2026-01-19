@@ -72,3 +72,28 @@ nextjs-portal > * {
   visibility: visible !important;
   opacity: 1 !important;
 }
+
+/* Swiper Testimonials Custom Styles */
+.testimonials-swiper .swiper-button-disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.testimonials-swiper .swiper-pagination {
+  position: relative;
+  margin-top: 3rem;
+}
+
+.testimonials-swiper .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  margin: 0 6px;
+  background: rgba(212, 175, 55, 0.5);
+  transition: all 0.3s;
+}
+
+.testimonials-swiper .swiper-pagination-bullet-active {
+  width: 32px;
+  border-radius: 6px;
+  background: #D4AF37;
+}

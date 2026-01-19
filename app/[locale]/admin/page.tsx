@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useLocale } from 'next-intl'
+import { ArrowRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { compressImage, compressThumbnail } from '@/lib/imageCompression'
 import DragDropImageUpload from '@/components/DragDropImageUpload'
