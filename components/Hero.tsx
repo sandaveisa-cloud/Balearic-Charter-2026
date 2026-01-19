@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl'
 import { getEmbedUrl } from '@/lib/imageUtils'
 
 // Dynamically import react-player to avoid SSR issues
-const ReactPlayer = dynamic(() => import('react-player'), { ssr: false })
+const ReactPlayer = dynamic(() => import('react-player'), { ssr: false }) as any
 
 interface HeroProps {
   settings: Record<string, string>
@@ -126,8 +126,8 @@ export default function Hero({ settings }: HeroProps) {
                   })(),
                 },
               },
-            }}
-            onError={(error) => {
+            } as any}
+            onError={(error: any) => {
               console.error('[Hero] ReactPlayer error:', error)
               setVideoError(true)
             }}
