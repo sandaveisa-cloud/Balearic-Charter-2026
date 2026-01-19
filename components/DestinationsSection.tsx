@@ -295,40 +295,41 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
 
           {/* Destinations Grid */}
           <div className="lg:col-span-2 order-1 lg:order-2 grid grid-cols-1 md:grid-cols-2 gap-8">
-          {activeDestinations.map((destination) => {
-            const destinationImage = getDestinationImage(destination)
-            const imageUrl = destinationImage
-              ? getImageUrl(destinationImage, {
-                  width: 1200,
-                  quality: 85,
-                  format: 'webp',
-                })
-              : null
-            const destinationName = getDestinationName(destination)
-            const description = getLocalizedDescription(destination)
-            const destinationSlug = destination.slug || destination.id
-            const youtubeVideoId = destination.youtube_video_url
-              ? extractYouTubeId(destination.youtube_video_url)
-              : null
+            {activeDestinations.map((destination) => {
+              const destinationImage = getDestinationImage(destination)
+              const imageUrl = destinationImage
+                ? getImageUrl(destinationImage, {
+                    width: 1200,
+                    quality: 85,
+                    format: 'webp',
+                  })
+                : null
+              const destinationName = getDestinationName(destination)
+              const description = getLocalizedDescription(destination)
+              const destinationSlug = destination.slug || destination.id
+              const youtubeVideoId = destination.youtube_video_url
+                ? extractYouTubeId(destination.youtube_video_url)
+                : null
 
-            return (
-              <DestinationCard
-                key={destination.id}
-                destinationName={destinationName}
-                region={destination.region}
-                description={description}
-                imageUrl={imageUrl}
-                youtubeVideoId={youtubeVideoId}
-                youtubeVideoUrl={destination.youtube_video_url}
-                destinationSlug={destinationSlug}
-                locale={locale}
-                t={t}
-                onHover={() => setHighlightedDestination(destinationSlug)}
-                onHoverEnd={() => setHighlightedDestination(null)}
-                onDiscoverMore={() => handleDiscoverMore(destination.youtube_video_url, destinationName)}
-              />
-            )
-          })}
+              return (
+                <DestinationCard
+                  key={destination.id}
+                  destinationName={destinationName}
+                  region={destination.region}
+                  description={description}
+                  imageUrl={imageUrl}
+                  youtubeVideoId={youtubeVideoId}
+                  youtubeVideoUrl={destination.youtube_video_url}
+                  destinationSlug={destinationSlug}
+                  locale={locale}
+                  t={t}
+                  onHover={() => setHighlightedDestination(destinationSlug)}
+                  onHoverEnd={() => setHighlightedDestination(null)}
+                  onDiscoverMore={() => handleDiscoverMore(destination.youtube_video_url, destinationName)}
+                />
+              )
+            })}
+          </div>
         </div>
 
         {/* Optional: View All Link */}
