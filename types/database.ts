@@ -41,13 +41,21 @@ export interface Fleet {
 
 export interface Destination {
   id: string
-  title: string
+  name: string
+  region: string | null
   description: string | null
-  image_urls: string[]
+  description_en: string | null
+  description_es: string | null
+  description_de: string | null
+  image_url: string | null
+  slug: string
   order_index: number
   is_active: boolean
   created_at: string
   updated_at: string
+  // Legacy fields for backward compatibility
+  title?: string
+  image_urls?: string[]
 }
 
 export interface Review {

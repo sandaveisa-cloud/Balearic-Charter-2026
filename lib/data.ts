@@ -36,7 +36,11 @@ export async function getSiteContent(): Promise<SiteContent> {
   }
 
   try {
-    destinationsResult = await supabase.from('destinations').select('*').eq('is_active', true).order('order_index', { ascending: true })
+    destinationsResult = await supabase
+      .from('destinations')
+      .select('id, name, region, description, description_en, description_es, description_de, image_url, slug, order_index, is_active, created_at, updated_at')
+      .eq('is_active', true)
+      .order('order_index', { ascending: true })
     if (destinationsResult.error) {
       console.error('[Data] Error fetching destinations:', destinationsResult.error)
     }
