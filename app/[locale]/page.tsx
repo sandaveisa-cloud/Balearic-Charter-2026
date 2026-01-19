@@ -1,3 +1,4 @@
+import React from 'react'
 import { getSiteContent } from '@/lib/data'
 import Hero from '@/components/Hero'
 import MissionSection from '@/components/MissionSection'
@@ -34,6 +35,19 @@ export default async function Home({ params }: Props) {
     )
   } catch (error) {
     console.error('[Home] Error rendering page:', error)
-    throw error
+    // Return error UI instead of throwing to prevent 500
+    return (
+      <main className="min-h-screen pt-16 flex items-center justify-center">
+        <div className="text-center p-8">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Page</h1>
+          <p className="text-gray-600 mb-4">
+            {error instanceof Error ? error.message : 'An unexpected error occurred'}
+          </p>
+          <p className="text-sm text-gray-500">
+            Please check the server console for more details.
+          </p>
+        </div>
+      </main>
+    )
   }
 }

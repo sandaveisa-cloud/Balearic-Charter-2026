@@ -14,6 +14,8 @@ module.exports = {
           'gold-light': '#F4E4BC',
           'gold-dark': '#B8941D',
         },
+        'luxury-blue': '#002366',
+        'luxury-gold': '#D4AF37',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

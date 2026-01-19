@@ -48,6 +48,7 @@ export interface Destination {
   description_es: string | null
   description_de: string | null
   image_url: string | null
+  youtube_video_url: string | null
   slug: string
   order_index: number
   is_active: boolean
