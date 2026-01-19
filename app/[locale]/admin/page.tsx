@@ -8,7 +8,7 @@ import DragDropImageUpload from '@/components/DragDropImageUpload'
 import AdminDashboard from '@/components/AdminDashboard'
 import type { BookingInquiry, Fleet, Destination, CulinaryExperience, CrewMember, Stat, Review } from '@/types/database'
 
-export default function AdminDashboard() {
+export default function AdminPage() {
   const [inquiries, setInquiries] = useState<BookingInquiry[]>([])
   const [fleet, setFleet] = useState<Fleet[]>([])
   const [destinations, setDestinations] = useState<Destination[]>([])

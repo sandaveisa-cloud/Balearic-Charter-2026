@@ -41,6 +41,14 @@ export default function AdminDashboard() {
         supabase.from('fleet').select('id, gallery_images, low_season_price, medium_season_price, high_season_price'),
       ])
 
+      // Check for errors
+      if (inquiriesResult.error) {
+        console.error('[Dashboard] Error fetching inquiries:', inquiriesResult.error)
+      }
+      if (fleetResult.error) {
+        console.error('[Dashboard] Error fetching fleet:', fleetResult.error)
+      }
+
       // Calculate stats
       const totalInquiries = inquiriesResult.data?.length || 0
       const fleetSize = fleetResult.data?.length || 0
@@ -98,15 +106,27 @@ export default function AdminDashboard() {
       const inquiriesWithYachts = await Promise.all(
         recentInquiriesData.map(async (inquiry) => {
           if (inquiry.yacht_id) {
-            const { data: yachtData } = await supabase
-              .from('fleet')
-              .select('name')
-              .eq('id', inquiry.yacht_id)
-              .single()
+            try {
+              const { data: yachtData, error: yachtError } = await supabase
+                .from('fleet')
+                .select('name')
+                .eq('id', inquiry.yacht_id)
+                .single()
 
-            return {
-              ...inquiry,
-              yacht_name: yachtData?.name || 'Unknown Yacht',
+              if (yachtError) {
+                console.error('[Dashboard] Error fetching yacht:', yachtError)
+              }
+
+              return {
+                ...inquiry,
+                yacht_name: yachtData?.name || 'Unknown Yacht',
+              }
+            } catch (error) {
+              console.error('[Dashboard] Error in yacht fetch:', error)
+              return {
+                ...inquiry,
+                yacht_name: 'Unknown Yacht',
+              }
             }
           }
           return {
@@ -125,6 +145,14 @@ export default function AdminDashboard() {
       setRecentInquiries(inquiriesWithYachts)
     } catch (error) {
       console.error('[Dashboard] Error fetching data:', error)
+      // Set default values on error to prevent crashes
+      setStats({
+        totalInquiries: 0,
+        fleetSize: 0,
+        galleryImages: 0,
+        revenuePotential: 0,
+      })
+      setRecentInquiries([])
     } finally {
       setLoading(false)
     }
