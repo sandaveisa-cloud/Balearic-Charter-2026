@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { useState, useRef, useEffect } from 'react'
+import { locales } from '@/i18n'
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇬🇧' },

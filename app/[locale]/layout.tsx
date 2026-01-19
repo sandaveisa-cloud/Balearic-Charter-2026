@@ -1,3 +1,4 @@
+import React from 'react'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -72,42 +73,24 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
   }
 
   // Load messages for the locale
-  const messages = await getMessages()
+  const messages = await getMessages({ locale })
 
   return (
-    <html lang={locale} className={`${inter.variable} ${playfair.variable}`}>
-      <head>
-        {/* Hreflang tags for SEO */}
-        {locales.map((loc) => (
-          <link
-            key={loc}
-            rel="alternate"
-            hrefLang={loc}
-            href={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'}/${loc}`}
-          />
-        ))}
-        <link
-          rel="alternate"
-          hrefLang="x-default"
-          href={`${process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'}/en`}
-        />
-      </head>
-      <body className="font-sans antialiased">
-        {/* Language Switcher in Header */}
-        <header className="fixed top-0 left-0 right-0 z-50 bg-luxury-blue/95 backdrop-blur-sm shadow-md">
-          <div className="container mx-auto px-4 py-4 flex justify-end">
-            <LanguageSwitcher />
-          </div>
-        </header>
-        
-        <NextIntlClientProvider messages={messages}>
-          <div className="pt-16">
-            {children}
-          </div>
-        </NextIntlClientProvider>
-        
-        <Footer />
-      </body>
-    </html>
+    <>
+      {/* Language Switcher in Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-luxury-blue/95 backdrop-blur-sm shadow-md">
+        <div className="container mx-auto px-4 py-4 flex justify-end">
+          <LanguageSwitcher />
+        </div>
+      </header>
+      
+      <NextIntlClientProvider messages={messages}>
+        <div className="pt-16">
+          {children}
+        </div>
+      </NextIntlClientProvider>
+      
+      <Footer />
+    </>
   )
 }
