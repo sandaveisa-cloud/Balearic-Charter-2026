@@ -99,6 +99,19 @@ export default async function LocaleLayout({ children, params }: Props) {
     )
   } catch (error) {
     console.error('[LocaleLayout] Error:', error)
-    throw error
+    // Return error UI instead of throwing to prevent 404
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center p-8">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Layout</h1>
+          <p className="text-gray-600 mb-4">
+            {error instanceof Error ? error.message : 'An unexpected error occurred'}
+          </p>
+          <p className="text-sm text-gray-500">
+            Please check the server console for more details.
+          </p>
+        </div>
+      </div>
+    )
   }
 }

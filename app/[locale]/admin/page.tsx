@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useLocale } from 'next-intl'
+import { useLocale, usePathname } from 'next-intl'
 import { ArrowRight } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { compressImage, compressThumbnail } from '@/lib/imageCompression'
@@ -14,6 +14,7 @@ import type { BookingInquiry, Fleet, Destination, CulinaryExperience, CrewMember
 export default function AdminPage() {
   const router = useRouter()
   const locale = useLocale()
+  const pathname = usePathname()
   const [inquiries, setInquiries] = useState<BookingInquiry[]>([])
   const [fleet, setFleet] = useState<Fleet[]>([])
   const [destinations, setDestinations] = useState<Destination[]>([])
@@ -1331,13 +1332,13 @@ export default function AdminPage() {
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-luxury-blue mb-2">Destination Management</h2>
                 <p className="text-gray-600 mb-4">Manage your charter destinations with full CRUD operations, YouTube videos, and localized content.</p>
-                <button
-                  onClick={() => router.push(`/${locale}/admin/destinations`)}
+                <Link
+                  href="/admin/destinations"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-luxury-blue text-white rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-colors shadow-lg"
                 >
                   <span>Open Destination Management</span>
                   <ArrowRight className="w-5 h-5" />
-                </button>
+                </Link>
               </div>
             </div>
           )}

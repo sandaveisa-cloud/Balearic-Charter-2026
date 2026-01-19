@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation, Pagination, Autoplay } from 'swiper/modules'
 import { Quote, Star, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Review } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
 
-// Import Swiper styles
+// Import Swiper components and modules
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Navigation, Pagination, Autoplay } from 'swiper/modules'
+
+// Import Swiper styles - safe to import in client component
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
@@ -212,8 +214,11 @@ export default function Testimonials({ reviews }: TestimonialsProps) {
               )
             })}
           </Swiper>
+          )}
 
-          {/* Custom Navigation Buttons */}
+          {/* Custom Navigation Buttons - Only show when mounted */}
+          {mounted && (
+          <>
           <button
             className="testimonial-prev absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-20 w-12 h-12 bg-luxury-gold/20 hover:bg-luxury-gold/40 backdrop-blur-sm border border-luxury-gold/50 rounded-full flex items-center justify-center text-luxury-gold transition-all duration-300 hover:scale-110"
             aria-label="Previous testimonial"
@@ -226,6 +231,8 @@ export default function Testimonials({ reviews }: TestimonialsProps) {
           >
             <ChevronRight className="w-6 h-6" />
           </button>
+          </>
+          )}
         </div>
       </div>
     </section>
