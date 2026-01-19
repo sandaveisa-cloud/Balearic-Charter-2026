@@ -1,0 +1,49 @@
+{
+  "common": {
+    "exploreFleet": "Explore Our Fleet",
+    "learnMore": "Learn More",
+    "bookNow": "Book Now",
+    "contactUs": "Contact Us"
+  },
+  "hero": {
+    "title": "Experience Luxury at Sea",
+    "subtitle": "Premium Yacht Charters in the Balearic Islands & Costa Blanca",
+    "cta": "Explore Our Fleet"
+  },
+  "stats": {
+    "title": "Our Journey in Numbers"
+  },
+  "fleet": {
+    "title": "Our Luxury Fleet",
+    "subtitle": "Discover our collection of world-class yachts",
+    "viewDetails": "View Details",
+    "from": "From"
+  },
+  "destinations": {
+    "title": "Exclusive Destinations",
+    "subtitle": "Explore the most beautiful locations in the Mediterranean"
+  },
+  "culinary": {
+    "title": "Culinary Excellence",
+    "subtitle": "Indulge in world-class dining experiences"
+  },
+  "crew": {
+    "title": "Expert Crew",
+    "subtitle": "Meet our professional team dedicated to your comfort"
+  },
+  "reviews": {
+    "title": "What Our Guests Say",
+    "subtitle": "Hear from those who have experienced the luxury of our charters"
+  },
+  "mission": {
+    "title": "Our Mission",
+    "text": "To combine luxury charter with precise logistics. We ensure a safe, high-end environment with professional crew and gourmet cuisine."
+  },
+  "footer": {
+    "about": "About",
+    "fleet": "Fleet",
+    "destinations": "Destinations",
+    "contact": "Contact",
+    "rights": "All rights reserved"
+  }
+}

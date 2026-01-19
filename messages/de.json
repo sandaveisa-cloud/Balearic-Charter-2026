@@ -1,0 +1,49 @@
+{
+  "common": {
+    "exploreFleet": "Unsere Flotte Erkunden",
+    "learnMore": "Mehr Erfahren",
+    "bookNow": "Jetzt Buchen",
+    "contactUs": "Kontaktieren Sie Uns"
+  },
+  "hero": {
+    "title": "Luxus auf See Erleben",
+    "subtitle": "Premium Yachtcharter auf den Balearen & Costa Blanca",
+    "cta": "Unsere Flotte Erkunden"
+  },
+  "stats": {
+    "title": "Unsere Reise in Zahlen"
+  },
+  "fleet": {
+    "title": "Unsere Luxusflotte",
+    "subtitle": "Entdecken Sie unsere Sammlung erstklassiger Yachten",
+    "viewDetails": "Details Anzeigen",
+    "from": "Ab"
+  },
+  "destinations": {
+    "title": "Exklusive Reiseziele",
+    "subtitle": "Erkunden Sie die schönsten Orte im Mittelmeer"
+  },
+  "culinary": {
+    "title": "Kulinarische Exzellenz",
+    "subtitle": "Genießen Sie erstklassige kulinarische Erlebnisse"
+  },
+  "crew": {
+    "title": "Erfahrene Crew",
+    "subtitle": "Lernen Sie unser professionelles Team kennen, das sich Ihrer Komfort widmet"
+  },
+  "reviews": {
+    "title": "Was Unsere Gäste Sagen",
+    "subtitle": "Hören Sie von denen, die den Luxus unserer Charter erlebt haben"
+  },
+  "mission": {
+    "title": "Unsere Mission",
+    "text": "Luxus-Charter mit präziser Logistik zu verbinden. Wir garantieren ein erstklassiges Umfeld mit professioneller Crew und Gourmetküche."
+  },
+  "footer": {
+    "about": "Über Uns",
+    "fleet": "Flotte",
+    "destinations": "Reiseziele",
+    "contact": "Kontakt",
+    "rights": "Alle Rechte vorbehalten"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "common": {
+    "exploreFleet": "Explorar Nuestra Flota",
+    "learnMore": "Saber Más",
+    "bookNow": "Reservar Ahora",
+    "contactUs": "Contáctanos"
+  },
+  "hero": {
+    "title": "Experimenta el Lujo en el Mar",
+    "subtitle": "Alquiler de Yates de Lujo en las Islas Baleares y Costa Blanca",
+    "cta": "Explorar Nuestra Flota"
+  },
+  "stats": {
+    "title": "Nuestro Viaje en Números"
+  },
+  "fleet": {
+    "title": "Nuestra Flota de Lujo",
+    "subtitle": "Descubre nuestra colección de yates de clase mundial",
+    "viewDetails": "Ver Detalles",
+    "from": "Desde"
+  },
+  "destinations": {
+    "title": "Destinos Exclusivos",
+    "subtitle": "Explora los lugares más hermosos del Mediterráneo"
+  },
+  "culinary": {
+    "title": "Excelencia Culinaria",
+    "subtitle": "Disfruta de experiencias gastronómicas de clase mundial"
+  },
+  "crew": {
+    "title": "Tripulación Experta",
+    "subtitle": "Conoce a nuestro equipo profesional dedicado a tu comodidad"
+  },
+  "reviews": {
+    "title": "Lo Que Dicen Nuestros Huéspedes",
+    "subtitle": "Escucha a quienes han experimentado el lujo de nuestros alquileres"
+  },
+  "mission": {
+    "title": "Nuestra Misión",
+    "text": "Combinar el chárter de lujo con una logística precisa. Garantizamos un entorno de alta gama con tripulación profesional y cocina gourmet."
+  },
+  "footer": {
+    "about": "Acerca de",
+    "fleet": "Flota",
+    "destinations": "Destinos",
+    "contact": "Contacto",
+    "rights": "Todos los derechos reservados"
+  }
+}
