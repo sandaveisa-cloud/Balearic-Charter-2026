@@ -155,7 +155,6 @@ Requirements:
 - Focus on the Mediterranean sailing experience
 
 Return ONLY the JSON object, nothing else.`
-    }
 
     const entityName = body.yachtName
     console.log(`[API] Calling Gemini (${geminiModel}) to generate description for:`, entityName)

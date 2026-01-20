@@ -145,9 +145,11 @@ export default function AdminPage() {
       
       // Transform settings into key-value object
       const settings: Record<string, string> = {}
-      if (settingsResult.data) {
-        settingsResult.data.forEach((setting) => {
-          settings[setting.key] = setting.value || ''
+      if (settingsResult.data && Array.isArray(settingsResult.data)) {
+        (settingsResult.data as Array<{ key: string; value: string | null }>).forEach((setting) => {
+          if (setting && typeof setting === 'object' && 'key' in setting) {
+            settings[setting.key] = setting.value || ''
+          }
         })
       }
       // Settings transformed successfully
@@ -257,13 +259,13 @@ export default function AdminPage() {
       const updatedImages = [...allImages, ...successfulUploads]
       
       // Update fleet record - set both main_image_url (first image) and gallery_images
-      const { error } = await supabase
+      const { error } = await (supabase
         .from('fleet')
         .update({ 
-          main_image_url: updatedImages[0] || successfulUploads[0], // First image as main
+          main_image_url: updatedImages[0] || successfulUploads[0] || null, // First image as main
           gallery_images: updatedImages 
         })
-        .eq('id', yachtId)
+        .eq('id', yachtId) as any)
 
       if (error) {
         console.error('[Admin] Error updating image URLs:', error)
@@ -1737,56 +1739,6 @@ export default function AdminPage() {
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </div>
-            </div>
-          )}
-
-          {activeTab === 'destinations_old' && (
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-luxury-blue">Destinations Management</h2>
-                <button
-                  onClick={() => setShowCreateDestinationForm(!showCreateDestinationForm)}
-                  className="px-4 py-2 bg-luxury-blue text-white rounded-lg font-semibold hover:bg-opacity-90 transition-colors flex items-center gap-2"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  {showCreateDestinationForm ? 'Cancel' : 'Create New Destination'}
-                </button>
-              </div>
-
-              {showCreateDestinationForm && (
-                <div className="mb-6">
-                  <DestinationEditForm
-                    destination={null}
-                    onSave={handleDestinationCreate}
-                      onCancel={() => setShowCreateDestinationForm(false)}
-                    saving={creatingDestination}
-                    onImageUpload={handleDestinationImageUpload}
-                    uploadingImage={false}
-                  />
-                </div>
-              )}
-
-              {destinations.length === 0 ? (
-                <p className="text-gray-600">No destinations yet. Click "Create New Destination" to add one.</p>
-              ) : (
-                <div className="space-y-8">
-                  {destinations.map((destination) => (
-                    <DestinationEditForm
-                      key={destination.id}
-                      destination={destination}
-                      onSave={(updates) => handleDestinationUpdate(destination.id, updates)}
-                      onDelete={() => handleDestinationDelete(destination.id)}
-                      saving={savingDestinations[destination.id] || false}
-                      deleting={deletingDestinations[destination.id] || false}
-                      successMessage={destinationsSuccess[destination.id]}
-                      onImageUpload={handleDestinationImageUpload}
-                      uploadingImage={uploadingDestinationImages[destination.id] || false}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
           )}
 
