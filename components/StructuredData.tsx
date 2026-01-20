@@ -9,7 +9,7 @@ interface StructuredDataProps {
   locale?: string
 }
 
-export default function StructuredData({ type, settings = {}, yacht, locale = 'en' }: StructuredDataProps) {
+export default function StructuredData({ type, settings = {}, yacht, destination, locale = 'en' }: StructuredDataProps) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.widedream.es'
   
   if (type === 'TravelAgency') {
