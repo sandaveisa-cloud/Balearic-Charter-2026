@@ -130,92 +130,126 @@ export const getSiteContent = unstable_cache(
 )
 
 export async function getFleetBySlug(slug: string): Promise<Fleet | null> {
-  const { data, error } = await supabase
-    .from('fleet')
-    .select('*')
-    .eq('slug', slug)
-    .eq('is_active', true)
-    .single()
+  if (!slug) return null
+  
+  try {
+    const { data, error } = await supabase
+      .from('fleet')
+      .select('*')
+      .eq('slug', slug)
+      .eq('is_active', true)
+      .single()
 
-  if (error || !data) {
+    if (error || !data) {
+      console.error('[Data] Error fetching fleet by slug:', error)
+      return null
+    }
+
+    return data as Fleet
+  } catch (error) {
+    console.error('[Data] Exception fetching fleet by slug:', error)
     return null
   }
-
-  return data as Fleet
 }
 
 // Get multiple fleet items by slugs for comparison
 export async function getFleetBySlugs(slugs: string[]): Promise<Fleet[]> {
-  if (slugs.length === 0) return []
+  if (!slugs || slugs.length === 0) return []
   
-  const { data, error } = await supabase
-    .from('fleet')
-    .select('*')
-    .in('slug', slugs)
-    .eq('is_active', true)
+  try {
+    const { data, error } = await supabase
+      .from('fleet')
+      .select('*')
+      .in('slug', slugs)
+      .eq('is_active', true)
 
-  if (error || !data) {
+    if (error || !data) {
+      console.error('[Data] Error fetching fleet by slugs:', error)
+      return []
+    }
+
+    return data as Fleet[]
+  } catch (error) {
+    console.error('[Data] Exception fetching fleet by slugs:', error)
     return []
   }
-
-  return data as Fleet[]
 }
 
 // Get destination by ID or slug
 export async function getDestinationByIdOrSlug(idOrSlug: string): Promise<Destination | null> {
   if (!idOrSlug) return null
 
-  // Try to fetch by ID first (UUID format)
-  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug)
-  
-  let query = supabase
-    .from('destinations')
-    .select('*')
-    .eq('is_active', true)
+  try {
+    // Try to fetch by ID first (UUID format)
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug)
+    
+    let query = supabase
+      .from('destinations')
+      .select('*')
+      .eq('is_active', true)
 
-  if (isUUID) {
-    query = query.eq('id', idOrSlug)
-  } else {
-    query = query.eq('slug', idOrSlug)
-  }
-
-  const { data, error } = await query.single()
-
-  if (error || !data) {
-    // If not found by slug, try by ID as fallback
-    if (!isUUID) {
-      const { data: fallbackData, error: fallbackError } = await supabase
-        .from('destinations')
-        .select('*')
-        .eq('id', idOrSlug)
-        .eq('is_active', true)
-        .single()
-
-      if (fallbackError || !fallbackData) {
-        return null
-      }
-      return fallbackData as Destination
+    if (isUUID) {
+      query = query.eq('id', idOrSlug)
+    } else {
+      query = query.eq('slug', idOrSlug)
     }
+
+    const { data, error } = await query.single()
+
+    if (error || !data) {
+      // If not found by slug, try by ID as fallback
+      if (!isUUID) {
+        try {
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from('destinations')
+            .select('*')
+            .eq('id', idOrSlug)
+            .eq('is_active', true)
+            .single()
+
+          if (fallbackError || !fallbackData) {
+            console.error('[Data] Error fetching destination by ID fallback:', fallbackError)
+            return null
+          }
+          return fallbackData as Destination
+        } catch (fallbackException) {
+          console.error('[Data] Exception fetching destination by ID fallback:', fallbackException)
+          return null
+        }
+      }
+      console.error('[Data] Error fetching destination:', error)
+      return null
+    }
+
+    return data as Destination
+  } catch (error) {
+    console.error('[Data] Exception fetching destination:', error)
     return null
   }
-
-  return data as Destination
 }
 
 export async function getBookingAvailability(yachtId: string, startDate: string, endDate: string): Promise<BookingAvailability[]> {
-  const { data, error } = await supabase
-    .from('booking_availability')
-    .select('*')
-    .eq('yacht_id', yachtId)
-    .gte('date', startDate)
-    .lte('date', endDate)
-    .order('date', { ascending: true })
+  if (!yachtId || !startDate || !endDate) return []
+  
+  try {
+    const { data, error } = await supabase
+      .from('booking_availability')
+      .select('*')
+      .eq('yacht_id', yachtId)
+      .gte('date', startDate)
+      .lte('date', endDate)
+      .order('date', { ascending: true })
 
-  if (error || !data) {
+    if (error || !data) {
+      console.error('[Data] Error fetching booking availability:', error)
+      return []
+    }
+
+    return data as BookingAvailability[]
+  } catch (error) {
+    console.error('[Data] Exception fetching booking availability:', error)
     return []
   }
-
-  return data as BookingAvailability[]
 }
 
 export async function submitBookingInquiry(inquiry: {
@@ -228,33 +262,53 @@ export async function submitBookingInquiry(inquiry: {
   guests?: number
   message?: string
 }) {
-  const { data, error } = await supabase
-    .from('booking_inquiries')
-    // @ts-expect-error - Supabase type inference limitation with dynamic table inserts
-    .insert([inquiry])
-    .select()
-    .single()
+  if (!inquiry || !inquiry.name || !inquiry.email) {
+    throw new Error('Invalid inquiry data: name and email are required')
+  }
+  
+  try {
+    const { data, error } = await supabase
+      .from('booking_inquiries')
+      // @ts-expect-error - Supabase type inference limitation with dynamic table inserts
+      .insert([inquiry])
+      .select()
+      .single()
 
-  if (error) {
+    if (error) {
+      console.error('[Data] Error submitting booking inquiry:', error)
+      throw error
+    }
+
+    return data
+  } catch (error) {
+    console.error('[Data] Exception submitting booking inquiry:', error)
     throw error
   }
-
-  return data
 }
 
 // Client-side function to fetch settings (for client components)
 // This does NOT use unstable_cache and can be called from client components
 export async function getSiteSettingsClient(): Promise<Record<string, string>> {
-  const { data, error } = await supabase.from('site_settings').select('*')
-  
-  if (error || !data) {
+  try {
+    const { data, error } = await supabase.from('site_settings').select('*')
+    
+    if (error || !data) {
+      console.error('[Data] Error fetching site settings (client):', error)
+      return {}
+    }
+
+    const settings: Record<string, string> = {}
+    if (Array.isArray(data)) {
+      data.forEach((setting: any) => {
+        if (setting && typeof setting === 'object' && 'key' in setting) {
+          settings[setting.key] = setting.value || ''
+        }
+      })
+    }
+
+    return settings
+  } catch (error) {
+    console.error('[Data] Exception fetching site settings (client):', error)
     return {}
   }
-
-  const settings: Record<string, string> = {}
-  data.forEach((setting: any) => {
-    settings[setting.key] = setting.value || ''
-  })
-
-  return settings
 }

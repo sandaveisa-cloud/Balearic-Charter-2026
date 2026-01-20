@@ -1,5 +1,7 @@
 import React from 'react'
 import { getSiteContent } from '@/lib/data'
+import { locales, defaultLocale } from '@/i18n/routing'
+import { notFound } from 'next/navigation'
 import Hero from '@/components/Hero'
 import MissionSection from '@/components/MissionSection'
 import FleetSection from '@/components/FleetSection'
@@ -20,14 +22,61 @@ type Props = {
 export default async function Home({ params }: Props) {
   try {
     const { locale } = await params
-    const content = await getSiteContent()
+    
+    // Validate locale parameter before using it
+    if (!locale || !locales.includes(locale as any)) {
+      console.error('[Home] Invalid locale:', locale)
+      notFound()
+    }
+    
+    // Fetch content with error handling
+    let content
+    try {
+      content = await getSiteContent()
+    } catch (dataError) {
+      console.error('[Home] Error fetching site content:', dataError)
+      // Return safe defaults if data fetching fails
+      content = {
+        settings: {},
+        sectionVisibility: {
+          journey: true,
+          mission: true,
+          crew: true,
+          culinary: true,
+          contact: true,
+        },
+        fleet: [],
+        destinations: [],
+        reviews: [],
+        stats: [],
+        culinaryExperiences: [],
+        crew: [],
+      }
+    }
 
-    // Debug logging for culinary data
-    console.log('[Home] Culinary experiences count:', content.culinaryExperiences?.length || 0)
-    console.log('[Home] Culinary experiences data:', content.culinaryExperiences)
-
+    // Ensure content and settings exist before accessing properties
+    const safeContent = content || {
+      settings: {},
+      sectionVisibility: {
+        journey: true,
+        mission: true,
+        crew: true,
+        culinary: true,
+        contact: true,
+      },
+      fleet: [],
+      destinations: [],
+      reviews: [],
+      stats: [],
+      culinaryExperiences: [],
+      crew: [],
+    }
+    
+    // Ensure settings object exists and has safe defaults
+    const safeSettings = safeContent.settings || {}
+    
     // Get section visibility settings (default to true if not set)
-    const visibility = content.sectionVisibility || {
+    const visibility = safeContent.sectionVisibility || {
       journey: true,
       mission: true,
       crew: true,
@@ -35,26 +84,23 @@ export default async function Home({ params }: Props) {
       contact: true,
     }
 
-    console.log('[Home] Section visibility:', visibility)
-    console.log('[Home] Culinary section visible:', visibility.culinary)
-
     return (
       <main className="min-h-screen pt-16">
-        <Hero settings={content.settings} />
+        <Hero settings={safeSettings} />
         {visibility.mission && <MissionSection />}
-        {visibility.journey && <StatsSection stats={content.stats || []} />}
-        <FleetSection fleet={content.fleet || []} />
-        <DestinationsSection destinations={content.destinations || []} />
-        <Testimonials reviews={content.reviews || []} />
+        {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
+        <FleetSection fleet={safeContent.fleet || []} />
+        <DestinationsSection destinations={safeContent.destinations || []} />
+        <Testimonials reviews={safeContent.reviews || []} />
         {/* Always render CulinarySection if visibility is enabled, even if experiences array is empty */}
         {visibility.culinary && (
-          <CulinarySection experiences={content.culinaryExperiences || []} />
+          <CulinarySection experiences={safeContent.culinaryExperiences || []} />
         )}
         {/* Only show CrewSection if visibility is enabled AND there are active crew members */}
-        {visibility.crew && content.crew && content.crew.length > 0 && (
-          <CrewSection crew={content.crew} />
+        {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (
+          <CrewSection crew={safeContent.crew} />
         )}
-        <ReviewsSection reviews={content.reviews || []} />
+        <ReviewsSection reviews={safeContent.reviews || []} />
       </main>
     )
   } catch (error) {
