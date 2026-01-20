@@ -136,21 +136,45 @@ export default async function Home({ params }: Props) {
           <StructuredData type="TravelAgency" settings={safeSettings} locale={locale} />
           
           <main className="min-h-screen pt-16">
+            {/* Hero Section - Always at the top */}
             <Hero settings={safeSettings} />
-            {visibility.mission && <MissionSection />}
-            {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
+            
+            {/* Fleet Section - Immediately after Hero for conversion focus */}
             <FleetSection fleet={safeContent.fleet || []} />
+            
+            {/* Stats & Mission Sections - After fleet to build trust */}
+            {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
+            {visibility.mission && <MissionSection />}
+            
+            {/* Supporting Content Sections */}
             <DestinationsSection destinations={safeContent.destinations || []} />
             <Testimonials reviews={safeContent.reviews || []} />
+            
             {/* Always render CulinarySection if visibility is enabled, even if experiences array is empty */}
             {visibility.culinary && (
               <CulinarySection experiences={safeContent.culinaryExperiences || []} />
             )}
+            
             {/* Only show CrewSection if visibility is enabled AND there are active crew members */}
             {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (
               <CrewSection crew={safeContent.crew} />
             )}
+            
             <ReviewsSection reviews={safeContent.reviews || []} />
+            
+            {/* Final Trust Badge - Prominent at the end before footer */}
+            <section className="py-8 bg-gradient-to-r from-green-50 via-amber-50 to-green-50 border-t border-[#E2E8F0]">
+              <div className="container mx-auto px-4">
+                <div className="text-center">
+                  <p className="text-sm md:text-base font-semibold text-[#0F172A] mb-1">
+                    ✓ 2026 Season | Verified & Logistically Synchronized
+                  </p>
+                  <p className="text-xs text-[#475569]">
+                    Trusted by hundreds of satisfied guests across the Balearic Islands
+                  </p>
+                </div>
+              </div>
+            </section>
           </main>
           
           {/* Floating CTA Button */}
