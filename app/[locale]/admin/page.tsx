@@ -2750,9 +2750,49 @@ function FleetEditForm({
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Extras & Features
           </label>
-          <p className="text-xs text-gray-500 mb-3">Add features like 'WiFi', 'Snorkeling Equipment', 'Towels', etc.</p>
+          <p className="text-xs text-gray-500 mb-3">Select high-end water toys and add custom features.</p>
           
-          {/* Add new extra */}
+          {/* Predefined High-End Water Toys */}
+          <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-sm font-semibold text-gray-700 mb-3">High-End Water Toys:</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { key: 'efoil', label: 'Fliteboard eFoil' },
+                { key: 'snorkel', label: 'Pro Snorkeling Gear' },
+                { key: 'scooter', label: 'Underwater Scooter' },
+                { key: 'sup', label: 'Stand Up Paddle (SUP)' },
+              ].map(({ key, label }) => {
+                const isChecked = extras.includes(key) || extras.some(e => e.toLowerCase().includes(key))
+                return (
+                  <label
+                    key={key}
+                    className="flex items-center gap-2 p-2 cursor-pointer hover:bg-white rounded border border-gray-300 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          // Add if not already present (case-insensitive)
+                          if (!extras.some(e => e.toLowerCase() === key.toLowerCase())) {
+                            setExtras([...extras, key])
+                          }
+                        } else {
+                          // Remove matching extras (case-insensitive)
+                          setExtras(extras.filter(e => e.toLowerCase() !== key.toLowerCase()))
+                        }
+                      }}
+                      className="w-4 h-4 text-luxury-blue border-gray-300 rounded focus:ring-luxury-blue"
+                    />
+                    <span className="text-sm text-gray-700">{label}</span>
+                  </label>
+                )
+              })}
+            </div>
+          </div>
+          
+          {/* Add custom extra */}
+          <p className="text-xs text-gray-500 mb-3">Or add custom features:</p>
           <div className="flex gap-2 mb-3">
             <input
               type="text"

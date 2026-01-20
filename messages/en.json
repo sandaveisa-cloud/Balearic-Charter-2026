@@ -33,6 +33,12 @@
       "recentBookings": "🔥 3 bookings in the last 7 days",
       "rating": "⭐ 4.9/5 average rating"
     },
+    "extras": {
+      "efoil": "Fliteboard eFoil",
+      "snorkel": "Pro Snorkeling Gear",
+      "scooter": "Underwater Scooter",
+      "sup": "Stand Up Paddle (SUP)"
+    },
     "ships": {
       "simona": {
         "headline": "Elegance, Comfort, and a Taste of Adventure",

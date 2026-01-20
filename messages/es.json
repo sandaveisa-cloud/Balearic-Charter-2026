@@ -33,6 +33,12 @@
       "recentBookings": "🔥 3 reservas en los últimos 7 días",
       "rating": "⭐ 4.9/5 calificación promedio"
     },
+    "extras": {
+      "efoil": "Fliteboard eFoil",
+      "snorkel": "Equipo de Snorkel Pro",
+      "scooter": "Scooter Subacuático",
+      "sup": "Tabla de Paddle Surf"
+    },
     "ships": {
       "simona": {
         "headline": "Elegancia, Comodidad y un Toque de Aventura",

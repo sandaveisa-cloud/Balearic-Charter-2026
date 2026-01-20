@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { useTranslations, useLocale } from 'next-intl'
-import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles, Home, ChevronRight } from 'lucide-react'
+import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles, Home, ChevronRight, Wind } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils'
 import { getFleetBySlugs } from '@/lib/data'
@@ -601,30 +601,50 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
             {yacht.extras && yacht.extras.length > 0 && (
               <section>
                 <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">Features & Extras</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {yacht.extras.map((extra, index) => {
-                    // Map common extras to icons
-                    const getIconForExtra = (extraName: string) => {
-                      const name = extraName.toLowerCase()
-                      if (name.includes('wifi') || name.includes('wi-fi')) return Zap
-                      if (name.includes('snorkel')) return Waves
-                      if (name.includes('towel')) return Sparkles
-                      if (name.includes('audio') || name.includes('sound') || name.includes('music')) return Sparkles
-                      if (name.includes('kayak') || name.includes('paddle')) return Anchor
-                      if (name.includes('fishing')) return Anchor
-                      if (name.includes('beach')) return Waves
-                      return Sparkles // Default icon
+                    // Map specific extras to icons and translations
+                    const getExtraConfig = (extraName: string) => {
+                      const name = extraName.toLowerCase().trim()
+                      
+                      // Specific high-end water toys
+                      if (name === 'efoil' || name.includes('efoil') || name.includes('fliteboard')) {
+                        return { icon: Zap, translationKey: 'efoil' }
+                      }
+                      if (name === 'snorkel' || name.includes('snorkel')) {
+                        return { icon: Waves, translationKey: 'snorkel' }
+                      }
+                      if (name === 'scooter' || name.includes('scooter') || name.includes('underwater')) {
+                        return { icon: Wind, translationKey: 'scooter' }
+                      }
+                      if (name === 'sup' || name.includes('paddle') || name.includes('stand up')) {
+                        return { icon: Anchor, translationKey: 'sup' }
+                      }
+                      
+                      // Fallback for other extras
+                      if (name.includes('wifi') || name.includes('wi-fi')) return { icon: Zap, translationKey: null }
+                      if (name.includes('towel')) return { icon: Sparkles, translationKey: null }
+                      if (name.includes('audio') || name.includes('sound') || name.includes('music')) return { icon: Sparkles, translationKey: null }
+                      if (name.includes('kayak')) return { icon: Anchor, translationKey: null }
+                      if (name.includes('fishing')) return { icon: Anchor, translationKey: null }
+                      if (name.includes('beach')) return { icon: Waves, translationKey: null }
+                      
+                      return { icon: Sparkles, translationKey: null }
                     }
                     
-                    const Icon = getIconForExtra(extra)
+                    const config = getExtraConfig(extra)
+                    const Icon = config.icon
+                    const displayText = config.translationKey 
+                      ? t(`extras.${config.translationKey}`, { default: extra })
+                      : extra
                     
                     return (
                       <div
                         key={index}
-                        className="flex items-center gap-3 p-4 bg-gradient-to-br from-luxury-blue/5 to-luxury-gold/5 border border-luxury-blue/20 rounded-lg hover:border-luxury-gold hover:shadow-md transition-all"
+                        className="flex flex-col items-center justify-center gap-2 p-6 bg-gradient-to-br from-luxury-blue/5 to-luxury-gold/5 border border-luxury-blue/20 rounded-lg hover:border-luxury-gold hover:shadow-lg transition-all text-center"
                       >
-                        <Icon className="w-5 h-5 text-luxury-gold flex-shrink-0" />
-                        <span className="text-sm font-medium text-gray-900">{extra}</span>
+                        <Icon className="w-8 h-8 text-luxury-gold flex-shrink-0" />
+                        <span className="text-sm font-medium text-gray-900 leading-tight">{displayText}</span>
                       </div>
                     )
                   })}

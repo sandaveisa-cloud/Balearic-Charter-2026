@@ -34,6 +34,12 @@
       "recentBookings": "🔥 3 Buchungen in den letzten 7 Tagen",
       "rating": "⭐ 4.9/5 Durchschnittsbewertung"
     },
+    "extras": {
+      "efoil": "Fliteboard eFoil",
+      "snorkel": "Profi-Schnorchelausrüstung",
+      "scooter": "Unterwasser-Scooter",
+      "sup": "Stand Up Paddle Board"
+    },
     "ships": {
       "simona": {
         "headline": "Eleganz, Komfort und ein Hauch von Abenteuer",
