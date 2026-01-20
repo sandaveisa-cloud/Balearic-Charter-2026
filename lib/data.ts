@@ -18,16 +18,21 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
   }
 
   try {
+    console.log('[Data] Fetching fleet...')
     fleetResult = await supabase.from('fleet').select('*').eq('is_active', true).order('is_featured', { ascending: false })
     if (fleetResult.error) {
       console.error('[Data] Error fetching fleet:', fleetResult.error)
+      fleetResult = { data: [], error: null }
+    } else {
+      console.log('[Data] fleet fetched:', fleetResult.data?.length || 0, 'items')
     }
   } catch (error) {
     console.error('[Data] Exception fetching fleet:', error)
-    fleetResult = { data: null, error: error as any }
+    fleetResult = { data: [], error: null }
   }
 
   try {
+    console.log('[Data] Fetching destinations...')
     destinationsResult = await supabase
       .from('destinations')
       .select('id, title, description, image_urls, order_index, is_active, created_at, updated_at')
@@ -35,66 +40,89 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
       .order('order_index', { ascending: true })
     if (destinationsResult.error) {
       console.error('[Data] Error fetching destinations:', destinationsResult.error)
+      destinationsResult = { data: [], error: null }
+    } else {
+      console.log('[Data] destinations fetched:', destinationsResult.data?.length || 0, 'items')
     }
   } catch (error) {
     console.error('[Data] Exception fetching destinations:', error)
-    destinationsResult = { data: null, error: error as any }
+    destinationsResult = { data: [], error: null }
   }
 
   try {
+    console.log('[Data] Fetching reviews...')
     reviewsResult = await supabase.from('reviews').select('*').eq('is_approved', true).order('is_featured', { ascending: false }).limit(6)
     if (reviewsResult.error) {
       console.error('[Data] Error fetching reviews:', reviewsResult.error)
+      reviewsResult = { data: [], error: null }
+    } else {
+      console.log('[Data] reviews fetched:', reviewsResult.data?.length || 0, 'items')
     }
   } catch (error) {
     console.error('[Data] Exception fetching reviews:', error)
-    reviewsResult = { data: null, error: error as any }
+    reviewsResult = { data: [], error: null }
   }
 
   try {
+    console.log('[Data] Fetching stats...')
     statsResult = await supabase.from('stats').select('*').eq('is_active', true).order('order_index', { ascending: true })
     if (statsResult.error) {
       console.error('[Data] Error fetching stats:', statsResult.error)
+      statsResult = { data: [], error: null }
+    } else {
+      console.log('[Data] stats fetched:', statsResult.data?.length || 0, 'items')
     }
   } catch (error) {
     console.error('[Data] Exception fetching stats:', error)
-    statsResult = { data: null, error: error as any }
+    statsResult = { data: [], error: null }
   }
 
   try {
+    console.log('[Data] Fetching culinary_experiences...')
     culinaryResult = await supabase.from('culinary_experiences').select('*').eq('is_active', true).order('order_index', { ascending: true })
     if (culinaryResult.error) {
       console.error('[Data] Error fetching culinary_experiences:', culinaryResult.error)
+      culinaryResult = { data: [], error: null }
+    } else {
+      console.log('[Data] culinary_experiences fetched:', culinaryResult.data?.length || 0, 'items')
     }
   } catch (error) {
     console.error('[Data] Exception fetching culinary_experiences:', error)
-    culinaryResult = { data: null, error: error as any }
+    culinaryResult = { data: [], error: null }
   }
 
   try {
+    console.log('[Data] Fetching crew...')
     crewResult = await supabase.from('crew').select('*').eq('is_active', true).order('order_index', { ascending: true })
     if (crewResult.error) {
       console.error('[Data] Error fetching crew:', crewResult.error)
+      crewResult = { data: [], error: null }
+    } else {
+      console.log('[Data] crew fetched:', crewResult.data?.length || 0, 'items')
     }
   } catch (error) {
     console.error('[Data] Exception fetching crew:', error)
-    crewResult = { data: null, error: error as any }
+    crewResult = { data: [], error: null }
   }
 
   // Transform settings into a key-value object
   // Add error handling to prevent crashes if settings data is malformed
+  console.log('[Data] Transforming settings...')
   const settings: Record<string, string> = {}
-  if (settingsResult.data && Array.isArray(settingsResult.data)) {
+  if (settingsResult?.data && Array.isArray(settingsResult.data)) {
     try {
       settingsResult.data.forEach((setting: any) => {
         if (setting && typeof setting === 'object' && 'key' in setting) {
           settings[setting.key] = setting.value || ''
         }
       })
+      console.log('[Data] Settings transformed:', Object.keys(settings).length, 'keys')
     } catch (error) {
       console.error('[Data] Error transforming settings:', error)
       // Continue with empty settings object if transformation fails
     }
+  } else {
+    console.warn('[Data] settingsResult.data is not an array:', settingsResult?.data)
   }
 
   // Default section visibility to true if not set
@@ -107,27 +135,76 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
   }
 
   // Return data with safe fallbacks
-  return {
+  const result = {
     settings: settings || {},
     sectionVisibility,
-    fleet: (fleetResult.data as Fleet[]) || [],
-    destinations: (destinationsResult.data as Destination[]) || [],
-    reviews: (reviewsResult.data as Review[]) || [],
-    stats: (statsResult.data as Stat[]) || [],
-    culinaryExperiences: (culinaryResult.data as CulinaryExperience[]) || [],
-    crew: (crewResult.data as CrewMember[]) || [],
+    fleet: (fleetResult?.data as Fleet[]) || [],
+    destinations: (destinationsResult?.data as Destination[]) || [],
+    reviews: (reviewsResult?.data as Review[]) || [],
+    stats: (statsResult?.data as Stat[]) || [],
+    culinaryExperiences: (culinaryResult?.data as CulinaryExperience[]) || [],
+    crew: (crewResult?.data as CrewMember[]) || [],
   }
+  
+  console.log('[Data] fetchSiteContentInternal completed:', {
+    settingsCount: Object.keys(result.settings).length,
+    fleetCount: result.fleet.length,
+    destinationsCount: result.destinations.length,
+    reviewsCount: result.reviews.length,
+    statsCount: result.stats.length,
+    culinaryCount: result.culinaryExperiences.length,
+    crewCount: result.crew.length,
+  })
+  
+  return result
 }
 
 // Cached version - cache for 1 hour (3600 seconds)
-export const getSiteContent = unstable_cache(
-  fetchSiteContentInternal,
-  ['site-content'],
-  {
-    revalidate: 3600, // 1 hour cache
-    tags: ['site-content', 'fleet', 'destinations', 'settings']
+// Wrap in try-catch to prevent cache errors from crashing the page
+export async function getSiteContent(): Promise<SiteContent> {
+  try {
+    console.log('[Data] getSiteContent called, using unstable_cache...')
+    const cachedFetch = unstable_cache(
+      fetchSiteContentInternal,
+      ['site-content'],
+      {
+        revalidate: 3600, // 1 hour cache
+        tags: ['site-content', 'fleet', 'destinations', 'settings']
+      }
+    )
+    const result = await cachedFetch()
+    console.log('[Data] getSiteContent completed successfully')
+    return result
+  } catch (error) {
+    console.error('[Data] Error in getSiteContent (cache):', error)
+    // Fallback to direct fetch if cache fails
+    console.log('[Data] Falling back to direct fetch...')
+    try {
+      const result = await fetchSiteContentInternal()
+      console.log('[Data] Direct fetch completed successfully')
+      return result
+    } catch (fallbackError) {
+      console.error('[Data] Error in direct fetch fallback:', fallbackError)
+      // Return empty data structure to prevent page crash
+      return {
+        settings: {},
+        sectionVisibility: {
+          journey: true,
+          mission: true,
+          crew: true,
+          culinary: true,
+          contact: true,
+        },
+        fleet: [],
+        destinations: [],
+        reviews: [],
+        stats: [],
+        culinaryExperiences: [],
+        crew: [],
+      }
+    }
   }
-)
+}
 
 export async function getFleetBySlug(slug: string): Promise<Fleet | null> {
   if (!slug) return null

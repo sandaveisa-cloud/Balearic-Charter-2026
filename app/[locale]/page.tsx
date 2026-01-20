@@ -126,25 +126,40 @@ export default async function Home({ params }: Props) {
     console.log('[Home] Section visibility:', visibility)
     console.log('[Home] Rendering page with components...')
 
-    return (
-      <main className="min-h-screen pt-16">
-        <Hero settings={safeSettings} />
-        {visibility.mission && <MissionSection />}
-        {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
-        <FleetSection fleet={safeContent.fleet || []} />
-        <DestinationsSection destinations={safeContent.destinations || []} />
-        <Testimonials reviews={safeContent.reviews || []} />
-        {/* Always render CulinarySection if visibility is enabled, even if experiences array is empty */}
-        {visibility.culinary && (
-          <CulinarySection experiences={safeContent.culinaryExperiences || []} />
-        )}
-        {/* Only show CrewSection if visibility is enabled AND there are active crew members */}
-        {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (
-          <CrewSection crew={safeContent.crew} />
-        )}
-        <ReviewsSection reviews={safeContent.reviews || []} />
-      </main>
-    )
+    // Wrap each component in error boundary to prevent one failure from crashing entire page
+    try {
+      return (
+        <main className="min-h-screen pt-16">
+          <Hero settings={safeSettings} />
+          {visibility.mission && <MissionSection />}
+          {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
+          <FleetSection fleet={safeContent.fleet || []} />
+          <DestinationsSection destinations={safeContent.destinations || []} />
+          <Testimonials reviews={safeContent.reviews || []} />
+          {/* Always render CulinarySection if visibility is enabled, even if experiences array is empty */}
+          {visibility.culinary && (
+            <CulinarySection experiences={safeContent.culinaryExperiences || []} />
+          )}
+          {/* Only show CrewSection if visibility is enabled AND there are active crew members */}
+          {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (
+            <CrewSection crew={safeContent.crew} />
+          )}
+          <ReviewsSection reviews={safeContent.reviews || []} />
+        </main>
+      )
+    } catch (renderError) {
+      console.error('[Home] Error during component rendering:', renderError)
+      // Return minimal fallback UI instead of crashing
+      return (
+        <main className="min-h-screen pt-16 flex items-center justify-center">
+          <div className="text-center p-8">
+            <h1 className="text-2xl font-bold text-luxury-blue mb-4">Welcome</h1>
+            <p className="text-gray-600 mb-4">We're experiencing some technical difficulties.</p>
+            <p className="text-sm text-gray-500">Please try refreshing the page.</p>
+          </div>
+        </main>
+      )
+    }
   } catch (error) {
     console.error('[Home] Error rendering page:', error)
     // Return error UI instead of throwing to prevent 500
