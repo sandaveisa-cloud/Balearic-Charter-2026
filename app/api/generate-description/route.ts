@@ -62,18 +62,48 @@ export async function POST(request: NextRequest) {
     // Check Gemini API key
     const geminiApiKey = process.env.GEMINI_API_KEY
     
+    console.log('[API] GEMINI_API_KEY check:', {
+      exists: !!geminiApiKey,
+      length: geminiApiKey?.length || 0,
+      startsWith: geminiApiKey?.substring(0, 10) || 'N/A',
+      isValidFormat: geminiApiKey?.startsWith('AIza') || false
+    })
+    
     if (!geminiApiKey) {
+      console.error('[API] GEMINI_API_KEY is missing from environment variables')
+      console.error('[API] Available env vars:', Object.keys(process.env).filter(k => k.includes('GEMINI') || k.includes('API')))
       return NextResponse.json(
-        { error: 'API key not configured', details: 'GEMINI_API_KEY is missing from environment variables' },
+        { error: 'API key not configured', details: 'GEMINI_API_KEY is missing from environment variables. Please check your .env.local file and restart the dev server.' },
         { status: 500 }
       )
     }
 
+    // Validate API key format (should start with 'AIza')
+    if (!geminiApiKey.startsWith('AIza')) {
+      console.warn('[API] API key format may be invalid (should start with "AIza")')
+    }
+
     // Initialize Gemini AI
-    const genAI = new GoogleGenerativeAI(geminiApiKey)
+    console.log('[API] Initializing GoogleGenerativeAI with API key (length:', geminiApiKey.length, ')')
+    let genAI: GoogleGenerativeAI
+    try {
+      genAI = new GoogleGenerativeAI(geminiApiKey)
+      console.log('[API] GoogleGenerativeAI instance created successfully')
+    } catch (initError) {
+      console.error('[API] Failed to initialize GoogleGenerativeAI:', initError)
+      return NextResponse.json(
+        { error: 'Failed to initialize Gemini AI', details: `Error initializing: ${initError instanceof Error ? initError.message : 'Unknown error'}` },
+        { status: 500 }
+      )
+    }
     
-    // Use gemini-1.5-pro for high quality (or gemini-1.5-flash for speed)
-    const geminiModel = 'gemini-1.5-pro'
+    // Use gemini-pro as it's the most widely available and stable model
+    // Alternative models to try if this doesn't work:
+    // - gemini-1.5-pro-002
+    // - gemini-1.5-flash-002
+    // - gemini-2.0-flash
+    // Check Google AI Studio (https://aistudio.google.com) to see which models are available for your API key
+    const geminiModel = 'gemini-pro'
 
     let prompt: string
     let systemInstruction: string
@@ -193,30 +223,130 @@ Return ONLY the JSON object, nothing else.`
 
     const entityName = category === 'logistics' ? body.serviceName : body.yachtName
     console.log(`[API] Calling Gemini (${geminiModel}) to generate description for:`, entityName)
+    console.log('[API] Request body:', JSON.stringify(body, null, 2))
 
     // Create model with system instruction
-    const model = genAI.getGenerativeModel({ 
+    console.log('[API] Creating model instance with:', {
       model: geminiModel,
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 2000,
-        responseMimeType: 'application/json',
-      },
-      systemInstruction: systemInstruction,
+      hasSystemInstruction: !!systemInstruction,
+      systemInstructionLength: systemInstruction?.length || 0
     })
+    
+    let model
+    try {
+      model = genAI.getGenerativeModel({ 
+        model: geminiModel,
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 2000,
+          responseMimeType: 'application/json',
+        },
+        systemInstruction: systemInstruction,
+      })
+      console.log('[API] Model instance created successfully')
+    } catch (modelError) {
+      console.error('[API] Failed to create model instance:', modelError)
+      return NextResponse.json(
+        { error: 'Failed to create model', details: `Error creating model: ${modelError instanceof Error ? modelError.message : 'Unknown error'}` },
+        { status: 500 }
+      )
+    }
 
     // Generate content using Gemini SDK
-    const result = await model.generateContent({
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: prompt }],
-        },
-      ],
-    })
+    let result
+    let response
+    let content: string
+    
+    try {
+      result = await model.generateContent({
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: prompt }],
+          },
+        ],
+      })
 
-    const response = await result.response
-    const content = response.text()
+      response = await result.response
+      
+      // Check for blocked content or safety issues
+      if (response.promptFeedback) {
+        const feedback = response.promptFeedback
+        if (feedback.blockReason) {
+          console.error('[API] Content blocked by Gemini safety filters:', feedback.blockReason)
+          return NextResponse.json(
+            { 
+              error: 'Content blocked by safety filters', 
+              details: `Content was blocked: ${feedback.blockReason}. Please try with different input or adjust your prompt.` 
+            },
+            { status: 400 }
+          )
+        }
+      }
+      
+      // Check if response has candidates
+      if (!response.candidates || response.candidates.length === 0) {
+        console.error('[API] No candidates in Gemini response')
+        return NextResponse.json(
+          { 
+            error: 'No content generated', 
+            details: 'Gemini API returned no candidates. This may be due to safety filters or API issues.' 
+          },
+          { status: 500 }
+        )
+      }
+      
+      // Check if candidate was blocked
+      const candidate = response.candidates[0]
+      if (candidate.finishReason === 'SAFETY') {
+        console.error('[API] Candidate blocked by safety filters')
+        return NextResponse.json(
+          { 
+            error: 'Content blocked by safety filters', 
+            details: 'The generated content was blocked by Gemini safety filters. Please try with different input.' 
+          },
+          { status: 400 }
+        )
+      }
+      
+      if (candidate.finishReason && candidate.finishReason !== 'STOP') {
+        console.warn('[API] Unexpected finish reason:', candidate.finishReason)
+      }
+      
+      content = response.text()
+      console.log('[API] Successfully received content from Gemini, length:', content?.length || 0)
+    } catch (geminiError: any) {
+      console.error('[API] Gemini API error:', geminiError)
+      console.error('[API] Error type:', typeof geminiError)
+      console.error('[API] Error keys:', Object.keys(geminiError || {}))
+      
+      // Try to extract more detailed error information
+      let errorMessage = geminiError?.message || 'Unknown Gemini API error'
+      if (geminiError?.cause) {
+        errorMessage += ` | Cause: ${JSON.stringify(geminiError.cause)}`
+      }
+      if (geminiError?.status) {
+        errorMessage += ` | Status: ${geminiError.status}`
+      }
+      
+      // Check for specific Gemini error codes
+      if (geminiError?.status === 400) {
+        errorMessage = 'Invalid request to Gemini API. Please check your input parameters.'
+      } else if (geminiError?.status === 401) {
+        errorMessage = 'Invalid Gemini API key. Please check your GEMINI_API_KEY in .env.local'
+      } else if (geminiError?.status === 403) {
+        errorMessage = 'Gemini API access forbidden. Please check your API key permissions.'
+      } else if (geminiError?.status === 429) {
+        errorMessage = 'Gemini API rate limit exceeded. Please try again later.'
+      } else if (geminiError?.status === 500) {
+        errorMessage = 'Gemini API server error. Please try again later.'
+      }
+      
+      return NextResponse.json(
+        { error: 'Failed to generate description', details: errorMessage },
+        { status: geminiError?.status || 500 }
+      )
+    }
 
     if (!content) {
       console.error('[API] Gemini returned empty response')
@@ -258,12 +388,21 @@ Return ONLY the JSON object, nothing else.`
     }
 
     console.log('[API] Description generated successfully for:', entityName)
+    console.log('[API] Generated description structure:', {
+      hasHeadline: !!generatedDescription.headline,
+      hasDescription: !!generatedDescription.description,
+      highlightsCount: generatedDescription.highlights?.length || 0,
+      hasTagline: !!generatedDescription.tagline
+    })
+    
     return NextResponse.json({
       success: true,
       description: generatedDescription,
     })
   } catch (error) {
     console.error('[API] Error generating description:', error)
+    console.error('[API] Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+    console.error('[API] Error details:', JSON.stringify(error, null, 2))
     
     // Handle Gemini-specific errors
     let errorDetails = 'Unknown error'
@@ -273,18 +412,31 @@ Return ONLY the JSON object, nothing else.`
       errorDetails = error.message
       
       // Check for common Gemini API errors
-      if (error.message.includes('API_KEY_INVALID') || error.message.includes('API key')) {
+      if (error.message.includes('API_KEY_INVALID') || error.message.includes('API key') || error.message.includes('401')) {
         statusCode = 401
         errorDetails = 'Invalid Gemini API key. Please check your GEMINI_API_KEY in .env.local'
-      } else if (error.message.includes('QUOTA_EXCEEDED') || error.message.includes('quota')) {
+      } else if (error.message.includes('QUOTA_EXCEEDED') || error.message.includes('quota') || error.message.includes('429')) {
         statusCode = 429
         errorDetails = 'Gemini API quota exceeded. Please check your usage limits.'
-      } else if (error.message.includes('MODEL_NOT_FOUND') || error.message.includes('model')) {
+      } else if (error.message.includes('MODEL_NOT_FOUND') || error.message.includes('model') || error.message.includes('404') || error.message.includes('not found')) {
         statusCode = 404
-        errorDetails = 'Gemini model not found. Please check the model name.'
+        errorDetails = `Gemini model "${geminiModel}" not found. Available models vary by account. Try: gemini-pro, gemini-1.5-pro-002, gemini-1.5-flash-002, or gemini-2.0-flash. Check https://aistudio.google.com to see which models are available for your API key.`
       } else if (error.message.includes('SAFETY') || error.message.includes('blocked')) {
         statusCode = 400
         errorDetails = 'Content was blocked by Gemini safety filters. Please try with different input.'
+      } else if (error.message.includes('network') || error.message.includes('fetch')) {
+        statusCode = 503
+        errorDetails = 'Network error connecting to Gemini API. Please check your internet connection.'
+      }
+    }
+    
+    // Try to extract more info from error object
+    if (error && typeof error === 'object') {
+      const errorObj = error as any
+      if (errorObj.status) statusCode = errorObj.status
+      if (errorObj.statusText) errorDetails += ` (${errorObj.statusText})`
+      if (errorObj.cause) {
+        console.error('[API] Error cause:', errorObj.cause)
       }
     }
     

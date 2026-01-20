@@ -7,8 +7,8 @@ export default function MissionSection() {
 
   const missionCards = [
     {
-      title: 'Precise Logistics',
-      description: 'We combine luxury charter with precise logistics to ensure seamless experiences.',
+      title: t('cards.logistics.title'),
+      description: t('cards.logistics.description'),
       icon: (
         <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -21,8 +21,8 @@ export default function MissionSection() {
       ),
     },
     {
-      title: 'Professional Crew',
-      description: 'We ensure a safe, high-end environment with our experienced and dedicated professional crew.',
+      title: t('cards.crew.title'),
+      description: t('cards.crew.description'),
       icon: (
         <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -35,8 +35,8 @@ export default function MissionSection() {
       ),
     },
     {
-      title: 'Gourmet Excellence',
-      description: 'Indulge in gourmet cuisine crafted by our expert chefs, elevating your charter experience.',
+      title: t('cards.gourmet.title'),
+      description: t('cards.gourmet.description'),
       icon: (
         <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path

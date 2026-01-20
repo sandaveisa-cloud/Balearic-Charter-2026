@@ -1,7 +1,9 @@
 'use client'
 
 import Image from 'next/image'
-import { useTranslations } from 'next-intl'
+import OptimizedImage from './OptimizedImage'
+import { useTranslations, useLocale } from 'next-intl'
+import { getLocalizedText } from '@/lib/i18nUtils'
 import type { CrewMember } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
 
@@ -40,13 +42,15 @@ export default function CrewSection({ crew }: CrewSectionProps) {
               <div key={member.id} className="text-center">
                 {imageUrl ? (
                   <div className="mb-6 aspect-square max-w-xs mx-auto overflow-hidden rounded-full relative">
-                    <Image
+                    <OptimizedImage
                       src={imageUrl}
                       alt={member.name}
                       fill
-                      sizes="(max-width: 768px) 100vw, 400px"
-                      className="object-cover"
+                      sizes="(max-width: 640px) 200px, 300px"
+                      objectFit="cover"
+                      aspectRatio="1/1"
                       loading="lazy"
+                      quality={80}
                     />
                   </div>
                 ) : (
@@ -61,9 +65,14 @@ export default function CrewSection({ crew }: CrewSectionProps) {
                   {member.name}
                 </h3>
                 <p className="text-luxury-gold font-semibold mb-4">{member.role}</p>
-                {member.bio && (
-                  <p className="text-gray-600">{member.bio}</p>
-                )}
+                {(() => {
+                  // Use JSONB i18n with fallback to legacy bio field
+                  // Note: bio_i18n would need to be added to CrewMember type if implemented
+                  const bio = member.bio || ''
+                  return bio ? (
+                    <p className="text-gray-600">{bio}</p>
+                  ) : null
+                })()}
               </div>
             )
           })}
