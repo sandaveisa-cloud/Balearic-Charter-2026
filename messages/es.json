@@ -17,7 +17,31 @@
     "title": "Nuestra Flota de Lujo",
     "subtitle": "Descubre nuestra colección de yates de clase mundial",
     "viewDetails": "Ver Detalles",
-    "from": "Desde"
+    "from": "Desde",
+    "ships": {
+      "simona": {
+        "headline": "Elegancia, Comodidad y un Toque de Aventura",
+        "description": "SIMONA es la elección perfecta para aquellos que buscan un equilibrio entre el rendimiento de navegación y la comodidad del hogar en el agua. Este modelo Lagoon 400 S2 es famoso por su salón luminoso y espacioso y su estabilidad, lo que lo hace ideal tanto para navegantes experimentados como para familias con niños.",
+        "highlights": [
+          "Espaciosidad y Luz: Gracias a las grandes ventanas y al diseño cuidadoso, el salón está lleno de luz natural, creando una atmósfera acogedora.",
+          "Autonomía Completa: Equipado con un potente Watermaker, este yate le permite disfrutar de viajes largos sin necesidad de visitar frecuentemente los puertos para suministros de agua.",
+          "Comodidad en Cualquier Clima: El sistema de Aire Acondicionado (AC) asegura una brisa agradable durante las calurosas tardes mediterráneas.",
+          "Áreas de Relajación: La amplia red de trampolín en la proa es el lugar favorito para tomar el sol y observar delfines."
+        ],
+        "tagline": "SIMONA es más que un barco: es tu villa flotante para un viaje inolvidable."
+      },
+      "wide-dream": {
+        "headline": "Relajación de Lujo y Vistas Panorámicas",
+        "description": "WIDE DREAM define el significado de la relajación premium en catamarán. La versión Lagoon 450 Flybridge está construida para aquellos que se niegan a comprometerse. Con tres niveles de áreas de relajación e impresionante espacio, este yate garantiza privacidad y lujo incluso para grupos más grandes de hasta 12 personas.",
+        "highlights": [
+          "Flybridge Exclusivo: El puente de nivel superior no solo facilita las maniobras, sino que ofrece el mejor lugar para tomar el sol con una vista de 360 grados del horizonte.",
+          "Máximo Nivel de Comodidad: Cuenta con cubierta de teca, un generador para energía continua y control climático dedicado en cada cabina.",
+          "Construido para el Entretenimiento: Las amplias áreas de cockpit y salón son perfectas para cenas al atardecer o celebraciones con amigos.",
+          "Equipamiento Premium: Desde un refrigerador de cocina de alta calidad hasta opciones modernas de entretenimiento acuático: todo está configurado para un servicio de alta gama."
+        ],
+        "tagline": "Con WIDE DREAM, cada mañana comienza con una vista de ensueño y una comodidad impecable."
+      }
+    }
   },
   "destinations": {
     "title": "Destinos Exclusivos",

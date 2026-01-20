@@ -17,7 +17,31 @@
     "title": "Unsere Luxusflotte",
     "subtitle": "Entdecken Sie unsere Sammlung erstklassiger Yachten",
     "viewDetails": "Details Anzeigen",
-    "from": "Ab"
+    "from": "Ab",
+    "ships": {
+      "simona": {
+        "headline": "Eleganz, Komfort und ein Hauch von Abenteuer",
+        "description": "SIMONA ist die perfekte Wahl für diejenigen, die ein Gleichgewicht zwischen Segelleistung und häuslichem Komfort auf dem Wasser suchen. Dieses Lagoon 400 S2 Modell ist berühmt für seinen hellen, geräumigen Salon und seine Stabilität, was es sowohl für erfahrene Segler als auch für Familien mit Kindern ideal macht.",
+        "highlights": [
+          "Weitläufigkeit und Licht: Dank großer Fenster und durchdachtem Design ist der Salon mit natürlichem Licht gefüllt und schafft eine gemütliche Atmosphäre.",
+          "Volle Autonomie: Ausgestattet mit einem leistungsstarken Watermaker ermöglicht diese Yacht lange Reisen, ohne häufig Häfen für Wasservorräte anlaufen zu müssen.",
+          "Komfort bei jedem Wetter: Das Klimaanlagensystem (AC) sorgt für eine angenehme Brise während heißer Mittelmeernachmittage.",
+          "Entspannungsbereiche: Das breite Trampolinnetz am Bug ist der Lieblingsplatz zum Sonnenbaden und Delfinbeobachten."
+        ],
+        "tagline": "SIMONA ist mehr als nur ein Schiff – es ist Ihre schwimmende Villa für eine unvergessliche Reise."
+      },
+      "wide-dream": {
+        "headline": "Luxus-Entspannung und Panoramablick",
+        "description": "WIDE DREAM definiert die Bedeutung von Premium-Katamaran-Entspannung. Die Lagoon 450 Flybridge-Version ist für diejenigen gebaut, die keine Kompromisse eingehen. Mit drei Ebenen von Entspannungsbereichen und beeindruckendem Platz gewährleistet diese Yacht Privatsphäre und Luxus auch für größere Gruppen von bis zu 12 Personen.",
+        "highlights": [
+          "Exklusives Flybridge: Die obere Brücke erleichtert nicht nur das Manövrieren, sondern bietet den besten Sonnenplatz mit 360-Grad-Blick auf den Horizont.",
+          "Höchster Komfort: Ausgestattet mit Teak-Deck, einem Generator für kontinuierliche Energie und dedizierter Klimakontrolle in jeder Kabine.",
+          "Gebaut für Unterhaltung: Die geräumigen Cockpit- und Salonbereiche sind perfekt für Sonnenuntergangs-Dinner oder Feiern mit Freunden.",
+          "Premium-Ausstattung: Von einem hochwertigen Galley-Kühlschrank bis hin zu modernen Wassersportoptionen – alles ist für erstklassigen Service eingerichtet."
+        ],
+        "tagline": "Mit WIDE DREAM beginnt jeder Morgen mit einer Traumaussicht und makellosem Komfort."
+      }
+    }
   },
   "destinations": {
     "title": "Exklusive Reiseziele",

@@ -38,7 +38,7 @@ export async function getSiteContent(): Promise<SiteContent> {
   try {
     destinationsResult = await supabase
       .from('destinations')
-      .select('id, name, region, description, description_en, description_es, description_de, image_url, youtube_video_url, slug, order_index, is_active, created_at, updated_at')
+      .select('id, title, description, image_urls, order_index, is_active, created_at, updated_at')
       .eq('is_active', true)
       .order('order_index', { ascending: true })
     if (destinationsResult.error) {

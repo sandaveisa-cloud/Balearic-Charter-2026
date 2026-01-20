@@ -2046,7 +2046,7 @@ function FleetEditForm({
       }
     } catch (error) {
       console.error('[Admin] Error generating description:', error)
-      alert(error instanceof Error ? error.message : 'Failed to generate description. Please check your OpenAI API key configuration.')
+      alert(error instanceof Error ? error.message : 'Failed to generate description. Please check your Gemini API key configuration.')
     } finally {
       setIsGenerating(false)
     }
@@ -3384,7 +3384,7 @@ function LogisticsServiceForm() {
       }
     } catch (error) {
       console.error('[Admin] Error generating logistics description:', error)
-      alert(error instanceof Error ? error.message : 'Failed to generate description. Please check your OpenAI API key configuration.')
+      alert(error instanceof Error ? error.message : 'Failed to generate description. Please check your Gemini API key configuration.')
     } finally {
       setIsGenerating(false)
     }
