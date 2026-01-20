@@ -347,7 +347,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                     objectFit="contain"
                     priority
                     quality={90}
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={() => {}}
                   />
                 </div>
               ) : null

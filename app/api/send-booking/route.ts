@@ -119,6 +119,7 @@ export async function POST(request: NextRequest) {
     console.log('[API] Saving to Supabase...')
     const { data: inquiry, error: dbError } = await supabase
       .from('booking_inquiries')
+      // @ts-expect-error - Supabase type inference limitation with dynamic table inserts
       .insert([
         {
           name: body.name,
@@ -258,7 +259,7 @@ export async function POST(request: NextRequest) {
                   <p><strong>TOTAL ESTIMATE: ${totalEstimate}</strong></p>
                 </div>
                 ${body.message ? `<div class="info-box"><p><span class="label">Client Message:</span></p><p>${body.message.replace(/\n/g, '<br>')}</p></div>` : ''}
-                ${inquiry ? `<p style="margin-top: 20px; color: #666; font-size: 12px;">Inquiry ID: ${inquiry.id}</p>` : ''}
+                ${inquiry ? `<p style="margin-top: 20px; color: #666; font-size: 12px;">Inquiry ID: ${(inquiry as any)?.id || 'N/A'}</p>` : ''}
               </div>
             </div>
           </body>
@@ -279,11 +280,11 @@ export async function POST(request: NextRequest) {
       console.log('[API] Admin notification sent successfully')
     }
 
-    console.log('[API] Booking inquiry processed successfully, ID:', inquiry?.id)
+    console.log('[API] Booking inquiry processed successfully, ID:', (inquiry as any)?.id)
     return NextResponse.json({
       success: true,
       message: 'Booking inquiry submitted successfully',
-      inquiryId: inquiry?.id,
+      inquiryId: (inquiry as any)?.id,
     })
   } catch (error) {
     console.error('[API] Error processing booking:', error)

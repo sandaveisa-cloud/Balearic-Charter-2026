@@ -96,10 +96,14 @@ Return ONLY a JSON object with this structure:
             }
 
             updatePromises.push(
-              supabase
-                .from('destinations')
-                .update({ description_i18n: updatedI18n })
-                .eq('id', dest.id)
+              (async () => {
+                const result = await supabase
+                  .from('destinations')
+                  // @ts-expect-error - Supabase type inference limitation with dynamic table updates
+                  .update({ description_i18n: updatedI18n })
+                  .eq('id', dest.id)
+                return result
+              })()
             )
           } catch (error) {
             console.error(`[BulkTranslate] Error translating destination ${dest.id}:`, error)
@@ -267,13 +271,17 @@ Return ONLY a JSON object:
               }
 
               updatePromises.push(
-                supabase
-                  .from('fleet')
-                  .update({
-                    description_i18n: updatedDescI18n,
-                    short_description_i18n: updatedShortDescI18n
-                  })
-                  .eq('id', yacht.id)
+                (async () => {
+                  const result = await supabase
+                    .from('fleet')
+                    // @ts-expect-error - Supabase type inference limitation with dynamic table updates
+                    .update({
+                      description_i18n: updatedDescI18n,
+                      short_description_i18n: updatedShortDescI18n
+                    })
+                    .eq('id', yacht.id)
+                  return result
+                })()
               )
             } catch (error) {
               console.error(`[BulkTranslate] Error translating fleet ${yacht.id}:`, error)

@@ -55,7 +55,7 @@ export default function AdminDashboard() {
 
       // Calculate gallery images
       let galleryImages = 0
-      fleetResult.data?.forEach((yacht) => {
+      fleetResult.data?.forEach((yacht: any) => {
         if (yacht.gallery_images && Array.isArray(yacht.gallery_images)) {
           galleryImages += yacht.gallery_images.length
         }
@@ -67,11 +67,12 @@ export default function AdminDashboard() {
       // Estimate based on average price and number of inquiries
       let revenuePotential = 0
       if (inquiriesResult.data && fleetResult.data) {
-        inquiriesResult.data.forEach((inquiry) => {
+        inquiriesResult.data.forEach((inquiry: any) => {
           if (inquiry.start_date && inquiry.end_date) {
             // Find the yacht for this inquiry
-            const yacht = fleetResult.data.find((y) => y.id === inquiry.yacht_id)
+            const yacht = fleetResult.data.find((y: any) => y.id === inquiry.yacht_id)
             if (yacht) {
+              const yachtData = yacht as any
               // Calculate days
               const start = new Date(inquiry.start_date)
               const end = new Date(inquiry.end_date)
@@ -79,9 +80,9 @@ export default function AdminDashboard() {
 
               // Determine season and use average price
               const avgPrice =
-                ((yacht.low_season_price || 0) +
-                  (yacht.medium_season_price || 0) +
-                  (yacht.high_season_price || 0)) /
+                ((yachtData.low_season_price || 0) +
+                  (yachtData.medium_season_price || 0) +
+                  (yachtData.high_season_price || 0)) /
                 3
 
               // Estimate: base price + 30% APA + 21% tax
@@ -94,8 +95,8 @@ export default function AdminDashboard() {
       }
 
       // Fetch recent inquiries with yacht names
-      const recentInquiriesData = inquiriesResult.data
-        ?.sort((a, b) => {
+      const recentInquiriesData = (inquiriesResult.data as any[])
+        ?.sort((a: any, b: any) => {
           const dateA = new Date(a.created_at).getTime()
           const dateB = new Date(b.created_at).getTime()
           return dateB - dateA
@@ -104,7 +105,7 @@ export default function AdminDashboard() {
 
       // Fetch yacht names for inquiries
       const inquiriesWithYachts = await Promise.all(
-        recentInquiriesData.map(async (inquiry) => {
+        recentInquiriesData.map(async (inquiry: any) => {
           if (inquiry.yacht_id) {
             try {
               const { data: yachtData, error: yachtError } = await supabase
@@ -119,7 +120,7 @@ export default function AdminDashboard() {
 
               return {
                 ...inquiry,
-                yacht_name: yachtData?.name || 'Unknown Yacht',
+                yacht_name: (yachtData as any)?.name || 'Unknown Yacht',
               }
             } catch (error) {
               console.error('[Dashboard] Error in yacht fetch:', error)

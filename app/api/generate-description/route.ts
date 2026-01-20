@@ -355,7 +355,7 @@ Return ONLY the JSON object, nothing else.`
         errorDetails = 'Gemini API quota exceeded. Please check your usage limits.'
       } else if (error.message.includes('MODEL_NOT_FOUND') || error.message.includes('model') || error.message.includes('404') || error.message.includes('not found')) {
         statusCode = 404
-        errorDetails = `Gemini model "${geminiModel}" not found. Available models vary by account. Try: gemini-pro, gemini-1.5-pro-002, gemini-1.5-flash-002, or gemini-2.0-flash. Check https://aistudio.google.com to see which models are available for your API key.`
+        errorDetails = `Gemini model not found. Available models vary by account. Try: gemini-pro, gemini-1.5-pro-002, gemini-1.5-flash-002, or gemini-2.0-flash. Check https://aistudio.google.com to see which models are available for your API key.`
       } else if (error.message.includes('SAFETY') || error.message.includes('blocked')) {
         statusCode = 400
         errorDetails = 'Content was blocked by Gemini safety filters. Please try with different input.'

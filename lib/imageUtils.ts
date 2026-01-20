@@ -97,7 +97,7 @@ export function getOptimizedImageUrl(
           width,
           height: options.height,
           quality,
-          format,
+          format: format as any,
           resize,
         },
       })

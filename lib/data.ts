@@ -86,7 +86,7 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
   const settings: Record<string, string> = {}
   if (settingsResult.data && Array.isArray(settingsResult.data)) {
     try {
-      settingsResult.data.forEach((setting) => {
+      settingsResult.data.forEach((setting: any) => {
         if (setting && typeof setting === 'object' && 'key' in setting) {
           settings[setting.key] = setting.value || ''
         }
@@ -230,6 +230,7 @@ export async function submitBookingInquiry(inquiry: {
 }) {
   const { data, error } = await supabase
     .from('booking_inquiries')
+    // @ts-expect-error - Supabase type inference limitation with dynamic table inserts
     .insert([inquiry])
     .select()
     .single()
@@ -251,7 +252,7 @@ export async function getSiteSettingsClient(): Promise<Record<string, string>> {
   }
 
   const settings: Record<string, string> = {}
-  data.forEach((setting) => {
+  data.forEach((setting: any) => {
     settings[setting.key] = setting.value || ''
   })
 

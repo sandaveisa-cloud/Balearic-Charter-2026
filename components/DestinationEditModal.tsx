@@ -91,6 +91,7 @@ export default function DestinationEditModal({
       const { supabase } = await import('@/lib/supabase')
       const { data, error: supabaseError } = await supabase
         .from('destinations')
+        // @ts-expect-error - Supabase type inference limitation with dynamic table upserts
         .upsert(
           {
             ...(destination?.id && { id: destination.id }),

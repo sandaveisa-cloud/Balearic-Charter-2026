@@ -219,7 +219,6 @@ export default function Testimonials({ reviews }: TestimonialsProps) {
               )
             })}
           </Swiper>
-          )}
 
           {/* Custom Navigation Buttons - Only show when mounted */}
           {mounted && (

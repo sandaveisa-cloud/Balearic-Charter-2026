@@ -306,13 +306,7 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
           <div className="lg:col-span-2 order-1 lg:order-2 grid grid-cols-1 md:grid-cols-2 gap-8">
             {activeDestinations.map((destination) => {
               const destinationImage = getDestinationImage(destination)
-              const imageUrl = destinationImage
-                ? getImageUrl(destinationImage, {
-                    width: 1200,
-                    quality: 85,
-                    format: 'webp',
-                  })
-                : null
+              const imageUrl = destinationImage || null
               const destinationName = getDestinationName(destination)
               const description = getLocalizedDescription(destination)
               const destinationSlug = destination.slug || destination.id
@@ -334,7 +328,7 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
                   t={t}
                   onHover={() => setHighlightedDestination(destinationSlug)}
                   onHoverEnd={() => setHighlightedDestination(null)}
-                  onDiscoverMore={() => handleDiscoverMore(destination.youtube_video_url, destinationName)}
+                  onDiscoverMore={() => handleDiscoverMore(destination.youtube_video_url || null, destinationName)}
                 />
               )
             })}
