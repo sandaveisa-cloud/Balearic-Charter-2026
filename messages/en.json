@@ -22,6 +22,8 @@
     "guests": "Guests",
     "cabins": "Cabins",
     "toilets": "Toilets",
+    "technicalSpecs": "Technical Specifications",
+    "selectDates": "Select Your Charter Dates",
     "ships": {
       "simona": {
         "headline": "Elegance, Comfort, and a Taste of Adventure",
@@ -49,7 +51,10 @@
   },
   "destinations": {
     "title": "Exclusive Destinations",
-    "subtitle": "Explore the most beautiful locations in the Mediterranean"
+    "subtitle": "Explore the most beautiful locations in the Mediterranean",
+    "viewDetails": "View Details",
+    "discoverMore": "Discover More",
+    "viewAll": "View All Destinations"
   },
   "culinary": {
     "title": "Culinary Excellence",
@@ -69,7 +74,21 @@
   },
   "mission": {
     "title": "Our Mission",
-    "text": "To combine luxury charter with precise logistics. We ensure a safe, high-end environment with professional crew and gourmet cuisine."
+    "text": "To combine luxury charter with precise logistics. We ensure a safe, high-end environment with professional crew and gourmet cuisine.",
+    "cards": {
+      "logistics": {
+        "title": "Precise Logistics",
+        "description": "We combine luxury charter with precise logistics to ensure seamless experiences."
+      },
+      "crew": {
+        "title": "Professional Crew",
+        "description": "We ensure a safe, high-end environment with our experienced and dedicated professional crew."
+      },
+      "gourmet": {
+        "title": "Gourmet Excellence",
+        "description": "Indulge in gourmet cuisine crafted by our expert chefs, elevating your charter experience."
+      }
+    }
   },
   "footer": {
     "about": "About",

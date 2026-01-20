@@ -22,6 +22,9 @@
     "guests": "Gäste",
     "cabins": "Kabinen",
     "toilets": "Toiletten",
+    "technicalSpecs": "Technische Spezifikationen",
+    "amenities": "Ausstattung & Features",
+    "selectDates": "Wählen Sie Ihre Charter-Daten",
     "ships": {
       "simona": {
         "headline": "Eleganz, Komfort und ein Hauch von Abenteuer",
@@ -49,7 +52,28 @@
   },
   "destinations": {
     "title": "Exklusive Reiseziele",
-    "subtitle": "Erkunden Sie die schönsten Orte im Mittelmeer"
+    "subtitle": "Erkunden Sie die schönsten Orte im Mittelmeer",
+    "viewDetails": "Details Anzeigen",
+    "discoverMore": "Mehr Entdecken",
+    "viewAll": "Alle Reiseziele Anzeigen"
+  },
+  "mission": {
+    "title": "Unsere Mission",
+    "text": "Luxus-Charter mit präziser Logistik zu verbinden. Wir garantieren ein erstklassiges Umfeld mit professioneller Crew und Gourmetküche.",
+    "cards": {
+      "logistics": {
+        "title": "Präzise Logistik",
+        "description": "Wir verbinden Luxus-Charter mit präziser Logistik, um nahtlose Erlebnisse zu gewährleisten."
+      },
+      "crew": {
+        "title": "Professionelle Crew",
+        "description": "Wir gewährleisten eine sichere, erstklassige Umgebung mit unserer erfahrenen und engagierten professionellen Crew."
+      },
+      "gourmet": {
+        "title": "Gourmet-Exzellenz",
+        "description": "Genießen Sie Gourmet-Küche, die von unseren erfahrenen Köchen kreiert wurde und Ihr Charter-Erlebnis aufwertet."
+      }
+    }
   },
   "culinary": {
     "title": "Kulinarische Exzellenz",
@@ -66,10 +90,6 @@
   "testimonials": {
     "title": "Gästetestimonials",
     "subtitle": "Entdecken Sie, was unsere Gäste über ihre Luxus-Charter-Erfahrung sagen"
-  },
-  "mission": {
-    "title": "Unsere Mission",
-    "text": "Luxus-Charter mit präziser Logistik zu verbinden. Wir garantieren ein erstklassiges Umfeld mit professioneller Crew und Gourmetküche."
   },
   "footer": {
     "about": "Über Uns",

@@ -101,46 +101,87 @@ TOTAL ESTIMATE: ${formatCurrency(priceBreakdown.totalEstimate)}
         return
       }
 
-      // Call the API route
-      const response = await fetch('/api/send-booking', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || undefined,
-          yachtId: yachtId,
-          yachtName: yachtName,
-          startDate: format(startDate, 'yyyy-MM-dd'),
-          endDate: format(endDate, 'yyyy-MM-dd'),
-          guests: formData.guests ? parseInt(formData.guests) : undefined,
-          message: formData.message || undefined,
-          priceBreakdown: priceBreakdown,
-          currency: currency,
-          taxPercentage: taxPercentage || 21,
-          apaPercentage: apaPercentage || 30,
-        }),
+      // Prepare request payload
+      const payload = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone?.trim() || undefined,
+        yachtId: yachtId,
+        yachtName: yachtName,
+        startDate: format(startDate, 'yyyy-MM-dd'),
+        endDate: format(endDate, 'yyyy-MM-dd'),
+        guests: formData.guests ? parseInt(formData.guests) : undefined,
+        message: formData.message?.trim() || undefined,
+        priceBreakdown: priceBreakdown,
+        currency: currency,
+        taxPercentage: taxPercentage || 21,
+        apaPercentage: apaPercentage || 30,
+      }
+
+      console.log('[BookingForm] Submitting booking:', {
+        name: payload.name,
+        email: payload.email,
+        yachtName: payload.yachtName,
+        hasPriceBreakdown: !!payload.priceBreakdown,
+        priceBreakdownTotal: payload.priceBreakdown?.totalEstimate,
       })
 
-      let result
+      // Call the API route with timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+      
+      let response: Response
       try {
-        result = await response.json()
-      } catch (jsonError) {
-        // If response is not JSON, get text
-        const text = await response.text()
-        console.error('[BookingForm] Non-JSON response:', text)
-        throw new Error(`Server error: ${response.status} ${response.statusText}`)
+        response = await fetch('/api/send-booking', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        })
+        clearTimeout(timeoutId)
+      } catch (fetchError) {
+        clearTimeout(timeoutId)
+        if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+          throw new Error('Request timeout: The server took too long to respond. Please try again.')
+        }
+        throw new Error(`Network error: ${fetchError instanceof Error ? fetchError.message : 'Failed to connect to server'}`)
+      }
+
+      let result: any = {}
+      try {
+        const responseText = await response.text()
+        console.log('[BookingForm] Response status:', response.status, response.statusText)
+        console.log('[BookingForm] Response text (first 500 chars):', responseText.substring(0, 500))
+        
+        if (responseText) {
+          try {
+            result = JSON.parse(responseText)
+          } catch (parseError) {
+            console.error('[BookingForm] Failed to parse JSON:', parseError)
+            console.error('[BookingForm] Full response text:', responseText)
+            throw new Error(`Server returned invalid response (${response.status}). Please try again or contact support.`)
+          }
+        }
+      } catch (readError) {
+        console.error('[BookingForm] Error reading response:', readError)
+        if (readError instanceof Error) {
+          throw readError
+        }
+        throw new Error(`Failed to read server response: ${response.status} ${response.statusText}`)
       }
 
       if (!response.ok) {
-        const errorMsg = result?.error || result?.details || `Server error: ${response.status} ${response.statusText}`
-        console.error('[BookingForm] API Error:', {
+        const errorMsg = result?.error || result?.details || result?.message || `Server error: ${response.status} ${response.statusText}`
+        console.error('[BookingForm] API Error Response:', {
           status: response.status,
           statusText: response.statusText,
           error: result?.error,
           details: result?.details,
+          message: result?.message,
+          success: result?.success,
+          fullResult: result,
         })
         setErrorMessage(errorMsg)
         throw new Error(errorMsg)
@@ -157,7 +198,27 @@ TOTAL ESTIMATE: ${formatCurrency(priceBreakdown.totalEstimate)}
       })
     } catch (error) {
       console.error('[BookingForm] Error submitting booking:', error)
-      const errorMsg = error instanceof Error ? error.message : 'Unknown error occurred'
+      console.error('[BookingForm] Error details:', {
+        name: error instanceof Error ? error.name : 'Unknown',
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : 'No stack trace',
+      })
+      
+      let errorMsg = 'Unknown error occurred'
+      if (error instanceof Error) {
+        errorMsg = error.message
+        // Provide more helpful error messages
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+          errorMsg = 'Network error: Please check your internet connection and try again.'
+        } else if (error.message.includes('500')) {
+          errorMsg = 'Server error: Please try again in a moment. If the problem persists, contact support.'
+        } else if (error.message.includes('400')) {
+          errorMsg = 'Invalid request: Please check that all fields are filled correctly.'
+        } else {
+          errorMsg = error.message || 'An unexpected error occurred. Please try again.'
+        }
+      }
+      
       setErrorMessage(errorMsg)
       setSubmitStatus('error')
     } finally {
@@ -300,9 +361,27 @@ TOTAL ESTIMATE: ${formatCurrency(priceBreakdown.totalEstimate)}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-luxury-blue text-white py-3 rounded-lg font-semibold transition-colors hover:bg-luxury-gold hover:text-luxury-blue disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-gradient-to-r from-luxury-blue via-luxury-gold to-luxury-blue text-white py-4 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
       >
-        {isSubmitting ? 'Submitting...' : 'Send Inquiry'}
+        <span className="relative z-10 flex items-center justify-center gap-2">
+          {isSubmitting ? (
+            <>
+              <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Submitting...
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Request a Quote
+            </>
+          )}
+        </span>
+        <div className="absolute inset-0 bg-gradient-to-r from-luxury-gold via-luxury-blue to-luxury-gold opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </button>
     </form>
   )

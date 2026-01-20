@@ -1,20 +1,16 @@
 import { supabase } from './supabase'
+import { unstable_cache } from 'next/cache'
 import type { SiteContent, Fleet, Destination, Review, Stat, CulinaryExperience, CrewMember, BookingAvailability } from '@/types/database'
 
-export async function getSiteContent(): Promise<SiteContent> {
-  console.log('[Data] Fetching site content from Supabase (fresh fetch, no cache)...')
-  
-  // Fetch all data in parallel with no cache - catch individual errors
+// Internal function to fetch data from Supabase
+async function fetchSiteContentInternal(): Promise<SiteContent> {
+  // Fetch all data in parallel - catch individual errors
   let settingsResult, fleetResult, destinationsResult, reviewsResult, statsResult, culinaryResult, crewResult
   
   try {
     settingsResult = await supabase.from('site_settings').select('*')
     if (settingsResult.error) {
       console.error('[Data] Error fetching site_settings:', settingsResult.error)
-    } else {
-      console.log('[Data] Site settings fetched:', {
-        count: settingsResult.data?.length || 0,
-      })
     }
   } catch (error) {
     console.error('[Data] Exception fetching site_settings:', error)
@@ -25,10 +21,6 @@ export async function getSiteContent(): Promise<SiteContent> {
     fleetResult = await supabase.from('fleet').select('*').eq('is_active', true).order('is_featured', { ascending: false })
     if (fleetResult.error) {
       console.error('[Data] Error fetching fleet:', fleetResult.error)
-    } else {
-      console.log('[Data] Fleet fetched:', {
-        count: fleetResult.data?.length || 0,
-      })
     }
   } catch (error) {
     console.error('[Data] Exception fetching fleet:', error)
@@ -96,8 +88,6 @@ export async function getSiteContent(): Promise<SiteContent> {
       settings[setting.key] = setting.value || ''
     })
   }
-  
-  console.log('[Data] Transformed settings:', settings)
 
   // Return data with safe fallbacks
   return {
@@ -110,6 +100,16 @@ export async function getSiteContent(): Promise<SiteContent> {
     crew: (crewResult.data as CrewMember[]) || [],
   }
 }
+
+// Cached version - cache for 1 hour (3600 seconds)
+export const getSiteContent = unstable_cache(
+  fetchSiteContentInternal,
+  ['site-content'],
+  {
+    revalidate: 3600, // 1 hour cache
+    tags: ['site-content', 'fleet', 'destinations', 'settings']
+  }
+)
 
 export async function getFleetBySlug(slug: string): Promise<Fleet | null> {
   const { data, error } = await supabase
@@ -124,6 +124,23 @@ export async function getFleetBySlug(slug: string): Promise<Fleet | null> {
   }
 
   return data as Fleet
+}
+
+// Get multiple fleet items by slugs for comparison
+export async function getFleetBySlugs(slugs: string[]): Promise<Fleet[]> {
+  if (slugs.length === 0) return []
+  
+  const { data, error } = await supabase
+    .from('fleet')
+    .select('*')
+    .in('slug', slugs)
+    .eq('is_active', true)
+
+  if (error || !data) {
+    return []
+  }
+
+  return data as Fleet[]
 }
 
 export async function getBookingAvailability(yachtId: string, startDate: string, endDate: string): Promise<BookingAvailability[]> {
@@ -163,4 +180,21 @@ export async function submitBookingInquiry(inquiry: {
   }
 
   return data
+}
+
+// Client-side function to fetch settings (for client components)
+// This does NOT use unstable_cache and can be called from client components
+export async function getSiteSettingsClient(): Promise<Record<string, string>> {
+  const { data, error } = await supabase.from('site_settings').select('*')
+  
+  if (error || !data) {
+    return {}
+  }
+
+  const settings: Record<string, string> = {}
+  data.forEach((setting) => {
+    settings[setting.key] = setting.value || ''
+  })
+
+  return settings
 }

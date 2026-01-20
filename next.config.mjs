@@ -5,6 +5,18 @@ const withNextIntl = createNextIntlPlugin('./i18n.ts');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Ensure date-fns is properly transpiled
+  transpilePackages: ['date-fns'],
+  webpack: (config, { isServer }) => {
+    // Fix for date-fns vendor chunk issue
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
+  },
   images: {
     domains: ['localhost', 'supabase.co'],
     remotePatterns: [

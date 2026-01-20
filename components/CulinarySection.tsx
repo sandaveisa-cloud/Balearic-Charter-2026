@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import OptimizedImage from './OptimizedImage'
 import { useTranslations } from 'next-intl'
 import type { CulinaryExperience } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
@@ -28,7 +29,7 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
           {experiences.map((experience) => {
             const imageUrl = getOptimizedImageUrl(experience.image_url, {
               width: 800,
@@ -43,13 +44,15 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
               >
                 {imageUrl ? (
                   <div className="aspect-square overflow-hidden relative">
-                    <Image
+                    <OptimizedImage
                       src={imageUrl}
                       alt={experience.title}
                       fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      objectFit="cover"
+                      aspectRatio="1/1"
                       loading="lazy"
+                      quality={80}
                     />
                   </div>
                 ) : (

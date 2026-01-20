@@ -22,6 +22,8 @@
     "guests": "Huéspedes",
     "cabins": "Camarotes",
     "toilets": "Baños",
+    "technicalSpecs": "Especificaciones Técnicas",
+    "selectDates": "Selecciona las Fechas de tu Alquiler",
     "ships": {
       "simona": {
         "headline": "Elegancia, Comodidad y un Toque de Aventura",
@@ -49,7 +51,10 @@
   },
   "destinations": {
     "title": "Destinos Exclusivos",
-    "subtitle": "Explora los lugares más hermosos del Mediterráneo"
+    "subtitle": "Explora los lugares más hermosos del Mediterráneo",
+    "viewDetails": "Ver Detalles",
+    "discoverMore": "Descubrir Más",
+    "viewAll": "Ver Todos los Destinos"
   },
   "culinary": {
     "title": "Excelencia Culinaria",
@@ -69,7 +74,21 @@
   },
   "mission": {
     "title": "Nuestra Misión",
-    "text": "Combinar el chárter de lujo con una logística precisa. Garantizamos un entorno de alta gama con tripulación profesional y cocina gourmet."
+    "text": "Combinar el chárter de lujo con una logística precisa. Garantizamos un entorno de alta gama con tripulación profesional y cocina gourmet.",
+    "cards": {
+      "logistics": {
+        "title": "Logística Precisa",
+        "description": "Combinamos el chárter de lujo con una logística precisa para garantizar experiencias sin problemas."
+      },
+      "crew": {
+        "title": "Tripulación Profesional",
+        "description": "Garantizamos un entorno seguro y de alta gama con nuestra tripulación profesional experimentada y dedicada."
+      },
+      "gourmet": {
+        "title": "Excelencia Gourmet",
+        "description": "Disfrute de la cocina gourmet elaborada por nuestros chefs expertos, elevando su experiencia de alquiler."
+      }
+    }
   },
   "footer": {
     "about": "Acerca de",

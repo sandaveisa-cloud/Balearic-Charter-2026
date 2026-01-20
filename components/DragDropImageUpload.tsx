@@ -1,9 +1,10 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { compressImage, compressThumbnail } from '@/lib/imageCompression'
-import Image from 'next/image'
+import OptimizedImage from './OptimizedImage'
+import SortableImageGallery from './SortableImageGallery'
 
 interface ImagePreview {
   file: File
@@ -14,12 +15,13 @@ interface ImagePreview {
 }
 
 interface DragDropImageUploadProps {
-  onUpload: (files: File[]) => Promise<void>
-  maxFiles?: number
+  onUpload: (files: File[], onProgress?: (progress: number) => void) => Promise<void>
+  maxFiles?: number // undefined = unlimited
   maxSize?: number // in MB
   isThumbnail?: boolean
   existingImages?: string[]
   onRemoveExisting?: (imageUrl: string) => void
+  onReorder?: (newOrder: string[]) => void // Callback when images are reordered
   className?: string
 }
 
@@ -30,6 +32,7 @@ export default function DragDropImageUpload({
   isThumbnail = false,
   existingImages = [],
   onRemoveExisting,
+  onReorder,
   className = '',
 }: DragDropImageUploadProps) {
   const [previews, setPreviews] = useState<ImagePreview[]>([])
@@ -37,13 +40,21 @@ export default function DragDropImageUpload({
   const [uploadProgress, setUploadProgress] = useState(0)
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    // Limit number of files
-    const remainingSlots = maxFiles - previews.length
-    const filesToProcess = acceptedFiles.slice(0, remainingSlots)
+    // If maxFiles is set, limit number of files; otherwise allow unlimited
+    let filesToProcess = acceptedFiles
     
-    if (filesToProcess.length === 0) {
-      alert(`Maximum ${maxFiles} files allowed. Please remove some images first.`)
-      return
+    if (maxFiles !== undefined) {
+      const remainingSlots = maxFiles - previews.length
+      filesToProcess = acceptedFiles.slice(0, remainingSlots)
+      
+      if (filesToProcess.length === 0) {
+        alert(`Maximum ${maxFiles} files allowed. Please remove some images first.`)
+        return
+      }
+      
+      if (acceptedFiles.length > remainingSlots) {
+        alert(`${acceptedFiles.length - remainingSlots} file(s) were not added. Maximum ${maxFiles} files allowed.`)
+      }
     }
     
     // Create previews
@@ -55,10 +66,6 @@ export default function DragDropImageUpload({
     }))
 
     setPreviews((prev) => [...prev, ...newPreviews])
-    
-    if (acceptedFiles.length > remainingSlots) {
-      alert(`${acceptedFiles.length - remainingSlots} file(s) were not added. Maximum ${maxFiles} files allowed.`)
-    }
   }, [maxFiles, previews.length])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -111,9 +118,12 @@ export default function DragDropImageUpload({
         })
       }
 
-      // Upload compressed files
+      // Upload compressed files with progress tracking
       setUploadProgress(50)
-      await onUpload(compressedFiles)
+      await onUpload(compressedFiles, (progress) => {
+        // Map upload progress (50-100%) to overall progress
+        setUploadProgress(50 + (progress * 0.5))
+      })
 
       // Clear previews after successful upload
       previews.forEach((preview) => {
@@ -188,7 +198,7 @@ export default function DragDropImageUpload({
               or <span className="text-luxury-blue font-medium">click to select files</span>
             </p>
             <p className="text-xs text-gray-400 mt-2">
-              Supports JPG, PNG, WebP • Max {maxSize}MB per file • Up to {maxFiles} files
+              Supports JPG, PNG, WebP • Max {maxSize}MB per file{maxFiles !== undefined ? ` • Up to ${maxFiles} files` : ' • Unlimited files'}
             </p>
           </div>
         </div>
@@ -221,18 +231,21 @@ export default function DragDropImageUpload({
 
           {/* New Image Previews */}
           {previews.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-6">
               {previews.map((preview, index) => (
                 <div
                   key={index}
                   className="relative group aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-luxury-blue transition-all"
                 >
-                  <Image
+                  <OptimizedImage
                     src={preview.preview}
                     alt={`Preview ${index + 1}`}
                     fill
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 16vw"
-                    className="object-cover"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                    objectFit="cover"
+                    aspectRatio="1/1"
+                    loading="lazy"
+                    quality={75}
                   />
                   
                   {/* Remove Button */}
@@ -262,36 +275,52 @@ export default function DragDropImageUpload({
             </div>
           )}
 
-          {/* Existing Images */}
+          {/* Existing Images - Sortable Gallery */}
           {existingImages.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {existingImages.map((imageUrl, index) => (
-                <div
-                  key={index}
-                  className="relative group aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-luxury-gold transition-all"
-                >
-                  <Image
-                    src={imageUrl}
-                    alt={`Existing image ${index + 1}`}
-                    fill
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 16vw"
-                    className="object-cover"
-                  />
-                  
-                  {/* Remove Button */}
-                  {onRemoveExisting && (
-                    <button
-                      onClick={() => onRemoveExisting(imageUrl)}
-                      className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                      aria-label="Remove image"
+            <div>
+              <p className="text-xs text-gray-500 mb-2">
+                💡 Drag images to reorder them. The first image will be used as the main image.
+              </p>
+              {onReorder ? (
+                <SortableImageGallery
+                  images={existingImages}
+                  onReorder={onReorder}
+                  onRemove={onRemoveExisting}
+                />
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                  {existingImages.map((imageUrl, index) => (
+                    <div
+                      key={index}
+                      className="relative group aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-luxury-gold transition-all"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  )}
+                      <OptimizedImage
+                        src={imageUrl}
+                        alt={`Existing image ${index + 1}`}
+                        fill
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                        objectFit="cover"
+                        aspectRatio="1/1"
+                        loading="lazy"
+                        quality={75}
+                      />
+                      
+                      {/* Remove Button */}
+                      {onRemoveExisting && (
+                        <button
+                          onClick={() => onRemoveExisting(imageUrl)}
+                          className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                          aria-label="Remove image"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           )}
 

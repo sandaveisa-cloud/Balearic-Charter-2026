@@ -28,12 +28,28 @@ interface BookingRequest {
 export async function POST(request: NextRequest) {
   try {
     console.log('[API] Received booking request')
-    const body: BookingRequest = await request.json()
+    
+    let body: BookingRequest
+    try {
+      body = await request.json()
+    } catch (jsonError) {
+      console.error('[API] Failed to parse request JSON:', jsonError)
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Invalid request format', 
+          details: 'The request body is not valid JSON. Please refresh the page and try again.' 
+        },
+        { status: 400 }
+      )
+    }
+    
     console.log('[API] Request body:', {
       name: body.name,
       email: body.email,
       yachtName: body.yachtName,
       hasPriceBreakdown: !!body.priceBreakdown,
+      priceBreakdownTotal: body.priceBreakdown?.totalEstimate,
     })
 
     // Validate required fields
@@ -274,25 +290,43 @@ export async function POST(request: NextRequest) {
     const errorDetails = error instanceof Error ? error.message : 'Unknown error'
     const errorStack = error instanceof Error ? error.stack : 'No stack trace'
     console.error('[API] Error stack:', errorStack)
-    console.error('[API] Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)))
+    
+    // Try to stringify error for logging
+    try {
+      console.error('[API] Full error object:', JSON.stringify(error, Object.getOwnPropertyNames(error)))
+    } catch (stringifyError) {
+      console.error('[API] Could not stringify error:', stringifyError)
+    }
     
     // Return more specific error message
     let userFriendlyError = 'Failed to process booking inquiry'
-    if (errorDetails.includes('PDF')) {
-      userFriendlyError = 'Failed to generate booking PDF. Please try again.'
-    } else if (errorDetails.includes('email') || errorDetails.includes('Resend')) {
-      userFriendlyError = 'Failed to send email. Please check your email address and try again.'
-    } else if (errorDetails.includes('database') || errorDetails.includes('Supabase')) {
-      userFriendlyError = 'Failed to save booking. Please try again.'
+    let statusCode = 500
+    
+    if (errorDetails.includes('PDF') || errorDetails.includes('pdf')) {
+      userFriendlyError = 'Failed to generate booking PDF. The booking was saved, but PDF generation failed. Please contact support.'
+      statusCode = 500
+    } else if (errorDetails.includes('email') || errorDetails.includes('Resend') || errorDetails.includes('resend')) {
+      userFriendlyError = 'Booking saved successfully, but email could not be sent. Please contact us directly.'
+      statusCode = 207 // Partial success
+    } else if (errorDetails.includes('database') || errorDetails.includes('Supabase') || errorDetails.includes('supabase')) {
+      userFriendlyError = 'Failed to save booking to database. Please try again or contact support.'
+      statusCode = 500
+    } else if (errorDetails.includes('JSON') || errorDetails.includes('parse')) {
+      userFriendlyError = 'Invalid request format. Please refresh the page and try again.'
+      statusCode = 400
+    } else if (errorDetails.includes('validation') || errorDetails.includes('required')) {
+      userFriendlyError = 'Please fill in all required fields correctly.'
+      statusCode = 400
     }
     
     return NextResponse.json(
       { 
+        success: false,
         error: userFriendlyError, 
         details: errorDetails,
-        message: 'Please check the server logs for more details'
+        message: 'An error occurred while processing your booking. Please try again or contact support if the problem persists.'
       },
-      { status: 500 }
+      { status: statusCode }
     )
   }
 }

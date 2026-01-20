@@ -1,15 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { format } from 'date-fns'
 import { useTranslations } from 'next-intl'
 import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils'
+import { getFleetBySlugs } from '@/lib/data'
 import BookingCalendar from './BookingCalendar'
 import BookingForm from './BookingForm'
 import SeasonalPriceCalculator, { type PriceBreakdown } from './SeasonalPriceCalculator'
+import AddOnSelector from './AddOnSelector'
+import BoatComparisonTable from './BoatComparisonTable'
+import OptimizedImage from './OptimizedImage'
 
 interface FleetDetailProps {
   yacht: Fleet
@@ -25,6 +29,40 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
       main_image_url: yacht.main_image_url,
       gallery_images_count: yacht.gallery_images?.length || 0,
     })
+    
+    // Load comparison boats (Lagoon 400 S and 450 F) if current boat is one of them
+    const loadComparisonBoats = async () => {
+      const comparisonSlugs: string[] = []
+      const currentSlug = yacht.slug?.toLowerCase()
+      
+      // If viewing Lagoon 400 S, compare with 450 F
+      if (currentSlug?.includes('400') || yacht.name?.toLowerCase().includes('400')) {
+        comparisonSlugs.push('lagoon-450-f', 'lagoon-450f')
+      }
+      // If viewing Lagoon 450 F, compare with 400 S
+      else if (currentSlug?.includes('450') || yacht.name?.toLowerCase().includes('450')) {
+        comparisonSlugs.push('lagoon-400-s', 'lagoon-400s')
+      }
+      
+      // Also try to find boats with similar names
+      if (comparisonSlugs.length === 0) {
+        // Try to find Lagoon boats for comparison
+        const lagoonBoats = ['lagoon-400-s', 'lagoon-400s', 'lagoon-450-f', 'lagoon-450f']
+        comparisonSlugs.push(...lagoonBoats.filter(slug => slug !== currentSlug))
+      }
+      
+      if (comparisonSlugs.length > 0) {
+        try {
+          const boats = await getFleetBySlugs(comparisonSlugs)
+          // Include current boat in comparison
+          setComparisonBoats([yacht, ...boats].slice(0, 3)) // Max 3 boats
+        } catch (error) {
+          console.error('[FleetDetail] Error loading comparison boats:', error)
+        }
+      }
+    }
+    
+    loadComparisonBoats()
   }, [yacht])
   
   // Get ship-specific translations based on slug
@@ -61,6 +99,13 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [priceBreakdown, setPriceBreakdown] = useState<PriceBreakdown | null>(null)
+  const [addOnsTotal, setAddOnsTotal] = useState(0)
+  const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
+  const [comparisonBoats, setComparisonBoats] = useState<Fleet[]>([])
+  
+  // Touch/swipe support for lightbox
+  const touchStartX = useRef<number | null>(null)
+  const touchEndX = useRef<number | null>(null)
 
   // Combine main_image_url and gallery_images into a single array
   const allImages = (() => {
@@ -98,7 +143,34 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isLightboxOpen, allImages.length])
 
+  // Touch/swipe handlers for lightbox
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }
 
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return
+    
+    const distance = touchStartX.current - touchEndX.current
+    const minSwipeDistance = 50 // Minimum distance for a swipe
+    
+    if (Math.abs(distance) > minSwipeDistance) {
+      if (distance > 0) {
+        // Swiped left - next image
+        nextImage()
+      } else {
+        // Swiped right - previous image
+        prevImage()
+      }
+    }
+    
+    touchStartX.current = null
+    touchEndX.current = null
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -124,22 +196,18 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                     }`}
                   >
                     {optimizedUrl && (
-                      <Image
+                      <OptimizedImage
                         src={optimizedUrl}
                         alt={`${yacht.name} - Image ${index + 1}`}
                         fill
                         sizes="100vw"
-                        className="object-cover cursor-pointer"
                         priority={index === 0}
+                        loading={index === 0 ? undefined : "lazy"}
+                        objectFit="cover"
+                        aspectRatio="16/9"
                         onClick={() => setIsLightboxOpen(true)}
-                        onError={() => {
-                          console.error('[FleetDetail] Image failed to load:', {
-                            yachtId: yacht.id,
-                            index,
-                            originalUrl: imageUrl,
-                            resolvedUrl: optimizedUrl,
-                          })
-                        }}
+                        quality={85}
+                        className="cursor-pointer"
                       />
                     )}
                   </div>
@@ -202,13 +270,16 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                         }`}
                       >
                         {thumbnailUrl && (
-                          <Image
+                          <OptimizedImage
                             src={thumbnailUrl}
                             alt={`Thumbnail ${index + 1}`}
                             fill
-                            sizes="80px"
-                            className="object-cover"
-                            loading="lazy"
+                        sizes="80px"
+                        objectFit="cover"
+                        aspectRatio="5/4"
+                        loading="lazy"
+                        quality={70}
+                        onClick={() => setCurrentImageIndex(index)}
                           />
                         )}
                       </button>
@@ -238,22 +309,28 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
         </div>
       </div>
 
-      {/* Lightbox Modal */}
+      {/* Lightbox Modal with Touch Support */}
       {isLightboxOpen && allImages.length > 0 && (
         <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-2 md:p-4"
           onClick={() => setIsLightboxOpen(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <button
             onClick={() => setIsLightboxOpen(false)}
-            className="absolute top-4 right-4 text-white hover:text-gray-300 z-50"
+            className="absolute top-4 right-4 text-white hover:text-gray-300 z-50 bg-black/50 rounded-full p-2 transition-all"
             aria-label="Close lightbox"
           >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <div className="relative max-w-7xl max-h-full" onClick={(e) => e.stopPropagation()}>
+          <div 
+            className="relative max-w-7xl max-h-full w-full h-full flex items-center justify-center" 
+            onClick={(e) => e.stopPropagation()}
+          >
             {(() => {
               const lightboxImageUrl = getOptimizedImageUrl(allImages[currentImageIndex], {
                 width: 2048,
@@ -261,14 +338,16 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                 format: 'webp',
               })
               return lightboxImageUrl ? (
-                <div className="relative w-full h-[90vh]">
-                  <Image
+                <div className="relative w-full h-full max-h-[90vh]" style={{ aspectRatio: 'auto' }}>
+                  <OptimizedImage
                     src={lightboxImageUrl}
                     alt={`${yacht.name} - Image ${currentImageIndex + 1}`}
                     fill
-                    sizes="(max-width: 1280px) 100vw, 1280px"
-                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1280px"
+                    objectFit="contain"
                     priority
+                    quality={90}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </div>
               ) : null
@@ -276,24 +355,30 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
             {allImages.length > 1 && (
               <>
                 <button
-                  onClick={prevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-3 rounded-full transition-all"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    prevImage()
+                  }}
+                  className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 md:p-3 rounded-full transition-all shadow-lg z-10 touch-manipulation"
                   aria-label="Previous image"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
                 <button
-                  onClick={nextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-3 rounded-full transition-all"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    nextImage()
+                  }}
+                  className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 md:p-3 rounded-full transition-all shadow-lg z-10 touch-manipulation"
                   aria-label="Next image"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 px-4 py-2 rounded-full">
                   {currentImageIndex + 1} / {allImages.length}
                 </div>
               </>
@@ -462,6 +547,31 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
               </section>
             )}
 
+            {/* Boat Comparison Table */}
+            {comparisonBoats.length > 1 && (
+              <section className="mt-12">
+                <BoatComparisonTable boats={comparisonBoats} />
+              </section>
+            )}
+
+            {/* Refit Details Section */}
+            {yacht.recently_refitted && yacht.refit_details && (
+              <section className="mt-12">
+                <div className="bg-gradient-to-r from-luxury-gold/10 to-yellow-400/10 border-2 border-luxury-gold rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Sparkles className="w-6 h-6 text-luxury-gold" />
+                    <h2 className="font-serif text-2xl font-bold text-luxury-blue">Recently Refitted</h2>
+                    <span className="px-3 py-1 bg-gradient-to-r from-luxury-gold to-yellow-400 text-white rounded-full text-sm font-bold">
+                      2024
+                    </span>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                    {yacht.refit_details}
+                  </p>
+                </div>
+              </section>
+            )}
+
           </div>
 
           {/* Booking Sidebar */}
@@ -493,6 +603,19 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                 taxPercentage={yacht.tax_percentage}
                 onBreakdownChange={setPriceBreakdown}
               />
+
+              {/* Add-ons Selector - Shows after dates are selected */}
+              {priceBreakdown && priceBreakdown.totalEstimate > 0 && (
+                <AddOnSelector
+                  basePrice={priceBreakdown.totalEstimate}
+                  currency={yacht.currency || 'EUR'}
+                  onTotalChange={(total, addOns) => {
+                    setAddOnsTotal(total)
+                    setSelectedAddOns(addOns)
+                  }}
+                  className="w-full"
+                />
+              )}
 
               {/* Booking Form */}
               <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">

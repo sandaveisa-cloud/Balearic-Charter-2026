@@ -28,6 +28,8 @@ export async function compressImage(
     maxWidthOrHeight: Math.max(maxWidth, maxHeight),
     useWebWorker,
     fileType: file.type,
+    // Optimize WebP quality to 75-80% for better compression without visible quality loss
+    initialQuality: 0.77, // 77% quality - good balance
   }
 
   try {

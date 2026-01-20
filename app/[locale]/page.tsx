@@ -10,8 +10,8 @@ import StatsSection from '@/components/StatsSection'
 import CulinarySection from '@/components/CulinarySection'
 import CrewSection from '@/components/CrewSection'
 
-// Force fresh data on every request (disable caching)
-export const revalidate = 0
+// Cache data for 1 hour (3600 seconds)
+export const revalidate = 3600
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -31,7 +31,10 @@ export default async function Home({ params }: Props) {
         <DestinationsSection destinations={content.destinations || []} />
         <Testimonials reviews={content.reviews || []} />
         <CulinarySection experiences={content.culinaryExperiences || []} />
-        <CrewSection crew={content.crew || []} />
+        {/* Only show CrewSection if there are active crew members */}
+        {content.crew && content.crew.length > 0 && (
+          <CrewSection crew={content.crew} />
+        )}
         <ReviewsSection reviews={content.reviews || []} />
       </main>
     )

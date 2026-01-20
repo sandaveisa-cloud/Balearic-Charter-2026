@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
+import { getDescriptionForLocale, getShortDescriptionForLocale, buildI18nUpdate, getLocalizedText, createI18nPatch, type Locale } from '@/lib/i18nUtils'
 import { ArrowRight, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { compressImage, compressThumbnail } from '@/lib/imageCompression'
@@ -80,30 +82,18 @@ export default function AdminPage() {
 
   const loadData = async () => {
     setLoading(true)
-    console.log('[Admin] Loading admin panel data...')
-    
-    // Debug: Check Supabase environment variables
+    // Check Supabase environment variables (only log errors)
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
       console.error('[Admin] NEXT_PUBLIC_SUPABASE_URL is missing!')
-    } else {
-      const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-      console.log('[Admin] Supabase URL present:', url)
-      if (url.endsWith('/')) {
-        console.warn('[Admin] WARNING: Supabase URL has trailing slash:', url)
-      }
     }
     
     if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       console.error('[Admin] NEXT_PUBLIC_SUPABASE_ANON_KEY is missing!')
-    } else {
-      console.log('[Admin] Supabase Anon Key present: Yes')
     }
     
     // Verify supabase client is initialized
     if (!supabase) {
       console.error('[Admin] Supabase client is not initialized!')
-    } else {
-      console.log('[Admin] Supabase client initialized successfully')
     }
     
     try {
@@ -127,63 +117,22 @@ export default function AdminPage() {
 
       if (fleetResult.error) {
         console.error('[Admin] Error fetching fleet:', fleetResult.error)
-      } else {
-        console.log('[Admin] Fleet fetched:', {
-          count: fleetResult.data?.length || 0,
-          yachts: fleetResult.data?.map(y => ({
-            id: y.id,
-            name: y.name,
-            main_image_url: y.main_image_url,
-          })),
-        })
       }
 
       if (destinationsResult.error) {
         console.error('[Admin] Error fetching destinations:', destinationsResult.error)
-      } else {
-        console.log('[Admin] Destinations fetched:', {
-          count: destinationsResult.data?.length || 0,
-          destinations: destinationsResult.data?.map(d => ({
-            id: d.id,
-            title: d.title,
-            image_urls_count: d.image_urls?.length || 0,
-          })),
-        })
       }
 
       if (culinaryResult.error) {
         console.error('[Admin] Error fetching culinary_experiences:', culinaryResult.error)
-      } else {
-        console.log('[Admin] Culinary experiences fetched:', {
-          count: culinaryResult.data?.length || 0,
-          experiences: culinaryResult.data?.map(c => ({
-            id: c.id,
-            title: c.title,
-            media_urls_count: c.media_urls?.length || 0,
-          })),
-        })
       }
 
       if (crewResult.error) {
         console.error('[Admin] Error fetching crew:', crewResult.error)
-      } else {
-        console.log('[Admin] Crew members fetched:', {
-          count: crewResult.data?.length || 0,
-          members: crewResult.data?.map(m => ({
-            id: m.id,
-            name: m.name,
-            role: m.role,
-          })),
-        })
       }
 
       if (settingsResult.error) {
         console.error('[Admin] Error fetching site_settings:', settingsResult.error)
-      } else {
-        console.log('[Admin] Site settings fetched:', {
-          count: settingsResult.data?.length || 0,
-          settings: settingsResult.data,
-        })
       }
 
       setInquiries((inquiriesResult.data as BookingInquiry[]) || [])
@@ -201,7 +150,7 @@ export default function AdminPage() {
           settings[setting.key] = setting.value || ''
         })
       }
-      console.log('[Admin] Transformed settings:', settings)
+      // Settings transformed successfully
       setSiteSettings(settings)
     } catch (error) {
       console.error('[Admin] Error loading data:', error)
@@ -230,12 +179,6 @@ export default function AdminPage() {
   const uploadImage = async (file: File, entityId: string, isThumbnail: boolean = false): Promise<string | null> => {
     try {
       // Compress image before upload
-      console.log('[Admin] Compressing image before upload...', {
-        originalName: file.name,
-        originalSize: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
-        isThumbnail,
-      })
-
       const compressedFile = isThumbnail
         ? await compressThumbnail(file)
         : await compressImage(file, {
@@ -243,12 +186,6 @@ export default function AdminPage() {
             maxHeight: 1920,
             maxSizeMB: 1,
           })
-
-      console.log('[Admin] Image compressed:', {
-        originalSize: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
-        compressedSize: `${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`,
-        reduction: `${((1 - compressedFile.size / file.size) * 100).toFixed(1)}%`,
-      })
 
       // Use WebP extension for better compression
       const fileExt = 'webp'
@@ -258,7 +195,7 @@ export default function AdminPage() {
       const { error: uploadError } = await supabase.storage
         .from('yacht-images')
         .upload(filePath, compressedFile, {
-          cacheControl: '3600',
+          cacheControl: 'public, max-age=31536000', // 1 year cache
           upsert: false,
           contentType: 'image/webp',
         })
@@ -273,7 +210,7 @@ export default function AdminPage() {
         .from('yacht-images')
         .getPublicUrl(filePath)
 
-      console.log('[Admin] Image uploaded successfully:', data.publicUrl)
+      // Image uploaded successfully
       return data.publicUrl
     } catch (error) {
       console.error('[Admin] Error uploading image:', error)
@@ -360,10 +297,75 @@ export default function AdminPage() {
     }
   }
 
+  // Handle reordering images in fleet gallery
+  const handleReorderFleetImages = async (yachtId: string, newOrder: string[]) => {
+    // Validate UUID
+    if (!yachtId || yachtId.length !== 36) {
+      console.error('[Admin] Invalid yacht ID when reordering images:', yachtId)
+      return
+    }
+
+    // Optimistically update local state first for better UX
+    setFleet(prev => prev.map(yacht => 
+      yacht.id === yachtId ? { 
+        ...yacht, 
+        main_image_url: newOrder[0] || null,
+        gallery_images: newOrder.length > 1 ? newOrder.slice(1) : []
+      } : yacht
+    ))
+
+    try {
+      // Update fleet record with new image order
+      // First image becomes main_image_url, rest go to gallery_images
+      const { error } = await supabase
+        .from('fleet')
+        .update({ 
+          main_image_url: newOrder[0] || null,
+          gallery_images: newOrder.length > 1 ? newOrder.slice(1) : []
+        })
+        .eq('id', yachtId)
+
+      if (error) {
+        console.error('[Admin] Error reordering images:', error)
+        alert(`Failed to save image order: ${error.message || 'Unknown error'}`)
+        // Reload data to revert UI
+        loadData()
+      } else {
+        setFleetSuccess(prev => ({ 
+          ...prev, 
+          [yachtId]: 'Image order updated successfully!' 
+        }))
+        setTimeout(() => {
+          setFleetSuccess(prev => {
+            const newState = { ...prev }
+            delete newState[yachtId]
+            return newState
+          })
+        }, 3000)
+      }
+    } catch (error) {
+      console.error('[Admin] Exception reordering images:', error)
+      alert('An error occurred while reordering images')
+      // Reload data to revert UI
+      loadData()
+    }
+  }
+
   // Handle removing an existing image from fleet gallery
   const handleRemoveFleetImage = async (yachtId: string, imageUrl: string) => {
+    // Validate UUID
+    if (!yachtId || yachtId.length !== 36) {
+      console.error('[Admin] Invalid yacht ID when removing image:', yachtId)
+      alert('Invalid yacht ID. Please refresh the page.')
+      return
+    }
+
     const currentYacht = fleet.find(y => y.id === yachtId)
-    if (!currentYacht) return
+    if (!currentYacht) {
+      console.error('[Admin] Yacht not found when removing image:', yachtId)
+      alert('Yacht not found. Please refresh the page.')
+      return
+    }
 
     const currentImages = currentYacht.gallery_images || []
     const currentMainImage = currentYacht.main_image_url
@@ -377,18 +379,22 @@ export default function AdminPage() {
     // Remove the image
     const updatedImages = allImages.filter(url => url !== imageUrl)
     
+    // Prepare update payload
+    const updatePayload: Partial<Fleet> = {
+      main_image_url: updatedImages[0] || null,
+      gallery_images: updatedImages.length > 0 ? updatedImages : []
+    }
+    
     // Update fleet record
     const { error } = await supabase
       .from('fleet')
-      .update({ 
-        main_image_url: updatedImages[0] || null,
-        gallery_images: updatedImages 
-      })
+      .update(updatePayload)
       .eq('id', yachtId)
 
     if (error) {
       console.error('[Admin] Error removing image:', error)
-      alert('Failed to remove image')
+      console.error('[Admin] Update payload:', updatePayload)
+      alert(`Failed to remove image: ${error.message || 'Unknown error'}`)
     } else {
       // Update local state
       setFleet(prev => prev.map(yacht => 
@@ -416,23 +422,170 @@ export default function AdminPage() {
   const handleFleetUpdate = async (yachtId: string, updates: Partial<Fleet>) => {
     setSavingFleet(prev => ({ ...prev, [yachtId]: true }))
     
-    console.log('[Admin] Updating fleet in database:', { yachtId, updates })
+    // Validate UUID before update
+    if (!yachtId || yachtId.length !== 36) {
+      console.error('[Admin] Invalid yacht ID:', yachtId)
+      alert('Invalid yacht ID. Please refresh the page.')
+      setSavingFleet(prev => ({ ...prev, [yachtId]: false }))
+      return
+    }
+    
+    // Clean up updates - remove undefined values and ensure proper types
+    const cleanedUpdates: Partial<Fleet> = {}
+    Object.entries(updates).forEach(([key, value]) => {
+      // Skip undefined and null values (except for fields that should be nullable)
+      if (value === undefined) return
+      
+      // Handle i18n fields - skip them initially, will be added conditionally if columns exist
+      // We'll detect if columns exist on first error and handle accordingly
+      if (key === 'description_i18n' || key === 'short_description_i18n') {
+        // Store i18n fields separately to try them first, then fallback if needed
+        // For now, skip them - we'll add them back if we detect the columns exist
+        // This prevents errors on databases without i18n columns
+        return // Skip i18n fields initially
+      }
+      
+      // Skip legacy 'description' field if it doesn't exist in database
+      if (key === 'description' || key === 'short_description') {
+        // Don't include legacy description/short_description in update
+        return
+      }
+      // Handle JSON fields - ensure they're properly formatted
+      else if (key === 'technical_specs' || key === 'amenities') {
+        if (value !== null && typeof value === 'object') {
+          cleanedUpdates[key as keyof Fleet] = value
+        } else if (value === null) {
+          cleanedUpdates[key as keyof Fleet] = null
+        }
+      }
+      // Handle array fields
+      else if (key === 'gallery_images') {
+        if (Array.isArray(value)) {
+          cleanedUpdates[key as keyof Fleet] = value
+        } else if (value === null) {
+          cleanedUpdates[key as keyof Fleet] = []
+        }
+      }
+      // Handle numeric fields - convert strings to numbers
+      else if (['low_season_price', 'medium_season_price', 'high_season_price', 'length', 'capacity', 'cabins', 'toilets', 'year'].includes(key)) {
+        if (value === null || value === '') {
+          cleanedUpdates[key as keyof Fleet] = null
+        } else if (typeof value === 'string') {
+          const numValue = parseFloat(value)
+          if (!isNaN(numValue)) {
+            cleanedUpdates[key as keyof Fleet] = numValue as any
+          }
+        } else if (typeof value === 'number') {
+          cleanedUpdates[key as keyof Fleet] = value
+        }
+      }
+      // Handle boolean fields
+      else if (['is_featured', 'is_active'].includes(key)) {
+        cleanedUpdates[key as keyof Fleet] = Boolean(value)
+      }
+      // Handle string fields
+      else {
+        cleanedUpdates[key as keyof Fleet] = value
+      }
+    })
+    
+    // Final check: Remove any legacy fields and i18n fields that might have slipped through
+    delete cleanedUpdates.description
+    delete cleanedUpdates.short_description
+    delete cleanedUpdates.description_i18n
+    delete cleanedUpdates.short_description_i18n
+    
+    // Store i18n fields separately - we'll try to update them after main update succeeds
+    const i18nFields: Partial<Fleet> = {}
+    if (updates.description_i18n && typeof updates.description_i18n === 'object') {
+      i18nFields.description_i18n = updates.description_i18n
+    }
+    if (updates.short_description_i18n && typeof updates.short_description_i18n === 'object') {
+      i18nFields.short_description_i18n = updates.short_description_i18n
+    }
+    
+    // Updating fleet in database (without i18n fields first)
     
     try {
       const { data, error } = await supabase
         .from('fleet')
-        .update(updates)
+        .update(cleanedUpdates)
         .eq('id', yachtId)
         .select()
 
       if (error) {
         console.error('[Admin] Error updating fleet in database:', error)
-        alert('Failed to update yacht')
+        console.error('[Admin] Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        })
+        console.error('[Admin] Update payload:', cleanedUpdates)
+        console.error('[Admin] Yacht ID:', yachtId)
+        
+        // Handle missing i18n columns - retry without them
+        if (error.code === 'PGRST204' && (error.message?.includes('description_i18n') || error.message?.includes('short_description_i18n'))) {
+          console.warn('[Admin] i18n columns not found, retrying without i18n fields...')
+          
+          // Remove i18n fields and retry
+          const fallbackUpdates = { ...cleanedUpdates }
+          delete fallbackUpdates.description_i18n
+          delete fallbackUpdates.short_description_i18n
+          
+          const { data: retryData, error: retryError } = await supabase
+            .from('fleet')
+            .update(fallbackUpdates)
+            .eq('id', yachtId)
+            .select()
+          
+          if (retryError) {
+            console.error('[Admin] Retry also failed:', retryError)
+            alert(`Failed to update yacht: ${retryError.message || 'Unknown error'}\n\nNote: i18n columns (description_i18n, short_description_i18n) are not available in your database.\n\nTo enable multi-language support, please run the migration:\n\nsupabase/add_i18n_to_fleet.sql\n\nSee SUPABASE_MIGRATION_INSTRUCTIONS.md for details.`)
+          } else {
+            // Success with fallback
+            setFleet(prev => prev.map(yacht => 
+              yacht.id === yachtId ? { ...yacht, ...retryData } : yacht
+            ))
+            setFleetSuccess(prev => ({ ...prev, [yachtId]: 'Yacht updated successfully! (Note: i18n columns not available)' }))
+            setTimeout(() => {
+              setFleetSuccess(prev => {
+                const newState = { ...prev }
+                delete newState[yachtId]
+                return newState
+              })
+            }, 3000)
+            return // Exit early on successful retry
+          }
+        } else {
+          alert(`Failed to update yacht: ${error.message || 'Unknown error'}\n\nCheck console for details.`)
+        }
       } else {
-        console.log('[Admin] Fleet updated successfully in database:', data)
-        // Update local state
+        // Fleet updated successfully! Now try to update i18n fields if they exist
+        if (Object.keys(i18nFields).length > 0) {
+          // Try to update i18n fields separately (non-blocking - won't fail main update)
+          const { error: i18nError } = await supabase
+            .from('fleet')
+            .update(i18nFields)
+            .eq('id', yachtId)
+          
+          if (i18nError) {
+            if (i18nError.code === 'PGRST204') {
+              // Only log once per session to avoid console spam
+              if (!sessionStorage.getItem('i18n-warning-shown')) {
+                console.warn('[Admin] i18n columns (description_i18n, short_description_i18n) not available in database.')
+                console.warn('[Admin] To enable multi-language support, run: supabase/add_i18n_to_fleet.sql')
+                sessionStorage.setItem('i18n-warning-shown', 'true')
+              }
+            } else {
+              console.warn('[Admin] Error updating i18n fields (non-critical):', i18nError)
+            }
+          }
+        }
+        
+        // Update local state with the returned data and i18n fields (if updated)
         setFleet(prev => prev.map(yacht => 
-          yacht.id === yachtId ? { ...yacht, ...updates } : yacht
+          yacht.id === yachtId ? { ...yacht, ...data, ...i18nFields } : yacht
         ))
         setFleetSuccess(prev => ({ ...prev, [yachtId]: 'Yacht updated successfully!' }))
         setTimeout(() => {
@@ -444,8 +597,8 @@ export default function AdminPage() {
         }, 3000)
       }
     } catch (error) {
-      console.error('Error in fleet update:', error)
-      alert('An error occurred')
+      console.error('[Admin] Exception in fleet update:', error)
+      alert(`An error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setSavingFleet(prev => ({ ...prev, [yachtId]: false }))
     }
@@ -622,15 +775,56 @@ export default function AdminPage() {
         const currentMedia = currentCulinary?.media_urls || []
         const updatedMedia = [...currentMedia, imageUrl]
 
-        const { error } = await supabase
+        // Try to update with media_urls first (new column)
+        let { error } = await supabase
           .from('culinary_experiences')
-          .update({ media_urls: updatedMedia })
+          .update({ 
+            media_urls: updatedMedia
+          })
           .eq('id', culinaryId)
 
-        if (error) {
-          console.error('Error updating culinary media:', error)
-          alert('Failed to save media URL')
+        // If media_urls column doesn't exist, fallback to image_url
+        if (error && (error.code === 'PGRST204' || error.message?.includes('media_urls'))) {
+          console.warn('[Admin] media_urls column not found, using image_url as fallback')
+          
+          // Fallback: use image_url (single image) until migration is run
+          const { error: fallbackError } = await supabase
+            .from('culinary_experiences')
+            .update({ 
+              image_url: imageUrl // Use the new image as the main image
+            })
+            .eq('id', culinaryId)
+
+          if (fallbackError) {
+            console.error('[Admin] Error updating culinary image_url:', fallbackError)
+            alert(`Failed to save image. Please run the database migration to enable multiple images.\n\nSee: SUPABASE_MIGRATION_INSTRUCTIONS.md\n\nError: ${fallbackError.message}`)
+          } else {
+            // Successfully saved to image_url (fallback mode)
+            // Update local state with image_url
+            setCulinary(prev => prev.map(c => 
+              c.id === culinaryId ? { ...c, image_url: imageUrl, media_urls: [imageUrl] } : c
+            ))
+            setCulinarySuccess(prev => ({ ...prev, [culinaryId]: 'Image uploaded! (Using single image mode - run migration for multiple images)' }))
+            setTimeout(() => {
+              setCulinarySuccess(prev => {
+                const newState = { ...prev }
+                delete newState[culinaryId]
+                return newState
+              })
+            }, 5000) // Show message longer so user sees the migration notice
+          }
+        } else if (error) {
+          console.error('[Admin] Error updating culinary media:', error)
+          console.error('[Admin] Error details:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+          })
+          alert(`Failed to save media URL: ${error.message || 'Unknown error'}`)
         } else {
+          // Success with media_urls
+          // Successfully saved to media_urls (multiple images mode)
           setCulinary(prev => prev.map(c => 
             c.id === culinaryId ? { ...c, media_urls: updatedMedia } : c
           ))
@@ -647,8 +841,8 @@ export default function AdminPage() {
         alert('Failed to upload media')
       }
     } catch (error) {
-      console.error('Error in culinary media upload:', error)
-      alert('An error occurred during upload')
+      console.error('[Admin] Exception in culinary media upload:', error)
+      alert(`An error occurred during upload: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setUploadingCulinaryMedia(prev => ({ ...prev, [culinaryId]: false }))
     }
@@ -827,18 +1021,64 @@ export default function AdminPage() {
   const handleCrewUpdate = async (crewId: string, updates: Partial<CrewMember>) => {
     setSavingCrew(prev => ({ ...prev, [crewId]: true }))
     
+    // Validate UUID before update
+    if (!crewId || crewId.length !== 36) {
+      console.error('[Admin] Invalid crew ID:', crewId)
+      alert('Invalid crew member ID. Please refresh the page.')
+      setSavingCrew(prev => ({ ...prev, [crewId]: false }))
+      return
+    }
+    
+    // Clean up updates - remove undefined values and ensure proper types
+    const cleanedUpdates: Partial<CrewMember> = {}
+    
+    Object.keys(updates).forEach(key => {
+      const value = updates[key as keyof CrewMember]
+      // Skip undefined values
+      if (value !== undefined) {
+        // Skip role_description if it doesn't exist in database (column not in schema)
+        if (key === 'role_description') {
+          // Don't include role_description in update - column doesn't exist in database
+          return
+        }
+        // Ensure order_index is a number
+        if (key === 'order_index') {
+          cleanedUpdates.order_index = typeof value === 'string' ? parseInt(value as string) || 0 : (value as number) || 0
+        }
+        // Ensure is_active is a boolean
+        else if (key === 'is_active') {
+          cleanedUpdates.is_active = typeof value === 'boolean' ? value : value === 'true' || value === true
+        }
+        // Keep other values as-is (name, role, bio, image_url)
+        else {
+          cleanedUpdates[key as keyof CrewMember] = value
+        }
+      }
+    })
+    
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('crew')
-        .update(updates)
+        .update(cleanedUpdates)
         .eq('id', crewId)
+        .select()
+        .single()
 
       if (error) {
-        console.error('Error updating crew:', error)
-        alert('Failed to update crew member')
+        console.error('[Admin] Error updating crew:', error)
+        console.error('[Admin] Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        })
+        console.error('[Admin] Crew ID:', crewId)
+        console.error('[Admin] Update payload:', cleanedUpdates)
+        alert(`Failed to update crew member: ${error.message || 'Unknown error'}`)
       } else {
+        // Update local state with the returned data
         setCrew(prev => prev.map(m => 
-          m.id === crewId ? { ...m, ...updates } : m
+          m.id === crewId ? { ...m, ...data } : m
         ))
         setCrewSuccess(prev => ({ ...prev, [crewId]: 'Crew member updated successfully!' }))
         setTimeout(() => {
@@ -850,8 +1090,8 @@ export default function AdminPage() {
         }, 3000)
       }
     } catch (error) {
-      console.error('Error in crew update:', error)
-      alert('An error occurred')
+      console.error('[Admin] Exception in crew update:', error)
+      alert('An error occurred while updating crew member')
     } finally {
       setSavingCrew(prev => ({ ...prev, [crewId]: false }))
     }
@@ -922,16 +1162,50 @@ export default function AdminPage() {
   const handleStatUpdate = async (statId: string, updates: Partial<Stat>) => {
     setSavingStats(prev => ({ ...prev, [statId]: true }))
     try {
-      const { error } = await supabase
+      // Clean updates - remove undefined values and validate
+      const cleanedUpdates: Record<string, any> = {
+        updated_at: new Date().toISOString(),
+      }
+      
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          cleanedUpdates[key] = value
+        }
+      })
+
+      // Validate UUID format
+      if (!statId || typeof statId !== 'string' || statId.length !== 36) {
+        console.error('[Admin] Invalid stat ID format:', statId)
+        alert('Invalid stat ID. Please refresh the page.')
+        return
+      }
+
+      const { data, error } = await supabase
         .from('stats')
-        .update({ ...updates, updated_at: new Date().toISOString() })
+        .update(cleanedUpdates)
         .eq('id', statId)
+        .select()
+        .single()
 
       if (error) {
-        console.error('Error updating stat:', error)
-        alert('Failed to update stat')
+        console.error('[Admin] Error updating stat:', {
+          statId,
+          error: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+        })
+        
+        let errorMessage = 'Failed to update stat'
+        if (error.code === 'PGRST204') {
+          errorMessage = 'Stat not found. Please refresh the page.'
+        } else if (error.message) {
+          errorMessage = `Failed to update stat: ${error.message}`
+        }
+        
+        alert(errorMessage)
       } else {
-        setStats(prev => prev.map(stat => stat.id === statId ? { ...stat, ...updates } : stat))
+        setStats(prev => prev.map(stat => stat.id === statId ? { ...stat, ...updates, ...data } : stat))
         setStatsSuccess(prev => ({ ...prev, [statId]: 'Stat updated successfully!' }))
         setTimeout(() => {
           setStatsSuccess(prev => {
@@ -942,8 +1216,8 @@ export default function AdminPage() {
         }, 3000)
       }
     } catch (error) {
-      console.error('Error in stat update:', error)
-      alert('An error occurred')
+      console.error('[Admin] Exception in stat update:', error)
+      alert('An unexpected error occurred while updating the stat')
     } finally {
       setSavingStats(prev => ({ ...prev, [statId]: false }))
     }
@@ -1074,7 +1348,7 @@ export default function AdminPage() {
     setSavingSettings(true)
     setSettingsSuccess('') // Clear previous success message
     
-    console.log('[Admin] Updating site_settings in database:', updates)
+    // Updating site_settings in database
     
     try {
       // Update or insert each setting
@@ -1083,7 +1357,7 @@ export default function AdminPage() {
         try {
           const settingValue = value || '' // Ensure value is never null
           
-          console.log(`[Admin] Processing setting ${key} with value:`, settingValue)
+          // Processing setting
           
           // Try upsert directly - this will insert if not exists, update if exists
           const result = await supabase
@@ -1121,11 +1395,11 @@ export default function AdminPage() {
               return { key, success: false, error: insertResult.error }
             }
             
-            console.log(`[Admin] Successfully inserted setting ${key}:`, insertResult.data)
+            // Successfully inserted setting
             return { key, success: true, data: insertResult.data }
           }
           
-          console.log(`[Admin] Successfully upserted setting ${key}:`, result.data)
+          // Successfully upserted setting
           return { key, success: true, data: result.data }
         } catch (error: any) {
           console.error(`[Admin] Exception handling setting ${key}:`, error)
@@ -1148,7 +1422,7 @@ export default function AdminPage() {
         setSettingsSuccess(`⚠️ ${failed.length} setting(s) failed to update. ${succeeded.length} setting(s) saved successfully. Check console for details.`)
         setTimeout(() => setSettingsSuccess(''), 5000)
       } else {
-        console.log('[Admin] All site settings updated successfully:', results)
+        // All site settings updated successfully
         // Update local state
         setSiteSettings(prev => ({ ...prev, ...updates }))
         setSettingsSuccess('✅ Settings saved successfully!')
@@ -1317,6 +1591,9 @@ export default function AdminPage() {
                       key={yacht.id}
                       yacht={yacht}
                       onImageUpload={handleImageUpload}
+                      onMultipleImageUpload={handleMultipleImageUpload}
+                      onRemoveImage={handleRemoveFleetImage}
+                      onReorderImages={handleReorderFleetImages}
                       onUpdate={handleFleetUpdate}
                       uploadingImage={uploadingImages[yacht.id] || false}
                       saving={savingFleet[yacht.id] || false}
@@ -1509,6 +1786,12 @@ export default function AdminPage() {
                 </button>
               </div>
               
+              {/* Bulk Translation Section */}
+              <div className="mb-12 border-t border-gray-200 pt-8">
+                <h3 className="text-xl font-bold text-luxury-blue mb-4">Bulk Translation (AI-Powered)</h3>
+                <BulkTranslationPanel />
+              </div>
+
               {/* Logistics Services Section */}
               <div className="mb-12 border-t border-gray-200 pt-8">
                 <h3 className="text-xl font-bold text-luxury-blue mb-4">Logistics & Ship Delivery Services</h3>
@@ -1866,6 +2149,9 @@ function DescriptionPreviewModal({
 function FleetEditForm({
   yacht,
   onImageUpload,
+  onMultipleImageUpload,
+  onRemoveImage,
+  onReorderImages,
   onUpdate,
   uploadingImage,
   saving,
@@ -1873,6 +2159,9 @@ function FleetEditForm({
 }: {
   yacht: Fleet
   onImageUpload: (yachtId: string, file: File) => void
+  onMultipleImageUpload: (yachtId: string, files: File[]) => void
+  onRemoveImage: (yachtId: string, imageUrl: string) => void
+  onReorderImages?: (yachtId: string, newOrder: string[]) => void
   onUpdate: (yachtId: string, updates: Partial<Fleet>) => void
   uploadingImage: boolean
   saving: boolean
@@ -1911,9 +2200,22 @@ function FleetEditForm({
     water_entertainment: yacht.amenities?.water_entertainment || false,
   })
   
-  // Description
-  const [description, setDescription] = useState(yacht.description || '')
-  const [shortDescription, setShortDescription] = useState(yacht.short_description || '')
+  // Description - Load from i18n based on current locale
+  const currentLocale = useLocale() as Locale
+  const [description, setDescription] = useState(() => 
+    getDescriptionForLocale(yacht, currentLocale)
+  )
+  const [shortDescription, setShortDescription] = useState(() => 
+    getShortDescriptionForLocale(yacht, currentLocale)
+  )
+  
+  // Update form when yacht data or locale changes
+  useEffect(() => {
+    const newDescription = getDescriptionForLocale(yacht, currentLocale)
+    const newShortDescription = getShortDescriptionForLocale(yacht, currentLocale)
+    setDescription(newDescription)
+    setShortDescription(newShortDescription)
+  }, [yacht.id, currentLocale, yacht.description_i18n, yacht.short_description_i18n, yacht.description, yacht.short_description])
   
   // Combine main_image_url and gallery_images into a single images array
   const getCombinedImages = () => {
@@ -1978,11 +2280,12 @@ function FleetEditForm({
       ...(engines ? { engines } : {}),
     }
     
-    // Prepare update object
+    // Prepare update object with locale-aware i18n updates
     const updates: Partial<Fleet> = {
       name,
-      description: description || null,
-      short_description: shortDescription || null,
+      // Use JSONB i18n columns with smart patch (preserves other locales)
+      ...buildI18nUpdate('description_i18n', yacht.description_i18n, currentLocale, description || null),
+      ...buildI18nUpdate('short_description_i18n', yacht.short_description_i18n, currentLocale, shortDescription || null),
       low_season_price: lowSeasonPrice ? parseFloat(lowSeasonPrice) : null,
       medium_season_price: mediumSeasonPrice ? parseFloat(mediumSeasonPrice) : null,
       high_season_price: highSeasonPrice ? parseFloat(highSeasonPrice) : null,
@@ -2018,7 +2321,7 @@ function FleetEditForm({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          locale: locale, // Pass current locale for multi-language generation
+          locale: currentLocale, // Pass current locale for multi-language generation
           yachtName: name || yacht.name,
           length: length ? parseFloat(length) : yacht.length,
           capacity: capacity ? parseInt(capacity) : yacht.capacity,
@@ -2035,31 +2338,39 @@ function FleetEditForm({
       
       const data = await response.json()
       
+      // API response received
+      
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate description')
+        const errorMessage = data.details || data.error || 'Failed to generate description'
+        console.error('[Admin] API error response:', { status: response.status, error: errorMessage, fullData: data })
+        throw new Error(errorMessage)
       }
       
       if (data.success && data.description) {
+        // Successfully received description
         setGeneratedDescription(data.description)
         setShowPreview(true)
       } else {
+        console.error('[Admin] Invalid response structure:', data)
         throw new Error('Invalid response from server')
       }
     } catch (error) {
       console.error('[Admin] Error generating description:', error)
-      alert(error instanceof Error ? error.message : 'Failed to generate description. Please check your Gemini API key configuration.')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate description. Please check your Gemini API key configuration.'
+      alert(`Error: ${errorMessage}\n\nPlease check:\n1. GEMINI_API_KEY is set in .env.local\n2. Your API key is valid\n3. You have available quota\n4. Check the server console for detailed error logs`)
     } finally {
       setIsGenerating(false)
     }
   }
   
-  // Apply generated description
+  // Apply generated description - sets the current locale's text
   const handleApplyDescription = () => {
     if (!generatedDescription) return
     
     // Build the full description text
     const fullDescription = `${generatedDescription.headline}\n\n${generatedDescription.description}\n\nKey Highlights:\n${generatedDescription.highlights.map(h => `• ${h}`).join('\n')}\n\n${generatedDescription.tagline}`
     
+    // Set description for current locale (will be saved to description_i18n[currentLocale] on submit)
     setDescription(fullDescription)
     setShortDescription(generatedDescription.description.split('\n')[0] || generatedDescription.description.substring(0, 150) + '...')
     
@@ -2103,11 +2414,16 @@ function FleetEditForm({
         <div>
           <h3 className="text-lg font-semibold text-gray-800">{yacht.name}</h3>
           {images.length > 0 && (
-            <img
-              src={images[0]}
-              alt={yacht.name}
-              className="mt-2 w-32 h-24 object-cover rounded border border-gray-200"
-            />
+            <div className="mt-2 w-32 h-24 relative rounded border border-gray-200 overflow-hidden">
+              <Image
+                src={images[0]}
+                alt={yacht.name}
+                fill
+                sizes="128px"
+                className="object-cover"
+                loading="lazy"
+              />
+            </div>
           )}
         </div>
       </div>
@@ -2139,14 +2455,19 @@ function FleetEditForm({
           
           {/* Drag & Drop Upload Component */}
           <DragDropImageUpload
-            onUpload={async (files) => {
-              await handleMultipleImageUpload(yacht.id, files)
+            onUpload={async (files, onProgress) => {
+              await onMultipleImageUpload(yacht.id, files, onProgress)
             }}
-            maxFiles={20}
             maxSize={10}
             isThumbnail={false}
             existingImages={images}
-            onRemoveExisting={(imageUrl) => handleRemoveFleetImage(yacht.id, imageUrl)}
+            onRemoveExisting={(imageUrl) => onRemoveImage(yacht.id, imageUrl)}
+            onReorder={onReorderImages ? (newOrder) => {
+              // Update local state immediately for better UX
+              setImages(newOrder)
+              // Call parent handler to save to database
+              onReorderImages(yacht.id, newOrder)
+            } : undefined}
             className="mb-6"
           />
 
@@ -2506,8 +2827,18 @@ function DestinationEditForm({
   uploadingImage?: boolean
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const currentLocale = useLocale() as Locale
   const [title, setTitle] = useState(destination?.title || '')
-  const [description, setDescription] = useState(destination?.description || '')
+  // Load description from i18n based on current locale
+  const [description, setDescription] = useState(() => {
+    if (!destination) return ''
+    // Try i18n first, then fallback to legacy columns, then legacy description
+    return getLocalizedText(destination.description_i18n, currentLocale) ||
+           (currentLocale === 'en' ? destination.description_en :
+            currentLocale === 'es' ? destination.description_es :
+            currentLocale === 'de' ? destination.description_de : null) ||
+           destination.description || ''
+  })
   const [orderIndex, setOrderIndex] = useState(destination?.order_index?.toString() || '0')
   const [isActive, setIsActive] = useState(destination?.is_active ?? true)
   const [imageUrls, setImageUrls] = useState<string[]>(destination?.image_urls || [])
@@ -2515,22 +2846,36 @@ function DestinationEditForm({
   useEffect(() => {
     if (destination) {
       setTitle(destination.title || '')
-      setDescription(destination.description || '')
+      // Update description when destination or locale changes
+      const newDescription = getLocalizedText(destination.description_i18n, currentLocale) ||
+                            (currentLocale === 'en' ? destination.description_en :
+                             currentLocale === 'es' ? destination.description_es :
+                             currentLocale === 'de' ? destination.description_de : null) ||
+                            destination.description || ''
+      setDescription(newDescription)
       setOrderIndex(destination.order_index?.toString() || '0')
       setIsActive(destination.is_active ?? true)
       setImageUrls(destination.image_urls || [])
     }
-  }, [destination])
+  }, [destination, currentLocale])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSave({
+    const updates: Omit<Destination, 'id' | 'created_at' | 'updated_at'> = {
+      name: title, // destinations uses 'name' but form uses 'title'
       title,
-      description: description || null,
+      // Use JSONB i18n column with smart patch
+      description_i18n: createI18nPatch(destination?.description_i18n, currentLocale, description || null),
       image_urls: imageUrls,
       order_index: parseInt(orderIndex) || 0,
       is_active: isActive,
-    })
+      // Keep legacy fields for backward compatibility
+      region: destination?.region || null,
+      slug: destination?.slug || '',
+      image_url: destination?.image_url || null,
+      youtube_video_url: destination?.youtube_video_url || null,
+    }
+    onSave(updates)
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -3093,7 +3438,7 @@ function CrewEditForm({
       name,
       role,
       bio: member?.bio || null,
-      role_description: roleDescription || null,
+      // role_description column doesn't exist in database, so we don't send it
       image_url: member?.image_url || null,
       order_index: parseInt(orderIndex) || 0,
       is_active: isActive,
@@ -3269,14 +3614,21 @@ function CrewEditForm({
           </div>
 
           <div className="flex items-center gap-4 pt-6">
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex items-center gap-3 cursor-pointer group">
               <input
                 type="checkbox"
                 checked={isActive}
                 onChange={(e) => setIsActive(e.target.checked)}
-                className="w-5 h-5 text-luxury-blue border-gray-300 rounded focus:ring-luxury-blue"
+                className="w-6 h-6 text-luxury-blue border-gray-300 rounded focus:ring-2 focus:ring-luxury-blue focus:ring-offset-2 cursor-pointer"
               />
-              <span className="text-sm font-medium text-gray-700">Active</span>
+              <div className="flex flex-col">
+                <span className={`text-sm font-semibold ${isActive ? 'text-green-600' : 'text-gray-600'}`}>
+                  {isActive ? '✓ Published (Visible on Frontend)' : '✗ Hidden (Not Visible on Frontend)'}
+                </span>
+                <span className="text-xs text-gray-500 mt-0.5">
+                  Toggle to show/hide this crew member on the public website
+                </span>
+              </div>
             </label>
           </div>
         </div>
@@ -3314,9 +3666,137 @@ function CrewEditForm({
   )
 }
 
+// Bulk Translation Panel Component
+function BulkTranslationPanel() {
+  const [entityType, setEntityType] = useState<'destinations' | 'crew' | 'culinary' | 'fleet'>('fleet')
+  const [targetLocale, setTargetLocale] = useState<'es' | 'de'>('de')
+  const [isTranslating, setIsTranslating] = useState(false)
+  const [translationResult, setTranslationResult] = useState<{ success: boolean; message?: string; stats?: any } | null>(null)
+
+  const handleBulkTranslate = async () => {
+    if (!confirm(`This will translate all ${entityType} content from English to ${targetLocale === 'es' ? 'Spanish' : 'German'}. Continue?`)) {
+      return
+    }
+
+    setIsTranslating(true)
+    setTranslationResult(null)
+
+    try {
+      const response = await fetch('/api/bulk-translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          entityType,
+          targetLocale,
+          sourceLocale: 'en',
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to translate')
+      }
+
+      setTranslationResult(data)
+      alert(`Translation completed! ${data.stats?.successful || 0} items translated successfully.`)
+    } catch (error) {
+      console.error('[BulkTranslate] Error:', error)
+      setTranslationResult({
+        success: false,
+        message: error instanceof Error ? error.message : 'Failed to translate'
+      })
+      alert(`Translation failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setIsTranslating(false)
+    }
+  }
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Content Type
+          </label>
+          <select
+            value={entityType}
+            onChange={(e) => setEntityType(e.target.value as any)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+          >
+            <option value="fleet">Fleet (Yachts)</option>
+            <option value="destinations">Destinations</option>
+            <option value="crew">Crew Members</option>
+            <option value="culinary">Culinary Experiences</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Target Language
+          </label>
+          <select
+            value={targetLocale}
+            onChange={(e) => setTargetLocale(e.target.value as any)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+          >
+            <option value="de">German (Deutsch)</option>
+            <option value="es">Spanish (Español)</option>
+          </select>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm text-blue-800">
+            <strong>Note:</strong> This will translate all active {entityType} content from English to {targetLocale === 'es' ? 'Spanish' : 'German'} using AI and save it to the JSONB columns (description_i18n). Existing translations in other languages will be preserved.
+          </p>
+        </div>
+
+        <button
+          onClick={handleBulkTranslate}
+          disabled={isTranslating}
+          className="w-full px-6 py-3 bg-luxury-blue text-white font-semibold rounded-lg hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {isTranslating ? (
+            <>
+              <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Translating...
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+              </svg>
+              Start Bulk Translation
+            </>
+          )}
+        </button>
+
+        {translationResult && (
+          <div className={`p-4 rounded-lg ${translationResult.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+            <p className={`text-sm font-medium ${translationResult.success ? 'text-green-800' : 'text-red-800'}`}>
+              {translationResult.message || (translationResult.success ? 'Translation completed successfully!' : 'Translation failed')}
+            </p>
+            {translationResult.stats && (
+              <div className="mt-2 text-xs text-gray-600">
+                Total: {translationResult.stats.total} | Successful: {translationResult.stats.successful} | Failed: {translationResult.stats.failed}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // Logistics Service Form Component
 function LogisticsServiceForm() {
-  // This function has access to parent scope's 'locale' variable
+  // Get locale from parent scope (AdminPage component)
+  const formLocale = useLocale() as Locale
   const [serviceName, setServiceName] = useState('')
   const [serviceType, setServiceType] = useState('Delivery')
   const [coverageArea, setCoverageArea] = useState('Mediterranean')
@@ -3365,7 +3845,7 @@ function LogisticsServiceForm() {
         },
         body: JSON.stringify({
           category: 'logistics',
-          locale: locale, // Pass current locale for multi-language generation (from parent scope)
+          locale: formLocale, // Pass current locale for multi-language generation
           serviceName: serviceName,
           serviceType: serviceType,
           coverageArea: coverageArea,

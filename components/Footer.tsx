@@ -2,20 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { getSiteContent } from '@/lib/data'
-import type { SiteContent } from '@/types/database'
+import { getSiteSettingsClient } from '@/lib/data'
 
 export default function Footer() {
   const t = useTranslations('footer')
-  const [content, setContent] = useState<SiteContent | null>(null)
+  const [settings, setSettings] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    getSiteContent().then(setContent)
+    getSiteSettingsClient().then(setSettings)
   }, [])
-
-  if (!content) return null
-
-  const settings = content.settings
 
   return (
     <footer className="bg-luxury-blue text-white">

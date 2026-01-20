@@ -2,8 +2,10 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import OptimizedImage from './OptimizedImage'
 import { useEffect, useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { getLocalizedText } from '@/lib/i18nUtils'
 import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
@@ -14,17 +16,8 @@ interface FleetSectionProps {
 
 export default function FleetSection({ fleet }: FleetSectionProps) {
   const t = useTranslations('fleet')
+  const locale = useLocale() as 'en' | 'es' | 'de'
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
-  useEffect(() => {
-    console.log('[FleetSection] Component loaded with fleet:', fleet.length, 'yachts')
-    fleet.forEach((yacht, index) => {
-      console.log(`[FleetSection] Yacht ${index + 1}:`, {
-        id: yacht.id,
-        name: yacht.name,
-        main_image_url: yacht.main_image_url,
-      })
-    })
-  }, [fleet])
 
   if (fleet.length === 0) {
     return null
@@ -42,7 +35,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
           {fleet.map((yacht) => {
             const imageUrl = getOptimizedImageUrl(yacht.main_image_url, {
               width: 1200,
@@ -59,31 +52,32 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
               >
                 {showImage ? (
                   <div className="aspect-[4/3] overflow-hidden relative">
-                    <Image
+                    <OptimizedImage
                       src={imageUrl}
                       alt={yacht.name}
                       fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover transition-transform group-hover:scale-110"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                      objectFit="cover"
+                      aspectRatio="4/3"
                       loading="lazy"
+                      quality={80}
                       onError={() => {
-                        console.error('[FleetSection] Image failed to load:', {
-                          yachtId: yacht.id,
-                          yachtName: yacht.name,
-                          originalUrl: yacht.main_image_url,
-                          resolvedUrl: imageUrl,
-                        })
                         setImageErrors(prev => ({ ...prev, [yacht.id]: true }))
                       }}
                     />
+                    {/* Refit Badge */}
+                    {yacht.recently_refitted && (
+                      <div className="absolute top-4 right-4 bg-gradient-to-r from-luxury-gold to-yellow-400 text-white px-4 py-2 rounded-full shadow-lg font-bold text-sm flex items-center gap-2 z-10">
+                        <Sparkles className="w-4 h-4" />
+                        Refit 2024
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="aspect-[4/3] bg-gradient-to-br from-luxury-blue to-luxury-gold flex items-center justify-center">
-                    <div className="text-center">
-                      <svg className="w-16 h-16 mx-auto mb-2 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span className="text-white text-2xl md:text-3xl font-serif">{yacht.name}</span>
+                    <div className="text-center text-white">
+                      <Ship className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                      <p className="text-sm font-medium">{yacht.name}</p>
                     </div>
                   </div>
                 )}
@@ -96,9 +90,13 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                     )}
                   </div>
 
-                  {yacht.short_description && (
-                    <p className="text-gray-600 mb-4 line-clamp-2">{yacht.short_description}</p>
-                  )}
+                  {(() => {
+                    // Use JSONB i18n with fallback to legacy field
+                    const shortDesc = getLocalizedText(yacht.short_description_i18n, locale) || yacht.short_description || ''
+                    return shortDesc ? (
+                      <p className="text-gray-600 mb-4 line-clamp-2">{shortDesc}</p>
+                    ) : null
+                  })()}
 
                   {/* Quick Info Bar */}
                   <div className="flex flex-wrap gap-4 mb-4 text-sm">
@@ -135,7 +133,22 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                     </div>
                   )}
 
-                  {yacht.high_season_price && (
+                  {/* Price */}
+                  {yacht.low_season_price && (
+                    <div className="mb-4">
+                      <span className="text-gray-600">{t('from')} </span>
+                      <span className="text-2xl font-bold text-luxury-blue">
+                        {new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: yacht.currency || 'EUR',
+                          minimumFractionDigits: 0,
+                        }).format(yacht.low_season_price)}
+                      </span>
+                      <span className="text-gray-600"> {t('perDay')}</span>
+                    </div>
+                  )}
+
+                  {yacht.high_season_price && !yacht.low_season_price && (
                     <div className="mb-4">
                       <span className="text-gray-600">{t('from')} </span>
                       <span className="text-2xl font-bold text-luxury-blue">
@@ -150,7 +163,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                   )}
 
                   <Link
-                    href={`/fleet/${yacht.slug}`}
+                    href={`/${locale}/fleet/${yacht.slug}`}
                     className="inline-block w-full text-center rounded-lg bg-luxury-blue px-6 py-3 text-white font-semibold transition-colors hover:bg-luxury-gold hover:text-luxury-blue"
                   >
                     {t('viewDetails')}

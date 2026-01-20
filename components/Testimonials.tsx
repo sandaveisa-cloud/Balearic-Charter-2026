@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import OptimizedImage from './OptimizedImage'
 import { Quote, Star, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Review } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
@@ -180,13 +180,15 @@ export default function Testimonials({ reviews }: TestimonialsProps) {
                     <div className="flex items-center gap-4 pt-6 border-t border-white/10">
                       {profileImageUrl ? (
                         <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-luxury-gold/50 flex-shrink-0">
-                          <Image
+                          <OptimizedImage
                             src={profileImageUrl}
                             alt={review.guest_name}
                             fill
                             sizes="64px"
-                            className="object-cover"
+                            objectFit="cover"
+                            aspectRatio="1/1"
                             loading="lazy"
+                            quality={80}
                           />
                         </div>
                       ) : (

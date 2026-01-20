@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import OptimizedImage from './OptimizedImage'
 import Link from 'next/link'
 import { useLocale } from 'next-intl'
 import { useTranslations } from 'next-intl'
+import { getLocalizedText } from '@/lib/i18nUtils'
 import { ArrowRight, Play } from 'lucide-react'
 import { getImageUrl } from '@/lib/imageUtils'
 import { extractYouTubeId, buildYouTubeEmbedUrl } from '@/lib/youtubeUtils'
@@ -101,13 +103,15 @@ function DestinationCard({
               isHovered && youtubeVideoId ? 'opacity-0' : 'opacity-100'
             }`}
           >
-            <Image
+            <OptimizedImage
               src={imageUrl}
               alt={destinationName}
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              objectFit="cover"
+              aspectRatio="4/3"
               loading="lazy"
+              quality={80}
             />
           </div>
         )}
@@ -246,8 +250,13 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
     return null
   }
 
-  // Get localized description
+  // Get localized description with JSONB fallback
   const getLocalizedDescription = (destination: Destination): string => {
+    // Try JSONB i18n first
+    const i18nDesc = getLocalizedText((destination as any).description_i18n, locale as 'en' | 'es' | 'de')
+    if (i18nDesc) return i18nDesc
+    
+    // Fallback to legacy columns
     switch (locale) {
       case 'es':
         return destination.description_es || destination.description || ''

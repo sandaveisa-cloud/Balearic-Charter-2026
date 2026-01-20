@@ -22,8 +22,10 @@ export interface Fleet {
     draft?: number | string // in meters/feet
     [key: string]: any
   }
-  description: string | null
-  short_description: string | null
+  description: string | null // Legacy field, kept for backward compatibility
+  short_description: string | null // Legacy field, kept for backward compatibility
+  description_i18n?: Record<string, string> | null // Multi-language descriptions: { "en": "...", "es": "...", "de": "..." }
+  short_description_i18n?: Record<string, string> | null // Multi-language short descriptions: { "en": "...", "es": "...", "de": "..." }
   main_image_url: string | null
   gallery_images: string[]
   low_season_price: number | null
@@ -54,6 +56,8 @@ export interface Fleet {
   tax_percentage: number | null
   is_featured: boolean
   is_active: boolean
+  recently_refitted?: boolean | null
+  refit_details?: string | null
   created_at: string
   updated_at: string
 }
@@ -62,10 +66,11 @@ export interface Destination {
   id: string
   name: string
   region: string | null
-  description: string | null
-  description_en: string | null
-  description_es: string | null
-  description_de: string | null
+  description: string | null // Legacy field, kept for backward compatibility
+  description_en: string | null // Legacy field, kept for backward compatibility
+  description_es: string | null // Legacy field, kept for backward compatibility
+  description_de: string | null // Legacy field, kept for backward compatibility
+  description_i18n?: Record<string, string> | null // Multi-language descriptions: { "en": "...", "es": "...", "de": "..." }
   image_url: string | null
   youtube_video_url: string | null
   slug: string

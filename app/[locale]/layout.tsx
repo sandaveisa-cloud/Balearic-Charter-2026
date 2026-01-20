@@ -80,7 +80,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     const messages = await getMessages({ locale })
 
     return (
-      <>
+      <NextIntlClientProvider messages={messages}>
         {/* Language Switcher in Header */}
         <header className="fixed top-0 left-0 right-0 z-50 bg-luxury-blue/95 backdrop-blur-sm shadow-md">
           <div className="container mx-auto px-4 py-4 flex justify-end">
@@ -88,14 +88,11 @@ export default async function LocaleLayout({ children, params }: Props) {
           </div>
         </header>
         
-        <NextIntlClientProvider messages={messages}>
-          <div className="pt-16">
-            {children}
-          </div>
-        </NextIntlClientProvider>
-        
+        <div className="pt-16">
+          {children}
+        </div>
         <Footer />
-      </>
+      </NextIntlClientProvider>
     )
   } catch (error) {
     console.error('[LocaleLayout] Error:', error)
