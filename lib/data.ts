@@ -82,11 +82,19 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
   }
 
   // Transform settings into a key-value object
+  // Add error handling to prevent crashes if settings data is malformed
   const settings: Record<string, string> = {}
-  if (settingsResult.data) {
-    settingsResult.data.forEach((setting) => {
-      settings[setting.key] = setting.value || ''
-    })
+  if (settingsResult.data && Array.isArray(settingsResult.data)) {
+    try {
+      settingsResult.data.forEach((setting) => {
+        if (setting && typeof setting === 'object' && 'key' in setting) {
+          settings[setting.key] = setting.value || ''
+        }
+      })
+    } catch (error) {
+      console.error('[Data] Error transforming settings:', error)
+      // Continue with empty settings object if transformation fails
+    }
   }
 
   // Default section visibility to true if not set

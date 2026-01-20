@@ -14,7 +14,7 @@ export default function StatsSection({ stats }: StatsSectionProps) {
   const displayStats: Stat[] = [
     { id: '1', value: '3', label: 'Successful Seasons', order_index: 1, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
     { id: '2', value: 'Hundreds', label: 'of Happy Guests', order_index: 2, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
-    { id: '3', value: '24/7', label: 'Logistics & Support', order_index: 3, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
+    { id: '3', value: '24/7', label: 'Charter Support', order_index: 3, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
     { id: '4', value: '99%', label: 'Client Satisfaction', order_index: 4, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
   ]
 

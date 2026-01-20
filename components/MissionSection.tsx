@@ -8,8 +8,8 @@ export default function MissionSection() {
 
   const missionCards = [
     {
-      title: 'Precise Logistics',
-      description: 'Seamless coordination and safe routes for every journey.',
+      title: 'Seamless Coordination',
+      description: 'Expert planning and safe routes for every charter journey.',
       icon: Ship,
     },
     {

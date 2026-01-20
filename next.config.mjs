@@ -1,5 +1,7 @@
 ﻿import createNextIntlPlugin from 'next-intl/plugin';
 
+// Use relative path - ensure i18n.ts is in the root directory
+// Vercel should resolve this correctly during build
 const withNextIntl = createNextIntlPlugin('./i18n.ts');
 
 /** @type {import('next').NextConfig} */

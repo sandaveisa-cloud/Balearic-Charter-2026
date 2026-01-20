@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 export const runtime = 'nodejs'
 
 interface GenerateDescriptionRequest {
-  category?: 'yacht' | 'logistics' // Category for different description types
+  category?: 'yacht' // Only yacht descriptions supported
   locale?: string // Language code: 'en', 'es', or 'de'
   yachtName?: string
   model?: string
@@ -18,11 +18,6 @@ interface GenerateDescriptionRequest {
     draft?: string
     engines?: string
   }
-  // Logistics-specific fields
-  serviceName?: string
-  serviceType?: string // e.g., "Delivery", "Transport"
-  coverageArea?: string // e.g., "Mediterranean", "Global"
-  features?: Record<string, boolean> // e.g., Insurance, Tracking
 }
 
 interface GeneratedDescription {
@@ -44,17 +39,10 @@ export async function POST(request: NextRequest) {
     }
     const targetLanguage = languageNames[locale] || 'English'
     
-    // Validate required fields based on category
-    if (category === 'yacht' && !body.yachtName) {
+    // Validate required fields
+    if (!body.yachtName) {
       return NextResponse.json(
         { error: 'Yacht name is required' },
-        { status: 400 }
-      )
-    }
-    
-    if (category === 'logistics' && !body.serviceName) {
-      return NextResponse.json(
-        { error: 'Service name is required' },
         { status: 400 }
       )
     }
@@ -108,59 +96,7 @@ export async function POST(request: NextRequest) {
     let prompt: string
     let systemInstruction: string
 
-    if (category === 'logistics') {
-      // Logistics-specific prompt
-      const enabledFeatures = Object.entries(body.features || {})
-        .filter(([_, enabled]) => enabled)
-        .map(([key, _]) => {
-          const featureNames: Record<string, string> = {
-            insurance: 'Full Insurance Coverage',
-            tracking: 'Real-time Vessel Tracking',
-            customs: 'Customs Clearance Service',
-            port_handling: 'Port Handling',
-            experienced_crew: 'Experienced Delivery Crew',
-            documentation: 'Complete Documentation Support',
-          }
-          return featureNames[key] || key
-        })
-
-      const logisticsInfo: string[] = []
-      if (body.serviceName) logisticsInfo.push(`Service Name: ${body.serviceName}`)
-      if (body.serviceType) logisticsInfo.push(`Service Type: ${body.serviceType}`)
-      if (body.coverageArea) logisticsInfo.push(`Coverage Area: ${body.coverageArea}`)
-      if (enabledFeatures.length > 0) logisticsInfo.push(`Features: ${enabledFeatures.join(', ')}`)
-
-      systemInstruction = `You are a professional maritime logistics copywriter. You must ALWAYS respond with valid JSON only, no markdown formatting, no code blocks, no explanations. Your response must be a strictly formatted JSON object. IMPORTANT: Generate all content in ${targetLanguage} language.`
-
-      prompt = `Generate a professional, trustworthy description for a yacht delivery and logistics service website. Write everything in ${targetLanguage} language.
-
-${logisticsInfo.join('\n')}
-
-You must return a JSON object with the following exact structure:
-{
-  "headline": "A professional, confidence-inspiring headline (one sentence, max 15 words)",
-  "description": "2-3 engaging paragraphs describing the logistics service, focusing on safety, reliability, efficiency, and professionalism. Use industry terms like 'Port handling', 'Customs clearance', 'Vessel relocation', and emphasize experienced crews, insurance coverage, and timely delivery.",
-  "highlights": [
-    "First key selling point focusing on safety and reliability (one sentence)",
-    "Second key selling point focusing on efficiency and timely delivery (one sentence)",
-    "Third key selling point focusing on professionalism and expertise (one sentence)",
-    "Fourth key selling point focusing on comprehensive service coverage (one sentence)"
-  ],
-  "tagline": "A professional closing sentence that emphasizes trust, reliability, and peace of mind (one sentence, confident)"
-}
-
-Requirements:
-- Use a "Professional Maritime Logistics" tone: trustworthy, professional, focused on safety and reliability
-- Emphasize: Safety and Reliability (insurance, experienced crews), Efficiency (timely delivery, optimized routes), Professionalism (industry terms, expertise)
-- Use industry terminology: Port handling, Customs clearance, Vessel relocation, Delivery service
-- Mention specific features naturally within the description
-- Make it compelling for yacht owners and charter companies
-- Keep it professional and confidence-inspiring
-- Focus on the peace of mind and reliability aspects
-
-Return ONLY the JSON object, nothing else.`
-    } else {
-      // Yacht description prompt
+    // Yacht description prompt (only category supported)
       const enabledAmenities = Object.entries(body.amenities || {})
         .filter(([_, enabled]) => enabled)
         .map(([key, _]) => {
@@ -221,7 +157,7 @@ Requirements:
 Return ONLY the JSON object, nothing else.`
     }
 
-    const entityName = category === 'logistics' ? body.serviceName : body.yachtName
+    const entityName = body.yachtName
     console.log(`[API] Calling Gemini (${geminiModel}) to generate description for:`, entityName)
     console.log('[API] Request body:', JSON.stringify(body, null, 2))
 
