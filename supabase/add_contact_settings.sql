@@ -23,6 +23,12 @@ VALUES ('contact_locations', 'Ibiza, Palma & Torrevieja, Spain', NOW())
 ON CONFLICT (key) DO UPDATE
 SET value = EXCLUDED.value, updated_at = NOW();
 
+-- Update WhatsApp link to match the correct phone number
+INSERT INTO site_settings (key, value, updated_at)
+VALUES ('whatsapp_link', 'https://wa.me/34680957096', NOW())
+ON CONFLICT (key) DO UPDATE
+SET value = EXCLUDED.value, updated_at = NOW();
+
 -- Verify the settings were added
 SELECT key, value FROM site_settings 
 WHERE key IN ('contact_phone', 'contact_email', 'contact_locations')
