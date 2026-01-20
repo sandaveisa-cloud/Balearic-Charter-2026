@@ -25,6 +25,8 @@ interface FleetDetailProps {
 
 export default function FleetDetail({ yacht }: FleetDetailProps) {
   const t = useTranslations('fleet')
+  const tBreadcrumb = useTranslations('breadcrumb')
+  const locale = useLocale()
   
   useEffect(() => {
     console.log('[FleetDetail] Component loaded with yacht:', {
