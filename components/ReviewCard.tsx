@@ -3,6 +3,7 @@
 import OptimizedImage from './OptimizedImage'
 import type { Review } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
+import { Star, CheckCircle2 } from 'lucide-react'
 
 interface ReviewCardProps {
   review: Review
@@ -13,46 +14,68 @@ export default function ReviewCard({ review }: ReviewCardProps) {
     if (!dateString) return ''
     try {
       const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
     } catch {
       return dateString
     }
   }
 
-  const profileImageUrl = getOptimizedImageUrl(review.profile_image_url, {
-    width: 96,
-    quality: 80,
-    format: 'webp',
-  })
+  const profileImageUrl = review.profile_image_url
+    ? getOptimizedImageUrl(review.profile_image_url, {
+        width: 80,
+        height: 80,
+        quality: 80,
+        format: 'webp',
+      })
+    : null
 
   return (
-    <div className="bg-gray-50 rounded-lg p-8 shadow-md hover:shadow-lg transition-shadow h-full flex flex-col">
-      {/* Rating Stars */}
-      <div className="flex items-center mb-4">
+    <div className="bg-white rounded-xl p-6 md:p-8 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col border border-gray-100 hover:border-luxury-gold/30">
+      {/* Featured Badge */}
+      {review.is_featured && (
+        <div className="flex items-center gap-2 mb-4">
+          <CheckCircle2 className="w-4 h-4 text-luxury-gold" />
+          <span className="text-xs font-semibold text-luxury-gold uppercase tracking-wider">
+            Featured Review
+          </span>
+        </div>
+      )}
+
+      {/* Rating Stars - Prominent */}
+      <div className="flex items-center gap-1 mb-4">
         {[...Array(5)].map((_, i) => (
-          <svg
+          <Star
             key={i}
-            className={`w-5 h-5 ${i < review.rating ? 'text-luxury-gold' : 'text-gray-300'}`}
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </svg>
+            className={`w-5 h-5 md:w-6 md:h-6 ${
+              i < (review.rating || 0)
+                ? 'fill-luxury-gold text-luxury-gold'
+                : 'fill-gray-200 text-gray-200'
+            }`}
+          />
         ))}
+        {review.rating && (
+          <span className="ml-2 text-sm font-semibold text-gray-700">
+            {review.rating}/5
+          </span>
+        )}
       </div>
 
       {/* Review Text */}
-      <p className="text-gray-700 mb-6 italic flex-grow">"{review.review_text}"</p>
+      <div className="flex-grow mb-6">
+        <p className="text-gray-700 text-base md:text-lg leading-relaxed italic">
+          "{review.review_text}"
+        </p>
+      </div>
 
       {/* Customer Info */}
-      <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
+      <div className="flex items-center gap-4 pt-6 border-t border-gray-200">
         {profileImageUrl ? (
-          <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-luxury-blue flex-shrink-0">
+          <div className="relative w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden border-2 border-luxury-gold/50 flex-shrink-0">
             <OptimizedImage
               src={profileImageUrl}
               alt={review.guest_name}
               fill
-              sizes="48px"
+              sizes="(max-width: 768px) 56px, 64px"
               objectFit="cover"
               aspectRatio="1/1"
               loading="lazy"
@@ -60,16 +83,22 @@ export default function ReviewCard({ review }: ReviewCardProps) {
             />
           </div>
         ) : (
-          <div className="w-12 h-12 rounded-full bg-luxury-blue flex items-center justify-center border-2 border-luxury-blue flex-shrink-0">
-            <span className="text-white text-sm font-semibold">
-              {review.guest_name.split(' ').map(n => n[0]).join('')}
+          <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-luxury-blue to-luxury-gold flex items-center justify-center border-2 border-luxury-gold/50 flex-shrink-0">
+            <span className="text-white text-base md:text-lg font-bold">
+              {review.guest_name
+                .split(' ')
+                .map((n) => n[0])
+                .join('')
+                .toUpperCase()}
             </span>
           </div>
         )}
-        <div className="flex-grow">
-          <p className="font-semibold text-luxury-blue">{review.guest_name}</p>
+        <div className="flex-grow min-w-0">
+          <p className="font-semibold text-luxury-blue text-base md:text-lg truncate">
+            {review.guest_name}
+          </p>
           {review.guest_location && (
-            <p className="text-sm text-gray-500">{review.guest_location}</p>
+            <p className="text-sm text-gray-600 truncate">{review.guest_location}</p>
           )}
           {review.review_date && (
             <p className="text-xs text-gray-400 mt-1">{formatDate(review.review_date)}</p>

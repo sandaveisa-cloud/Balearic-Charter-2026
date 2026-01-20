@@ -6,7 +6,6 @@ import Hero from '@/components/Hero'
 import MissionSection from '@/components/MissionSection'
 import FleetSection from '@/components/FleetSection'
 import DestinationsSection from '@/components/DestinationsSection'
-import Testimonials from '@/components/Testimonials'
 import ReviewsSection from '@/components/ReviewsSection'
 import StatsSection from '@/components/StatsSection'
 import CulinarySection from '@/components/CulinarySection'
@@ -148,7 +147,6 @@ export default async function Home({ params }: Props) {
             
             {/* Supporting Content Sections */}
             <DestinationsSection destinations={safeContent.destinations || []} />
-            <Testimonials reviews={safeContent.reviews || []} />
             
             {/* Always render CulinarySection if visibility is enabled, even if experiences array is empty */}
             {visibility.culinary && (
@@ -160,6 +158,7 @@ export default async function Home({ params }: Props) {
               <CrewSection crew={safeContent.crew} />
             )}
             
+            {/* Consolidated Reviews Section - Single high-impact section */}
             <ReviewsSection reviews={safeContent.reviews || []} />
             
             {/* Final Trust Badge - Prominent at the end before footer */}
