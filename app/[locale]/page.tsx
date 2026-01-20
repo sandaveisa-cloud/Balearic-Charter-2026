@@ -145,10 +145,6 @@ export default async function Home({ params }: Props) {
             {/* Fleet Section - Immediately after Hero for conversion focus */}
             <FleetSection fleet={safeContent.fleet || []} />
             
-            {/* Stats & Mission Sections - After fleet to build trust */}
-            {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
-            {visibility.mission && <MissionSection />}
-            
             {/* Supporting Content Sections */}
             <DestinationsSection destinations={safeContent.destinations || []} />
             
@@ -156,6 +152,10 @@ export default async function Home({ params }: Props) {
             {visibility.culinary && (
               <CulinarySection experiences={safeContent.culinaryExperiences || []} />
             )}
+            
+            {/* Stats & Mission Sections - After Culinary to build trust */}
+            {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
+            {visibility.mission && <MissionSection />}
             
             {/* Only show CrewSection if visibility is enabled AND there are active crew members */}
             {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (
