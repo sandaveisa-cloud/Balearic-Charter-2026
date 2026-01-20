@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
-import { ArrowRight, Wind, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
+import { ArrowRight, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { compressImage, compressThumbnail } from '@/lib/imageCompression'
 import { extractYouTubeId, buildYouTubeEmbedUrl } from '@/lib/youtubeUtils'
@@ -2162,7 +2162,7 @@ function FleetEditForm({
           <h4 className="text-lg font-semibold text-gray-800 mb-4">Amenities</h4>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {[
-              { key: 'ac', label: 'AC', icon: Wind },
+              { key: 'ac', label: 'AC', icon: Snowflake },
               { key: 'watermaker', label: 'Watermaker', icon: Droplets },
               { key: 'generator', label: 'Generator', icon: Zap },
               { key: 'flybridge', label: 'Flybridge', icon: Ship },
@@ -2178,7 +2178,7 @@ function FleetEditForm({
                 key={key}
                 className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-all ${
                   amenities[key]
-                    ? 'border-luxury-blue bg-luxury-blue/5'
+                    ? 'border-blue-600 bg-blue-50'
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
@@ -2186,10 +2186,10 @@ function FleetEditForm({
                   type="checkbox"
                   checked={amenities[key] || false}
                   onChange={() => toggleAmenity(key)}
-                  className="w-4 h-4 text-luxury-blue border-gray-300 rounded focus:ring-luxury-blue"
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-600"
                 />
-                <Icon className={`w-5 h-5 ${amenities[key] ? 'text-luxury-blue' : 'text-gray-400'}`} />
-                <span className={`text-sm font-medium ${amenities[key] ? 'text-luxury-blue' : 'text-gray-700'}`}>
+                <Icon className={`w-5 h-5 ${amenities[key] ? 'text-blue-600' : 'text-gray-400'}`} />
+                <span className={`text-sm font-medium ${amenities[key] ? 'text-blue-600' : 'text-gray-700'}`}>
                   {label}
                 </span>
               </label>

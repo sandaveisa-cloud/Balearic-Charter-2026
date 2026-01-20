@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { Ruler, Users, Home, Bath, Wind, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
+import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils'
 import BookingCalendar from './BookingCalendar'
@@ -366,7 +366,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                 <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">Amenities & Features</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {[
-                    { key: 'ac', label: 'Air Conditioning', icon: Wind },
+                    { key: 'ac', label: 'Air Conditioning', icon: Snowflake },
                     { key: 'watermaker', label: 'Watermaker', icon: Droplets },
                     { key: 'generator', label: 'Generator', icon: Zap },
                     { key: 'flybridge', label: 'Flybridge', icon: Ship },
@@ -382,9 +382,9 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                     .map(({ key, label, icon: Icon }) => (
                       <div
                         key={key}
-                        className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg hover:border-luxury-blue hover:shadow-md transition-all"
+                        className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-600 hover:shadow-md transition-all"
                       >
-                        <Icon className="w-6 h-6 text-luxury-blue flex-shrink-0" />
+                        <Icon className="w-5 h-5 text-blue-600 flex-shrink-0" />
                         <span className="text-sm font-medium text-gray-900">{label}</span>
                       </div>
                     ))}

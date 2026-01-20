@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
-import { Ruler, Users, Home, Bath, Wind, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
+import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
 
@@ -102,25 +102,25 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                   <div className="flex flex-wrap gap-4 mb-4 text-sm">
                     {yacht.length && (
                       <span className="flex items-center gap-1.5 text-gray-700">
-                        <Ruler className="w-4 h-4 text-luxury-gold" />
+                        <Ruler className="w-5 h-5 text-luxury-gold" />
                         <span className="font-medium">{yacht.length}m</span>
                       </span>
                     )}
                     {yacht.capacity && (
                       <span className="flex items-center gap-1.5 text-gray-700">
-                        <Users className="w-4 h-4 text-luxury-gold" />
+                        <Users className="w-5 h-5 text-luxury-gold" />
                         <span className="font-medium">{yacht.capacity} Guests</span>
                       </span>
                     )}
                     {yacht.cabins && (
                       <span className="flex items-center gap-1.5 text-gray-700">
-                        <Home className="w-4 h-4 text-luxury-gold" />
+                        <BedDouble className="w-5 h-5 text-luxury-gold" />
                         <span className="font-medium">{yacht.cabins} Cabins</span>
                       </span>
                     )}
                     {yacht.toilets && (
                       <span className="flex items-center gap-1.5 text-gray-700">
-                        <Bath className="w-4 h-4 text-luxury-gold" />
+                        <Bath className="w-5 h-5 text-luxury-gold" />
                         <span className="font-medium">{yacht.toilets} Toilets</span>
                       </span>
                     )}
@@ -166,7 +166,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
 // Amenities Display Component
 function AmenitiesDisplay({ amenities }: { amenities: Fleet['amenities'] }) {
   const amenityConfig = [
-    { key: 'ac', label: 'AC', icon: Wind },
+    { key: 'ac', label: 'AC', icon: Snowflake },
     { key: 'watermaker', label: 'Watermaker', icon: Droplets },
     { key: 'generator', label: 'Generator', icon: Zap },
     { key: 'flybridge', label: 'Flybridge', icon: Ship },
@@ -191,14 +191,14 @@ function AmenitiesDisplay({ amenities }: { amenities: Fleet['amenities'] }) {
       {visible.map(({ key, label, icon: Icon }) => (
         <span
           key={key}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-luxury-blue/10 text-luxury-blue rounded-full text-xs font-medium"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium"
         >
-          <Icon className="w-3.5 h-3.5" />
+          <Icon className="w-5 h-5 text-blue-600" />
           {label}
         </span>
       ))}
       {remaining > 0 && (
-        <span className="inline-flex items-center px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+        <span className="inline-flex items-center px-2.5 py-1 bg-gray-100 text-gray-400 rounded-full text-xs font-medium">
           +{remaining} more
         </span>
       )}
