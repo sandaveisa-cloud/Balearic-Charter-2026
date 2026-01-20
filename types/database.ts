@@ -183,6 +183,13 @@ export type Season = 'low' | 'medium' | 'high'
 
 export interface SiteContent {
   settings: Record<string, string>
+  sectionVisibility?: {
+    journey: boolean
+    mission: boolean
+    crew: boolean
+    culinary: boolean
+    contact: boolean
+  }
   fleet: Fleet[]
   destinations: Destination[]
   reviews: Review[]

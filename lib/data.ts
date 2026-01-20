@@ -89,9 +89,19 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
     })
   }
 
+  // Default section visibility to true if not set
+  const sectionVisibility = {
+    journey: settings['section_journey_visible'] !== 'false', // Default true
+    mission: settings['section_mission_visible'] !== 'false', // Default true
+    crew: settings['section_crew_visible'] !== 'false', // Default true
+    culinary: settings['section_culinary_visible'] !== 'false', // Default true
+    contact: settings['section_contact_visible'] !== 'false', // Default true
+  }
+
   // Return data with safe fallbacks
   return {
     settings: settings || {},
+    sectionVisibility,
     fleet: (fleetResult.data as Fleet[]) || [],
     destinations: (destinationsResult.data as Destination[]) || [],
     reviews: (reviewsResult.data as Review[]) || [],

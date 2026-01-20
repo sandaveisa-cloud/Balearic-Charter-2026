@@ -14,7 +14,10 @@ interface CrewSectionProps {
 export default function CrewSection({ crew }: CrewSectionProps) {
   const t = useTranslations('crew')
   
-  if (crew.length === 0) {
+  // Filter only active crew members (should already be filtered in data.ts, but double-check)
+  const activeCrew = (crew || []).filter(member => member.is_active !== false)
+  
+  if (activeCrew.length === 0) {
     return null
   }
 
@@ -31,7 +34,7 @@ export default function CrewSection({ crew }: CrewSectionProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-          {crew.map((member) => {
+          {activeCrew.map((member) => {
             const imageUrl = getOptimizedImageUrl(member.image_url, {
               width: 800,
               quality: 80,

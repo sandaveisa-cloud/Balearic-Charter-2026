@@ -563,24 +563,37 @@ export default function AdminPage() {
       } else {
         // Fleet updated successfully! Now try to update i18n fields if they exist
         if (Object.keys(i18nFields).length > 0) {
-          // Try to update i18n fields separately (non-blocking - won't fail main update)
-          const { error: i18nError } = await supabase
-            .from('fleet')
-            .update(i18nFields)
-            .eq('id', yachtId)
+          // Check if we've already determined that i18n columns don't exist
+          const i18nColumnsExist = sessionStorage.getItem('i18n-columns-exist') !== 'false'
           
-          if (i18nError) {
-            if (i18nError.code === 'PGRST204') {
-              // Only log once per session to avoid console spam
-              if (!sessionStorage.getItem('i18n-warning-shown')) {
-                console.warn('[Admin] i18n columns (description_i18n, short_description_i18n) not available in database.')
-                console.warn('[Admin] To enable multi-language support, run: supabase/add_i18n_to_fleet.sql')
-                sessionStorage.setItem('i18n-warning-shown', 'true')
+          if (i18nColumnsExist) {
+            // Try to update i18n fields separately (non-blocking - won't fail main update)
+            const { error: i18nError } = await supabase
+              .from('fleet')
+              .update(i18nFields)
+              .eq('id', yachtId)
+            
+            if (i18nError) {
+              if (i18nError.code === 'PGRST204') {
+                // Mark that i18n columns don't exist to skip future attempts
+                sessionStorage.setItem('i18n-columns-exist', 'false')
+                
+                // Only log once per session to avoid console spam
+                if (!sessionStorage.getItem('i18n-warning-shown')) {
+                  console.warn('[Admin] i18n columns (description_i18n, short_description_i18n) not available in database.')
+                  console.warn('[Admin] To enable multi-language support, run: supabase/add_i18n_to_fleet.sql')
+                  console.warn('[Admin] This is expected if you haven\'t run the migration yet. The main update succeeded.')
+                  sessionStorage.setItem('i18n-warning-shown', 'true')
+                }
+              } else {
+                console.warn('[Admin] Error updating i18n fields (non-critical):', i18nError)
               }
             } else {
-              console.warn('[Admin] Error updating i18n fields (non-critical):', i18nError)
+              // Successfully updated i18n fields - mark that columns exist
+              sessionStorage.setItem('i18n-columns-exist', 'true')
             }
           }
+          // If i18n columns don't exist, silently skip the update
         }
         
         // Update local state with the returned data and i18n fields (if updated)
@@ -994,24 +1007,63 @@ export default function AdminPage() {
   const handleCrewCreate = async (data: Omit<CrewMember, 'id' | 'created_at' | 'updated_at'>) => {
     setCreatingCrew(true)
     
+    // Clean and validate data
+    const cleanedData = {
+      ...data,
+      name: data.name?.trim() || '',
+      role: data.role?.trim() || '',
+      bio: data.bio?.trim() || null,
+      order_index: data.order_index || 0,
+      is_active: data.is_active ?? true,
+    }
+    
+    // Validate required fields
+    if (!cleanedData.name) {
+      alert('Name is required')
+      setCreatingCrew(false)
+      return
+    }
+    if (!cleanedData.role) {
+      alert('Role is required')
+      setCreatingCrew(false)
+      return
+    }
+    
+    console.log('[Admin] Creating crew member:', cleanedData)
+    
     try {
       const { data: result, error } = await supabase
         .from('crew')
-        .insert([data])
+        .insert([cleanedData])
         .select()
         .single()
 
       if (error) {
-        console.error('Error creating crew:', error)
-        alert('Failed to create crew member')
+        console.error('[Admin] Error creating crew:', error)
+        console.error('[Admin] Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        })
+        alert(`Failed to create crew member: ${error.message || 'Unknown error'}`)
       } else {
         setCrew(prev => [...prev, result as CrewMember])
         setShowCreateCrewForm(false)
-        alert('Crew member created successfully!')
+        // Show success message
+        const tempId = result.id
+        setCrewSuccess(prev => ({ ...prev, [tempId]: '✅ Crew member created successfully! You can now upload an image.' }))
+        setTimeout(() => {
+          setCrewSuccess(prev => {
+            const newState = { ...prev }
+            delete newState[tempId]
+            return newState
+          })
+        }, 5000)
       }
     } catch (error) {
-      console.error('Error in crew create:', error)
-      alert('An error occurred')
+      console.error('[Admin] Exception in crew create:', error)
+      alert(`An error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setCreatingCrew(false)
     }
@@ -1020,6 +1072,7 @@ export default function AdminPage() {
   // Update crew member
   const handleCrewUpdate = async (crewId: string, updates: Partial<CrewMember>) => {
     setSavingCrew(prev => ({ ...prev, [crewId]: true }))
+    setCrewSuccess(prev => ({ ...prev, [crewId]: '' })) // Clear previous success message
     
     // Validate UUID before update
     if (!crewId || crewId.length !== 36) {
@@ -1049,12 +1102,18 @@ export default function AdminPage() {
         else if (key === 'is_active') {
           cleanedUpdates.is_active = typeof value === 'boolean' ? value : value === 'true' || value === true
         }
-        // Keep other values as-is (name, role, bio, image_url)
+        // Handle string fields - trim whitespace
+        else if (key === 'name' || key === 'role' || key === 'bio') {
+          cleanedUpdates[key] = (typeof value === 'string' ? value.trim() : value) || null
+        }
+        // Keep other values as-is (image_url)
         else {
           cleanedUpdates[key as keyof CrewMember] = value
         }
       }
     })
+    
+    console.log('[Admin] Updating crew member:', crewId, cleanedUpdates)
     
     try {
       const { data, error } = await supabase
@@ -1074,24 +1133,38 @@ export default function AdminPage() {
         })
         console.error('[Admin] Crew ID:', crewId)
         console.error('[Admin] Update payload:', cleanedUpdates)
-        alert(`Failed to update crew member: ${error.message || 'Unknown error'}`)
-      } else {
-        // Update local state with the returned data
-        setCrew(prev => prev.map(m => 
-          m.id === crewId ? { ...m, ...data } : m
-        ))
-        setCrewSuccess(prev => ({ ...prev, [crewId]: 'Crew member updated successfully!' }))
+        setCrewSuccess(prev => ({ ...prev, [crewId]: `❌ Failed to update: ${error.message || 'Unknown error'}` }))
         setTimeout(() => {
           setCrewSuccess(prev => {
             const newState = { ...prev }
             delete newState[crewId]
             return newState
           })
-        }, 3000)
+        }, 5000)
+      } else {
+        // Update local state with the returned data
+        setCrew(prev => prev.map(m => 
+          m.id === crewId ? { ...m, ...data } : m
+        ))
+        setCrewSuccess(prev => ({ ...prev, [crewId]: '✅ Crew member updated successfully! Changes will appear on the public site.' }))
+        setTimeout(() => {
+          setCrewSuccess(prev => {
+            const newState = { ...prev }
+            delete newState[crewId]
+            return newState
+          })
+        }, 5000)
       }
     } catch (error) {
       console.error('[Admin] Exception in crew update:', error)
-      alert('An error occurred while updating crew member')
+      setCrewSuccess(prev => ({ ...prev, [crewId]: `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}` }))
+      setTimeout(() => {
+        setCrewSuccess(prev => {
+          const newState = { ...prev }
+          delete newState[crewId]
+          return newState
+        })
+      }, 5000)
     } finally {
       setSavingCrew(prev => ({ ...prev, [crewId]: false }))
     }
@@ -1545,7 +1618,7 @@ export default function AdminPage() {
 
           {activeTab === 'settings' && (
             <div>
-              <h2 className="text-2xl font-bold text-luxury-blue mb-6">Hero Section & Settings</h2>
+              <h2 className="text-2xl font-bold text-luxury-blue mb-6">Site Settings</h2>
               
               {settingsSuccess && (
                 <div className={`mb-4 p-4 border rounded-lg ${
@@ -1566,6 +1639,52 @@ export default function AdminPage() {
               )}
 
               <div className="space-y-6">
+                {/* Section Visibility Controls */}
+                <div className="border border-gray-200 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Section Visibility</h3>
+                  <p className="text-sm text-gray-600 mb-4">Control which sections are visible on the public website.</p>
+                  
+                  <div className="space-y-4">
+                    {[
+                      { key: 'section_journey_visible', label: 'Our Journey in Numbers', description: 'Statistics section' },
+                      { key: 'section_mission_visible', label: 'Our Mission', description: 'Mission statement section' },
+                      { key: 'section_crew_visible', label: 'Expert Crew', description: 'Crew members section' },
+                      { key: 'section_culinary_visible', label: 'Culinary Excellence', description: 'Culinary experiences section' },
+                      { key: 'section_contact_visible', label: 'Contact Section', description: 'Contact information section' },
+                    ].map((section) => {
+                      const isVisible = siteSettings[section.key] === 'true'
+                      return (
+                        <div key={section.key} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3">
+                              <label className="flex items-center gap-3 cursor-pointer group">
+                                <input
+                                  type="checkbox"
+                                  checked={isVisible}
+                                  onChange={async (e) => {
+                                    const newValue = e.target.checked ? 'true' : 'false'
+                                    await handleSettingsUpdate({ [section.key]: newValue })
+                                  }}
+                                  className="w-5 h-5 text-luxury-blue border-gray-300 rounded focus:ring-2 focus:ring-luxury-blue focus:ring-offset-2 cursor-pointer"
+                                />
+                                <div className="flex flex-col">
+                                  <span className={`text-sm font-semibold ${isVisible ? 'text-green-600' : 'text-gray-600'}`}>
+                                    {isVisible ? '✓ Published' : '✗ Hidden'} - {section.label}
+                                  </span>
+                                  <span className="text-xs text-gray-500 mt-0.5">
+                                    {section.description}
+                                  </span>
+                                </div>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Hero Section Content */}
                 <div className="border border-gray-200 rounded-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Hero Section Content</h3>
                   <HeroSettingsForm
@@ -3144,11 +3263,20 @@ function CulinaryEditForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Remove duplicate URLs from media_urls array
+    const uniqueMediaUrls = [...new Set(mediaUrls.filter(url => url && url.trim()))]
+    
+    // Log if duplicates were removed
+    if (uniqueMediaUrls.length !== mediaUrls.length) {
+      console.warn(`[Admin] Removed ${mediaUrls.length - uniqueMediaUrls.length} duplicate media URL(s) from "${title}"`)
+    }
+    
     onSave({
       title,
       description: description || null,
-      image_url: null,
-      media_urls: mediaUrls,
+      image_url: null, // Always null - use media_urls instead
+      media_urls: uniqueMediaUrls, // Use deduplicated array
       order_index: parseInt(orderIndex) || 0,
       is_active: isActive,
     })
@@ -3283,31 +3411,56 @@ function CulinaryEditForm({
           </label>
           
           {mediaUrls.length > 0 && (
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-4 mb-4">
-              {mediaUrls.map((url, index) => (
-                <div key={index} className="relative group">
-                  {url.includes('youtube.com') || url.includes('youtu.be') ? (
-                    <div className="aspect-video bg-gray-200 rounded border border-gray-200 flex items-center justify-center">
-                      <span className="text-xs text-gray-500">YouTube</span>
+            <div className="mb-4">
+              <p className="text-xs text-gray-500 mb-2">
+                {mediaUrls.length} {mediaUrls.length === 1 ? 'image' : 'images'} attached to "{title || 'this experience'}"
+              </p>
+              <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
+                {mediaUrls.map((url, index) => {
+                  // Create unique key using experience ID and URL hash
+                  const urlKey = `${experience?.id || 'new'}-${url.substring(url.length - 20)}-${index}`
+                  const isImage = !url.includes('youtube.com') && !url.includes('youtu.be')
+                  
+                  return (
+                    <div key={urlKey} className="relative group">
+                      {isImage ? (
+                        <div className="relative">
+                          <img
+                            src={url}
+                            alt={`${title || 'Experience'} - Image ${index + 1}`}
+                            className="w-full h-24 object-cover rounded border border-gray-200"
+                            onError={(e) => {
+                              console.error('[Admin] Failed to load image:', url)
+                              e.currentTarget.style.display = 'none'
+                            }}
+                          />
+                          {/* Image number badge */}
+                          <div className="absolute top-1 left-1 bg-[#0F172A]/80 text-white text-xs px-1.5 py-0.5 rounded">
+                            {index + 1}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="aspect-video bg-gray-200 rounded border border-gray-200 flex items-center justify-center">
+                          <span className="text-xs text-gray-500">YouTube</span>
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveMedia(index)}
+                        className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        title={`Remove ${isImage ? 'image' : 'video'} ${index + 1}`}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
                     </div>
-                  ) : (
-                    <img
-                      src={url}
-                      alt={`Media ${index + 1}`}
-                      className="w-full h-24 object-cover rounded border border-gray-200"
-                    />
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveMedia(index)}
-                    className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              ))}
+                  )
+                })}
+              </div>
+              <p className="text-xs text-gray-400 mt-2">
+                Note: Only the first image will be displayed on the public page. Additional images can be used for a future gallery feature.
+              </p>
             </div>
           )}
 
@@ -3418,6 +3571,7 @@ function CrewEditForm({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [name, setName] = useState(member?.name || '')
   const [role, setRole] = useState(member?.role || '')
+  const [bio, setBio] = useState(member?.bio || '')
   const [roleDescription, setRoleDescription] = useState(member?.role_description || '')
   const [orderIndex, setOrderIndex] = useState(member?.order_index?.toString() || '0')
   const [isActive, setIsActive] = useState(member?.is_active ?? true)
@@ -3426,23 +3580,53 @@ function CrewEditForm({
     if (member) {
       setName(member.name || '')
       setRole(member.role || '')
+      setBio(member.bio || '')
       setRoleDescription(member.role_description || '')
       setOrderIndex(member.order_index?.toString() || '0')
       setIsActive(member.is_active ?? true)
+    } else {
+      // Reset form for create mode
+      setName('')
+      setRole('')
+      setBio('')
+      setRoleDescription('')
+      setOrderIndex('0')
+      setIsActive(true)
     }
   }, [member])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    onSave({
-      name,
-      role,
-      bio: member?.bio || null,
+    
+    // Validate required fields
+    if (!name.trim()) {
+      alert('Name is required')
+      return
+    }
+    if (!role.trim()) {
+      alert('Role is required')
+      return
+    }
+    
+    // Prepare update payload
+    const updates: Omit<CrewMember, 'id' | 'created_at' | 'updated_at'> = {
+      name: name.trim(),
+      role: role.trim(),
+      bio: bio.trim() || null,
       // role_description column doesn't exist in database, so we don't send it
-      image_url: member?.image_url || null,
+      image_url: member?.image_url || null, // Image is updated separately via onImageUpload
       order_index: parseInt(orderIndex) || 0,
       is_active: isActive,
-    })
+    }
+    
+    console.log('[CrewEditForm] Submitting updates:', updates)
+    
+    try {
+      await onSave(updates)
+    } catch (error) {
+      console.error('[CrewEditForm] Error in onSave:', error)
+      alert('Failed to save crew member. Please check the console for details.')
+    }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -3504,8 +3688,20 @@ function CrewEditForm({
       </div>
 
       {successMessage && (
-        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-green-800 text-sm">{successMessage}</p>
+        <div className={`mb-4 p-3 border rounded-lg ${
+          successMessage.includes('✅') 
+            ? 'bg-green-50 border-green-200' 
+            : successMessage.includes('❌')
+            ? 'bg-red-50 border-red-200'
+            : 'bg-blue-50 border-blue-200'
+        }`}>
+          <p className={`text-sm ${
+            successMessage.includes('✅') 
+              ? 'text-green-800' 
+              : successMessage.includes('❌')
+              ? 'text-red-800'
+              : 'text-blue-800'
+          }`}>{successMessage}</p>
         </div>
       )}
 
@@ -3540,17 +3736,33 @@ function CrewEditForm({
         </div>
 
         <div>
+          <label htmlFor={`crew-bio-${member?.id || 'new'}`} className="block text-sm font-medium text-gray-700 mb-2">
+            Bio / Description *
+          </label>
+          <textarea
+            id={`crew-bio-${member?.id || 'new'}`}
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            rows={4}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+            placeholder="Brief bio or description of the crew member..."
+          />
+        </div>
+
+        <div>
           <label htmlFor={`crew-role-description-${member?.id || 'new'}`} className="block text-sm font-medium text-gray-700 mb-2">
-            Role Description
+            Role Description (Optional - for internal use)
           </label>
           <textarea
             id={`crew-role-description-${member?.id || 'new'}`}
             value={roleDescription}
             onChange={(e) => setRoleDescription(e.target.value)}
-            rows={4}
+            rows={3}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
-            placeholder="Detailed description of the crew member's role and responsibilities..."
+            placeholder="Detailed description of the crew member's role and responsibilities (not displayed on public site)..."
           />
+          <p className="text-xs text-gray-500 mt-1">Note: This field is for internal reference only and won't be displayed on the public site.</p>
         </div>
 
         <div>

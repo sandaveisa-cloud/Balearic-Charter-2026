@@ -22,17 +22,36 @@ export default async function Home({ params }: Props) {
     const { locale } = await params
     const content = await getSiteContent()
 
+    // Debug logging for culinary data
+    console.log('[Home] Culinary experiences count:', content.culinaryExperiences?.length || 0)
+    console.log('[Home] Culinary experiences data:', content.culinaryExperiences)
+
+    // Get section visibility settings (default to true if not set)
+    const visibility = content.sectionVisibility || {
+      journey: true,
+      mission: true,
+      crew: true,
+      culinary: true,
+      contact: true,
+    }
+
+    console.log('[Home] Section visibility:', visibility)
+    console.log('[Home] Culinary section visible:', visibility.culinary)
+
     return (
       <main className="min-h-screen pt-16">
         <Hero settings={content.settings} />
-        <MissionSection />
-        <StatsSection stats={content.stats || []} />
+        {visibility.mission && <MissionSection />}
+        {visibility.journey && <StatsSection stats={content.stats || []} />}
         <FleetSection fleet={content.fleet || []} />
         <DestinationsSection destinations={content.destinations || []} />
         <Testimonials reviews={content.reviews || []} />
-        <CulinarySection experiences={content.culinaryExperiences || []} />
-        {/* Only show CrewSection if there are active crew members */}
-        {content.crew && content.crew.length > 0 && (
+        {/* Always render CulinarySection if visibility is enabled, even if experiences array is empty */}
+        {visibility.culinary && (
+          <CulinarySection experiences={content.culinaryExperiences || []} />
+        )}
+        {/* Only show CrewSection if visibility is enabled AND there are active crew members */}
+        {visibility.crew && content.crew && content.crew.length > 0 && (
           <CrewSection crew={content.crew} />
         )}
         <ReviewsSection reviews={content.reviews || []} />
