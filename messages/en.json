@@ -122,5 +122,12 @@
     "subtitle": "Get in touch with our team for your luxury charter experience",
     "whatsapp": "WhatsApp",
     "availability": "Available 24/7 for your charter inquiries"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "fleet": "Fleet",
+    "discoverMore": "Discover More About Our Mission and Destinations",
+    "discoverMoreDescription": "Explore our complete range of services, learn about our mission, and discover all the exclusive destinations we offer.",
+    "backToHome": "Back to Home Page"
   }
 }

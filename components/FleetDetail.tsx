@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { format } from 'date-fns'
-import { useTranslations } from 'next-intl'
-import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
+import { useTranslations, useLocale } from 'next-intl'
+import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles, Home, ChevronRight } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils'
 import { getFleetBySlugs } from '@/lib/data'
@@ -391,6 +392,38 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
       )}
 
       <div className="container mx-auto px-4 py-12">
+        {/* Breadcrumbs */}
+        <nav className="mb-8" aria-label="Breadcrumb">
+          <ol className="flex items-center space-x-2 text-sm text-gray-600">
+            <li>
+              <Link 
+                href={`/${locale}`}
+                className="flex items-center hover:text-luxury-blue transition-colors"
+              >
+                <Home className="w-4 h-4 mr-1" />
+                <span>{tBreadcrumb('home')}</span>
+              </Link>
+            </li>
+            <li>
+              <ChevronRight className="w-4 h-4 text-gray-400" />
+            </li>
+            <li>
+              <a 
+                href={`/${locale}#fleet`}
+                className="hover:text-luxury-blue transition-colors"
+              >
+                {tBreadcrumb('fleet')}
+              </a>
+            </li>
+            <li>
+              <ChevronRight className="w-4 h-4 text-gray-400" />
+            </li>
+            <li className="text-luxury-blue font-semibold" aria-current="page">
+              {yacht.name}
+            </li>
+          </ol>
+        </nav>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
@@ -644,6 +677,25 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                 />
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Return to Overview Section */}
+        <div className="mt-20 mb-12 bg-gradient-to-br from-luxury-blue/5 via-luxury-gold/5 to-luxury-blue/5 rounded-2xl p-8 md:p-12 border border-luxury-gold/20">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-luxury-blue mb-4">
+              {tBreadcrumb('discoverMore')}
+            </h2>
+            <p className="text-lg text-gray-700 mb-8">
+              {tBreadcrumb('discoverMoreDescription')}
+            </p>
+            <Link
+              href={`/${locale}`}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-luxury-gold text-luxury-blue font-bold text-lg rounded-lg hover:bg-luxury-blue hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              <Home className="w-5 h-5" />
+              <span>{tBreadcrumb('backToHome')}</span>
+            </Link>
           </div>
         </div>
       </div>

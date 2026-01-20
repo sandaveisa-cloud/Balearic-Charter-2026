@@ -123,5 +123,12 @@
     "subtitle": "Kontaktieren Sie unser Team für Ihr Luxus-Charter-Erlebnis",
     "whatsapp": "WhatsApp",
     "availability": "24/7 verfügbar für Ihre Charter-Anfragen"
+  },
+  "breadcrumb": {
+    "home": "Startseite",
+    "fleet": "Flotte",
+    "discoverMore": "Entdecken Sie Mehr Über Unsere Mission und Reiseziele",
+    "discoverMoreDescription": "Erkunden Sie unser vollständiges Serviceangebot, erfahren Sie mehr über unsere Mission und entdecken Sie alle exklusiven Reiseziele, die wir anbieten.",
+    "backToHome": "Zurück zur Startseite"
   }
 }

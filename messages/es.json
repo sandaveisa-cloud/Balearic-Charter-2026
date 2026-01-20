@@ -122,5 +122,12 @@
     "subtitle": "Ponte en contacto con nuestro equipo para tu experiencia de alquiler de lujo",
     "whatsapp": "WhatsApp",
     "availability": "Disponible 24/7 para tus consultas de alquiler"
+  },
+  "breadcrumb": {
+    "home": "Inicio",
+    "fleet": "Flota",
+    "discoverMore": "Descubre Más Sobre Nuestra Misión y Destinos",
+    "discoverMoreDescription": "Explora nuestra gama completa de servicios, conoce nuestra misión y descubre todos los destinos exclusivos que ofrecemos.",
+    "backToHome": "Volver a la Página Principal"
   }
 }

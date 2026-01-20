@@ -1,10 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useLocale } from 'next-intl'
 import LanguageSwitcher from './LanguageSwitcher'
 
 export default function StickyHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
+  const locale = useLocale()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,7 +27,16 @@ export default function StickyHeader() {
           : 'bg-luxury-blue/95 backdrop-blur-sm shadow-md'
       }`}
     >
-      <div className="container mx-auto px-4 py-4 flex justify-end">
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        {/* Logo/Company Name - Links to Home */}
+        <Link 
+          href={`/${locale}`}
+          className="font-serif text-2xl md:text-3xl font-bold text-white hover:text-luxury-gold transition-colors duration-300"
+        >
+          Wide Dream
+        </Link>
+        
+        {/* Language Switcher */}
         <LanguageSwitcher />
       </div>
     </header>
