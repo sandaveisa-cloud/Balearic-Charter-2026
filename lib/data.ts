@@ -1,11 +1,11 @@
 import { supabase } from './supabase'
 import { unstable_cache } from 'next/cache'
-import type { SiteContent, Fleet, Destination, Review, Stat, CulinaryExperience, CrewMember, BookingAvailability } from '@/types/database'
+import type { SiteContent, Fleet, Destination, Review, Stat, CulinaryExperience, CrewMember, ContactPerson, BookingAvailability } from '@/types/database'
 
 // Internal function to fetch data from Supabase
 async function fetchSiteContentInternal(): Promise<SiteContent> {
   // Fetch all data in parallel - catch individual errors
-  let settingsResult, fleetResult, destinationsResult, reviewsResult, statsResult, culinaryResult, crewResult
+  let settingsResult, fleetResult, destinationsResult, reviewsResult, statsResult, culinaryResult, crewResult, contactResult
   
   try {
     settingsResult = await supabase.from('site_settings').select('*')
@@ -105,6 +105,20 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
     crewResult = { data: [], error: null }
   }
 
+  try {
+    console.log('[Data] Fetching contact_persons...')
+    contactResult = await supabase.from('contact_persons').select('*').eq('is_active', true).order('order_index', { ascending: true })
+    if (contactResult.error) {
+      console.error('[Data] Error fetching contact_persons:', contactResult.error)
+      contactResult = { data: [], error: null }
+    } else {
+      console.log('[Data] contact_persons fetched:', contactResult.data?.length || 0, 'items')
+    }
+  } catch (error) {
+    console.error('[Data] Exception fetching contact_persons:', error)
+    contactResult = { data: [], error: null }
+  }
+
   // Transform settings into a key-value object
   // Add error handling to prevent crashes if settings data is malformed
   console.log('[Data] Transforming settings...')
@@ -144,6 +158,7 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
     stats: (statsResult?.data as Stat[]) || [],
     culinaryExperiences: (culinaryResult?.data as CulinaryExperience[]) || [],
     crew: (crewResult?.data as CrewMember[]) || [],
+    contactPersons: (contactResult?.data as ContactPerson[]) || [],
   }
   
   console.log('[Data] fetchSiteContentInternal completed:', {
@@ -154,6 +169,7 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
     statsCount: result.stats.length,
     culinaryCount: result.culinaryExperiences.length,
     crewCount: result.crew.length,
+    contactCount: result.contactPersons.length,
   })
   
   return result
@@ -201,6 +217,7 @@ export async function getSiteContent(): Promise<SiteContent> {
         stats: [],
         culinaryExperiences: [],
         crew: [],
+        contactPersons: [],
       }
     }
   }

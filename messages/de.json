@@ -117,5 +117,11 @@
     "bookings": "5 Buchungen diese Woche",
     "rating": "4.9/5 Bewertung",
     "secret_bays": "Geheime Buchten"
+  },
+  "contact": {
+    "title": "Kontaktieren Sie Uns",
+    "subtitle": "Kontaktieren Sie unser Team für Ihr Luxus-Charter-Erlebnis",
+    "whatsapp": "WhatsApp",
+    "availability": "24/7 verfügbar für Ihre Charter-Anfragen"
   }
 }

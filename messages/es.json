@@ -116,5 +116,11 @@
     "bookings": "5 reservas esta semana",
     "rating": "4.9/5 Valoración",
     "secret_bays": "Acceso a Calas Exclusivas"
+  },
+  "contact": {
+    "title": "Contáctanos",
+    "subtitle": "Ponte en contacto con nuestro equipo para tu experiencia de alquiler de lujo",
+    "whatsapp": "WhatsApp",
+    "availability": "Disponible 24/7 para tus consultas de alquiler"
   }
 }

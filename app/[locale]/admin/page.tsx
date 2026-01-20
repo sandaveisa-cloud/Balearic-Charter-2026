@@ -12,7 +12,7 @@ import { compressImage, compressThumbnail } from '@/lib/imageCompression'
 import { extractYouTubeId, buildYouTubeEmbedUrl } from '@/lib/youtubeUtils'
 import DragDropImageUpload from '@/components/DragDropImageUpload'
 import AdminDashboard from '@/components/AdminDashboard'
-import type { BookingInquiry, Fleet, Destination, CulinaryExperience, CrewMember, Stat, Review } from '@/types/database'
+import type { BookingInquiry, Fleet, Destination, CulinaryExperience, CrewMember, Stat, Review, ContactPerson } from '@/types/database'
 
 export default function AdminPage() {
   const router = useRouter()
@@ -25,9 +25,10 @@ export default function AdminPage() {
   const [crew, setCrew] = useState<CrewMember[]>([])
   const [stats, setStats] = useState<Stat[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
+  const [contactPersons, setContactPersons] = useState<ContactPerson[]>([])
   const [siteSettings, setSiteSettings] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'overview' | 'settings' | 'fleet' | 'destinations' | 'reviews' | 'stats' | 'culinary' | 'crew' | 'inquiries'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'settings' | 'fleet' | 'destinations' | 'reviews' | 'stats' | 'culinary' | 'crew' | 'contact' | 'inquiries'>('overview')
   
   // Fleet management states
   const [uploadingImages, setUploadingImages] = useState<Record<string, boolean>>({})
@@ -75,6 +76,13 @@ export default function AdminPage() {
   const [reviewsSuccess, setReviewsSuccess] = useState<Record<string, string>>({})
   const [creatingReview, setCreatingReview] = useState(false)
   const [showCreateReviewForm, setShowCreateReviewForm] = useState(false)
+  
+  // Contact management states
+  const [savingContact, setSavingContact] = useState<Record<string, boolean>>({})
+  const [deletingContact, setDeletingContact] = useState<Record<string, boolean>>({})
+  const [contactSuccess, setContactSuccess] = useState<Record<string, string>>({})
+  const [creatingContact, setCreatingContact] = useState(false)
+  const [showCreateContactForm, setShowCreateContactForm] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -97,7 +105,7 @@ export default function AdminPage() {
     }
     
     try {
-      const [inquiriesResult, fleetResult, destinationsResult, culinaryResult, crewResult, settingsResult, statsResult, reviewsResult] = await Promise.all([
+      const [inquiriesResult, fleetResult, destinationsResult, culinaryResult, crewResult, settingsResult, statsResult, reviewsResult, contactResult] = await Promise.all([
         supabase.from('booking_inquiries').select('*').order('created_at', { ascending: false }).limit(50),
         supabase.from('fleet').select('*').order('name', { ascending: true }),
         supabase.from('destinations').select('*').order('order_index', { ascending: true }),
@@ -106,6 +114,7 @@ export default function AdminPage() {
         supabase.from('site_settings').select('*'),
         supabase.from('stats').select('*').order('order_index', { ascending: true }),
         supabase.from('reviews').select('*').order('created_at', { ascending: false }),
+        supabase.from('contact_persons').select('*').order('order_index', { ascending: true }),
       ])
 
       // Log results and errors
@@ -142,6 +151,7 @@ export default function AdminPage() {
       setCrew((crewResult.data as CrewMember[]) || [])
       setStats((statsResult.data as Stat[]) || [])
       setReviews((reviewsResult.data as Review[]) || [])
+      setContactPersons((contactResult.data as ContactPerson[]) || [])
       
       // Transform settings into key-value object
       const settings: Record<string, string> = {}
@@ -1447,6 +1457,130 @@ export default function AdminPage() {
     }
   }
 
+  // Contact Management Handlers
+  const handleContactUpdate = async (contactId: string, updates: Partial<ContactPerson> & { locations?: string[] | string }) => {
+    setSavingContact(prev => ({ ...prev, [contactId]: true }))
+    try {
+      // Clean updates - handle locations array
+      const cleanedUpdates: any = { ...updates }
+      if (updates.locations !== undefined) {
+        // Ensure locations is always an array
+        if (Array.isArray(updates.locations)) {
+          cleanedUpdates.locations = updates.locations
+        } else if (typeof updates.locations === 'string') {
+          // Convert comma-separated string to array
+          const locationsStr = updates.locations as string
+          cleanedUpdates.locations = locationsStr.split(',').map(loc => loc.trim()).filter(loc => loc.length > 0)
+        }
+      }
+      
+      const { error } = await supabase
+        .from('contact_persons')
+        // @ts-expect-error - Supabase type inference limitation
+        .update({ ...cleanedUpdates, updated_at: new Date().toISOString() })
+        .eq('id', contactId)
+
+      if (error) {
+        console.error('Error updating contact:', error)
+        alert('Failed to update contact')
+      } else {
+        setContactPersons(prev => prev.map(contact => contact.id === contactId ? { ...contact, ...cleanedUpdates } as ContactPerson : contact))
+        setContactSuccess(prev => ({ ...prev, [contactId]: 'Contact updated successfully!' }))
+        setTimeout(() => {
+          setContactSuccess(prev => {
+            const newState = { ...prev }
+            delete newState[contactId]
+            return newState
+          })
+        }, 3000)
+      }
+    } catch (error) {
+      console.error('Error in contact update:', error)
+      alert('An error occurred')
+    } finally {
+      setSavingContact(prev => ({ ...prev, [contactId]: false }))
+    }
+  }
+
+  const handleContactCreate = async (data: Partial<ContactPerson> & { locations?: string[] | string }) => {
+    setCreatingContact(true)
+    try {
+      // Validate required fields
+      if (!data.name || !data.phone || !data.email) {
+        alert('Name, phone, and email are required')
+        setCreatingContact(false)
+        return
+      }
+      
+      // Handle locations - convert string to array if needed
+      let locations: string[] = []
+      if (data.locations) {
+        if (Array.isArray(data.locations)) {
+          locations = data.locations
+        } else if (typeof data.locations === 'string') {
+          const locationsStr = data.locations as string
+          locations = locationsStr.split(',').map(loc => loc.trim()).filter(loc => loc.length > 0)
+        }
+      }
+      
+      const { data: result, error } = await supabase
+        .from('contact_persons')
+        // @ts-expect-error - Supabase type inference limitation
+        .insert({
+          name: data.name,
+          role: data.role || null,
+          phone: data.phone,
+          email: data.email,
+          locations: locations,
+          is_active: data.is_active ?? true,
+          order_index: data.order_index ?? 0,
+        })
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Error creating contact:', error)
+        alert('Failed to create contact')
+      } else {
+        setContactPersons(prev => [...prev, result as ContactPerson])
+        setShowCreateContactForm(false)
+        alert('Contact created successfully!')
+      }
+    } catch (error) {
+      console.error('Error in contact create:', error)
+      alert('An error occurred')
+    } finally {
+      setCreatingContact(false)
+    }
+  }
+
+  const handleContactDelete = async (contactId: string) => {
+    if (!confirm('Are you sure you want to delete this contact?')) {
+      return
+    }
+
+    setDeletingContact(prev => ({ ...prev, [contactId]: true }))
+    try {
+      const { error } = await supabase
+        .from('contact_persons')
+        .delete()
+        .eq('id', contactId)
+
+      if (error) {
+        console.error('Error deleting contact:', error)
+        alert('Failed to delete contact')
+      } else {
+        setContactPersons(prev => prev.filter(contact => contact.id !== contactId))
+        alert('Contact deleted successfully!')
+      }
+    } catch (error) {
+      console.error('Error in contact delete:', error)
+      alert('An error occurred')
+    } finally {
+      setDeletingContact(prev => ({ ...prev, [contactId]: false }))
+    }
+  }
+
   // Update site settings
   const handleSettingsUpdate = async (updates: Record<string, string>) => {
     setSavingSettings(true)
@@ -1578,6 +1712,7 @@ export default function AdminPage() {
               { id: 'stats', label: 'Stats' },
               { id: 'culinary', label: 'Culinary' },
               { id: 'crew', label: 'Crew' },
+              { id: 'contact', label: 'Contact Management' },
               { id: 'inquiries', label: 'Booking Inquiries' },
             ].map((tab) => (
               <button
@@ -1599,6 +1734,47 @@ export default function AdminPage() {
         <div className="bg-white rounded-lg shadow p-6">
           {activeTab === 'overview' && (
             <AdminDashboard />
+          )}
+
+          {activeTab === 'contact' && (
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-luxury-blue">Contact Management</h2>
+                <button
+                  onClick={() => setShowCreateContactForm(!showCreateContactForm)}
+                  className="px-4 py-2 bg-luxury-blue text-white rounded-lg font-semibold hover:bg-opacity-90 transition-colors flex items-center gap-2"
+                >
+                  + Add Contact Person
+                </button>
+              </div>
+
+              {showCreateContactForm && (
+                <ContactEditForm
+                  onSave={handleContactCreate}
+                  onCancel={() => setShowCreateContactForm(false)}
+                  saving={creatingContact}
+                />
+              )}
+
+              <div className="space-y-6">
+                {contactPersons.map((contact) => (
+                  <ContactEditForm
+                    key={contact.id}
+                    contact={contact}
+                    onSave={(updates) => handleContactUpdate(contact.id, updates)}
+                    onDelete={() => handleContactDelete(contact.id)}
+                    saving={savingContact[contact.id] || false}
+                    deleting={deletingContact[contact.id] || false}
+                    successMessage={contactSuccess[contact.id]}
+                  />
+                ))}
+                {contactPersons.length === 0 && !showCreateContactForm && (
+                  <div className="text-center py-12 text-gray-500">
+                    <p>No contact persons added yet. Click "Add Contact Person" to get started.</p>
+                  </div>
+                )}
+              </div>
+            </div>
           )}
 
           {activeTab === 'inquiries' && (
@@ -4223,6 +4399,211 @@ function StatEditForm({
               Cancel
             </button>
           )}
+        </div>
+      </form>
+    </div>
+  )
+}
+
+// Contact Edit Form Component
+function ContactEditForm({
+  contact,
+  onSave,
+  onDelete,
+  onCancel,
+  saving,
+  deleting,
+  successMessage
+}: {
+  contact?: ContactPerson
+  onSave: (updates: Partial<ContactPerson> & { locations?: string[] | string }) => void | Promise<void>
+  onDelete?: () => void
+  onCancel?: () => void
+  saving: boolean
+  deleting?: boolean
+  successMessage?: string
+}) {
+  const isCreateMode = !contact
+  const [name, setName] = useState(contact?.name || '')
+  const [role, setRole] = useState(contact?.role || '')
+  const [phone, setPhone] = useState(contact?.phone || '')
+  const [email, setEmail] = useState(contact?.email || '')
+  const [locations, setLocations] = useState(
+    contact?.locations ? contact.locations.join(', ') : ''
+  )
+  const [orderIndex, setOrderIndex] = useState(contact?.order_index ?? 0)
+  const [isActive, setIsActive] = useState(contact?.is_active ?? true)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    const updates: any = {
+      name,
+      role: role || null,
+      phone,
+      email,
+      locations: locations, // Pass as string, handler will convert to array
+      order_index: orderIndex,
+      is_active: isActive,
+    }
+    
+    await onSave(updates)
+    
+    if (isCreateMode) {
+      // Reset form
+      setName('')
+      setRole('')
+      setPhone('')
+      setEmail('')
+      setLocations('')
+      setOrderIndex(0)
+      setIsActive(true)
+    }
+  }
+
+  return (
+    <div className="border border-gray-200 rounded-lg p-6">
+      <div className="flex items-start justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-800">
+          {isCreateMode ? 'Create New Contact Person' : contact.name}
+        </h3>
+        <div className="flex gap-2">
+          {!isCreateMode && onDelete && (
+            <button
+              type="button"
+              onClick={onDelete}
+              disabled={deleting}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {deleting ? 'Deleting...' : 'Delete'}
+            </button>
+          )}
+          {isCreateMode && onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      </div>
+
+      {successMessage && (
+        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-green-800 text-sm">{successMessage}</p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Name *
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="Peter Sutter"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Role
+            </label>
+            <input
+              type="text"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="Operations Manager"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Phone *
+            </label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="+34 680 957 096"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email *
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="peter.sutter@gmail.com"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Locations (comma-separated) *
+          </label>
+          <input
+            type="text"
+            value={locations}
+            onChange={(e) => setLocations(e.target.value)}
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+            placeholder="Ibiza, Palma, Torrevieja"
+          />
+          <p className="mt-1 text-sm text-gray-500">
+            Separate multiple locations with commas (e.g., "Ibiza, Palma, Torrevieja")
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Order Index
+            </label>
+            <input
+              type="number"
+              value={orderIndex}
+              onChange={(e) => setOrderIndex(parseInt(e.target.value) || 0)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+            />
+          </div>
+          <div className="flex items-center gap-4 pt-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isActive}
+                onChange={(e) => setIsActive(e.target.checked)}
+                className="w-5 h-5 text-luxury-blue rounded focus:ring-luxury-blue"
+              />
+              <span className="text-sm font-medium text-gray-700">Active</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            type="submit"
+            disabled={saving}
+            className="px-6 py-2 bg-luxury-blue text-white rounded-lg font-semibold hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {saving ? 'Saving...' : isCreateMode ? 'Create Contact' : 'Save Changes'}
+          </button>
         </div>
       </form>
     </div>

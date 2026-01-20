@@ -116,5 +116,11 @@
     "bookings": "5 bookings this week",
     "rating": "4.9/5 Customer Rating",
     "secret_bays": "Secret Bays Access"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with our team for your luxury charter experience",
+    "whatsapp": "WhatsApp",
+    "availability": "Available 24/7 for your charter inquiries"
   }
 }

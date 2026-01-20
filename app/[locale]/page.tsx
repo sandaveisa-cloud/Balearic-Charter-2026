@@ -10,6 +10,7 @@ import ReviewsSection from '@/components/ReviewsSection'
 import StatsSection from '@/components/StatsSection'
 import CulinarySection from '@/components/CulinarySection'
 import CrewSection from '@/components/CrewSection'
+import ContactSection from '@/components/ContactSection'
 import StructuredData from '@/components/StructuredData'
 import FloatingCTA from '@/components/FloatingCTA'
 
@@ -58,6 +59,7 @@ export default async function Home({ params }: Props) {
         statsCount: content?.stats?.length || 0,
         culinaryCount: content?.culinaryExperiences?.length || 0,
         crewCount: content?.crew?.length || 0,
+        contactCount: content?.contactPersons?.length || 0,
         hasSectionVisibility: !!content?.sectionVisibility,
       })
     } catch (dataError) {
@@ -82,6 +84,7 @@ export default async function Home({ params }: Props) {
         stats: [],
         culinaryExperiences: [],
         crew: [],
+        contactPersons: [],
       }
       console.log('[Home] Using fallback empty content')
     }
@@ -100,10 +103,11 @@ export default async function Home({ params }: Props) {
       fleet: [],
       destinations: [],
       reviews: [],
-      stats: [],
-      culinaryExperiences: [],
-      crew: [],
-    }
+        stats: [],
+        culinaryExperiences: [],
+        crew: [],
+        contactPersons: [],
+      }
     
     console.log('[Home] Using safeContent with:', {
       hasSettings: !!safeContent.settings,
@@ -160,6 +164,11 @@ export default async function Home({ params }: Props) {
             
             {/* Consolidated Reviews Section - Single high-impact section */}
             <ReviewsSection reviews={safeContent.reviews || []} />
+            
+            {/* Contact Section - If visibility is enabled */}
+            {visibility.contact && (
+              <ContactSection contactPersons={safeContent.contactPersons || []} />
+            )}
             
             {/* Final Trust Badge - Prominent at the end before footer */}
             <section className="py-8 bg-gradient-to-r from-green-50 via-amber-50 to-green-50 border-t border-[#E2E8F0]">

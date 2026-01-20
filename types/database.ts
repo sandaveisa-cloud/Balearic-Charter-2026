@@ -113,6 +113,19 @@ export interface Stat {
   updated_at: string
 }
 
+export interface ContactPerson {
+  id: string
+  name: string
+  role: string | null
+  phone: string
+  email: string
+  locations: string[] // Array of location strings
+  is_active: boolean
+  order_index: number
+  created_at: string
+  updated_at: string
+}
+
 export interface CulinaryExperience {
   id: string
   title: string
@@ -196,4 +209,5 @@ export interface SiteContent {
   stats: Stat[]
   culinaryExperiences: CulinaryExperience[]
   crew: CrewMember[]
+  contactPersons: ContactPerson[]
 }
