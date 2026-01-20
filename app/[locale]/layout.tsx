@@ -9,6 +9,7 @@ import '../globals.css'
 import Footer from '@/components/Footer'
 import StickyHeader from '@/components/StickyHeader'
 import ScrollToTop from '@/components/ScrollToTop'
+import WhatsAppButton from '@/components/WhatsAppButton'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
@@ -114,7 +115,8 @@ export default async function LocaleLayout({ children, params }: Props) {
         </div>
         <Footer />
         
-        {/* Scroll to Top Button */}
+        {/* Floating Action Buttons */}
+        <WhatsAppButton />
         <ScrollToTop />
       </NextIntlClientProvider>
     )
