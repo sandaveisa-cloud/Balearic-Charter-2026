@@ -1,10 +1,8 @@
-'use client'
-
-import { useTranslations } from 'next-intl'
 import { Ship, ShieldCheck, Utensils } from 'lucide-react'
+import { getTranslations } from 'next-intl/server'
 
-export default function MissionSection() {
-  const t = useTranslations('mission')
+export default async function MissionSection() {
+  const t = await getTranslations('mission')
 
   const missionCards = [
     {

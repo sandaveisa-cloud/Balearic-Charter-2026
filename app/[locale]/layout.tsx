@@ -119,6 +119,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         {/* Floating Action Buttons */}
         <WhatsAppButton />
         <ScrollToTop />
+        {/* FloatingCTA is added per-page (home page only) */}
       </NextIntlClientProvider>
     )
   } catch (error) {

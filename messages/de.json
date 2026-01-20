@@ -25,6 +25,15 @@
     "technicalSpecs": "Technische Spezifikationen",
     "amenities": "Ausstattung & Features",
     "selectDates": "Wählen Sie Ihre Charter-Daten",
+    "trustBadges": {
+      "verified": "Verifizierte Charter",
+      "insured": "Vollständig Versichert",
+      "professionalCrew": "Professionelle Crew"
+    },
+    "socialProof": {
+      "recentBookings": "🔥 3 Buchungen in den letzten 7 Tagen",
+      "rating": "⭐ 4.9/5 Durchschnittsbewertung"
+    },
     "ships": {
       "simona": {
         "headline": "Eleganz, Komfort und ein Hauch von Abenteuer",

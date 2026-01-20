@@ -24,6 +24,15 @@
     "toilets": "Baños",
     "technicalSpecs": "Especificaciones Técnicas",
     "selectDates": "Selecciona las Fechas de tu Alquiler",
+    "trustBadges": {
+      "verified": "Chárter Verificado",
+      "insured": "Totalmente Asegurado",
+      "professionalCrew": "Tripulación Profesional"
+    },
+    "socialProof": {
+      "recentBookings": "🔥 3 reservas en los últimos 7 días",
+      "rating": "⭐ 4.9/5 calificación promedio"
+    },
     "ships": {
       "simona": {
         "headline": "Elegancia, Comodidad y un Toque de Aventura",

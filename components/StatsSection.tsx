@@ -1,14 +1,12 @@
-'use client'
-
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 import type { Stat } from '@/types/database'
 
 interface StatsSectionProps {
   stats: Stat[]
 }
 
-export default function StatsSection({ stats }: StatsSectionProps) {
-  const t = useTranslations('stats')
+export default async function StatsSection({ stats }: StatsSectionProps) {
+  const t = await getTranslations('stats')
   
   // Always use these specific stats as requested
   const displayStats: Stat[] = [

@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
-import { getFleetBySlug } from '@/lib/data'
+import { getFleetBySlug, getSiteContent } from '@/lib/data'
 import FleetDetail from '@/components/FleetDetail'
+import StructuredData from '@/components/StructuredData'
 
 type Props = {
   params: Promise<{ slug: string; locale: string }>
@@ -23,12 +24,22 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function FleetPage({ params }: Props) {
-  const { slug } = await params
+  const { slug, locale } = await params
   const yacht = await getFleetBySlug(slug)
 
   if (!yacht) {
     notFound()
   }
 
-  return <FleetDetail yacht={yacht} />
+  // Fetch settings for structured data
+  const siteContent = await getSiteContent()
+  const settings = siteContent.settings || {}
+
+  return (
+    <>
+      {/* Structured Data for SEO */}
+      <StructuredData type="BoatTrip" settings={settings} yacht={yacht} locale={locale} />
+      <FleetDetail yacht={yacht} />
+    </>
+  )
 }

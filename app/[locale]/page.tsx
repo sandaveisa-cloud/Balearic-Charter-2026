@@ -11,6 +11,8 @@ import ReviewsSection from '@/components/ReviewsSection'
 import StatsSection from '@/components/StatsSection'
 import CulinarySection from '@/components/CulinarySection'
 import CrewSection from '@/components/CrewSection'
+import StructuredData from '@/components/StructuredData'
+import FloatingCTA from '@/components/FloatingCTA'
 
 // Cache data for 1 hour (3600 seconds)
 export const revalidate = 3600
@@ -129,23 +131,31 @@ export default async function Home({ params }: Props) {
     // Wrap each component in error boundary to prevent one failure from crashing entire page
     try {
       return (
-        <main className="min-h-screen pt-16">
-          <Hero settings={safeSettings} />
-          {visibility.mission && <MissionSection />}
-          {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
-          <FleetSection fleet={safeContent.fleet || []} />
-          <DestinationsSection destinations={safeContent.destinations || []} />
-          <Testimonials reviews={safeContent.reviews || []} />
-          {/* Always render CulinarySection if visibility is enabled, even if experiences array is empty */}
-          {visibility.culinary && (
-            <CulinarySection experiences={safeContent.culinaryExperiences || []} />
-          )}
-          {/* Only show CrewSection if visibility is enabled AND there are active crew members */}
-          {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (
-            <CrewSection crew={safeContent.crew} />
-          )}
-          <ReviewsSection reviews={safeContent.reviews || []} />
-        </main>
+        <>
+          {/* Structured Data for SEO */}
+          <StructuredData type="TravelAgency" settings={safeSettings} locale={locale} />
+          
+          <main className="min-h-screen pt-16">
+            <Hero settings={safeSettings} />
+            {visibility.mission && <MissionSection />}
+            {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
+            <FleetSection fleet={safeContent.fleet || []} />
+            <DestinationsSection destinations={safeContent.destinations || []} />
+            <Testimonials reviews={safeContent.reviews || []} />
+            {/* Always render CulinarySection if visibility is enabled, even if experiences array is empty */}
+            {visibility.culinary && (
+              <CulinarySection experiences={safeContent.culinaryExperiences || []} />
+            )}
+            {/* Only show CrewSection if visibility is enabled AND there are active crew members */}
+            {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (
+              <CrewSection crew={safeContent.crew} />
+            )}
+            <ReviewsSection reviews={safeContent.reviews || []} />
+          </main>
+          
+          {/* Floating CTA Button */}
+          <FloatingCTA />
+        </>
       )
     } catch (renderError) {
       console.error('[Home] Error during component rendering:', renderError)

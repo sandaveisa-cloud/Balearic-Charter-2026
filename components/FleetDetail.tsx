@@ -14,6 +14,8 @@ import SeasonalPriceCalculator, { type PriceBreakdown } from './SeasonalPriceCal
 import AddOnSelector from './AddOnSelector'
 import BoatComparisonTable from './BoatComparisonTable'
 import OptimizedImage from './OptimizedImage'
+import StructuredData from './StructuredData'
+import SocialProof from './SocialProof'
 
 interface FleetDetailProps {
   yacht: Fleet
@@ -391,6 +393,9 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Social Proof & Trust Block */}
+            <SocialProof />
+            
             {/* Description */}
             <section className="space-y-4">
               <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-4">About {yacht.name}</h2>

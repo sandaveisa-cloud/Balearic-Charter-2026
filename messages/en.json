@@ -24,6 +24,15 @@
     "toilets": "Toilets",
     "technicalSpecs": "Technical Specifications",
     "selectDates": "Select Your Charter Dates",
+    "trustBadges": {
+      "verified": "Verified Charter",
+      "insured": "Fully Insured",
+      "professionalCrew": "Professional Crew"
+    },
+    "socialProof": {
+      "recentBookings": "🔥 3 bookings in the last 7 days",
+      "rating": "⭐ 4.9/5 average rating"
+    },
     "ships": {
       "simona": {
         "headline": "Elegance, Comfort, and a Taste of Adventure",
