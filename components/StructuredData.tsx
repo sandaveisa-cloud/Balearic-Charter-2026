@@ -1,9 +1,11 @@
-import type { Fleet } from '@/types/database'
+import type { Fleet, Destination } from '@/types/database'
+import { getLocalizedText } from '@/lib/i18nUtils'
 
 interface StructuredDataProps {
-  type: 'TravelAgency' | 'BoatTrip'
+  type: 'TravelAgency' | 'BoatTrip' | 'Place'
   settings?: Record<string, string>
   yacht?: Fleet
+  destination?: Destination
   locale?: string
 }
 
@@ -112,6 +114,54 @@ export default function StructuredData({ type, settings = {}, yacht, locale = 'e
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(boatTripSchema) }}
+      />
+    )
+  }
+
+  if (type === 'Place' && destination) {
+    const destinationName = destination.name || destination.title || 'Destination'
+    const description = getLocalizedText(
+      (destination as any).description_i18n, 
+      locale as 'en' | 'es' | 'de'
+    ) || destination.description || destination.description_en || ''
+    
+    // Map destination names to coordinates
+    const coordinates: Record<string, { lat: number; lng: number }> = {
+      ibiza: { lat: 38.9067, lng: 1.4206 },
+      formentera: { lat: 38.7050, lng: 1.4500 },
+      mallorca: { lat: 39.5696, lng: 2.6502 },
+      menorca: { lat: 39.9375, lng: 4.0000 },
+      'costa-blanca': { lat: 38.3452, lng: -0.4810 },
+    }
+    
+    const slug = destination.slug?.toLowerCase() || destinationName.toLowerCase().replace(/\s+/g, '-')
+    const coords = coordinates[slug] || coordinates[destinationName.toLowerCase()] || { lat: 39.5, lng: 2.5 }
+    
+    const placeSchema = {
+      "@context": "https://schema.org",
+      "@type": "Place",
+      "name": destinationName,
+      "description": description.substring(0, 200),
+      "image": destination.image_url || undefined,
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": coords.lat,
+        "longitude": coords.lng
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": destination.region || destinationName,
+        "addressRegion": "Balearic Islands",
+        "addressCountry": "ES"
+      },
+      "url": `${baseUrl}/${locale}/destinations/${slug}`,
+      "sameAs": settings.instagram_link || undefined
+    }
+
+    return (
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(placeSchema) }}
       />
     )
   }

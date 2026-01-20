@@ -69,7 +69,29 @@
     "subtitle": "Explore the most beautiful locations in the Mediterranean",
     "viewDetails": "View Details",
     "discoverMore": "Discover More",
-    "viewAll": "View All Destinations"
+    "viewAll": "View All Destinations",
+    "exploreRoutes": "Explore Routes",
+    "boatAccessOnly": "Boat Access Only",
+    "ibiza": {
+      "title": "Ibiza",
+      "description": "Experience the vibrant nightlife and pristine beaches of Ibiza. Discover hidden coves and enjoy the island's legendary sunset views."
+    },
+    "formentera": {
+      "title": "Formentera",
+      "description": "Crystal-clear waters and unspoiled beaches await in Formentera. A paradise for water sports enthusiasts and relaxation seekers."
+    },
+    "mallorca": {
+      "title": "Mallorca",
+      "description": "Explore the stunning coastline of Mallorca, from dramatic cliffs to secluded bays. Rich culture meets natural beauty."
+    },
+    "menorca": {
+      "title": "Menorca",
+      "description": "Discover Menorca's UNESCO Biosphere Reserve, pristine beaches, and charming fishing villages."
+    },
+    "costaBlanca": {
+      "title": "Costa Blanca",
+      "description": "The sun-drenched Costa Blanca offers golden beaches, vibrant marinas, and charming coastal towns along Spain's eastern coast."
+    }
   },
   "culinary": {
     "title": "Culinary Excellence",
@@ -127,7 +149,13 @@
     "title": "Contact Us",
     "subtitle": "Get in touch with our team for your luxury charter experience",
     "whatsapp": "WhatsApp",
-    "availability": "Available 24/7 for your charter inquiries"
+    "availability": "Available 24/7 for your charter inquiries",
+    "locations": "Ibiza, Palma & Torrevieja, Spain",
+    "phone": "+34 680 957 096",
+    "email": "peter.sutter@gmail.com",
+    "phoneLabel": "Call Us",
+    "emailLabel": "Email Us",
+    "locationLabel": "Our Locations"
   },
   "breadcrumb": {
     "home": "Home",

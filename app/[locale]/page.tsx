@@ -167,7 +167,10 @@ export default async function Home({ params }: Props) {
             
             {/* Contact Section - If visibility is enabled */}
             {visibility.contact && (
-              <ContactSection contactPersons={safeContent.contactPersons || []} />
+              <ContactSection 
+                contactPersons={safeContent.contactPersons || []} 
+                settings={safeSettings}
+              />
             )}
             
             {/* Final Trust Badge - Prominent at the end before footer */}

@@ -70,7 +70,29 @@
     "subtitle": "Erkunden Sie die schönsten Orte im Mittelmeer",
     "viewDetails": "Details Anzeigen",
     "discoverMore": "Mehr Entdecken",
-    "viewAll": "Alle Reiseziele Anzeigen"
+    "viewAll": "Alle Reiseziele Anzeigen",
+    "exploreRoutes": "Routen Erkunden",
+    "boatAccessOnly": "Nur per Boot erreichbar",
+    "ibiza": {
+      "title": "Ibiza",
+      "description": "Erleben Sie das pulsierende Nachtleben und die unberührten Strände von Ibiza. Entdecken Sie versteckte Buchten und genießen Sie die legendären Sonnenuntergänge der Insel."
+    },
+    "formentera": {
+      "title": "Formentera",
+      "description": "Kristallklares Wasser und unberührte Strände erwarten Sie auf Formentera. Ein Paradies für Wassersport-Enthusiasten und Entspannungssuchende."
+    },
+    "mallorca": {
+      "title": "Mallorca",
+      "description": "Erkunden Sie die atemberaubende Küste von Mallorca, von dramatischen Klippen bis zu abgelegenen Buchten. Reiche Kultur trifft auf natürliche Schönheit."
+    },
+    "menorca": {
+      "title": "Menorca",
+      "description": "Entdecken Sie Menorcas UNESCO-Biosphärenreservat, unberührte Strände und charmante Fischerdörfer."
+    },
+    "costablanca": {
+      "title": "Costa Blanca",
+      "description": "Die sonnenverwöhnte Costa Blanca bietet goldene Strände, lebendige Yachthäfen und charmante Küstenstädte entlang der spanischen Ostküste."
+    }
   },
   "mission": {
     "title": "Unsere Mission",
@@ -128,7 +150,13 @@
     "title": "Kontaktieren Sie Uns",
     "subtitle": "Kontaktieren Sie unser Team für Ihr Luxus-Charter-Erlebnis",
     "whatsapp": "WhatsApp",
-    "availability": "24/7 verfügbar für Ihre Charter-Anfragen"
+    "availability": "24/7 verfügbar für Ihre Charter-Anfragen",
+    "locations": "Ibiza, Palma & Torrevieja, Spanien",
+    "phone": "+34 680 957 096",
+    "email": "peter.sutter@gmail.com",
+    "phoneLabel": "Rufen Sie Uns An",
+    "emailLabel": "Schreiben Sie Uns",
+    "locationLabel": "Unsere Standorte"
   },
   "breadcrumb": {
     "home": "Startseite",

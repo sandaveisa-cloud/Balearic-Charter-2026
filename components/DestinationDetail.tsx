@@ -68,13 +68,13 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
   const destinationSlug = destination.slug || destination.id
 
   return (
-    <div className="min-h-screen bg-white">
+    <article className="min-h-screen bg-white">
       {/* Hero Section with Image */}
-      <div className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden bg-gradient-to-br from-luxury-blue to-luxury-blue/80">
+      <header className="relative h-[50vh] md:h-[60vh] w-full overflow-hidden bg-gradient-to-br from-luxury-blue to-luxury-blue/80">
         {optimizedImageUrl ? (
           <OptimizedImage
             src={optimizedImageUrl}
-            alt={destinationName}
+            alt={`${destinationName} - Luxury yacht charter destination in the Balearic Islands. Discover pristine beaches and hidden coves.`}
             fill
             sizes="100vw"
             priority
@@ -113,16 +113,18 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
             )}
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Description */}
             {description && (
-              <section>
-                <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-4">About {destinationName}</h2>
+              <section aria-labelledby="about-heading">
+                <h2 id="about-heading" className="font-serif text-3xl font-bold text-luxury-blue mb-4">
+                  About {destinationName}
+                </h2>
                 <div className="prose max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
                   {description}
                 </div>
@@ -131,8 +133,10 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
 
             {/* Video Section */}
             {youtubeVideoId && (
-              <section>
-                <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-4">Discover {destinationName}</h2>
+              <section aria-labelledby="video-heading">
+                <h2 id="video-heading" className="font-serif text-3xl font-bold text-luxury-blue mb-4">
+                  Discover {destinationName}
+                </h2>
                 <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-900">
                   <iframe
                     src={buildYouTubeEmbedUrl(youtubeVideoId, {
@@ -141,10 +145,11 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
                       loop: false,
                       controls: true,
                     })}
-                    title={`${destinationName} - Video`}
+                    title={`${destinationName} - Luxury yacht charter destination video`}
                     className="absolute inset-0 w-full h-full"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
+                    loading="lazy"
                   />
                 </div>
                 <button
@@ -159,7 +164,7 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
           </div>
 
           {/* Sidebar with Map */}
-          <div className="lg:col-span-1">
+          <aside className="lg:col-span-1">
             <div className="sticky top-8 space-y-6">
               {/* Interactive Map */}
               <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
@@ -185,9 +190,9 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
                 </div>
               )}
             </div>
-          </div>
+          </aside>
         </div>
-      </div>
+      </main>
 
       {/* Video Modal */}
       {youtubeVideoId && (
@@ -198,6 +203,6 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
           title={destinationName}
         />
       )}
-    </div>
+    </article>
   )
 }
