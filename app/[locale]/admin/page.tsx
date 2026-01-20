@@ -28,7 +28,7 @@ export default function AdminPage() {
   const [contactPersons, setContactPersons] = useState<ContactPerson[]>([])
   const [siteSettings, setSiteSettings] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'overview' | 'settings' | 'fleet' | 'destinations' | 'reviews' | 'stats' | 'culinary' | 'crew' | 'contact' | 'inquiries'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'settings' | 'theme' | 'fleet' | 'destinations' | 'reviews' | 'stats' | 'culinary' | 'crew' | 'contact' | 'inquiries'>('overview')
   
   // Fleet management states
   const [uploadingImages, setUploadingImages] = useState<Record<string, boolean>>({})
@@ -1706,6 +1706,7 @@ export default function AdminPage() {
             {[
               { id: 'overview', label: 'Overview' },
               { id: 'settings', label: 'Site Settings' },
+              { id: 'theme', label: 'Theme Settings' },
               { id: 'fleet', label: 'Fleet' },
               { id: 'destinations', label: 'Destinations' },
               { id: 'reviews', label: 'Reviews' },
@@ -1901,6 +1902,167 @@ export default function AdminPage() {
                     onUpdate={handleSettingsUpdate}
                     saving={savingSettings}
                   />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'theme' && (
+            <div>
+              <h2 className="text-2xl font-bold text-luxury-blue mb-6">Theme Settings</h2>
+              <p className="text-gray-600 mb-6">Customize your website's color scheme. Changes apply instantly across the entire site.</p>
+              
+              {settingsSuccess && (
+                <div className={`mb-4 p-4 border rounded-lg ${
+                  settingsSuccess.includes('✅') 
+                    ? 'bg-green-50 border-green-200' 
+                    : 'bg-red-50 border-red-200'
+                }`}>
+                  <p className={settingsSuccess.includes('✅') ? 'text-green-800' : 'text-red-800'}>
+                    {settingsSuccess}
+                  </p>
+                </div>
+              )}
+
+              <div className="space-y-6">
+                {/* Primary Color */}
+                <div className="border border-gray-200 rounded-lg p-6">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3">
+                    Primary Color (Deep Navy)
+                  </label>
+                  <p className="text-xs text-gray-600 mb-4">Main brand color used for headings, buttons, and accents.</p>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="color"
+                      value={siteSettings.theme_primary_color || '#1B263B'}
+                      onChange={(e) => {
+                        const newSettings = { ...siteSettings, theme_primary_color: e.target.value }
+                        setSiteSettings(newSettings)
+                      }}
+                      className="w-20 h-20 rounded-lg border-2 border-gray-300 cursor-pointer"
+                    />
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={siteSettings.theme_primary_color || '#1B263B'}
+                        onChange={(e) => {
+                          const newSettings = { ...siteSettings, theme_primary_color: e.target.value }
+                          setSiteSettings(newSettings)
+                        }}
+                        placeholder="#1B263B"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent font-mono"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Secondary Color */}
+                <div className="border border-gray-200 rounded-lg p-6">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3">
+                    Secondary Color (Soft Gold)
+                  </label>
+                  <p className="text-xs text-gray-600 mb-4">Accent color for highlights, scores, and special elements.</p>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="color"
+                      value={siteSettings.theme_secondary_color || '#C5A059'}
+                      onChange={(e) => {
+                        const newSettings = { ...siteSettings, theme_secondary_color: e.target.value }
+                        setSiteSettings(newSettings)
+                      }}
+                      className="w-20 h-20 rounded-lg border-2 border-gray-300 cursor-pointer"
+                    />
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={siteSettings.theme_secondary_color || '#C5A059'}
+                        onChange={(e) => {
+                          const newSettings = { ...siteSettings, theme_secondary_color: e.target.value }
+                          setSiteSettings(newSettings)
+                        }}
+                        placeholder="#C5A059"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent font-mono"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Background Color */}
+                <div className="border border-gray-200 rounded-lg p-6">
+                  <label className="block text-sm font-semibold text-gray-800 mb-3">
+                    Background Color
+                  </label>
+                  <p className="text-xs text-gray-600 mb-4">Main background color for sections and cards.</p>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="color"
+                      value={siteSettings.theme_background_color || '#FFFFFF'}
+                      onChange={(e) => {
+                        const newSettings = { ...siteSettings, theme_background_color: e.target.value }
+                        setSiteSettings(newSettings)
+                      }}
+                      className="w-20 h-20 rounded-lg border-2 border-gray-300 cursor-pointer"
+                    />
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={siteSettings.theme_background_color || '#FFFFFF'}
+                        onChange={(e) => {
+                          const newSettings = { ...siteSettings, theme_background_color: e.target.value }
+                          setSiteSettings(newSettings)
+                        }}
+                        placeholder="#FFFFFF"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent font-mono"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preview */}
+                <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Live Preview</h3>
+                  <div className="space-y-3">
+                    <div 
+                      className="p-4 rounded-lg text-white"
+                      style={{ backgroundColor: siteSettings.theme_primary_color || '#1B263B' }}
+                    >
+                      Primary Color Sample
+                    </div>
+                    <div 
+                      className="p-4 rounded-lg text-white"
+                      style={{ backgroundColor: siteSettings.theme_secondary_color || '#C5A059' }}
+                    >
+                      Secondary Color Sample
+                    </div>
+                    <div 
+                      className="p-4 rounded-lg border-2"
+                      style={{ 
+                        backgroundColor: siteSettings.theme_background_color || '#FFFFFF',
+                        borderColor: siteSettings.theme_primary_color || '#1B263B'
+                      }}
+                    >
+                      Background Color Sample
+                    </div>
+                  </div>
+                </div>
+
+                {/* Save Button */}
+                <div className="flex justify-end">
+                  <button
+                    onClick={async () => {
+                      await handleSettingsUpdate({
+                        theme_primary_color: siteSettings.theme_primary_color || '#1B263B',
+                        theme_secondary_color: siteSettings.theme_secondary_color || '#C5A059',
+                        theme_background_color: siteSettings.theme_background_color || '#FFFFFF',
+                      })
+                      // Force page reload to apply theme
+                      window.location.reload()
+                    }}
+                    disabled={savingSettings}
+                    className="px-8 py-3 bg-luxury-blue text-white rounded-lg font-semibold hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {savingSettings ? 'Saving...' : 'Save Theme Colors'}
+                  </button>
                 </div>
               </div>
             </div>

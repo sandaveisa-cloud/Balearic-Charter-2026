@@ -119,8 +119,8 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
           </div>
         </div>
 
-        {/* Reviews Grid - Responsive: 1 column mobile, 2 tablet, 3 desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        {/* Reviews Grid - Elegant 3-column on desktop, carousel-friendly */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {curatedReviews.map((review) => (
             <ReviewCard key={review.id} review={review} />
           ))}

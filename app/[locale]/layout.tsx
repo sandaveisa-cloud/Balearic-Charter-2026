@@ -10,6 +10,7 @@ import Footer from '@/components/Footer'
 import StickyHeader from '@/components/StickyHeader'
 import ScrollToTop from '@/components/ScrollToTop'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import ThemeProvider from '@/components/ThemeProvider'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
@@ -108,6 +109,9 @@ export default async function LocaleLayout({ children, params }: Props) {
 
     return (
       <NextIntlClientProvider messages={messages}>
+        {/* Theme Provider - Applies dynamic theme colors */}
+        <ThemeProvider />
+        
         {/* Sticky Header with Language Switcher */}
         <StickyHeader />
         

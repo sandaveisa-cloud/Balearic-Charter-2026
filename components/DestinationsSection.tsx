@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import OptimizedImage from './OptimizedImage'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { useTranslations } from 'next-intl'
 import { getLocalizedText } from '@/lib/i18nUtils'
 import { ArrowRight, Play } from 'lucide-react'
 import { getImageUrl } from '@/lib/imageUtils'
 import { extractYouTubeId, buildYouTubeEmbedUrl } from '@/lib/youtubeUtils'
-import BalearicIslandsMap from './BalearicIslandsMap'
+import InteractiveDestinationsMap from './InteractiveDestinationsMap'
 import VideoModal from './VideoModal'
 
 interface Destination {
@@ -217,6 +218,7 @@ function DestinationCard({
 
 export default function DestinationsSection({ destinations }: DestinationsSectionProps) {
   const locale = useLocale()
+  const router = useRouter()
   const t = useTranslations('destinations')
   const [highlightedDestination, setHighlightedDestination] = useState<string | null>(null)
   const [videoModal, setVideoModal] = useState<{ isOpen: boolean; videoUrl: string | null; title: string }>({
@@ -285,19 +287,28 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-luxury-blue mb-6">
             {t('title') || 'Discover Our Destinations'}
           </h2>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed text-center px-4 text-balance">
             {t('subtitle') || 'Explore the stunning coastlines and hidden gems of the Mediterranean'}
           </p>
         </div>
 
         {/* Interactive Map and Destinations Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          {/* SVG Map */}
+          {/* Interactive Leaflet Map */}
           <div className="lg:col-span-1 order-2 lg:order-1">
             <div className="sticky top-8 h-[500px] lg:h-[600px]">
-              <BalearicIslandsMap
+              <InteractiveDestinationsMap
+                destinations={activeDestinations.map(dest => ({
+                  id: dest.id,
+                  name: getDestinationName(dest),
+                  slug: dest.slug || dest.id,
+                  description: getLocalizedDescription(dest),
+                }))}
                 highlightedDestination={highlightedDestination}
-                onDestinationHover={setHighlightedDestination}
+                onMarkerClick={(slug) => {
+                  // Navigate to destination page on marker click
+                  router.push(`/${locale}/destinations/${slug}`)
+                }}
               />
             </div>
           </div>

@@ -63,6 +63,22 @@ export interface Fleet {
   updated_at: string
 }
 
+export interface SeasonalData {
+  spring?: SeasonInfo
+  summer?: SeasonInfo
+  earlyAutumn?: SeasonInfo
+  lateAutumn?: SeasonInfo
+  winter?: SeasonInfo
+}
+
+export interface SeasonInfo {
+  sailing_score: number // Percentage (0-100)
+  avg_temp: number // Average temperature in Celsius
+  conditions: string
+  tourist_level: string
+  pros: string[]
+}
+
 export interface Destination {
   id: string
   name: string
@@ -77,6 +93,7 @@ export interface Destination {
   slug: string
   order_index: number
   is_active: boolean
+  seasonal_data?: SeasonalData | null // JSONB field for seasonal sailing information
   created_at: string
   updated_at: string
   // Legacy fields for backward compatibility

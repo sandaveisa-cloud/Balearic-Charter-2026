@@ -9,13 +9,16 @@ module.exports = {
     extend: {
       colors: {
         luxury: {
-          blue: '#002366',
-          gold: '#D4AF37',
+          blue: 'var(--luxury-blue, #1B263B)',
+          gold: 'var(--luxury-gold, #C5A059)',
           'gold-light': '#F4E4BC',
           'gold-dark': '#B8941D',
         },
-        'luxury-blue': '#002366',
-        'luxury-gold': '#D4AF37',
+        'luxury-blue': 'var(--luxury-blue, #1B263B)',
+        'luxury-gold': 'var(--luxury-gold, #C5A059)',
+        'primary': 'var(--primary-color, #1B263B)',
+        'secondary': 'var(--secondary-color, #C5A059)',
+        'background': 'var(--background-color, #FFFFFF)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

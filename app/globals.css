@@ -6,8 +6,15 @@
 @import 'leaflet/dist/leaflet.css';
 
 :root {
-  --luxury-blue: #002366;
-  --luxury-gold: #D4AF37;
+  /* Default theme colors - can be overridden by database values */
+  --luxury-blue: #1B263B;
+  --luxury-gold: #C5A059;
+  --luxury-background: #FFFFFF;
+  
+  /* Theme color aliases for dynamic theming */
+  --primary-color: var(--luxury-blue);
+  --secondary-color: var(--luxury-gold);
+  --background-color: var(--luxury-background);
 }
 
 body {
