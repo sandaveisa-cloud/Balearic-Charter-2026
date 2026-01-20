@@ -61,6 +61,13 @@ export default function MissionSection() {
             )
           })}
         </div>
+
+        {/* Verification Line */}
+        <div className="mt-8 pt-4 border-t border-[#E2E8F0]">
+          <p className="text-xs text-gray-400 text-center">
+            ✓ 2026 Season | Verified & Logistically Synchronized
+          </p>
+        </div>
       </div>
     </section>
   )

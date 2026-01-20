@@ -1,10 +1,10 @@
 'use client'
 
-import Image from 'next/image'
 import OptimizedImage from './OptimizedImage'
 import { useTranslations } from 'next-intl'
 import type { CulinaryExperience } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
+import { ChefHat, ShoppingBag, Menu } from 'lucide-react'
 
 interface CulinarySectionProps {
   experiences: CulinaryExperience[]
@@ -13,65 +13,100 @@ interface CulinarySectionProps {
 export default function CulinarySection({ experiences }: CulinarySectionProps) {
   const t = useTranslations('culinary')
   
-  if (experiences.length === 0) {
-    return null
-  }
+  // Find paella image or use first experience image as placeholder
+  const paellaExperience = experiences.find(exp => 
+    exp.title?.toLowerCase().includes('paella') || 
+    exp.description?.toLowerCase().includes('paella')
+  )
+  
+  const featuredImageUrl = paellaExperience?.image_url 
+    ? getOptimizedImageUrl(paellaExperience.image_url, {
+        width: 1200,
+        quality: 85,
+        format: 'webp',
+      })
+    : experiences.length > 0 && experiences[0].image_url
+    ? getOptimizedImageUrl(experiences[0].image_url, {
+        width: 1200,
+        quality: 85,
+        format: 'webp',
+      })
+    : null
+
+  const bulletPoints = [
+    { icon: ChefHat, text: 'Private Chef Service' },
+    { icon: ShoppingBag, text: 'Fresh Local Ingredients' },
+    { icon: Menu, text: 'Tailored Menu Options' },
+  ]
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-12 bg-white border-t border-b border-[#E2E8F0]">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4">
-            {t('title')}
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            {t('subtitle')}
-          </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          {/* Left Side - Image */}
+          <div className="order-2 lg:order-1">
+            {featuredImageUrl ? (
+              <div className="relative aspect-[4/3] rounded-lg overflow-hidden">
+                <OptimizedImage
+                  src={featuredImageUrl}
+                  alt="Authentic Spanish Paella"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  objectFit="cover"
+                  aspectRatio="4/3"
+                  priority
+                  quality={85}
+                />
+              </div>
+            ) : (
+              <div className="relative aspect-[4/3] rounded-lg overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                <ChefHat className="w-24 h-24 text-gray-400" />
+              </div>
+            )}
+          </div>
+
+          {/* Right Side - Content */}
+          <div className="order-1 lg:order-2 space-y-6">
+            {/* Main Heading */}
+            <h2 className="font-serif text-3xl font-bold text-[#0F172A]">
+              Culinary Excellence
+            </h2>
+
+            {/* Subheading */}
+            <p className="text-base text-[#475569]">
+              World-class dining on the open sea.
+            </p>
+
+            {/* Featured Dish */}
+            <div className="space-y-3">
+              <h3 className="font-serif text-xl font-bold text-[#0F172A]">
+                Authentic Spanish Paella
+              </h3>
+              <p className="text-base text-[#475569] leading-relaxed">
+                Savor our signature traditional paella, prepared fresh on deck by our master chef using the finest local seafood and Mediterranean ingredients.
+              </p>
+            </div>
+
+            {/* Bullet Points */}
+            <ul className="space-y-3">
+              {bulletPoints.map((point, index) => {
+                const IconComponent = point.icon
+                return (
+                  <li key={index} className="flex items-start gap-3">
+                    <IconComponent size={20} className="text-[#C5A059] flex-shrink-0 mt-0.5" strokeWidth={2} />
+                    <span className="text-base text-[#475569]">{point.text}</span>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-          {experiences.map((experience) => {
-            const imageUrl = getOptimizedImageUrl(experience.image_url, {
-              width: 800,
-              quality: 80,
-              format: 'webp',
-            })
-
-            return (
-              <div
-                key={experience.id}
-                className="bg-gray-50 rounded-lg overflow-hidden shadow-md transition-transform hover:scale-105"
-              >
-                {imageUrl ? (
-                  <div className="aspect-square overflow-hidden relative">
-                    <OptimizedImage
-                      src={imageUrl}
-                      alt={experience.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      objectFit="cover"
-                      aspectRatio="1/1"
-                      loading="lazy"
-                      quality={80}
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-square bg-gradient-to-br from-luxury-gold-light to-luxury-gold flex items-center justify-center">
-                    <span className="text-luxury-blue text-xl font-serif text-center px-4">{experience.title}</span>
-                  </div>
-                )}
-
-                <div className="p-6">
-                  <h3 className="font-serif text-xl font-bold text-luxury-blue mb-2">
-                    {experience.title}
-                  </h3>
-                  {experience.description && (
-                    <p className="text-gray-600 text-sm">{experience.description}</p>
-                  )}
-                </div>
-              </div>
-            )
-          })}
+        {/* Verification Line */}
+        <div className="mt-8 pt-4 border-t border-[#E2E8F0]">
+          <p className="text-xs text-gray-400 text-center">
+            ✓ 2026 Season | Verified & Logistically Synchronized
+          </p>
         </div>
       </div>
     </section>
