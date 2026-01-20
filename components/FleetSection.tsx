@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { Ruler, Users, Home, Bath, Wind, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
 
@@ -97,24 +98,40 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                     <p className="text-gray-600 mb-4 line-clamp-2">{yacht.short_description}</p>
                   )}
 
-                  <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-600">
+                  {/* Quick Info Bar */}
+                  <div className="flex flex-wrap gap-4 mb-4 text-sm">
                     {yacht.length && (
-                      <span className="flex items-center">
-                        <svg className="w-5 h-5 mr-1 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                        </svg>
-                        {yacht.length}m
+                      <span className="flex items-center gap-1.5 text-gray-700">
+                        <Ruler className="w-4 h-4 text-luxury-gold" />
+                        <span className="font-medium">{yacht.length}m</span>
                       </span>
                     )}
                     {yacht.capacity && (
-                      <span className="flex items-center">
-                        <svg className="w-5 h-5 mr-1 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        Up to {yacht.capacity} guests
+                      <span className="flex items-center gap-1.5 text-gray-700">
+                        <Users className="w-4 h-4 text-luxury-gold" />
+                        <span className="font-medium">{yacht.capacity} Guests</span>
+                      </span>
+                    )}
+                    {yacht.cabins && (
+                      <span className="flex items-center gap-1.5 text-gray-700">
+                        <Home className="w-4 h-4 text-luxury-gold" />
+                        <span className="font-medium">{yacht.cabins} Cabins</span>
+                      </span>
+                    )}
+                    {yacht.toilets && (
+                      <span className="flex items-center gap-1.5 text-gray-700">
+                        <Bath className="w-4 h-4 text-luxury-gold" />
+                        <span className="font-medium">{yacht.toilets} Toilets</span>
                       </span>
                     )}
                   </div>
+
+                  {/* Amenities Tags */}
+                  {yacht.amenities && Object.keys(yacht.amenities).filter(key => yacht.amenities?.[key]).length > 0 && (
+                    <div className="mb-4">
+                      <AmenitiesDisplay amenities={yacht.amenities} />
+                    </div>
+                  )}
 
                   {yacht.high_season_price && (
                     <div className="mb-4">
@@ -143,5 +160,48 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
         </div>
       </div>
     </section>
+  )
+}
+
+// Amenities Display Component
+function AmenitiesDisplay({ amenities }: { amenities: Fleet['amenities'] }) {
+  const amenityConfig = [
+    { key: 'ac', label: 'AC', icon: Wind },
+    { key: 'watermaker', label: 'Watermaker', icon: Droplets },
+    { key: 'generator', label: 'Generator', icon: Zap },
+    { key: 'flybridge', label: 'Flybridge', icon: Ship },
+    { key: 'heating', label: 'Heating', icon: Flame },
+    { key: 'teak_deck', label: 'Teak Deck', icon: Waves },
+    { key: 'full_batten', label: 'Full Batten', icon: Ship },
+    { key: 'folding_table', label: 'Folding Table', icon: Table },
+    { key: 'fridge', label: 'Fridge', icon: Refrigerator },
+    { key: 'dinghy', label: 'Dinghy', icon: Anchor },
+    { key: 'water_entertainment', label: 'Water Toys', icon: Sparkles },
+  ]
+
+  const enabledAmenities = amenityConfig.filter(config => amenities?.[config.key as keyof typeof amenities])
+  const visibleCount = 5
+  const visible = enabledAmenities.slice(0, visibleCount)
+  const remaining = enabledAmenities.length - visibleCount
+
+  if (enabledAmenities.length === 0) return null
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {visible.map(({ key, label, icon: Icon }) => (
+        <span
+          key={key}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-luxury-blue/10 text-luxury-blue rounded-full text-xs font-medium"
+        >
+          <Icon className="w-3.5 h-3.5" />
+          {label}
+        </span>
+      ))}
+      {remaining > 0 && (
+        <span className="inline-flex items-center px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+          +{remaining} more
+        </span>
+      )}
+    </div>
   )
 }

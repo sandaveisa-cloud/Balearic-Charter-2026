@@ -17,6 +17,9 @@ export interface Fleet {
     max_speed?: string
     fuel_capacity?: string
     water_capacity?: string
+    length?: number | string // in meters/feet
+    beam?: number | string // in meters/feet
+    draft?: number | string // in meters/feet
     [key: string]: any
   }
   description: string | null
@@ -27,8 +30,24 @@ export interface Fleet {
   medium_season_price: number | null
   high_season_price: number | null
   currency: string
-  capacity: number | null
-  length: number | null
+  capacity: number | null // Guests
+  cabins: number | null
+  toilets: number | null
+  length: number | null // Overall length in meters
+  amenities: {
+    ac?: boolean
+    watermaker?: boolean
+    generator?: boolean
+    flybridge?: boolean
+    heating?: boolean
+    teak_deck?: boolean
+    full_batten?: boolean
+    folding_table?: boolean
+    fridge?: boolean
+    dinghy?: boolean
+    water_entertainment?: boolean // Water toys
+    [key: string]: boolean | undefined
+  } | null
   apa_percentage: number | null
   crew_service_fee: number | null
   cleaning_fee: number | null

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { format } from 'date-fns'
+import { Ruler, Users, Home, Bath, Wind, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils'
 import BookingCalendar from './BookingCalendar'
@@ -282,17 +283,111 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
               )}
             </section>
 
-            {/* Technical Specs */}
-            {yacht.technical_specs && Object.keys(yacht.technical_specs).length > 0 && (
+            {/* Technical Specifications Table */}
+            <section>
+              <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">Technical Specifications</h2>
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                <table className="w-full">
+                  <tbody className="divide-y divide-gray-200">
+                    {yacht.length && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700 w-1/3">Length</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.length}m</td>
+                      </tr>
+                    )}
+                    {yacht.technical_specs?.beam && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Beam</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.beam}</td>
+                      </tr>
+                    )}
+                    {yacht.technical_specs?.draft && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Draft</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.draft}</td>
+                      </tr>
+                    )}
+                    {yacht.technical_specs?.engines && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Engines</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.engines}</td>
+                      </tr>
+                    )}
+                    {yacht.capacity && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Capacity</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.capacity} Guests</td>
+                      </tr>
+                    )}
+                    {yacht.cabins && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Cabins</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.cabins}</td>
+                      </tr>
+                    )}
+                    {yacht.toilets && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Toilets</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.toilets}</td>
+                      </tr>
+                    )}
+                    {yacht.technical_specs?.cruising_speed && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Cruising Speed</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.cruising_speed}</td>
+                      </tr>
+                    )}
+                    {yacht.technical_specs?.max_speed && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Max Speed</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.max_speed}</td>
+                      </tr>
+                    )}
+                    {yacht.technical_specs?.fuel_capacity && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Fuel Capacity</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.fuel_capacity}</td>
+                      </tr>
+                    )}
+                    {yacht.technical_specs?.water_capacity && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Water Capacity</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.water_capacity}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            {/* Amenities Section */}
+            {yacht.amenities && Object.keys(yacht.amenities).filter(key => yacht.amenities?.[key]).length > 0 && (
               <section>
-                <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-4">Technical Specifications</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  {Object.entries(yacht.technical_specs).map(([key, value]) => (
-                    <div key={key} className="border-b border-gray-200 pb-2">
-                      <span className="text-gray-600 capitalize">{key.replace(/_/g, ' ')}:</span>
-                      <span className="ml-2 font-semibold text-luxury-blue">{String(value)}</span>
-                    </div>
-                  ))}
+                <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">Amenities & Features</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {[
+                    { key: 'ac', label: 'Air Conditioning', icon: Wind },
+                    { key: 'watermaker', label: 'Watermaker', icon: Droplets },
+                    { key: 'generator', label: 'Generator', icon: Zap },
+                    { key: 'flybridge', label: 'Flybridge', icon: Ship },
+                    { key: 'heating', label: 'Heating', icon: Flame },
+                    { key: 'teak_deck', label: 'Teak Deck', icon: Waves },
+                    { key: 'full_batten', label: 'Full Batten', icon: Ship },
+                    { key: 'folding_table', label: 'Folding Table', icon: Table },
+                    { key: 'fridge', label: 'Refrigerator', icon: Refrigerator },
+                    { key: 'dinghy', label: 'Dinghy', icon: Anchor },
+                    { key: 'water_entertainment', label: 'Water Entertainment', icon: Sparkles },
+                  ]
+                    .filter(({ key }) => yacht.amenities?.[key as keyof typeof yacht.amenities])
+                    .map(({ key, label, icon: Icon }) => (
+                      <div
+                        key={key}
+                        className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg hover:border-luxury-blue hover:shadow-md transition-all"
+                      >
+                        <Icon className="w-6 h-6 text-luxury-blue flex-shrink-0" />
+                        <span className="text-sm font-medium text-gray-900">{label}</span>
+                      </div>
+                    ))}
                 </div>
               </section>
             )}

@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useLocale, usePathname } from 'next-intl'
-import { ArrowRight } from 'lucide-react'
+import { useRouter, usePathname } from 'next/navigation'
+import { useLocale } from 'next-intl'
+import { ArrowRight, Wind, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { compressImage, compressThumbnail } from '@/lib/imageCompression'
+import { extractYouTubeId, buildYouTubeEmbedUrl } from '@/lib/youtubeUtils'
 import DragDropImageUpload from '@/components/DragDropImageUpload'
 import AdminDashboard from '@/components/AdminDashboard'
 import type { BookingInquiry, Fleet, Destination, CulinaryExperience, CrewMember, Stat, Review } from '@/types/database'
@@ -1590,6 +1591,52 @@ export default function AdminPage() {
   )
 }
 
+// Video Preview Component
+function VideoPreview({ url }: { url: string }) {
+  const youtubeId = extractYouTubeId(url)
+  const isYouTube = !!youtubeId
+
+  if (isYouTube) {
+    return (
+      <div className="relative max-w-xl aspect-video bg-black rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+        <iframe
+          src={buildYouTubeEmbedUrl(youtubeId, {
+            autoplay: false,
+            mute: true,
+            loop: true,
+            controls: true,
+          })}
+          title="Hero Video Preview"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowFullScreen
+          className="absolute inset-0 w-full h-full"
+        />
+      </div>
+    )
+  }
+
+  // Direct video URL
+  return (
+    <div className="relative max-w-xl aspect-video bg-black rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+      <video
+        src={url}
+        controls
+        muted
+        loop
+        playsInline
+        className="w-full h-full object-contain"
+        onError={(e) => {
+          // Handle video load errors gracefully
+          const target = e.target as HTMLVideoElement
+          target.style.display = 'none'
+        }}
+      >
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  )
+}
+
 // Hero Settings Form Component
 function HeroSettingsForm({ 
   settings, 
@@ -1664,6 +1711,32 @@ function HeroSettingsForm({
         <p className="mt-1 text-sm text-gray-500">
           Paste a direct video URL or YouTube link for the homepage background
         </p>
+        
+        {/* Video Preview */}
+        <div className="mt-4">
+          {saving ? (
+            <div className="relative max-w-xl aspect-video bg-gray-100 rounded-lg border border-gray-200 shadow-sm flex items-center justify-center">
+              <div className="flex flex-col items-center gap-2">
+                <svg className="animate-spin h-8 w-8 text-luxury-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span className="text-sm text-gray-600">Saving...</span>
+              </div>
+            </div>
+          ) : heroVideoUrl ? (
+            <VideoPreview url={heroVideoUrl} />
+          ) : (
+            <div className="relative max-w-xl aspect-video bg-gray-50 rounded-lg border border-gray-200 shadow-sm flex items-center justify-center">
+              <div className="flex flex-col items-center gap-2 text-gray-400">
+                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span className="text-sm font-medium">No video uploaded</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       <button
@@ -1709,6 +1782,37 @@ function FleetEditForm({
   const [mediumSeasonPrice, setMediumSeasonPrice] = useState(yacht.medium_season_price?.toString() || '')
   const [highSeasonPrice, setHighSeasonPrice] = useState(yacht.high_season_price?.toString() || '')
   
+  // Technical Specs
+  const [length, setLength] = useState(yacht.length?.toString() || '')
+  const [lengthUnit, setLengthUnit] = useState('m')
+  const [beam, setBeam] = useState(yacht.technical_specs?.beam?.toString() || '')
+  const [beamUnit, setBeamUnit] = useState('m')
+  const [draft, setDraft] = useState(yacht.technical_specs?.draft?.toString() || '')
+  const [draftUnit, setDraftUnit] = useState('m')
+  const [engines, setEngines] = useState(yacht.technical_specs?.engines || '')
+  const [capacity, setCapacity] = useState(yacht.capacity?.toString() || '')
+  const [cabins, setCabins] = useState(yacht.cabins?.toString() || '')
+  const [toilets, setToilets] = useState(yacht.toilets?.toString() || '')
+  
+  // Amenities
+  const [amenities, setAmenities] = useState<Record<string, boolean>>({
+    ac: yacht.amenities?.ac || false,
+    watermaker: yacht.amenities?.watermaker || false,
+    generator: yacht.amenities?.generator || false,
+    flybridge: yacht.amenities?.flybridge || false,
+    heating: yacht.amenities?.heating || false,
+    teak_deck: yacht.amenities?.teak_deck || false,
+    full_batten: yacht.amenities?.full_batten || false,
+    folding_table: yacht.amenities?.folding_table || false,
+    fridge: yacht.amenities?.fridge || false,
+    dinghy: yacht.amenities?.dinghy || false,
+    water_entertainment: yacht.amenities?.water_entertainment || false,
+  })
+  
+  // Description
+  const [description, setDescription] = useState(yacht.description || '')
+  const [shortDescription, setShortDescription] = useState(yacht.short_description || '')
+  
   // Combine main_image_url and gallery_images into a single images array
   const getCombinedImages = () => {
     const gallery = yacht.gallery_images || []
@@ -1726,19 +1830,68 @@ function FleetEditForm({
     setLowSeasonPrice(yacht.low_season_price?.toString() || '')
     setMediumSeasonPrice(yacht.medium_season_price?.toString() || '')
     setHighSeasonPrice(yacht.high_season_price?.toString() || '')
+    setLength(yacht.length?.toString() || '')
+    setBeam(yacht.technical_specs?.beam?.toString() || '')
+    setDraft(yacht.technical_specs?.draft?.toString() || '')
+    setEngines(yacht.technical_specs?.engines || '')
+    setCapacity(yacht.capacity?.toString() || '')
+    setCabins(yacht.cabins?.toString() || '')
+    setToilets(yacht.toilets?.toString() || '')
+    setDescription(yacht.description || '')
+    setShortDescription(yacht.short_description || '')
+    setAmenities({
+      ac: yacht.amenities?.ac || false,
+      watermaker: yacht.amenities?.watermaker || false,
+      generator: yacht.amenities?.generator || false,
+      flybridge: yacht.amenities?.flybridge || false,
+      heating: yacht.amenities?.heating || false,
+      teak_deck: yacht.amenities?.teak_deck || false,
+      full_batten: yacht.amenities?.full_batten || false,
+      folding_table: yacht.amenities?.folding_table || false,
+      fridge: yacht.amenities?.fridge || false,
+      dinghy: yacht.amenities?.dinghy || false,
+      water_entertainment: yacht.amenities?.water_entertainment || false,
+    })
     setImages(getCombinedImages())
   }, [yacht])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onUpdate(yacht.id, {
+    
+    // Build technical_specs object - preserve existing fields
+    const technicalSpecs = {
+      ...(yacht.technical_specs || {}),
+      ...(beam ? { beam: `${beam}${beamUnit}` } : {}),
+      ...(draft ? { draft: `${draft}${draftUnit}` } : {}),
+      ...(engines ? { engines } : {}),
+    }
+    
+    // Prepare update object
+    const updates: Partial<Fleet> = {
       name,
+      description: description || null,
+      short_description: shortDescription || null,
       low_season_price: lowSeasonPrice ? parseFloat(lowSeasonPrice) : null,
       medium_season_price: mediumSeasonPrice ? parseFloat(mediumSeasonPrice) : null,
       high_season_price: highSeasonPrice ? parseFloat(highSeasonPrice) : null,
+      length: length ? parseFloat(length) : null,
+      capacity: capacity ? parseInt(capacity) : null,
+      cabins: cabins ? parseInt(cabins) : null,
+      toilets: toilets ? parseInt(toilets) : null,
+      technical_specs: technicalSpecs,
+      amenities: amenities,
       main_image_url: images[0] || null, // First image as main
       gallery_images: images, // Save all images to gallery_images array
-    })
+    }
+    
+    onUpdate(yacht.id, updates)
+  }
+  
+  const toggleAmenity = (key: string) => {
+    setAmenities(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }))
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1835,53 +1988,266 @@ function FleetEditForm({
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label htmlFor={`low-price-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
-              Low Season Price ({yacht.currency || 'EUR'})
-            </label>
-            <input
-              type="number"
-              id={`low-price-${yacht.id}`}
-              value={lowSeasonPrice}
-              onChange={(e) => setLowSeasonPrice(e.target.value)}
-              min="0"
-              step="0.01"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
-              placeholder="0.00"
-            />
-          </div>
+        {/* Description Fields */}
+        <div>
+          <label htmlFor={`short-description-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+            Short Description (for cards)
+          </label>
+          <textarea
+            id={`short-description-${yacht.id}`}
+            value={shortDescription}
+            onChange={(e) => setShortDescription(e.target.value)}
+            rows={2}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+            placeholder="Brief description shown on fleet cards"
+          />
+        </div>
 
-          <div>
-            <label htmlFor={`medium-price-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
-              Medium Season Price ({yacht.currency || 'EUR'})
-            </label>
-            <input
-              type="number"
-              id={`medium-price-${yacht.id}`}
-              value={mediumSeasonPrice}
-              onChange={(e) => setMediumSeasonPrice(e.target.value)}
-              min="0"
-              step="0.01"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
-              placeholder="0.00"
-            />
-          </div>
+        <div>
+          <label htmlFor={`description-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+            Full Description (for detail page)
+          </label>
+          <textarea
+            id={`description-${yacht.id}`}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={6}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+            placeholder="Detailed description for the yacht detail page"
+          />
+        </div>
 
-          <div>
-            <label htmlFor={`high-price-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
-              High Season Price ({yacht.currency || 'EUR'})
-            </label>
-            <input
-              type="number"
-              id={`high-price-${yacht.id}`}
-              value={highSeasonPrice}
-              onChange={(e) => setHighSeasonPrice(e.target.value)}
-              min="0"
-              step="0.01"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
-              placeholder="0.00"
-            />
+        {/* Technical Specifications */}
+        <div className="border-t border-gray-200 pt-4">
+          <h4 className="text-lg font-semibold text-gray-800 mb-4">Technical Specifications</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+              <label htmlFor={`length-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                Length
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  id={`length-${yacht.id}`}
+                  value={length}
+                  onChange={(e) => setLength(e.target.value)}
+                  step="0.01"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                  placeholder="11.97"
+                />
+                <select
+                  value={lengthUnit}
+                  onChange={(e) => setLengthUnit(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                >
+                  <option value="m">m</option>
+                  <option value="ft">ft</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor={`beam-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                Beam
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  id={`beam-${yacht.id}`}
+                  value={beam}
+                  onChange={(e) => setBeam(e.target.value)}
+                  step="0.01"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                  placeholder="6.76"
+                />
+                <select
+                  value={beamUnit}
+                  onChange={(e) => setBeamUnit(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                >
+                  <option value="m">m</option>
+                  <option value="ft">ft</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor={`draft-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                Draft
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  id={`draft-${yacht.id}`}
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  step="0.01"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                  placeholder="1.20"
+                />
+                <select
+                  value={draftUnit}
+                  onChange={(e) => setDraftUnit(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                >
+                  <option value="m">m</option>
+                  <option value="ft">ft</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor={`engines-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                Engines
+              </label>
+              <input
+                type="text"
+                id={`engines-${yacht.id}`}
+                value={engines}
+                onChange={(e) => setEngines(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="Twin 1200hp"
+              />
+            </div>
+
+            <div>
+              <label htmlFor={`capacity-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                Capacity (Guests)
+              </label>
+              <input
+                type="number"
+                id={`capacity-${yacht.id}`}
+                value={capacity}
+                onChange={(e) => setCapacity(e.target.value)}
+                min="1"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="12"
+              />
+            </div>
+
+            <div>
+              <label htmlFor={`cabins-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                Cabins
+              </label>
+              <input
+                type="number"
+                id={`cabins-${yacht.id}`}
+                value={cabins}
+                onChange={(e) => setCabins(e.target.value)}
+                min="0"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="4"
+              />
+            </div>
+
+            <div>
+              <label htmlFor={`toilets-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                Toilets
+              </label>
+              <input
+                type="number"
+                id={`toilets-${yacht.id}`}
+                value={toilets}
+                onChange={(e) => setToilets(e.target.value)}
+                min="0"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="4"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Amenities Checklist */}
+        <div className="border-t border-gray-200 pt-4">
+          <h4 className="text-lg font-semibold text-gray-800 mb-4">Amenities</h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {[
+              { key: 'ac', label: 'AC', icon: Wind },
+              { key: 'watermaker', label: 'Watermaker', icon: Droplets },
+              { key: 'generator', label: 'Generator', icon: Zap },
+              { key: 'flybridge', label: 'Flybridge', icon: Ship },
+              { key: 'heating', label: 'Heating', icon: Flame },
+              { key: 'teak_deck', label: 'Teak Deck', icon: Waves },
+              { key: 'full_batten', label: 'Full Batten', icon: Ship },
+              { key: 'folding_table', label: 'Folding Table', icon: Table },
+              { key: 'fridge', label: 'Fridge', icon: Refrigerator },
+              { key: 'dinghy', label: 'Dinghy', icon: Anchor },
+              { key: 'water_entertainment', label: 'Water Entertainment', icon: Sparkles },
+            ].map(({ key, label, icon: Icon }) => (
+              <label
+                key={key}
+                className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-all ${
+                  amenities[key]
+                    ? 'border-luxury-blue bg-luxury-blue/5'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={amenities[key] || false}
+                  onChange={() => toggleAmenity(key)}
+                  className="w-4 h-4 text-luxury-blue border-gray-300 rounded focus:ring-luxury-blue"
+                />
+                <Icon className={`w-5 h-5 ${amenities[key] ? 'text-luxury-blue' : 'text-gray-400'}`} />
+                <span className={`text-sm font-medium ${amenities[key] ? 'text-luxury-blue' : 'text-gray-700'}`}>
+                  {label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Pricing */}
+        <div className="border-t border-gray-200 pt-4">
+          <h4 className="text-lg font-semibold text-gray-800 mb-4">Pricing</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label htmlFor={`low-price-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                Low Season Price ({yacht.currency || 'EUR'})
+              </label>
+              <input
+                type="number"
+                id={`low-price-${yacht.id}`}
+                value={lowSeasonPrice}
+                onChange={(e) => setLowSeasonPrice(e.target.value)}
+                min="0"
+                step="0.01"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="0.00"
+              />
+            </div>
+
+            <div>
+              <label htmlFor={`medium-price-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                Medium Season Price ({yacht.currency || 'EUR'})
+              </label>
+              <input
+                type="number"
+                id={`medium-price-${yacht.id}`}
+                value={mediumSeasonPrice}
+                onChange={(e) => setMediumSeasonPrice(e.target.value)}
+                min="0"
+                step="0.01"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="0.00"
+              />
+            </div>
+
+            <div>
+              <label htmlFor={`high-price-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+                High Season Price ({yacht.currency || 'EUR'})
+              </label>
+              <input
+                type="number"
+                id={`high-price-${yacht.id}`}
+                value={highSeasonPrice}
+                onChange={(e) => setHighSeasonPrice(e.target.value)}
+                min="0"
+                step="0.01"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="0.00"
+              />
+            </div>
           </div>
         </div>
 
