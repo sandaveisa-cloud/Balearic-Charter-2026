@@ -112,5 +112,14 @@
   "metadata": {
     "title": "Luxus Yachtcharter Mallorca & Costa Blanca | Wide Dream",
     "description": "Yacht mieten auf Mallorca, Ibiza oder in Torrevieja. Entdecken Sie die Balearen auf einer exklusiven Privatyacht. Jetzt Ihren Traumurlaub auf See buchen!"
+  },
+  "trust": {
+    "verified": "Verifizierter Charter",
+    "insured": "Vollkasko",
+    "crew": "Profi-Crew",
+    "experts": "Lokale Experten",
+    "bookings": "5 Buchungen diese Woche",
+    "rating": "4.9/5 Bewertung",
+    "secret_bays": "Geheime Buchten"
   }
 }

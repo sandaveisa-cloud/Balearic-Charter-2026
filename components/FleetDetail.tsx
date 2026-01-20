@@ -16,6 +16,7 @@ import BoatComparisonTable from './BoatComparisonTable'
 import OptimizedImage from './OptimizedImage'
 import StructuredData from './StructuredData'
 import SocialProof from './SocialProof'
+import TrustBar from './TrustBar'
 
 interface FleetDetailProps {
   yacht: Fleet
@@ -393,6 +394,9 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Trust Bar - Full version for detail page */}
+            <TrustBar variant="full" />
+            
             {/* Social Proof & Trust Block */}
             <SocialProof />
             

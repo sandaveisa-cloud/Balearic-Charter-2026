@@ -111,5 +111,14 @@
   "metadata": {
     "title": "Luxury Yacht Charter Majorca & Costa Blanca | Wide Dream",
     "description": "Rent a private boat in Mallorca, Ibiza, or Torrevieja. Discover the Balearic Islands with an exclusive crewed yacht. Book your luxury escape today!"
+  },
+  "trust": {
+    "verified": "Verified Charter",
+    "insured": "Fully Insured",
+    "crew": "Professional Crew",
+    "experts": "Local Experts",
+    "bookings": "5 bookings this week",
+    "rating": "4.9/5 Customer Rating",
+    "secret_bays": "Secret Bays Access"
   }
 }

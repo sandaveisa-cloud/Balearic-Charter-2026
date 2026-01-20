@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import OptimizedImage from './OptimizedImage'
+import TrustBar from './TrustBar'
 import { useEffect, useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { getLocalizedText } from '@/lib/i18nUtils'
@@ -89,6 +90,9 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                       <span className="text-luxury-gold font-semibold">{yacht.year}</span>
                     )}
                   </div>
+
+                  {/* Trust Bar - Compact version for listing cards */}
+                  <TrustBar variant="compact" />
 
                   {(() => {
                     // Use JSONB i18n with fallback to legacy field

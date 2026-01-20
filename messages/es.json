@@ -111,5 +111,14 @@
   "metadata": {
     "title": "Alquiler de Yates de Lujo en Mallorca y Costa Blanca | Wide Dream",
     "description": "Descubra las Islas Baleares a bordo de un yate privado. Alquiler de barcos en Mallorca e Ibiza con tripulación profesional. ¡Reserve su aventura hoy!"
+  },
+  "trust": {
+    "verified": "Chárter Verificado",
+    "insured": "Seguro a Todo Riesgo",
+    "crew": "Tripulación Profesional",
+    "experts": "Expertos Locales",
+    "bookings": "5 reservas esta semana",
+    "rating": "4.9/5 Valoración",
+    "secret_bays": "Acceso a Calas Exclusivas"
   }
 }
