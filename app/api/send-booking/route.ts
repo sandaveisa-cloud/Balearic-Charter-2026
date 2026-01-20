@@ -7,7 +7,8 @@ import type { PriceBreakdown } from '@/components/SeasonalPriceCalculator'
 // Force Node.js runtime for PDF generation
 export const runtime = 'nodejs'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Force dynamic rendering to prevent build-time issues with missing env vars
+export const dynamic = 'force-dynamic'
 
 interface BookingRequest {
   name: string
@@ -75,14 +76,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check Resend API key
+    // Check Resend API key and initialize client only when needed
     if (!process.env.RESEND_API_KEY) {
       console.error('[API] RESEND_API_KEY not configured')
-      return NextResponse.json(
-        { error: 'Email service not configured', details: 'RESEND_API_KEY is missing from environment variables' },
-        { status: 500 }
-      )
+      // Still save to database, but skip email sending
+      console.warn('[API] Continuing without email service - booking will be saved to database only')
     }
+    
+    // Initialize Resend client only if API key is available
+    const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
     console.log('[API] Generating PDF...')
     // Generate PDF - allow it to fail gracefully
@@ -151,9 +153,11 @@ export async function POST(request: NextRequest) {
       maximumFractionDigits: 0,
     }).format(body.priceBreakdown.totalEstimate)
 
-    // Send email to client with PDF attachment
+    // Send email to client with PDF attachment (only if Resend is configured)
     // Note: For production, replace with your verified domain (e.g., noreply@yourdomain.com)
-    const clientEmailResult = await resend.emails.send({
+    let clientEmailResult: { error?: any } | null = null
+    if (resend) {
+      clientEmailResult = await resend.emails.send({
       from: 'Balearic & Costa Blanca Charters <onboarding@resend.dev>',
       to: body.email,
       subject: `Your Charter Booking Offer - ${body.yachtName}`,
@@ -202,19 +206,24 @@ export async function POST(request: NextRequest) {
           content: pdfBase64,
         },
       ] : undefined,
-    })
+      })
+    } else {
+      console.warn('[API] Skipping client email - RESEND_API_KEY not configured')
+    }
 
-    if (clientEmailResult.error) {
+    if (clientEmailResult?.error) {
       console.error('[API] Client email error:', clientEmailResult.error)
       // Don't fail the request if email fails, but log it
-    } else {
+    } else if (clientEmailResult) {
       console.log('[API] Client email sent successfully')
     }
 
-    // Send notification email to admin
-    console.log('[API] Sending admin notification...')
-    // Note: For production, replace with your verified domain (e.g., noreply@yourdomain.com)
-    const notificationEmailResult = await resend.emails.send({
+    // Send notification email to admin (only if Resend is configured)
+    let notificationEmailResult: { error?: any } | null = null
+    if (resend) {
+      console.log('[API] Sending admin notification...')
+      // Note: For production, replace with your verified domain (e.g., noreply@yourdomain.com)
+      notificationEmailResult = await resend.emails.send({
       from: 'Balearic & Costa Blanca Charters <onboarding@resend.dev>',
       to: 'sanda.veisa@gmail.com',
       subject: `New Booking Inquiry: ${body.yachtName} - ${body.name}`,
@@ -271,12 +280,15 @@ export async function POST(request: NextRequest) {
           content: pdfBase64,
         },
       ] : undefined,
-    })
+      })
+    } else {
+      console.warn('[API] Skipping admin notification - RESEND_API_KEY not configured')
+    }
 
-    if (notificationEmailResult.error) {
+    if (notificationEmailResult?.error) {
       console.error('[API] Notification email error:', notificationEmailResult.error)
       // Don't fail the request if email fails, but log it
-    } else {
+    } else if (notificationEmailResult) {
       console.log('[API] Admin notification sent successfully')
     }
 
