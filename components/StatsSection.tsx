@@ -10,26 +10,30 @@ interface StatsSectionProps {
 export default function StatsSection({ stats }: StatsSectionProps) {
   const t = useTranslations('stats')
   
-  if (stats.length === 0) {
-    return null
-  }
+  // Always use these specific stats as requested
+  const displayStats: Stat[] = [
+    { id: '1', value: '3', label: 'Successful Seasons', order_index: 1, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
+    { id: '2', value: 'Hundreds', label: 'of Happy Guests', order_index: 2, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
+    { id: '3', value: '24/7', label: 'Logistics & Support', order_index: 3, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
+    { id: '4', value: '99%', label: 'Client Satisfaction', order_index: 4, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
+  ]
 
   return (
-    <section className="py-16 bg-gradient-to-r from-luxury-blue to-luxury-blue/90 text-white">
+    <section className="py-12 bg-white border-t border-b border-[#E2E8F0]">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold mb-2">
-            {t('title')}
+        <div className="text-center mb-8">
+          <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#0F172A] mb-1">
+            {t('title') || 'Our Journey in Numbers'}
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((stat) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          {displayStats.map((stat) => (
             <div key={stat.id} className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-luxury-gold mb-2">
+              <div className="text-3xl md:text-4xl font-bold text-[#0F172A] mb-1">
                 {stat.value}
               </div>
-              <div className="text-lg text-gray-200">{stat.label}</div>
+              <div className="text-sm md:text-base text-[#475569]">{stat.label}</div>
             </div>
           ))}
         </div>

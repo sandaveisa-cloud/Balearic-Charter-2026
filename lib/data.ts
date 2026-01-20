@@ -143,6 +143,47 @@ export async function getFleetBySlugs(slugs: string[]): Promise<Fleet[]> {
   return data as Fleet[]
 }
 
+// Get destination by ID or slug
+export async function getDestinationByIdOrSlug(idOrSlug: string): Promise<Destination | null> {
+  if (!idOrSlug) return null
+
+  // Try to fetch by ID first (UUID format)
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug)
+  
+  let query = supabase
+    .from('destinations')
+    .select('*')
+    .eq('is_active', true)
+
+  if (isUUID) {
+    query = query.eq('id', idOrSlug)
+  } else {
+    query = query.eq('slug', idOrSlug)
+  }
+
+  const { data, error } = await query.single()
+
+  if (error || !data) {
+    // If not found by slug, try by ID as fallback
+    if (!isUUID) {
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('destinations')
+        .select('*')
+        .eq('id', idOrSlug)
+        .eq('is_active', true)
+        .single()
+
+      if (fallbackError || !fallbackData) {
+        return null
+      }
+      return fallbackData as Destination
+    }
+    return null
+  }
+
+  return data as Destination
+}
+
 export async function getBookingAvailability(yachtId: string, startDate: string, endDate: string): Promise<BookingAvailability[]> {
   const { data, error } = await supabase
     .from('booking_availability')
