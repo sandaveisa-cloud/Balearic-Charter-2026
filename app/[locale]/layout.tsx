@@ -1,6 +1,6 @@
 import React from 'react'
 import { NextIntlClientProvider } from 'next-intl'
-import { getMessages } from 'next-intl/server'
+import { getMessages, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { locales } from '../../i18n'
 import type { Metadata } from 'next'
@@ -14,7 +14,7 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfa
 
 type Props = {
   children: React.ReactNode
-  params: Promise<{ locale: string }>
+  params: { locale: string }
 }
 
 export function generateStaticParams() {
@@ -22,7 +22,7 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params
+  const { locale } = params
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
   
   const titles: Record<string, string> = {
@@ -69,15 +69,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LocaleLayout({ children, params }: Props) {
   try {
-    const { locale } = await params
+    const { locale } = params
     
     // Validate locale
     if (!locales.includes(locale as any)) {
       notFound()
     }
 
+    // Enable static rendering for pages using next-intl in Server Components
+    setRequestLocale(locale)
+
     // Load messages for the locale
-    const messages = await getMessages({ locale })
+    const messages = await getMessages()
 
     return (
       <NextIntlClientProvider messages={messages}>

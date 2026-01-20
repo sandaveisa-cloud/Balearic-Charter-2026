@@ -1,8 +1,8 @@
 ﻿import createNextIntlPlugin from 'next-intl/plugin';
 
-// Use relative path - ensure i18n.ts is in the root directory
-// Vercel should resolve this correctly during build
-const withNextIntl = createNextIntlPlugin('./i18n.ts');
+// next-intl App Router request config
+// See: https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
