@@ -476,7 +476,7 @@ export default function AdminPage() {
         }
       }
       // Handle array fields
-      else if (key === 'gallery_images') {
+      else if (key === 'gallery_images' || key === 'extras') {
         if (Array.isArray(value)) {
           cleanedUpdates[key as keyof Fleet] = value as any
         } else if (value === null) {
@@ -2442,9 +2442,14 @@ function FleetEditForm({
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [name, setName] = useState(yacht.name || '')
+  const [year, setYear] = useState(yacht.year?.toString() || '')
   const [lowSeasonPrice, setLowSeasonPrice] = useState(yacht.low_season_price?.toString() || '')
   const [mediumSeasonPrice, setMediumSeasonPrice] = useState(yacht.medium_season_price?.toString() || '')
   const [highSeasonPrice, setHighSeasonPrice] = useState(yacht.high_season_price?.toString() || '')
+  
+  // Extras/Features
+  const [extras, setExtras] = useState<string[]>(yacht.extras || [])
+  const [newExtra, setNewExtra] = useState('')
   
   // Technical Specs
   const [length, setLength] = useState(yacht.length?.toString() || '')
@@ -2514,6 +2519,7 @@ function FleetEditForm({
 
   useEffect(() => {
     setName(yacht.name || '')
+    setYear(yacht.year?.toString() || '')
     setLowSeasonPrice(yacht.low_season_price?.toString() || '')
     setMediumSeasonPrice(yacht.medium_season_price?.toString() || '')
     setHighSeasonPrice(yacht.high_season_price?.toString() || '')
@@ -2524,6 +2530,7 @@ function FleetEditForm({
     setCapacity(yacht.capacity?.toString() || '')
     setCabins(yacht.cabins?.toString() || '')
     setToilets(yacht.toilets?.toString() || '')
+    setExtras(yacht.extras || [])
     setDescription(yacht.description || '')
     setShortDescription(yacht.short_description || '')
     setAmenities({
@@ -2556,6 +2563,8 @@ function FleetEditForm({
     // Prepare update object with locale-aware i18n updates
     const updates: Partial<Fleet> = {
       name,
+      year: year ? parseInt(year) : null,
+      extras: extras.filter(e => e.trim().length > 0), // Remove empty extras
       // Use JSONB i18n columns with smart patch (preserves other locales)
       ...buildI18nUpdate('description_i18n', yacht.description_i18n, currentLocale, description || null),
       ...buildI18nUpdate('short_description_i18n', yacht.short_description_i18n, currentLocale, shortDescription || null),
@@ -2719,6 +2728,85 @@ function FleetEditForm({
             onChange={(e) => setName(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
           />
+        </div>
+
+        <div>
+          <label htmlFor={`year-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
+            Year of Manufacture
+          </label>
+          <input
+            type="number"
+            id={`year-${yacht.id}`}
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            min="1900"
+            max="2100"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+            placeholder="e.g., 2014"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Extras & Features
+          </label>
+          <p className="text-xs text-gray-500 mb-3">Add features like 'WiFi', 'Snorkeling Equipment', 'Towels', etc.</p>
+          
+          {/* Add new extra */}
+          <div className="flex gap-2 mb-3">
+            <input
+              type="text"
+              value={newExtra}
+              onChange={(e) => setNewExtra(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  if (newExtra.trim() && !extras.includes(newExtra.trim())) {
+                    setExtras([...extras, newExtra.trim()])
+                    setNewExtra('')
+                  }
+                }
+              }}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="e.g., WiFi, Snorkeling Equipment"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (newExtra.trim() && !extras.includes(newExtra.trim())) {
+                  setExtras([...extras, newExtra.trim()])
+                  setNewExtra('')
+                }
+              }}
+              className="px-4 py-2 bg-luxury-blue text-white rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-colors"
+            >
+              Add
+            </button>
+          </div>
+
+          {/* List of extras */}
+          {extras.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {extras.map((extra, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 px-3 py-1 bg-luxury-blue/10 text-luxury-blue rounded-full border border-luxury-blue/20"
+                >
+                  <span className="text-sm">{extra}</span>
+                  <button
+                    type="button"
+                    onClick={() => setExtras(extras.filter((_, i) => i !== index))}
+                    className="text-luxury-blue hover:text-red-600 transition-colors"
+                    aria-label={`Remove ${extra}`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div>

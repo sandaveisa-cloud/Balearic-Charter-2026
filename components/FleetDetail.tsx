@@ -488,6 +488,12 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
               <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                 <table className="w-full">
                   <tbody className="divide-y divide-gray-200">
+                    {yacht.year && (
+                      <tr className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700 w-1/3">Year Built</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.year}</td>
+                      </tr>
+                    )}
                     {yacht.length && (
                       <tr className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm font-medium text-gray-700 w-1/3">Length</td>
@@ -587,6 +593,41 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                         <span className="text-sm font-medium text-gray-900">{label}</span>
                       </div>
                     ))}
+                </div>
+              </section>
+            )}
+
+            {/* Features & Extras Section */}
+            {yacht.extras && yacht.extras.length > 0 && (
+              <section>
+                <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">Features & Extras</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {yacht.extras.map((extra, index) => {
+                    // Map common extras to icons
+                    const getIconForExtra = (extraName: string) => {
+                      const name = extraName.toLowerCase()
+                      if (name.includes('wifi') || name.includes('wi-fi')) return Zap
+                      if (name.includes('snorkel')) return Waves
+                      if (name.includes('towel')) return Sparkles
+                      if (name.includes('audio') || name.includes('sound') || name.includes('music')) return Sparkles
+                      if (name.includes('kayak') || name.includes('paddle')) return Anchor
+                      if (name.includes('fishing')) return Anchor
+                      if (name.includes('beach')) return Waves
+                      return Sparkles // Default icon
+                    }
+                    
+                    const Icon = getIconForExtra(extra)
+                    
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-center gap-3 p-4 bg-gradient-to-br from-luxury-blue/5 to-luxury-gold/5 border border-luxury-blue/20 rounded-lg hover:border-luxury-gold hover:shadow-md transition-all"
+                      >
+                        <Icon className="w-5 h-5 text-luxury-gold flex-shrink-0" />
+                        <span className="text-sm font-medium text-gray-900">{extra}</span>
+                      </div>
+                    )
+                  })}
                 </div>
               </section>
             )}
