@@ -159,7 +159,11 @@
     "contact": "Contacto",
     "rights": "Todos los derechos reservados",
     "tagline": "Su destino principal para alquileres de yates de lujo en el Mediterráneo.",
-    "followUs": "Síguenos"
+    "followUs": "Síguenos",
+    "legal": "Aviso Legal",
+    "privacy": "Política de Privacidad",
+    "cookies": "Política de Cookies",
+    "terms": "Términos y Condiciones"
   },
   "metadata": {
     "title": "Alquiler de Yates de Lujo en Mallorca y Costa Blanca | Wide Dream",
@@ -196,6 +200,214 @@
     "successMessage": "Hemos recibido tu mensaje y te responderemos pronto.",
     "backToHome": "Volver al Inicio",
     "errorMessage": "Error al enviar el mensaje. Por favor, inténtalo de nuevo."
+  },
+  "legal": {
+    "title": "Aviso Legal",
+    "lastUpdated": "Última actualización:",
+    "metaDescription": "Información legal y detalles de cumplimiento para los servicios de alquiler de yates de Fabula Marítima SL.",
+    "companyInfo": {
+      "title": "Información de la Empresa",
+      "entity": "Entidad",
+      "cif": "CIF",
+      "form": "Forma Legal",
+      "formValue": "Sociedad Limitada (España)",
+      "contact": "Información de Contacto",
+      "operatingAreas": "Áreas de Operación",
+      "operatingAreasValue": "Islas Baleares (Ibiza, Formentera, Palma de Mallorca) y Costa Blanca (Torrevieja)"
+    },
+    "maritime": {
+      "title": "Licencias Marítimas y Cumplimiento",
+      "compliance": "Fabula Marítima SL cumple con las Regulaciones Marítimas Españolas (Lista 6ª) y mantiene todas las licencias requeridas para operaciones de alquiler comercial.",
+      "requirements": "Para la temporada 2025/2026, operamos en pleno cumplimiento con los requisitos de uso de la Bandera Internacional 'H' (Hotel) y mantenemos registros completos de pasajeros según lo exigido por las autoridades marítimas españolas.",
+      "standards": "Todas las embarcaciones de nuestra flota cumplen y superan los estándares de seguridad establecidos por la Dirección General de la Marina Mercante (DGMM)."
+    },
+    "business": {
+      "title": "Actividad Comercial",
+      "role": "Fabula Marítima SL opera como proveedor de servicios de alquiler, ofreciendo alquileres de catamaranes, excursiones de día y eventos corporativos en las Islas Baleares y la región de Costa Blanca.",
+      "responsibility": "Somos responsables del mantenimiento de las embarcaciones, gestión de tripulación profesional, cobertura de seguros integral y todos los aspectos de gestión de reservas y atención al cliente."
+    },
+    "insurance": {
+      "title": "Seguros y Responsabilidad",
+      "coverage": "Nuestra cobertura de seguros integral incluye:",
+      "liability": "Seguro de responsabilidad civil a terceros",
+      "passenger": "Cobertura de lesiones y accidentes de pasajeros",
+      "vessel": "Protección por daños y pérdida de embarcación",
+      "indemnity": "Seguro de responsabilidad civil profesional",
+      "claims": "Todas las reclamaciones se gestionan de acuerdo con la ley marítima española y las regulaciones de la UE. Para información detallada sobre cobertura y procedimientos de reclamación, contáctenos directamente."
+    },
+    "ip": {
+      "title": "Propiedad Intelectual",
+      "content": "Todo el contenido de este sitio web, incluyendo pero no limitado a diseño, fotografías, texto, logotipos y marca, es propiedad exclusiva de Fabula Marítima SL. El uso, reproducción o distribución no autorizada de cualquier contenido está estrictamente prohibido y puede resultar en acciones legales."
+    },
+    "footer": {
+      "title": "Contacto Rápido"
+    },
+    "backToHome": "Volver al Inicio"
+  },
+  "privacy": {
+    "title": "Política de Privacidad",
+    "lastUpdated": "Última actualización:",
+    "metaDescription": "Política de privacidad e información sobre protección de datos para los servicios de alquiler de yates de Fabula Marítima SL.",
+    "dataController": {
+      "title": "Responsable del Tratamiento",
+      "entity": "Entidad",
+      "cif": "CIF",
+      "email": "Correo Electrónico"
+    },
+    "dataCollection": {
+      "title": "Recopilación de Datos",
+      "description": "Recopilamos información proporcionada a través de formularios de reserva y solicitudes de contacto:",
+      "name": "Nombre",
+      "email": "Dirección de correo electrónico",
+      "phone": "Número de teléfono",
+      "identification": "Documentos de identificación (para contratos de alquiler)"
+    },
+    "purpose": {
+      "title": "Finalidad del Tratamiento de Datos",
+      "description": "Sus datos personales se procesan para las siguientes finalidades:",
+      "bookings": "Gestionar reservas y alquileres de embarcaciones",
+      "payments": "Procesar pagos y facturación",
+      "support": "Prestar atención al cliente y responder a consultas"
+    },
+    "retention": {
+      "title": "Conservación de Datos",
+      "description": "Los datos se conservan durante el tiempo necesario para la prestación del servicio y para cumplir con las obligaciones fiscales legales en España. Después de este período, los datos se eliminarán de forma segura."
+    },
+    "rights": {
+      "title": "Sus Derechos",
+      "description": "Bajo el Reglamento General de Protección de Datos (RGPD), usted tiene los siguientes derechos:",
+      "access": "Derecho de acceso: Solicitar información sobre sus datos personales",
+      "rectification": "Derecho de rectificación: Corregir datos inexactos o incompletos",
+      "erasure": "Derecho de supresión: Solicitar la eliminación de sus datos",
+      "portability": "Derecho de portabilidad: Recibir sus datos en un formato estructurado",
+      "contact": "Para ejercer estos derechos, contáctenos en:"
+    },
+    "security": {
+      "title": "Seguridad de los Datos",
+      "description": "Implementamos cifrado SSL y alojamiento seguro (Vercel) para proteger sus datos. Toda la transmisión de datos está cifrada, y seguimos las mejores prácticas de la industria para garantizar la seguridad de su información personal."
+    },
+    "backToHome": "Volver al Inicio"
+  },
+  "cookies": {
+    "title": "Política de Cookies",
+    "lastUpdated": "Última actualización:",
+    "metaDescription": "Información sobre cookies y tecnologías de seguimiento utilizadas en el sitio web de Fabula Marítima SL.",
+    "whatAre": {
+      "title": "¿Qué son las Cookies?",
+      "description": "Las cookies son pequeños archivos de texto almacenados en su dispositivo (ordenador, tableta o móvil) cuando visita nuestro sitio web. Ayudan a mejorar su experiencia de usuario recordando sus preferencias y permitiendo ciertas funciones del sitio web."
+    },
+    "types": {
+      "title": "Tipos de Cookies que Utilizamos",
+      "essential": {
+        "title": "Cookies Esenciales/Técnicas",
+        "description": "Estas cookies son necesarias para la navegación y seguridad del sitio web. Permiten funciones básicas como la navegación por páginas y el acceso a áreas seguras del sitio web. El sitio web no puede funcionar correctamente sin estas cookies."
+      },
+      "analytical": {
+        "title": "Cookies Analíticas",
+        "description": "Utilizamos cookies analíticas (por ejemplo, Google Analytics) para medir el tráfico del sitio web y comprender cómo los visitantes interactúan con nuestro sitio. Esto nos ayuda a mejorar nuestros servicios de alquiler y la experiencia del usuario. Estas cookies recopilan datos anónimos y agregados."
+      }
+    },
+    "managing": {
+      "title": "Gestión de Cookies",
+      "description": "Puede bloquear o eliminar cookies a través de la configuración de su navegador. Aquí le mostramos cómo gestionar las cookies en navegadores populares:",
+      "chrome": "Google Chrome: Configuración > Privacidad y seguridad > Cookies y otros datos de sitios",
+      "safari": "Safari: Preferencias > Privacidad > Cookies y datos de sitios web",
+      "firefox": "Mozilla Firefox: Opciones > Privacidad y Seguridad > Cookies y Datos del Sitio"
+    },
+    "consent": {
+      "title": "Consentimiento",
+      "description": "Al continuar navegando por nuestro sitio web, acepta el uso de cookies esenciales necesarias para el funcionamiento del sitio web. Para las cookies analíticas, solicitaremos su consentimiento explícito cuando lo requiera la ley."
+    },
+    "backToHome": "Volver al Inicio"
+  },
+  "terms": {
+    "title": "Términos y Condiciones",
+    "lastUpdated": "Última actualización:",
+    "metaDescription": "Términos y condiciones para los servicios de alquiler de yates proporcionados por Fabula Marítima SL. Políticas de reserva, pago, cancelación y seguridad.",
+    "provider": {
+      "title": "Información del Proveedor de Charter",
+      "entity": "Entidad",
+      "cif": "CIF",
+      "form": "Forma Legal",
+      "formValue": "Sociedad Limitada (España)",
+      "description": "Fabula Marítima SL opera como proveedor profesional de servicios de alquiler de yates en las Islas Baleares (Ibiza, Formentera, Palma de Mallorca) y la región de Costa Blanca (Torrevieja). Nos especializamos en alquileres de catamaranes de lujo, excursiones de día y eventos corporativos."
+    },
+    "compliance": {
+      "title": "Cumplimiento Regulatorio 2026",
+      "flag": {
+        "title": "Bandera Internacional 'H' (Bandera Hotel)",
+        "description": "Desde agosto de 2025, todas las embarcaciones de alquiler comercial que operan en aguas españolas deben mostrar la Bandera Internacional 'H'. Esta bandera indica que la embarcación opera como servicio de alquiler comercial y cumple con las Regulaciones Marítimas Españolas (Lista 6ª).",
+        "note": "Todas las embarcaciones de nuestra flota cumplen plenamente con este requisito regulatorio de 2026."
+      },
+      "manifest": {
+        "title": "Manifiesto de Pasajeros y Libro de Registro Oficial",
+        "description": "De acuerdo con las regulaciones marítimas españolas de 2026, mantenemos un libro de registro oficial de pasajeros (Manifiesto de pasajeros) para todos los alquileres. Se requiere la siguiente información de cada pasajero:",
+        "id": "Documento de identificación válido (DNI o pasaporte)",
+        "nationality": "Nacionalidad",
+        "emergency": "Información de contacto de emergencia",
+        "note": "Esta información es obligatoria para la seguridad y el cumplimiento regulatorio. Todos los datos se manejan de acuerdo con nuestra Política de Privacidad."
+      }
+    },
+    "booking": {
+      "title": "Términos de Reserva y Pago",
+      "description": "Para asegurar su reserva de alquiler, se aplica el siguiente calendario de pagos:",
+      "deposit": {
+        "title": "Depósito Inicial (50%)",
+        "description": "Se requiere un depósito no reembolsable del 50% del costo total del alquiler para confirmar su reserva.",
+        "note": "Este depósito asegura sus fechas y embarcación seleccionadas."
+      },
+      "final": {
+        "title": "Pago Final (30 días antes de la salida)",
+        "description": "El saldo restante del 50% debe pagarse a más tardar 30 días antes de su fecha de salida programada.",
+        "note": "El incumplimiento del pago antes de esta fecha límite puede resultar en la cancelación de su reserva."
+      },
+      "paymentMethods": {
+        "title": "Métodos de Pago Aceptados",
+        "bank": "Transferencia bancaria (IBAN proporcionado tras la confirmación de la reserva)",
+        "card": "Tarjeta de crédito/débito (Visa, Mastercard)",
+        "transfer": "Transferencia bancaria (se aceptan transferencias internacionales)"
+      }
+    },
+    "cancellation": {
+      "title": "Política de Cancelación",
+      "description": "Los términos de cancelación varían según el período de aviso antes de su salida programada:",
+      "table": {
+        "period": "Período de Cancelación",
+        "refund": "Importe del Reembolso",
+        "more30": "Más de 30 días antes de la salida",
+        "full": "100% de reembolso (menos el depósito)",
+        "15to30": "15-30 días antes de la salida",
+        "half": "50% de reembolso",
+        "less15": "Menos de 15 días antes de la salida",
+        "none": "Sin reembolso"
+      },
+      "weather": {
+        "title": "Cancelaciones por Condiciones Meteorológicas",
+        "description": "En caso de condiciones meteorológicas severas que hagan insegura la navegación, el Capitán tiene la autoridad para cancelar o reprogramar el alquiler. En tales casos, se le ofrecerá un reembolso completo o la opción de reprogramar a fechas alternativas (sujeto a disponibilidad)."
+      }
+    },
+    "safety": {
+      "title": "Seguridad y Responsabilidad",
+      "description": "La seguridad de nuestros pasajeros y tripulación es nuestra máxima prioridad. Todas las embarcaciones de nuestra flota cumplen y superan los estándares de seguridad marítima españoles (cumplimiento DGMM).",
+      "responsibilities": {
+        "title": "Nuestras Responsabilidades",
+        "vessel": "Mantener las embarcaciones en excelente condición con todo el equipo de seguridad requerido",
+        "crew": "Proporcionar miembros de tripulación profesionales calificados y experimentados",
+        "insurance": "Cobertura de seguros integral (responsabilidad civil a terceros, lesiones de pasajeros, daños a la embarcación)",
+        "safety": "Cumplimiento de todas las regulaciones marítimas españolas y protocolos de seguridad"
+      },
+      "passenger": {
+        "title": "Responsabilidades del Pasajero",
+        "follow": "Seguir todas las instrucciones de seguridad proporcionadas por la tripulación",
+        "inform": "Informar a la tripulación sobre cualquier condición médica o requisitos especiales",
+        "respect": "Respetar la embarcación, el equipo y otros pasajeros"
+      },
+      "liability": {
+        "title": "Limitación de Responsabilidad",
+        "description": "Fabula Marítima SL no es responsable de lesiones personales o daños a la propiedad resultantes de negligencia del pasajero, incumplimiento de las instrucciones de la tripulación, o participación en actividades acuáticas. Todos los pasajeros participan en actividades acuáticas bajo su propio riesgo."
+      }
+    },
+    "backToHome": "Volver al Inicio"
   },
   "breadcrumb": {
     "home": "Inicio",

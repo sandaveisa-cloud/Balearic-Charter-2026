@@ -160,7 +160,11 @@
     "contact": "Kontakt",
     "rights": "Alle Rechte vorbehalten",
     "tagline": "Ihr erstklassiges Ziel für Luxus-Yachtcharter im Mittelmeer.",
-    "followUs": "Folgen Sie Uns"
+    "followUs": "Folgen Sie Uns",
+    "legal": "Impressum",
+    "privacy": "Datenschutzerklärung",
+    "cookies": "Cookie-Richtlinie",
+    "terms": "Allgemeine Geschäftsbedingungen"
   },
   "metadata": {
     "title": "Luxus Yachtcharter Mallorca & Costa Blanca | Wide Dream",
@@ -198,11 +202,219 @@
     "backToHome": "Zurück zur Startseite",
     "errorMessage": "Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut."
   },
+  "legal": {
+    "title": "Impressum",
+    "lastUpdated": "Zuletzt aktualisiert:",
+    "metaDescription": "Rechtliche Informationen und Compliance-Details für die Yachtcharter-Dienstleistungen von Fabula Marítima SL.",
+    "companyInfo": {
+      "title": "Firmeninformationen",
+      "entity": "Unternehmen",
+      "cif": "CIF",
+      "form": "Rechtsform",
+      "formValue": "Sociedad Limitada (Spanien)",
+      "contact": "Kontaktinformationen",
+      "operatingAreas": "Betriebsgebiete",
+      "operatingAreasValue": "Balearen (Ibiza, Formentera, Palma de Mallorca) und Costa Blanca (Torrevieja)"
+    },
+    "maritime": {
+      "title": "Seefahrtslizenzen und Compliance",
+      "compliance": "Fabula Marítima SL entspricht den spanischen Seefahrtsvorschriften (Lista 6ª) und hält alle erforderlichen Lizenzen für gewerbliche Charterbetriebe aufrecht.",
+      "requirements": "Für die Saison 2025/2026 arbeiten wir in vollem Einklang mit den Anforderungen für die Verwendung der Internationalen 'H'-Flagge (Hotel) und führen umfassende Passagierbücher, wie von den spanischen Seefahrtsbehörden vorgeschrieben.",
+      "standards": "Alle Schiffe in unserer Flotte erfüllen und übertreffen die Sicherheitsstandards der Dirección General de la Marina Mercante (DGMM)."
+    },
+    "business": {
+      "title": "Geschäftstätigkeit",
+      "role": "Fabula Marítima SL agiert als Charterdienstleister und bietet Katamaran-Charter, Tagesausflüge und Firmenveranstaltungen auf den Balearen und in der Region Costa Blanca an.",
+      "responsibility": "Wir sind verantwortlich für die Wartung der Schiffe, die Verwaltung der professionellen Crew, umfassende Versicherungsdeckung und alle Aspekte der Buchungsverwaltung und des Kundenservice."
+    },
+    "insurance": {
+      "title": "Versicherung und Haftung",
+      "coverage": "Unsere umfassende Versicherungsdeckung umfasst:",
+      "liability": "Haftpflichtversicherung für Dritte",
+      "passenger": "Deckung für Passagierverletzungen und Unfälle",
+      "vessel": "Schutz vor Schiffsbeschädigung und -verlust",
+      "indemnity": "Berufshaftpflichtversicherung",
+      "claims": "Alle Ansprüche werden gemäß spanischem Seerecht und EU-Vorschriften bearbeitet. Für detaillierte Informationen zu Deckung und Schadensverfahren kontaktieren Sie uns bitte direkt."
+    },
+    "ip": {
+      "title": "Geistiges Eigentum",
+      "content": "Alle Inhalte dieser Website, einschließlich, aber nicht beschränkt auf Design, Fotos, Text, Logos und Marken, sind ausschließliches Eigentum von Fabula Marítima SL. Unbefugte Verwendung, Vervielfältigung oder Verbreitung von Inhalten ist strengstens untersagt und kann zu rechtlichen Schritten führen."
+    },
+    "footer": {
+      "title": "Schnellkontakt"
+    },
+    "backToHome": "Zurück zur Startseite"
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "lastUpdated": "Zuletzt aktualisiert:",
+    "metaDescription": "Datenschutzerklärung und Informationen zum Datenschutz für die Yachtcharter-Dienstleistungen von Fabula Marítima SL.",
+    "dataController": {
+      "title": "Verantwortlicher",
+      "entity": "Unternehmen",
+      "cif": "CIF",
+      "email": "E-Mail"
+    },
+    "dataCollection": {
+      "title": "Datenerhebung",
+      "description": "Wir erheben Informationen, die über Buchungsformulare und Kontaktanfragen bereitgestellt werden:",
+      "name": "Name",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefonnummer",
+      "identification": "Ausweisdokumente (für Charterverträge)"
+    },
+    "purpose": {
+      "title": "Zweck der Datenverarbeitung",
+      "description": "Ihre persönlichen Daten werden für folgende Zwecke verarbeitet:",
+      "bookings": "Verwaltung von Yachtcharter-Buchungen und Reservierungen",
+      "payments": "Abwicklung von Zahlungen und Rechnungsstellung",
+      "support": "Kundensupport und Beantwortung von Anfragen"
+    },
+    "retention": {
+      "title": "Datenspeicherung",
+      "description": "Daten werden so lange gespeichert, wie es für die Dienstleistungserbringung und zur Erfüllung gesetzlicher steuerlicher Verpflichtungen in Spanien erforderlich ist. Nach diesem Zeitraum werden die Daten sicher gelöscht."
+    },
+    "rights": {
+      "title": "Ihre Rechte",
+      "description": "Unter der Datenschutz-Grundverordnung (DSGVO) haben Sie folgende Rechte:",
+      "access": "Recht auf Auskunft: Informationen über Ihre persönlichen Daten anfordern",
+      "rectification": "Recht auf Berichtigung: Unrichtige oder unvollständige Daten korrigieren",
+      "erasure": "Recht auf Löschung: Löschung Ihrer Daten anfordern",
+      "portability": "Recht auf Datenübertragbarkeit: Ihre Daten in strukturiertem Format erhalten",
+      "contact": "Um diese Rechte auszuüben, kontaktieren Sie uns bitte unter:"
+    },
+    "security": {
+      "title": "Datensicherheit",
+      "description": "Wir implementieren SSL-Verschlüsselung und sichere Hosting-Lösungen (Vercel), um Ihre Daten zu schützen. Alle Datenübertragungen sind verschlüsselt, und wir befolgen branchenübliche Best Practices, um die Sicherheit Ihrer persönlichen Informationen zu gewährleisten."
+    },
+    "backToHome": "Zurück zur Startseite"
+  },
+  "cookies": {
+    "title": "Cookie-Richtlinie",
+    "lastUpdated": "Zuletzt aktualisiert:",
+    "metaDescription": "Informationen über Cookies und Tracking-Technologien, die auf der Website von Fabula Marítima SL verwendet werden.",
+    "whatAre": {
+      "title": "Was sind Cookies?",
+      "description": "Cookies sind kleine Textdateien, die auf Ihrem Gerät (Computer, Tablet oder Mobilgerät) gespeichert werden, wenn Sie unsere Website besuchen. Sie verbessern Ihre Benutzererfahrung, indem sie Ihre Präferenzen speichern und bestimmte Website-Funktionen ermöglichen."
+    },
+    "types": {
+      "title": "Arten von Cookies, die wir verwenden",
+      "essential": {
+        "title": "Essenzielle/Technische Cookies",
+        "description": "Diese Cookies sind für die Website-Navigation und Sicherheit erforderlich. Sie ermöglichen grundlegende Funktionen wie Seitennavigation und Zugriff auf sichere Bereiche der Website. Die Website kann ohne diese Cookies nicht ordnungsgemäß funktionieren."
+      },
+      "analytical": {
+        "title": "Analytische Cookies",
+        "description": "Wir verwenden analytische Cookies (z. B. Google Analytics), um den Website-Traffic zu messen und zu verstehen, wie Besucher mit unserer Website interagieren. Dies hilft uns, unsere Charter-Dienstleistungen und die Benutzererfahrung zu verbessern. Diese Cookies sammeln anonyme, aggregierte Daten."
+      }
+    },
+    "managing": {
+      "title": "Cookies verwalten",
+      "description": "Sie können Cookies über Ihre Browser-Einstellungen blockieren oder löschen. So verwalten Sie Cookies in gängigen Browsern:",
+      "chrome": "Google Chrome: Einstellungen > Datenschutz und Sicherheit > Cookies und andere Websitedaten",
+      "safari": "Safari: Einstellungen > Datenschutz > Cookies und Websitedaten",
+      "firefox": "Mozilla Firefox: Einstellungen > Datenschutz & Sicherheit > Cookies und Websitedaten"
+    },
+    "consent": {
+      "title": "Einverständnis",
+      "description": "Durch das weitere Surfen auf unserer Website akzeptieren Sie die Verwendung von essenziellen Cookies, die für die Funktionalität der Website erforderlich sind. Für analytische Cookies werden wir Ihre ausdrückliche Zustimmung anfordern, wenn dies gesetzlich vorgeschrieben ist."
+    },
+    "backToHome": "Zurück zur Startseite"
+  },
   "breadcrumb": {
     "home": "Startseite",
     "fleet": "Flotte",
     "discoverMore": "Entdecken Sie Mehr Über Unsere Mission und Reiseziele",
     "discoverMoreDescription": "Erkunden Sie unser vollständiges Serviceangebot, erfahren Sie mehr über unsere Mission und entdecken Sie alle exklusiven Reiseziele, die wir anbieten.",
+    "backToHome": "Zurück zur Startseite"
+  },
+  "terms": {
+    "title": "Allgemeine Geschäftsbedingungen",
+    "lastUpdated": "Zuletzt aktualisiert:",
+    "metaDescription": "Allgemeine Geschäftsbedingungen für Yachtcharter-Dienstleistungen von Fabula Marítima SL. Buchungs-, Zahlungs-, Stornierungs- und Sicherheitsrichtlinien.",
+    "provider": {
+      "title": "Charter-Anbieter Informationen",
+      "entity": "Unternehmen",
+      "cif": "CIF",
+      "form": "Rechtsform",
+      "formValue": "Sociedad Limitada (Spanien)",
+      "description": "Fabula Marítima SL agiert als professioneller Yachtcharter-Dienstleister auf den Balearen (Ibiza, Formentera, Palma de Mallorca) und in der Region Costa Blanca (Torrevieja). Wir spezialisieren uns auf Luxus-Katamaran-Charter, Tagesausflüge und Firmenveranstaltungen."
+    },
+    "compliance": {
+      "title": "Regulatorische Compliance 2026",
+      "flag": {
+        "title": "Internationale 'H'-Flagge (Hotel-Flagge)",
+        "description": "Seit August 2025 müssen alle gewerblichen Charter-Schiffe, die in spanischen Gewässern operieren, die Internationale 'H'-Flagge führen. Diese Flagge zeigt an, dass das Schiff als gewerblicher Charter-Service operiert und den spanischen Seefahrtsvorschriften (Lista 6ª) entspricht.",
+        "note": "Alle Schiffe in unserer Flotte erfüllen vollständig diese regulatorische Anforderung von 2026."
+      },
+      "manifest": {
+        "title": "Passagierliste & Offizielles Logbuch",
+        "description": "Gemäß den spanischen Seefahrtsvorschriften von 2026 führen wir ein offizielles Passagierlogbuch (Manifiesto de pasajeros) für alle Charter. Die folgenden Informationen werden von jedem Passagier benötigt:",
+        "id": "Gültiges Ausweisdokument (Personalausweis oder Reisepass)",
+        "nationality": "Nationalität",
+        "emergency": "Notfallkontaktinformationen",
+        "note": "Diese Informationen sind für Sicherheit und regulatorische Compliance obligatorisch. Alle Daten werden gemäß unserer Datenschutzerklärung behandelt."
+      }
+    },
+    "booking": {
+      "title": "Buchungs- & Zahlungsbedingungen",
+      "description": "Um Ihre Charter-Buchung zu sichern, gilt der folgende Zahlungsplan:",
+      "deposit": {
+        "title": "Anzahlung (50%)",
+        "description": "Eine nicht erstattungsfähige Anzahlung von 50% der gesamten Charter-Gebühr ist erforderlich, um Ihre Buchung zu bestätigen.",
+        "note": "Diese Anzahlung sichert Ihre ausgewählten Daten und das Schiff."
+      },
+      "final": {
+        "title": "Endgültige Zahlung (30 Tage vor Abfahrt)",
+        "description": "Der verbleibende Saldo von 50% muss spätestens 30 Tage vor Ihrem geplanten Abfahrtsdatum gezahlt werden.",
+        "note": "Wenn die Zahlung bis zu diesem Termin nicht abgeschlossen wird, kann dies zur Stornierung Ihrer Buchung führen."
+      },
+      "paymentMethods": {
+        "title": "Akzeptierte Zahlungsmethoden",
+        "bank": "Banküberweisung (IBAN wird nach Buchungsbestätigung bereitgestellt)",
+        "card": "Kredit-/Debitkarte (Visa, Mastercard)",
+        "transfer": "Überweisung (internationale Überweisungen werden akzeptiert)"
+      }
+    },
+    "cancellation": {
+      "title": "Stornierungsrichtlinie",
+      "description": "Die Stornierungsbedingungen variieren je nach Kündigungsfrist vor Ihrer geplanten Abfahrt:",
+      "table": {
+        "period": "Stornierungszeitraum",
+        "refund": "Erstattungsbetrag",
+        "more30": "Mehr als 30 Tage vor Abfahrt",
+        "full": "100% Erstattung (abzüglich Anzahlung)",
+        "15to30": "15-30 Tage vor Abfahrt",
+        "half": "50% Erstattung",
+        "less15": "Weniger als 15 Tage vor Abfahrt",
+        "none": "Keine Erstattung"
+      },
+      "weather": {
+        "title": "Wetterbedingte Stornierungen",
+        "description": "Bei schweren Wetterbedingungen, die das Segeln unsicher machen, hat der Kapitän die Befugnis, die Charter zu stornieren oder umzuplanen. In solchen Fällen erhalten Sie eine vollständige Erstattung oder die Option, auf alternative Termine umzuplanen (vorbehaltlich Verfügbarkeit)."
+      }
+    },
+    "safety": {
+      "title": "Sicherheit & Haftung",
+      "description": "Die Sicherheit unserer Passagiere und Crew hat höchste Priorität. Alle Schiffe in unserer Flotte erfüllen und übertreffen die spanischen Seesicherheitsstandards (DGMM-Compliance).",
+      "responsibilities": {
+        "title": "Unsere Verantwortlichkeiten",
+        "vessel": "Wartung der Schiffe in ausgezeichnetem Zustand mit allen erforderlichen Sicherheitsausrüstungen",
+        "crew": "Bereitstellung qualifizierter, erfahrener professioneller Crew-Mitglieder",
+        "insurance": "Umfassende Versicherungsdeckung (Haftpflicht für Dritte, Passagierverletzungen, Schiffsbeschädigung)",
+        "safety": "Einhaltung aller spanischen Seefahrtsvorschriften und Sicherheitsprotokolle"
+      },
+      "passenger": {
+        "title": "Passagier-Verantwortlichkeiten",
+        "follow": "Befolgen Sie alle Sicherheitsanweisungen der Crew",
+        "inform": "Informieren Sie die Crew über medizinische Bedingungen oder besondere Anforderungen",
+        "respect": "Respektieren Sie das Schiff, die Ausrüstung und andere Passagiere"
+      },
+      "liability": {
+        "title": "Haftungsbeschränkung",
+        "description": "Fabula Marítima SL haftet nicht für Personenschäden oder Sachschäden, die durch Fahrlässigkeit des Passagiers, Nichteinhaltung der Crew-Anweisungen oder Teilnahme an Wassersportaktivitäten entstehen. Alle Passagiere nehmen an Wasseraktivitäten auf eigenes Risiko teil."
+      }
+    },
     "backToHome": "Zurück zur Startseite"
   }
 }

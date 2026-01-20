@@ -1,11 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import Link from 'next/link'
 import { getSiteSettingsClient } from '@/lib/data'
 
 export default function Footer() {
   const t = useTranslations('footer')
+  const locale = useLocale()
   const [settings, setSettings] = useState<Record<string, string>>({})
 
   useEffect(() => {
@@ -109,8 +111,39 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-gray-700 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} {settings.company_name || 'Balearic & Costa Blanca Charters'}. {t('rights')}</p>
+        <div className="mt-8 border-t border-gray-700 pt-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-gray-400">
+            <p>&copy; {new Date().getFullYear()} {settings.company_name || 'Balearic & Costa Blanca Charters'}. {t('rights')}</p>
+            <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
+              <Link 
+                href={`/${locale}/legal`}
+                className="hover:text-luxury-gold transition-colors"
+              >
+                {t('legal') || 'Legal Notice'}
+              </Link>
+              <span className="text-gray-600">|</span>
+              <Link 
+                href={`/${locale}/privacy`}
+                className="hover:text-luxury-gold transition-colors"
+              >
+                {t('privacy') || 'Privacy Policy'}
+              </Link>
+              <span className="text-gray-600">|</span>
+              <Link 
+                href={`/${locale}/cookies`}
+                className="hover:text-luxury-gold transition-colors"
+              >
+                {t('cookies') || 'Cookies Policy'}
+              </Link>
+              <span className="text-gray-600">|</span>
+              <Link 
+                href={`/${locale}/terms`}
+                className="hover:text-luxury-gold transition-colors"
+              >
+                {t('terms') || 'Terms & Conditions'}
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

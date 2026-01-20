@@ -159,7 +159,11 @@
     "contact": "Contact",
     "rights": "All rights reserved",
     "tagline": "Your premier destination for luxury yacht charters in the Mediterranean.",
-    "followUs": "Follow Us"
+    "followUs": "Follow Us",
+    "legal": "Legal Notice",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookies Policy",
+    "terms": "Terms & Conditions"
   },
   "metadata": {
     "title": "Luxury Yacht Charter Majorca & Costa Blanca | Wide Dream",
@@ -203,5 +207,213 @@
     "discoverMore": "Discover More About Our Mission and Destinations",
     "discoverMoreDescription": "Explore our complete range of services, learn about our mission, and discover all the exclusive destinations we offer.",
     "backToHome": "Back to Home Page"
+  },
+  "legal": {
+    "title": "Legal Notice",
+    "lastUpdated": "Last updated:",
+    "metaDescription": "Legal information and compliance details for Fabula Marítima SL yacht charter services.",
+    "companyInfo": {
+      "title": "Company Information",
+      "entity": "Entity",
+      "cif": "CIF",
+      "form": "Legal Form",
+      "formValue": "Sociedad Limitada (Spain)",
+      "contact": "Contact Information",
+      "operatingAreas": "Operating Areas",
+      "operatingAreasValue": "Balearic Islands (Ibiza, Formentera, Palma de Mallorca) & Costa Blanca (Torrevieja)"
+    },
+    "maritime": {
+      "title": "Maritime Licenses & Compliance",
+      "compliance": "Fabula Marítima SL complies with Spanish Maritime Regulations (Lista 6ª) and maintains all required licenses for commercial charter operations.",
+      "requirements": "For the 2025/2026 season, we operate in full compliance with International 'H' Flag (Hotel) usage requirements and maintain comprehensive passenger logbooks as mandated by Spanish maritime authorities.",
+      "standards": "All vessels in our fleet meet and exceed the safety standards set by the Dirección General de la Marina Mercante (DGMM)."
+    },
+    "business": {
+      "title": "Business Activity",
+      "role": "Fabula Marítima SL operates as a charter service provider, offering catamaran charters, day trips, and corporate events in the Balearic Islands and Costa Blanca regions.",
+      "responsibility": "We are responsible for vessel maintenance, professional crew management, comprehensive insurance coverage, and all aspects of booking management and customer service."
+    },
+    "insurance": {
+      "title": "Insurance & Liability",
+      "coverage": "Our comprehensive insurance coverage includes:",
+      "liability": "Third-party liability insurance",
+      "passenger": "Passenger injury and accident coverage",
+      "vessel": "Vessel damage and loss protection",
+      "indemnity": "Professional indemnity insurance",
+      "claims": "All claims are handled according to Spanish maritime law and EU regulations. For detailed information regarding coverage and claims procedures, please contact us directly."
+    },
+    "ip": {
+      "title": "Intellectual Property",
+      "content": "All content on this website, including but not limited to design, photographs, text, logos, and branding, is the exclusive property of Fabula Marítima SL. Unauthorized use, reproduction, or distribution of any content is strictly prohibited and may result in legal action."
+    },
+    "footer": {
+      "title": "Quick Contact"
+    },
+    "backToHome": "Back to Home"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated:",
+    "metaDescription": "Privacy policy and data protection information for Fabula Marítima SL yacht charter services.",
+    "dataController": {
+      "title": "Data Controller",
+      "entity": "Entity",
+      "cif": "CIF",
+      "email": "Email"
+    },
+    "dataCollection": {
+      "title": "Data Collection",
+      "description": "We collect information provided via booking forms and contact requests:",
+      "name": "Name",
+      "email": "Email address",
+      "phone": "Phone number",
+      "identification": "Identification documents (for charter contracts)"
+    },
+    "purpose": {
+      "title": "Purpose of Data Processing",
+      "description": "Your personal data is processed for the following purposes:",
+      "bookings": "To manage boat charter bookings and reservations",
+      "payments": "To process payments and invoicing",
+      "support": "To provide customer support and respond to inquiries"
+    },
+    "retention": {
+      "title": "Data Retention",
+      "description": "Data is kept as long as necessary for the service provision and to comply with legal tax obligations in Spain. After this period, data will be securely deleted."
+    },
+    "rights": {
+      "title": "Your Rights",
+      "description": "Under the General Data Protection Regulation (GDPR), you have the following rights:",
+      "access": "Right of access: Request information about your personal data",
+      "rectification": "Right of rectification: Correct inaccurate or incomplete data",
+      "erasure": "Right of erasure: Request deletion of your data",
+      "portability": "Right of data portability: Receive your data in a structured format",
+      "contact": "To exercise these rights, please contact us at:"
+    },
+    "security": {
+      "title": "Data Security",
+      "description": "We implement SSL encryption and secure hosting (Vercel) to protect your data. All data transmission is encrypted, and we follow industry best practices to ensure the security of your personal information."
+    },
+    "backToHome": "Back to Home"
+  },
+  "cookies": {
+    "title": "Cookies Policy",
+    "lastUpdated": "Last updated:",
+    "metaDescription": "Information about cookies and tracking technologies used on the Fabula Marítima SL website.",
+    "whatAre": {
+      "title": "What are Cookies?",
+      "description": "Cookies are small text files stored on your device (computer, tablet, or mobile) when you visit our website. They help improve your user experience by remembering your preferences and enabling certain website features."
+    },
+    "types": {
+      "title": "Types of Cookies We Use",
+      "essential": {
+        "title": "Essential/Technical Cookies",
+        "description": "These cookies are necessary for website navigation and security. They enable basic functions such as page navigation and access to secure areas of the website. The website cannot function properly without these cookies."
+      },
+      "analytical": {
+        "title": "Analytical Cookies",
+        "description": "We use analytical cookies (e.g., Google Analytics) to measure website traffic and understand how visitors interact with our site. This helps us improve our charter services and user experience. These cookies collect anonymous, aggregated data."
+      }
+    },
+    "managing": {
+      "title": "Managing Cookies",
+      "description": "You can block or delete cookies through your browser settings. Here's how to manage cookies in popular browsers:",
+      "chrome": "Google Chrome: Settings > Privacy and security > Cookies and other site data",
+      "safari": "Safari: Preferences > Privacy > Cookies and website data",
+      "firefox": "Mozilla Firefox: Options > Privacy & Security > Cookies and Site Data"
+    },
+    "consent": {
+      "title": "Consent",
+      "description": "By continuing to browse our website, you accept the use of essential cookies necessary for the website's functionality. For analytical cookies, we will request your explicit consent where required by law."
+    },
+    "backToHome": "Back to Home"
+  },
+  "terms": {
+    "title": "Terms & Conditions",
+    "lastUpdated": "Last updated:",
+    "metaDescription": "Terms and conditions for yacht charter services provided by Fabula Marítima SL. Booking, payment, cancellation, and safety policies.",
+    "provider": {
+      "title": "Charter Provider Information",
+      "entity": "Entity",
+      "cif": "CIF",
+      "form": "Legal Form",
+      "formValue": "Sociedad Limitada (Spain)",
+      "description": "Fabula Marítima SL operates as a professional yacht charter service provider in the Balearic Islands (Ibiza, Formentera, Palma de Mallorca) and Costa Blanca (Torrevieja) regions. We specialize in luxury catamaran charters, day trips, and corporate events."
+    },
+    "compliance": {
+      "title": "2026 Regulatory Compliance",
+      "flag": {
+        "title": "International 'H' Flag (Hotel Flag)",
+        "description": "As of August 2025, all commercial charter vessels operating in Spanish waters are required to display the International 'H' Flag. This flag indicates that the vessel is operating as a commercial charter service and complies with Spanish Maritime Regulations (Lista 6ª).",
+        "note": "All vessels in our fleet are fully compliant with this 2026 regulatory requirement."
+      },
+      "manifest": {
+        "title": "Passenger Manifest & Official Logbook",
+        "description": "In accordance with 2026 Spanish maritime regulations, we maintain an official passenger logbook (Manifiesto de pasajeros) for all charters. The following information is required from each passenger:",
+        "id": "Valid identification document (ID card or passport)",
+        "nationality": "Nationality",
+        "emergency": "Emergency contact information",
+        "note": "This information is mandatory for safety and regulatory compliance. All data is handled in accordance with our Privacy Policy."
+      }
+    },
+    "booking": {
+      "title": "Booking & Payment Terms",
+      "description": "To secure your charter booking, the following payment schedule applies:",
+      "deposit": {
+        "title": "Initial Deposit (50%)",
+        "description": "A non-refundable deposit of 50% of the total charter fee is required to confirm your booking.",
+        "note": "This deposit secures your selected dates and vessel."
+      },
+      "final": {
+        "title": "Final Payment (30 days before departure)",
+        "description": "The remaining 50% balance must be paid no later than 30 days before your scheduled departure date.",
+        "note": "Failure to complete payment by this deadline may result in cancellation of your booking."
+      },
+      "paymentMethods": {
+        "title": "Accepted Payment Methods",
+        "bank": "Bank transfer (IBAN provided upon booking confirmation)",
+        "card": "Credit/Debit card (Visa, Mastercard)",
+        "transfer": "Wire transfer (international transfers accepted)"
+      }
+    },
+    "cancellation": {
+      "title": "Cancellation Policy",
+      "description": "Cancellation terms vary based on the notice period before your scheduled departure:",
+      "table": {
+        "period": "Cancellation Period",
+        "refund": "Refund Amount",
+        "more30": "More than 30 days before departure",
+        "full": "100% refund (minus deposit)",
+        "15to30": "15-30 days before departure",
+        "half": "50% refund",
+        "less15": "Less than 15 days before departure",
+        "none": "No refund"
+      },
+      "weather": {
+        "title": "Weather-Related Cancellations",
+        "description": "In case of severe weather conditions that make sailing unsafe, the Captain has the authority to cancel or reschedule the charter. In such cases, you will be offered a full refund or the option to reschedule to alternative dates (subject to availability)."
+      }
+    },
+    "safety": {
+      "title": "Safety & Liability",
+      "description": "The safety of our passengers and crew is our highest priority. All vessels in our fleet meet and exceed Spanish maritime safety standards (DGMM compliance).",
+      "responsibilities": {
+        "title": "Our Responsibilities",
+        "vessel": "Maintaining vessels in excellent condition with all required safety equipment",
+        "crew": "Providing qualified, experienced professional crew members",
+        "insurance": "Comprehensive insurance coverage (third-party liability, passenger injury, vessel damage)",
+        "safety": "Compliance with all Spanish maritime regulations and safety protocols"
+      },
+      "passenger": {
+        "title": "Passenger Responsibilities",
+        "follow": "Follow all safety instructions provided by the crew",
+        "inform": "Inform the crew of any medical conditions or special requirements",
+        "respect": "Respect the vessel, equipment, and other passengers"
+      },
+      "liability": {
+        "title": "Liability Limitation",
+        "description": "Fabula Marítima SL is not liable for personal injury or property damage resulting from passenger negligence, failure to follow crew instructions, or participation in water sports activities. All passengers participate in water activities at their own risk."
+      }
+    },
+    "backToHome": "Back to Home"
   }
 }
