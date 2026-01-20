@@ -17,7 +17,31 @@
     "title": "Our Luxury Fleet",
     "subtitle": "Discover our collection of world-class yachts",
     "viewDetails": "View Details",
-    "from": "From"
+    "from": "From",
+    "ships": {
+      "simona": {
+        "headline": "Elegance, Comfort, and a Taste of Adventure",
+        "description": "SIMONA is the perfect choice for those seeking a balance between sailing performance and home comfort on the water. This Lagoon 400 S2 model is famous for its bright, spacious salon and stability, making it ideal for both experienced sailors and families with children.",
+        "highlights": [
+          "Spaciousness and Light: Thanks to large windows and thoughtful design, the salon is filled with natural light, creating a cozy atmosphere.",
+          "Full Autonomy: Equipped with a powerful Watermaker, this yacht allows you to enjoy long journeys without the need to frequently visit ports for water supplies.",
+          "All-Weather Comfort: The Air Conditioning (AC) system ensures a pleasant breeze during hot Mediterranean afternoons.",
+          "Relaxation Areas: The wide trampoline net at the bow is the favorite spot for sunbathing and dolphin watching."
+        ],
+        "tagline": "SIMONA is more than just a ship – it is your floating villa for an unforgettable journey."
+      },
+      "wide-dream": {
+        "headline": "Luxury Relaxation and Panoramic Views",
+        "description": "WIDE DREAM defines the meaning of premium catamaran relaxation. The Lagoon 450 Flybridge version is built for those who refuse to compromise. With three levels of relaxation areas and impressive space, this yacht ensures privacy and luxury even for larger groups of up to 12 people.",
+        "highlights": [
+          "Exclusive Flybridge: The upper-level bridge not only makes maneuvering easier but offers the best sunbathing spot with a 360-degree view of the horizon.",
+          "Highest Level of Comfort: Features a Teak deck, a Generator for continuous power, and dedicated climate control in every cabin.",
+          "Built for Entertainment: The spacious cockpit and salon areas are perfect for sunset dinners or celebrations with friends.",
+          "Premium Equipment: From a high-quality galley fridge to modern water entertainment options – everything is set for high-end service."
+        ],
+        "tagline": "With WIDE DREAM, every morning begins with a dream view and flawless comfort."
+      }
+    }
   },
   "destinations": {
     "title": "Exclusive Destinations",

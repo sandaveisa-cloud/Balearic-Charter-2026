@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { format } from 'date-fns'
+import { useTranslations } from 'next-intl'
 import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils'
@@ -15,6 +16,8 @@ interface FleetDetailProps {
 }
 
 export default function FleetDetail({ yacht }: FleetDetailProps) {
+  const t = useTranslations('fleet')
+  
   useEffect(() => {
     console.log('[FleetDetail] Component loaded with yacht:', {
       id: yacht.id,
@@ -23,6 +26,36 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
       gallery_images_count: yacht.gallery_images?.length || 0,
     })
   }, [yacht])
+  
+  // Get ship-specific translations based on slug
+  const getShipTranslations = () => {
+    const slug = yacht.slug?.toLowerCase()
+    try {
+      if (slug === 'simona') {
+        const highlights = t.raw('ships.simona.highlights') as string[]
+        return {
+          headline: t('ships.simona.headline'),
+          description: t('ships.simona.description'),
+          highlights: Array.isArray(highlights) ? highlights : [],
+          tagline: t('ships.simona.tagline'),
+        }
+      } else if (slug === 'wide-dream') {
+        const highlights = t.raw('ships.wide-dream.highlights') as string[]
+        return {
+          headline: t('ships.wide-dream.headline'),
+          description: t('ships.wide-dream.description'),
+          highlights: Array.isArray(highlights) ? highlights : [],
+          tagline: t('ships.wide-dream.tagline'),
+        }
+      }
+    } catch (error) {
+      // Translation not found, return null to use fallback
+      console.log('[FleetDetail] Translation not found for slug:', slug, error)
+    }
+    return null
+  }
+  
+  const shipTranslations = getShipTranslations()
   const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null)
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
@@ -274,12 +307,49 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Description */}
-            <section>
+            <section className="space-y-4">
               <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-4">About {yacht.name}</h2>
-              {yacht.description && (
-                <div className="prose max-w-none text-gray-700 whitespace-pre-line">
-                  {yacht.description}
+              
+              {/* Ship-specific content from translations */}
+              {shipTranslations ? (
+                <div className="space-y-6">
+                  {/* Headline */}
+                  <h3 className="font-serif text-2xl font-semibold text-luxury-blue">
+                    {shipTranslations.headline}
+                  </h3>
+                  
+                  {/* Main Description */}
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    {shipTranslations.description}
+                  </p>
+                  
+                  {/* Key Highlights */}
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-xl text-gray-800">Key Highlights:</h4>
+                    <ul className="space-y-3 list-none">
+                      {shipTranslations.highlights.map((highlight, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="flex-shrink-0 w-2 h-2 rounded-full bg-luxury-blue mt-2"></span>
+                          <span className="text-gray-700 leading-relaxed">{highlight}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Closing Tagline */}
+                  <div className="mt-6 p-6 bg-gradient-to-r from-luxury-blue/5 to-luxury-gold/5 border-l-4 border-luxury-blue rounded-lg">
+                    <p className="text-lg italic text-gray-800 font-serif">
+                      {shipTranslations.tagline}
+                    </p>
+                  </div>
                 </div>
+              ) : (
+                /* Fallback to database description if no translations */
+                yacht.description && (
+                  <div className="prose max-w-none text-gray-700 whitespace-pre-line">
+                    {yacht.description}
+                  </div>
+                )
               )}
             </section>
 

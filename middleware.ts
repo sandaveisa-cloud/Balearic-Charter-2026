@@ -1,7 +1,8 @@
 import createMiddleware from 'next-intl/middleware'
 import { locales, defaultLocale } from './i18n'
+import { NextRequest, NextResponse } from 'next/server'
 
-export default createMiddleware({
+const intlMiddleware = createMiddleware({
   // A list of all locales that are supported
   locales,
 
@@ -12,9 +13,21 @@ export default createMiddleware({
   localePrefix: 'always'
 })
 
+export default function middleware(request: NextRequest) {
+  // Handle root path explicitly
+  if (request.nextUrl.pathname === '/') {
+    return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url))
+  }
+  
+  // Use the intl middleware for all other paths
+  return intlMiddleware(request)
+}
+
 export const config = {
   // Match only internationalized pathnames
   matcher: [
+    // Match root path
+    '/',
     // Match all pathnames except for
     // - api routes
     // - _next (Next.js internals)

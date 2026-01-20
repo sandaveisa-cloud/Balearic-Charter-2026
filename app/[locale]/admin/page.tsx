@@ -1508,6 +1508,12 @@ export default function AdminPage() {
                   {showCreateStatForm ? 'Cancel' : 'Create New Stat'}
                 </button>
               </div>
+              
+              {/* Logistics Services Section */}
+              <div className="mb-12 border-t border-gray-200 pt-8">
+                <h3 className="text-xl font-bold text-luxury-blue mb-4">Logistics & Ship Delivery Services</h3>
+                <LogisticsServiceForm />
+              </div>
 
               {showCreateStatForm && (
                 <div className="mb-6">
@@ -1760,6 +1766,102 @@ function HeroSettingsForm({
   )
 }
 
+// Description Preview Modal Component
+function DescriptionPreviewModal({
+  description,
+  onApply,
+  onClose,
+}: {
+  description: {
+    headline: string
+    description: string
+    highlights: string[]
+    tagline: string
+  }
+  onApply: () => void
+  onClose: () => void
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold text-luxury-blue">Generated Description Preview</h3>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Close preview"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          {/* Preview Content */}
+          <div className="space-y-6 mb-6">
+            {/* Headline */}
+            <div>
+              <h4 className="text-sm font-semibold text-gray-600 mb-2">Headline</h4>
+              <h3 className="font-serif text-2xl font-semibold text-luxury-blue">
+                {description.headline}
+              </h3>
+            </div>
+            
+            {/* Description */}
+            <div>
+              <h4 className="text-sm font-semibold text-gray-600 mb-2">Description</h4>
+              <p className="text-lg text-gray-700 leading-relaxed whitespace-pre-line">
+                {description.description}
+              </p>
+            </div>
+            
+            {/* Highlights */}
+            <div>
+              <h4 className="text-sm font-semibold text-gray-600 mb-2">Key Highlights</h4>
+              <ul className="space-y-2 list-none">
+                {description.highlights.map((highlight, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-2 h-2 rounded-full bg-luxury-blue mt-2"></span>
+                    <span className="text-gray-700">{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            {/* Tagline */}
+            <div>
+              <h4 className="text-sm font-semibold text-gray-600 mb-2">Tagline</h4>
+              <div className="p-4 bg-gradient-to-r from-luxury-blue/5 to-luxury-gold/5 border-l-4 border-luxury-blue rounded-lg">
+                <p className="text-lg italic text-gray-800 font-serif">
+                  {description.tagline}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Actions */}
+          <div className="flex gap-3 justify-end border-t pt-4">
+            <button
+              onClick={onClose}
+              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={onApply}
+              className="px-6 py-2 bg-luxury-blue text-white rounded-lg font-semibold hover:bg-opacity-90 transition-colors"
+            >
+              Apply to Form
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Fleet Edit Form Component
 function FleetEditForm({
   yacht,
@@ -1824,6 +1926,16 @@ function FleetEditForm({
   }
   
   const [images, setImages] = useState<string[]>(getCombinedImages())
+  
+  // AI Description Generator states
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [generatedDescription, setGeneratedDescription] = useState<{
+    headline: string
+    description: string
+    highlights: string[]
+    tagline: string
+  } | null>(null)
+  const [showPreview, setShowPreview] = useState(false)
 
   useEffect(() => {
     setName(yacht.name || '')
@@ -1892,6 +2004,66 @@ function FleetEditForm({
       ...prev,
       [key]: !prev[key]
     }))
+  }
+  
+  // Generate AI description
+  const handleGenerateDescription = async () => {
+    setIsGenerating(true)
+    setGeneratedDescription(null)
+    
+    try {
+      const response = await fetch('/api/generate-description', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          yachtName: name || yacht.name,
+          length: length ? parseFloat(length) : yacht.length,
+          capacity: capacity ? parseInt(capacity) : yacht.capacity,
+          cabins: cabins ? parseInt(cabins) : yacht.cabins,
+          toilets: toilets ? parseInt(toilets) : yacht.toilets,
+          amenities: amenities,
+          technicalSpecs: {
+            beam: beam ? `${beam}${beamUnit}` : yacht.technical_specs?.beam,
+            draft: draft ? `${draft}${draftUnit}` : yacht.technical_specs?.draft,
+            engines: engines || yacht.technical_specs?.engines,
+          },
+        }),
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate description')
+      }
+      
+      if (data.success && data.description) {
+        setGeneratedDescription(data.description)
+        setShowPreview(true)
+      } else {
+        throw new Error('Invalid response from server')
+      }
+    } catch (error) {
+      console.error('[Admin] Error generating description:', error)
+      alert(error instanceof Error ? error.message : 'Failed to generate description. Please check your OpenAI API key configuration.')
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+  
+  // Apply generated description
+  const handleApplyDescription = () => {
+    if (!generatedDescription) return
+    
+    // Build the full description text
+    const fullDescription = `${generatedDescription.headline}\n\n${generatedDescription.description}\n\nKey Highlights:\n${generatedDescription.highlights.map(h => `• ${h}`).join('\n')}\n\n${generatedDescription.tagline}`
+    
+    setDescription(fullDescription)
+    setShortDescription(generatedDescription.description.split('\n')[0] || generatedDescription.description.substring(0, 150) + '...')
+    
+    setShowPreview(false)
+    setGeneratedDescription(null)
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -2004,9 +2176,34 @@ function FleetEditForm({
         </div>
 
         <div>
-          <label htmlFor={`description-${yacht.id}`} className="block text-sm font-medium text-gray-700 mb-2">
-            Full Description (for detail page)
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label htmlFor={`description-${yacht.id}`} className="block text-sm font-medium text-gray-700">
+              Full Description (for detail page)
+            </label>
+            <button
+              type="button"
+              onClick={handleGenerateDescription}
+              disabled={isGenerating}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-luxury-blue to-luxury-gold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isGenerating ? (
+                <>
+                  <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Generate Luxury Description
+                </>
+              )}
+            </button>
+          </div>
           <textarea
             id={`description-${yacht.id}`}
             value={description}
@@ -2016,6 +2213,18 @@ function FleetEditForm({
             placeholder="Detailed description for the yacht detail page"
           />
         </div>
+        
+        {/* Preview Modal */}
+        {showPreview && generatedDescription && (
+          <DescriptionPreviewModal
+            description={generatedDescription}
+            onApply={handleApplyDescription}
+            onClose={() => {
+              setShowPreview(false)
+              setGeneratedDescription(null)
+            }}
+          />
+        )}
 
         {/* Technical Specifications */}
         <div className="border-t border-gray-200 pt-4">
@@ -3099,6 +3308,236 @@ function CrewEditForm({
             </button>
           )}
         </div>
+      </form>
+    </div>
+  )
+}
+
+// Logistics Service Form Component
+function LogisticsServiceForm() {
+  const [serviceName, setServiceName] = useState('')
+  const [serviceType, setServiceType] = useState('Delivery')
+  const [coverageArea, setCoverageArea] = useState('Mediterranean')
+  const [description, setDescription] = useState('')
+  const [features, setFeatures] = useState<Record<string, boolean>>({
+    insurance: false,
+    tracking: false,
+    customs: false,
+    port_handling: false,
+    experienced_crew: false,
+    documentation: false,
+  })
+  
+  // AI Description Generator states
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [generatedDescription, setGeneratedDescription] = useState<{
+    headline: string
+    description: string
+    highlights: string[]
+    tagline: string
+  } | null>(null)
+  const [showPreview, setShowPreview] = useState(false)
+  
+  const toggleFeature = (key: string) => {
+    setFeatures(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }))
+  }
+  
+  // Generate AI description
+  const handleGenerateDescription = async () => {
+    if (!serviceName.trim()) {
+      alert('Please enter a service name first')
+      return
+    }
+    
+    setIsGenerating(true)
+    setGeneratedDescription(null)
+    
+    try {
+      const response = await fetch('/api/generate-description', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          category: 'logistics',
+          serviceName: serviceName,
+          serviceType: serviceType,
+          coverageArea: coverageArea,
+          features: features,
+        }),
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate description')
+      }
+      
+      if (data.success && data.description) {
+        setGeneratedDescription(data.description)
+        setShowPreview(true)
+      } else {
+        throw new Error('Invalid response from server')
+      }
+    } catch (error) {
+      console.error('[Admin] Error generating logistics description:', error)
+      alert(error instanceof Error ? error.message : 'Failed to generate description. Please check your OpenAI API key configuration.')
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+  
+  // Apply generated description
+  const handleApplyDescription = () => {
+    if (!generatedDescription) return
+    
+    // Build the full description text
+    const fullDescription = `${generatedDescription.headline}\n\n${generatedDescription.description}\n\nKey Highlights:\n${generatedDescription.highlights.map(h => `• ${h}`).join('\n')}\n\n${generatedDescription.tagline}`
+    
+    setDescription(fullDescription)
+    setShowPreview(false)
+    setGeneratedDescription(null)
+  }
+  
+  return (
+    <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+      <h4 className="text-lg font-semibold text-gray-800 mb-4">Create Logistics Service Description</h4>
+      
+      <form className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Service Name *
+            </label>
+            <input
+              type="text"
+              value={serviceName}
+              onChange={(e) => setServiceName(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="e.g., Mediterranean Yacht Delivery"
+              required
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Service Type
+            </label>
+            <select
+              value={serviceType}
+              onChange={(e) => setServiceType(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+            >
+              <option value="Delivery">Delivery</option>
+              <option value="Transport">Transport</option>
+              <option value="Relocation">Relocation</option>
+              <option value="Logistics">Logistics</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Coverage Area
+            </label>
+            <input
+              type="text"
+              value={coverageArea}
+              onChange={(e) => setCoverageArea(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="e.g., Mediterranean, Global"
+            />
+          </div>
+        </div>
+        
+        {/* Features Checklist */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Service Features
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {[
+              { key: 'insurance', label: 'Insurance Coverage' },
+              { key: 'tracking', label: 'Real-time Tracking' },
+              { key: 'customs', label: 'Customs Clearance' },
+              { key: 'port_handling', label: 'Port Handling' },
+              { key: 'experienced_crew', label: 'Experienced Crew' },
+              { key: 'documentation', label: 'Documentation Support' },
+            ].map(({ key, label }) => (
+              <label
+                key={key}
+                className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-all ${
+                  features[key]
+                    ? 'border-blue-600 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={features[key] || false}
+                  onChange={() => toggleFeature(key)}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-600"
+                />
+                <span className={`text-sm font-medium ${features[key] ? 'text-blue-600' : 'text-gray-700'}`}>
+                  {label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+        
+        {/* Description Field with Generate Button */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Service Description
+            </label>
+            <button
+              type="button"
+              onClick={handleGenerateDescription}
+              disabled={isGenerating || !serviceName.trim()}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-luxury-blue to-luxury-gold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isGenerating ? (
+                <>
+                  <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Generate Luxury Description
+                </>
+              )}
+            </button>
+          </div>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={8}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+            placeholder="Service description will appear here after generation or manual entry..."
+          />
+        </div>
+        
+        {/* Preview Modal */}
+        {showPreview && generatedDescription && (
+          <DescriptionPreviewModal
+            description={generatedDescription}
+            onApply={handleApplyDescription}
+            onClose={() => {
+              setShowPreview(false)
+              setGeneratedDescription(null)
+            }}
+          />
+        )}
       </form>
     </div>
   )

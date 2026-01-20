@@ -1,7 +1,5 @@
-import { redirect } from 'next/navigation'
-import { defaultLocale } from '../i18n'
-
-// Root page redirects to default locale
+// Root page - middleware handles redirect to /en
+// This component should never be reached if middleware is working correctly
 export default function RootPage() {
-  redirect(`/${defaultLocale}`)
+  return null
 }
