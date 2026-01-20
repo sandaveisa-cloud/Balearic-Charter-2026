@@ -2018,6 +2018,7 @@ function FleetEditForm({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          locale: locale, // Pass current locale for multi-language generation
           yachtName: name || yacht.name,
           length: length ? parseFloat(length) : yacht.length,
           capacity: capacity ? parseInt(capacity) : yacht.capacity,
@@ -3315,6 +3316,7 @@ function CrewEditForm({
 
 // Logistics Service Form Component
 function LogisticsServiceForm() {
+  // This function has access to parent scope's 'locale' variable
   const [serviceName, setServiceName] = useState('')
   const [serviceType, setServiceType] = useState('Delivery')
   const [coverageArea, setCoverageArea] = useState('Mediterranean')
@@ -3363,6 +3365,7 @@ function LogisticsServiceForm() {
         },
         body: JSON.stringify({
           category: 'logistics',
+          locale: locale, // Pass current locale for multi-language generation (from parent scope)
           serviceName: serviceName,
           serviceType: serviceType,
           coverageArea: coverageArea,

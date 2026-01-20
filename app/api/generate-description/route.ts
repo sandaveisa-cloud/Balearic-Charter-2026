@@ -5,6 +5,7 @@ export const runtime = 'nodejs'
 
 interface GenerateDescriptionRequest {
   category?: 'yacht' | 'logistics' // Category for different description types
+  locale?: string // Language code: 'en', 'es', or 'de'
   yachtName?: string
   model?: string
   length?: number | string
@@ -35,6 +36,13 @@ export async function POST(request: NextRequest) {
   try {
     const body: GenerateDescriptionRequest = await request.json()
     const category = body.category || 'yacht' // Default to yacht for backward compatibility
+    const locale = body.locale || 'en' // Default to English if not provided
+    const languageNames: Record<string, string> = {
+      'en': 'English',
+      'es': 'Spanish',
+      'de': 'German'
+    }
+    const targetLanguage = languageNames[locale] || 'English'
     
     // Validate required fields based on category
     if (category === 'yacht' && !body.yachtName) {
@@ -92,9 +100,9 @@ export async function POST(request: NextRequest) {
       if (body.coverageArea) logisticsInfo.push(`Coverage Area: ${body.coverageArea}`)
       if (enabledFeatures.length > 0) logisticsInfo.push(`Features: ${enabledFeatures.join(', ')}`)
 
-      systemInstruction = `You are a professional maritime logistics copywriter. You must ALWAYS respond with valid JSON only, no markdown formatting, no code blocks, no explanations. Your response must be a strictly formatted JSON object.`
+      systemInstruction = `You are a professional maritime logistics copywriter. You must ALWAYS respond with valid JSON only, no markdown formatting, no code blocks, no explanations. Your response must be a strictly formatted JSON object. IMPORTANT: Generate all content in ${targetLanguage} language.`
 
-      prompt = `Generate a professional, trustworthy description for a yacht delivery and logistics service website.
+      prompt = `Generate a professional, trustworthy description for a yacht delivery and logistics service website. Write everything in ${targetLanguage} language.
 
 ${logisticsInfo.join('\n')}
 
@@ -150,9 +158,9 @@ Return ONLY the JSON object, nothing else.`
       if (body.technicalSpecs?.beam) techSpecs.push(`Beam: ${body.technicalSpecs.beam}`)
       if (body.technicalSpecs?.engines) techSpecs.push(`Engines: ${body.technicalSpecs.engines}`)
 
-      systemInstruction = `You are an expert luxury yacht charter copywriter. You must ALWAYS respond with valid JSON only, no markdown formatting, no code blocks, no explanations. Your response must be a strictly formatted JSON object.`
+      systemInstruction = `You are an expert luxury yacht charter copywriter. You must ALWAYS respond with valid JSON only, no markdown formatting, no code blocks, no explanations. Your response must be a strictly formatted JSON object. IMPORTANT: Generate all content in ${targetLanguage} language.`
 
-      prompt = `Generate a professional, evocative description for a yacht charter website.
+      prompt = `Generate a professional, evocative description for a yacht charter website. Write everything in ${targetLanguage} language.
 
 Yacht Name: ${body.yachtName}
 ${body.model ? `Model: ${body.model}` : ''}

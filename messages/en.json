@@ -16,8 +16,12 @@
   "fleet": {
     "title": "Our Luxury Fleet",
     "subtitle": "Discover our collection of world-class yachts",
-    "viewDetails": "View Details",
+    "viewDetails": "View Details & Book",
     "from": "From",
+    "perDay": "/ day",
+    "guests": "Guests",
+    "cabins": "Cabins",
+    "toilets": "Toilets",
     "ships": {
       "simona": {
         "headline": "Elegance, Comfort, and a Taste of Adventure",
@@ -59,6 +63,10 @@
     "title": "What Our Guests Say",
     "subtitle": "Hear from those who have experienced the luxury of our charters"
   },
+  "testimonials": {
+    "title": "Guest Testimonials",
+    "subtitle": "Discover what our guests say about their luxury charter experience"
+  },
   "mission": {
     "title": "Our Mission",
     "text": "To combine luxury charter with precise logistics. We ensure a safe, high-end environment with professional crew and gourmet cuisine."
@@ -68,6 +76,8 @@
     "fleet": "Fleet",
     "destinations": "Destinations",
     "contact": "Contact",
-    "rights": "All rights reserved"
+    "rights": "All rights reserved",
+    "tagline": "Your premier destination for luxury yacht charters in the Mediterranean.",
+    "followUs": "Follow Us"
   }
 }

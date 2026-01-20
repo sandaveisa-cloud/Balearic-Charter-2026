@@ -355,7 +355,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
 
             {/* Technical Specifications Table */}
             <section>
-              <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">Technical Specifications</h2>
+              <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">{t('technicalSpecs', { default: 'Technical Specifications' })}</h2>
               <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                 <table className="w-full">
                   <tbody className="divide-y divide-gray-200">
@@ -469,7 +469,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
             <div className="sticky top-8 space-y-6">
               {/* Calendar - Date Selection */}
               <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-                <h3 className="font-serif text-xl font-bold text-luxury-blue mb-4">Select Your Charter Dates</h3>
+                <h3 className="font-serif text-xl font-bold text-luxury-blue mb-4">{t('selectDates', { default: 'Select Your Charter Dates' })}</h3>
                 <BookingCalendar
                   yachtId={yacht.id}
                   onDateSelect={(start, end) => {

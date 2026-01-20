@@ -16,8 +16,12 @@
   "fleet": {
     "title": "Nuestra Flota de Lujo",
     "subtitle": "Descubre nuestra colección de yates de clase mundial",
-    "viewDetails": "Ver Detalles",
+    "viewDetails": "Ver Detalles y Reservar",
     "from": "Desde",
+    "perDay": "/ día",
+    "guests": "Huéspedes",
+    "cabins": "Camarotes",
+    "toilets": "Baños",
     "ships": {
       "simona": {
         "headline": "Elegancia, Comodidad y un Toque de Aventura",
@@ -59,6 +63,10 @@
     "title": "Lo Que Dicen Nuestros Huéspedes",
     "subtitle": "Escucha a quienes han experimentado el lujo de nuestros alquileres"
   },
+  "testimonials": {
+    "title": "Testimonios de Huéspedes",
+    "subtitle": "Descubre lo que dicen nuestros huéspedes sobre su experiencia de alquiler de lujo"
+  },
   "mission": {
     "title": "Nuestra Misión",
     "text": "Combinar el chárter de lujo con una logística precisa. Garantizamos un entorno de alta gama con tripulación profesional y cocina gourmet."
@@ -68,6 +76,8 @@
     "fleet": "Flota",
     "destinations": "Destinos",
     "contact": "Contacto",
-    "rights": "Todos los derechos reservados"
+    "rights": "Todos los derechos reservados",
+    "tagline": "Su destino principal para alquileres de yates de lujo en el Mediterráneo.",
+    "followUs": "Síguenos"
   }
 }

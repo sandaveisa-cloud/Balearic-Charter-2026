@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 import type { CrewMember } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
 
@@ -9,6 +10,8 @@ interface CrewSectionProps {
 }
 
 export default function CrewSection({ crew }: CrewSectionProps) {
+  const t = useTranslations('crew')
+  
   if (crew.length === 0) {
     return null
   }
@@ -18,10 +21,10 @@ export default function CrewSection({ crew }: CrewSectionProps) {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4">
-            Masters of Sea & Kitchen
+            {t('title')}
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Meet our exceptional crew dedicated to making your charter experience unforgettable.
+            {t('subtitle')}
           </p>
         </div>
 

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
@@ -12,6 +13,7 @@ interface FleetSectionProps {
 }
 
 export default function FleetSection({ fleet }: FleetSectionProps) {
+  const t = useTranslations('fleet')
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
   useEffect(() => {
     console.log('[FleetSection] Component loaded with fleet:', fleet.length, 'yachts')
@@ -33,10 +35,10 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4">
-            Our Luxury Fleet
+            {t('title')}
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover our collection of meticulously maintained yachts, each offering unique luxury experiences.
+            {t('subtitle')}
           </p>
         </div>
 
@@ -109,19 +111,19 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                     {yacht.capacity && (
                       <span className="flex items-center gap-1.5 text-gray-700">
                         <Users className="w-5 h-5 text-luxury-gold" />
-                        <span className="font-medium">{yacht.capacity} Guests</span>
+                        <span className="font-medium">{yacht.capacity} {t('guests', { count: yacht.capacity })}</span>
                       </span>
                     )}
                     {yacht.cabins && (
                       <span className="flex items-center gap-1.5 text-gray-700">
                         <BedDouble className="w-5 h-5 text-luxury-gold" />
-                        <span className="font-medium">{yacht.cabins} Cabins</span>
+                        <span className="font-medium">{yacht.cabins} {t('cabins', { count: yacht.cabins })}</span>
                       </span>
                     )}
                     {yacht.toilets && (
                       <span className="flex items-center gap-1.5 text-gray-700">
                         <Bath className="w-5 h-5 text-luxury-gold" />
-                        <span className="font-medium">{yacht.toilets} Toilets</span>
+                        <span className="font-medium">{yacht.toilets} {t('toilets', { count: yacht.toilets })}</span>
                       </span>
                     )}
                   </div>
@@ -135,7 +137,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
 
                   {yacht.high_season_price && (
                     <div className="mb-4">
-                      <span className="text-gray-600">From </span>
+                      <span className="text-gray-600">{t('from')} </span>
                       <span className="text-2xl font-bold text-luxury-blue">
                         {new Intl.NumberFormat('en-US', {
                           style: 'currency',
@@ -143,7 +145,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                           minimumFractionDigits: 0,
                         }).format(yacht.high_season_price)}
                       </span>
-                      <span className="text-gray-600"> / day</span>
+                      <span className="text-gray-600"> {t('perDay')}</span>
                     </div>
                   )}
 
@@ -151,7 +153,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                     href={`/fleet/${yacht.slug}`}
                     className="inline-block w-full text-center rounded-lg bg-luxury-blue px-6 py-3 text-white font-semibold transition-colors hover:bg-luxury-gold hover:text-luxury-blue"
                   >
-                    View Details & Book
+                    {t('viewDetails')}
                   </Link>
                 </div>
               </div>

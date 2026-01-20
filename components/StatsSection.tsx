@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import type { Stat } from '@/types/database'
 
 interface StatsSectionProps {
@@ -7,6 +8,8 @@ interface StatsSectionProps {
 }
 
 export default function StatsSection({ stats }: StatsSectionProps) {
+  const t = useTranslations('stats')
+  
   if (stats.length === 0) {
     return null
   }
@@ -16,7 +19,7 @@ export default function StatsSection({ stats }: StatsSectionProps) {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="font-serif text-3xl md:text-4xl font-bold mb-2">
-            Our Journey in Numbers
+            {t('title')}
           </h2>
         </div>
 

@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Quote, Star, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -20,6 +22,7 @@ interface TestimonialsProps {
 }
 
 export default function Testimonials({ reviews }: TestimonialsProps) {
+  const t = useTranslations('reviews')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -85,10 +88,10 @@ export default function Testimonials({ reviews }: TestimonialsProps) {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Guest Testimonials
+            {t('title')}
           </h2>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Discover what our guests say about their luxury charter experience
+            {t('subtitle')}
           </p>
         </div>
 

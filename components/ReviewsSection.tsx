@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import type { Review } from '@/types/database'
 import ReviewCard from './ReviewCard'
 
@@ -8,6 +9,8 @@ interface ReviewsSectionProps {
 }
 
 export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
+  const t = useTranslations('reviews')
+  
   if (reviews.length === 0) {
     return null
   }
@@ -17,10 +20,10 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4">
-            What Our Guests Say
+            {t('title')}
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Hear from those who have experienced the luxury of our charters.
+            {t('subtitle')}
           </p>
         </div>
 

@@ -16,8 +16,12 @@
   "fleet": {
     "title": "Unsere Luxusflotte",
     "subtitle": "Entdecken Sie unsere Sammlung erstklassiger Yachten",
-    "viewDetails": "Details Anzeigen",
+    "viewDetails": "Details Anzeigen & Buchen",
     "from": "Ab",
+    "perDay": "/ Tag",
+    "guests": "Gäste",
+    "cabins": "Kabinen",
+    "toilets": "Toiletten",
     "ships": {
       "simona": {
         "headline": "Eleganz, Komfort und ein Hauch von Abenteuer",
@@ -59,6 +63,10 @@
     "title": "Was Unsere Gäste Sagen",
     "subtitle": "Hören Sie von denen, die den Luxus unserer Charter erlebt haben"
   },
+  "testimonials": {
+    "title": "Gästetestimonials",
+    "subtitle": "Entdecken Sie, was unsere Gäste über ihre Luxus-Charter-Erfahrung sagen"
+  },
   "mission": {
     "title": "Unsere Mission",
     "text": "Luxus-Charter mit präziser Logistik zu verbinden. Wir garantieren ein erstklassiges Umfeld mit professioneller Crew und Gourmetküche."
@@ -68,6 +76,8 @@
     "fleet": "Flotte",
     "destinations": "Reiseziele",
     "contact": "Kontakt",
-    "rights": "Alle Rechte vorbehalten"
+    "rights": "Alle Rechte vorbehalten",
+    "tagline": "Ihr erstklassiges Ziel für Luxus-Yachtcharter im Mittelmeer.",
+    "followUs": "Folgen Sie Uns"
   }
 }

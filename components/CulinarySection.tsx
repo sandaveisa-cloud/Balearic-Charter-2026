@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 import type { CulinaryExperience } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
 
@@ -9,6 +10,8 @@ interface CulinarySectionProps {
 }
 
 export default function CulinarySection({ experiences }: CulinarySectionProps) {
+  const t = useTranslations('culinary')
+  
   if (experiences.length === 0) {
     return null
   }
@@ -18,10 +21,10 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4">
-            Culinary Experiences
+            {t('title')}
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Indulge in world-class cuisine prepared by our master chefs, featuring the finest local ingredients and international flavors.
+            {t('subtitle')}
           </p>
         </div>
 

@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { getSiteContent } from '@/lib/data'
 import type { SiteContent } from '@/types/database'
 
 export default function Footer() {
+  const t = useTranslations('footer')
   const [content, setContent] = useState<SiteContent | null>(null)
 
   useEffect(() => {
@@ -25,13 +27,13 @@ export default function Footer() {
               {settings.company_name || 'Balearic & Costa Blanca Charters'}
             </h3>
             <p className="text-gray-300">
-              Your premier destination for luxury yacht charters in the Mediterranean.
+              {t('tagline', { default: 'Your premier destination for luxury yacht charters in the Mediterranean.' })}
             </p>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h4 className="mb-4 font-semibold">Contact</h4>
+            <h4 className="mb-4 font-semibold">{t('contact')}</h4>
             <ul className="space-y-2 text-gray-300">
               {settings.contact_phone && (
                 <li>
@@ -52,7 +54,7 @@ export default function Footer() {
 
           {/* Social Links */}
           <div>
-            <h4 className="mb-4 font-semibold">Follow Us</h4>
+            <h4 className="mb-4 font-semibold">{t('followUs', { default: 'Follow Us' })}</h4>
             <div className="flex space-x-4">
               {settings.whatsapp_link && (
                 <a
@@ -98,7 +100,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 border-t border-gray-700 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} {settings.company_name || 'Balearic & Costa Blanca Charters'}. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {settings.company_name || 'Balearic & Costa Blanca Charters'}. {t('rights')}</p>
         </div>
       </div>
     </footer>
