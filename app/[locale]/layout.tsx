@@ -14,7 +14,7 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfa
 
 type Props = {
   children: React.ReactNode
-  params: { locale: string }
+  params: Promise<{ locale: string }> | { locale: string }
 }
 
 export function generateStaticParams() {
@@ -22,7 +22,8 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = params
+  const resolvedParams = params instanceof Promise ? await params : params
+  const { locale } = resolvedParams
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
   
   const titles: Record<string, string> = {
@@ -68,19 +69,39 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function LocaleLayout({ children, params }: Props) {
+  console.log('[LocaleLayout] Starting layout render...')
+  
   try {
-    const { locale } = params
+    // Handle both Promise and direct params (Next.js 14+ uses Promise)
+    const resolvedParams = params instanceof Promise ? await params : params
+    const { locale } = resolvedParams
+    
+    console.log('[LocaleLayout] Locale from params:', locale)
+    console.log('[LocaleLayout] Available locales:', locales)
     
     // Validate locale
-    if (!locales.includes(locale as any)) {
+    if (!locale || !locales.includes(locale as any)) {
+      console.error('[LocaleLayout] Invalid locale:', locale)
       notFound()
+      return // TypeScript guard
     }
 
+    console.log('[LocaleLayout] Locale validated, setting request locale...')
     // Enable static rendering for pages using next-intl in Server Components
     setRequestLocale(locale)
 
+    console.log('[LocaleLayout] Loading messages for locale:', locale)
     // Load messages for the locale
-    const messages = await getMessages()
+    let messages
+    try {
+      messages = await getMessages({ locale })
+      console.log('[LocaleLayout] Messages loaded successfully, keys:', Object.keys(messages || {}).length)
+    } catch (messagesError) {
+      console.error('[LocaleLayout] Error loading messages:', messagesError)
+      // Fallback to empty messages object instead of crashing
+      messages = {}
+      console.warn('[LocaleLayout] Using empty messages object as fallback')
+    }
 
     return (
       <NextIntlClientProvider messages={messages}>

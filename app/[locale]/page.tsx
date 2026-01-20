@@ -20,22 +20,52 @@ type Props = {
 }
 
 export default async function Home({ params }: Props) {
+  console.log('[Home] Starting page render...')
+  
   try {
     const { locale } = await params
+    console.log('[Home] Locale from params:', locale)
+    console.log('[Home] Available locales:', locales)
     
     // Validate locale parameter before using it
-    if (!locale || !locales.includes(locale as any)) {
-      console.error('[Home] Invalid locale:', locale)
+    if (!locale) {
+      console.error('[Home] Locale is missing/undefined')
       notFound()
+      return // TypeScript guard
     }
+    
+    if (!locales.includes(locale as any)) {
+      console.error('[Home] Invalid locale:', locale, 'not in', locales)
+      notFound()
+      return // TypeScript guard
+    }
+    
+    console.log('[Home] Locale validated successfully:', locale)
     
     // Fetch content with error handling
     let content
     try {
+      console.log('[Home] Fetching site content...')
       content = await getSiteContent()
+      console.log('[Home] Site content fetched successfully')
+      console.log('[Home] Content summary:', {
+        hasSettings: !!content?.settings,
+        settingsKeys: content?.settings ? Object.keys(content.settings).length : 0,
+        fleetCount: content?.fleet?.length || 0,
+        destinationsCount: content?.destinations?.length || 0,
+        reviewsCount: content?.reviews?.length || 0,
+        statsCount: content?.stats?.length || 0,
+        culinaryCount: content?.culinaryExperiences?.length || 0,
+        crewCount: content?.crew?.length || 0,
+        hasSectionVisibility: !!content?.sectionVisibility,
+      })
     } catch (dataError) {
       console.error('[Home] Error fetching site content:', dataError)
-      // Return safe defaults if data fetching fails
+      console.error('[Home] Error details:', {
+        message: dataError instanceof Error ? dataError.message : 'Unknown error',
+        stack: dataError instanceof Error ? dataError.stack : 'No stack',
+      })
+      // Return safe defaults if data fetching fails - NEVER call notFound() for empty data
       content = {
         settings: {},
         sectionVisibility: {
@@ -52,9 +82,11 @@ export default async function Home({ params }: Props) {
         culinaryExperiences: [],
         crew: [],
       }
+      console.log('[Home] Using fallback empty content')
     }
 
     // Ensure content and settings exist before accessing properties
+    // NEVER call notFound() for empty data - always render with fallbacks
     const safeContent = content || {
       settings: {},
       sectionVisibility: {
@@ -72,8 +104,15 @@ export default async function Home({ params }: Props) {
       crew: [],
     }
     
+    console.log('[Home] Using safeContent with:', {
+      hasSettings: !!safeContent.settings,
+      fleetLength: safeContent.fleet?.length || 0,
+      hasSectionVisibility: !!safeContent.sectionVisibility,
+    })
+    
     // Ensure settings object exists and has safe defaults
     const safeSettings = safeContent.settings || {}
+    console.log('[Home] Safe settings keys:', Object.keys(safeSettings).length)
     
     // Get section visibility settings (default to true if not set)
     const visibility = safeContent.sectionVisibility || {
@@ -83,6 +122,9 @@ export default async function Home({ params }: Props) {
       culinary: true,
       contact: true,
     }
+    
+    console.log('[Home] Section visibility:', visibility)
+    console.log('[Home] Rendering page with components...')
 
     return (
       <main className="min-h-screen pt-16">
