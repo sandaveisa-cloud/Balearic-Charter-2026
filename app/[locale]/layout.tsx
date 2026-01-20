@@ -1,6 +1,6 @@
 import React from 'react'
 import { NextIntlClientProvider } from 'next-intl'
-import { getMessages, setRequestLocale } from 'next-intl/server'
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { locales } from '../../i18n'
 import type { Metadata } from 'next'
@@ -28,20 +28,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = resolvedParams
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
   
-  const titles: Record<string, string> = {
-    en: 'Balearic & Costa Blanca Charters | Luxury Yacht Charter',
-    es: 'Alquiler de Yates de Lujo | Islas Baleares y Costa Blanca',
-    de: 'Balearen & Costa Blanca Charter | Luxus Yachtcharter',
+  // Get translated metadata from translation files
+  let currentTitle: string
+  let currentDescription: string
+  
+  try {
+    const t = await getTranslations({ locale, namespace: 'metadata' })
+    currentTitle = t('title')
+    currentDescription = t('description')
+  } catch (error) {
+    console.error('[Metadata] Error loading translations, using fallback:', error)
+    // Fallback to English if translation fails
+    const fallbackT = await getTranslations({ locale: 'en', namespace: 'metadata' })
+    currentTitle = fallbackT('title')
+    currentDescription = fallbackT('description')
   }
-
-  const descriptions: Record<string, string> = {
-    en: 'Premium yacht charters in the Balearic Islands and Costa Blanca. Experience luxury at sea with our world-class fleet and exceptional service.',
-    es: 'Alquiler de yates de lujo en las Islas Baleares y Costa Blanca. Experimenta el lujo en el mar con nuestra flota de clase mundial y servicio excepcional.',
-    de: 'Premium Yachtcharter auf den Balearen und Costa Blanca. Erleben Sie Luxus auf See mit unserer erstklassigen Flotte und außergewöhnlichem Service.',
-  }
-
-  const currentTitle = titles[locale] || titles.en
-  const currentDescription = descriptions[locale] || descriptions.en
 
   // Generate hreflang links for SEO
   const languages = locales.map((loc) => ({
