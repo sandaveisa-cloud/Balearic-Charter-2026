@@ -19,12 +19,29 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
 
   try {
     console.log('[Data] Fetching fleet...')
-    fleetResult = await supabase.from('fleet').select('*').eq('is_active', true).order('is_featured', { ascending: false })
+    // Select all columns including extras, specs, show_on_home, and all description columns
+    fleetResult = await supabase
+      .from('fleet')
+      .select('*')
+      .eq('is_active', true)
+      .order('is_featured', { ascending: false })
+    
     if (fleetResult.error) {
       console.error('[Data] Error fetching fleet:', fleetResult.error)
       fleetResult = { data: [], error: null }
     } else {
       console.log('[Data] fleet fetched:', fleetResult.data?.length || 0, 'items')
+      // Log first yacht structure for debugging
+      if (fleetResult.data && fleetResult.data.length > 0) {
+        console.log('[Data] Sample yacht structure:', {
+          id: fleetResult.data[0].id,
+          name: fleetResult.data[0].name,
+          hasExtras: !!fleetResult.data[0].extras,
+          hasSpecs: !!(fleetResult.data[0].specs || fleetResult.data[0].technical_specs),
+          show_on_home: (fleetResult.data[0] as any)?.show_on_home,
+          keys: Object.keys(fleetResult.data[0])
+        })
+      }
     }
   } catch (error) {
     console.error('[Data] Exception fetching fleet:', error)

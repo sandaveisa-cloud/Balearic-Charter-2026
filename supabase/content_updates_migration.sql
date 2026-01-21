@@ -199,7 +199,7 @@ VALUES
     'David Anderson',
     'London, UK',
     5,
-    'An absolutely incredible experience from start to finish. The yacht was pristine, the crew was professional and attentive, and the destinations were breathtaking. We felt like royalty throughout our entire journey. Highly recommend!',
+    'Amazing experience on Simona! The yacht exceeded all our expectations. The crew was incredibly professional and the destinations we visited were absolutely stunning. We will definitely be back!',
     true,
     true
   ),
@@ -207,7 +207,7 @@ VALUES
     'Sophie Laurent',
     'Paris, France',
     5,
-    'Perfect luxury charter experience! The attention to detail was remarkable, from the gourmet meals to the impeccable service. The crew made us feel at home while providing world-class hospitality. We will definitely book again!',
+    'Best paella ever! The culinary experience on board was outstanding. Fresh seafood, perfectly cooked, and served with such elegance. Combined with the beautiful Mediterranean views, this was an unforgettable journey.',
     true,
     true
   )

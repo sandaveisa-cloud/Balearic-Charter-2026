@@ -46,14 +46,14 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         )}
       </div>
 
-      {/* Rating Stars - Delicate */}
+      {/* Rating Stars - Gold/Yellow */}
       <div className="flex items-center gap-0.5 mb-3">
         {[...Array(5)].map((_, i) => (
           <Star
             key={i}
             className={`w-3.5 h-3.5 ${
               i < (review.rating || 0)
-                ? 'fill-luxury-gold text-luxury-gold'
+                ? 'fill-yellow-400 text-yellow-400'
                 : 'fill-gray-200 text-gray-200'
             }`}
           />

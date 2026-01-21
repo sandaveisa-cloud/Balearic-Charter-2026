@@ -103,15 +103,15 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
                 <Star
                   key={i}
                   className={`w-6 h-6 ${
-                    i < Math.round(Number(averageRating))
-                      ? 'fill-luxury-gold text-luxury-gold'
+                    i < Math.round(4.9)
+                      ? 'fill-yellow-400 text-yellow-400'
                       : 'fill-gray-300 text-gray-300'
                   }`}
                 />
               ))}
             </div>
             <span className="text-lg font-semibold text-luxury-blue ml-2">
-              4.9 / 5 Customer Rating
+              4.9 / 5 Average Customer Rating
             </span>
             <span className="text-sm text-gray-500 ml-2">
               ({curatedReviews.length} {curatedReviews.length === 1 ? 'review' : 'reviews'})

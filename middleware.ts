@@ -18,7 +18,7 @@ export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   
   // Debug logging for Vercel
-  console.log('Middleware checking path:', pathname)
+  console.log('[Middleware] Checking path:', pathname)
 
   // ============================================================================
   // STEP 1: Handle root path explicitly
@@ -29,14 +29,16 @@ export default async function middleware(request: NextRequest) {
 
   // ============================================================================
   // STEP 2: CRITICAL SECURITY CHECK - Admin Route Protection
+  // STRICT: Block ANY path containing '/admin' if no session exists
   // This MUST run BEFORE i18n middleware to catch all admin routes
   // ============================================================================
   
-  // Check: Does the path include '/admin'?
-  const isAdminRoute = pathname.includes('/admin')
+  // Strict check: Does the path include '/admin' anywhere?
+  // This catches: /admin, /en/admin, /es/admin, /de/admin, /en/admin/destinations, etc.
+  const isAdminRoute = pathname.toLowerCase().includes('/admin')
 
   if (isAdminRoute) {
-    console.log('[Middleware] 🔒 Admin route detected:', pathname)
+    console.log('[Middleware] 🔒 SECURITY: Admin route detected:', pathname)
     
     try {
       // Create response object for Supabase client
@@ -49,15 +51,15 @@ export default async function middleware(request: NextRequest) {
       // Create Supabase client
       const supabase = createSupabaseMiddlewareClient(request, response)
       
-      // Check for active user session
+      // Check for active user session - STRICT CHECK
       const { data: { user }, error } = await supabase.auth.getUser()
 
-      // IF NO USER: Redirect immediately to login
-      if (error || !user) {
-        console.log('[Middleware] ❌ No user found, redirecting to login')
+      // CRITICAL: IF NO USER OR ERROR - BLOCK ACCESS IMMEDIATELY
+      if (error || !user || !user.id) {
+        console.log('[Middleware] ❌ SECURITY BLOCK: No authenticated user found for admin route')
+        console.log('[Middleware] Error:', error?.message || 'No user')
         
         // Extract locale from pathname
-        // Path format: /en/admin, /es/admin, /de/admin, /admin, etc.
         const pathSegments = pathname.split('/').filter(Boolean)
         let locale = defaultLocale
         
@@ -66,25 +68,27 @@ export default async function middleware(request: NextRequest) {
           locale = pathSegments[0] as typeof defaultLocale
         }
 
-        // Redirect to login page with return URL
+        // IMMEDIATE REDIRECT to login - do not allow any admin access
         const loginUrl = new URL(`/${locale}/login`, request.url)
         loginUrl.searchParams.set('redirect', pathname)
-        console.log('[Middleware] 🔄 Redirecting to:', loginUrl.toString())
+        console.log('[Middleware] 🔄 SECURITY REDIRECT to login:', loginUrl.toString())
         return NextResponse.redirect(loginUrl)
       }
 
-      console.log('[Middleware] ✅ User authenticated:', user.email)
-      // User is authenticated - allow access and continue with intl middleware
+      // User is authenticated - log and allow access
+      console.log('[Middleware] ✅ SECURITY PASS: User authenticated:', user.email, 'for path:', pathname)
+      // Continue with intl middleware
       return intlMiddleware(request)
     } catch (error) {
-      // If session check fails, redirect to login for security (fail secure)
-      console.error('[Middleware] ⚠️ Error checking session:', error)
+      // FAIL SECURE: If ANY error occurs during auth check, block access
+      console.error('[Middleware] ⚠️ SECURITY ERROR: Exception during auth check:', error)
       const pathSegments = pathname.split('/').filter(Boolean)
       const locale = (pathSegments.length > 0 && locales.includes(pathSegments[0] as any))
         ? pathSegments[0] as typeof defaultLocale
         : defaultLocale
       const loginUrl = new URL(`/${locale}/login`, request.url)
       loginUrl.searchParams.set('redirect', pathname)
+      console.log('[Middleware] 🔄 FAIL-SECURE REDIRECT to login:', loginUrl.toString())
       return NextResponse.redirect(loginUrl)
     }
   }
