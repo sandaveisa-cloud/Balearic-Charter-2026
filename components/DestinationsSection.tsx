@@ -300,6 +300,7 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
               <InteractiveDestinationsMap
                 destinations={activeDestinations.map(dest => ({
                   id: dest.id,
+                  title: getDestinationName(dest),
                   name: getDestinationName(dest),
                   slug: dest.slug || dest.id,
                   description: getLocalizedDescription(dest),
