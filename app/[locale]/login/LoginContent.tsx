@@ -21,16 +21,38 @@ export default function LoginContent() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  // Check if user is already logged in
+  // Track if we've already triggered a redirect to prevent loops
+  const [hasRedirected, setHasRedirected] = useState(false)
+
+  // Check if user is already logged in (only once on mount, and only if not submitting)
   useEffect(() => {
+    if (hasRedirected || isPending) return // Prevent multiple redirects or conflicts during login
+    
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        router.push(redirectPath)
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session && !hasRedirected && !isPending) {
+          // Ensure we're not redirecting to the login page itself
+          const targetPath = redirectPath || '/admin'
+          if (targetPath.includes('/login') || targetPath.includes('/signup')) {
+            console.log('[Login] Redirect path is login page, using /admin instead')
+            window.location.href = '/admin'
+            return
+          }
+          console.log('[Login] Session found, redirecting to:', targetPath)
+          setHasRedirected(true)
+          // Use hard navigation to prevent loops
+          // Small delay to ensure we don't conflict with form submission
+          setTimeout(() => {
+            window.location.href = targetPath
+          }, 100)
+        }
+      } catch (error) {
+        console.error('[Login] Error checking session:', error)
       }
     }
     checkSession()
-  }, [router, redirectPath])
+  }, []) // Only run once on mount
 
   // Reset pending state when form action completes (state changes)
   useEffect(() => {
@@ -39,14 +61,20 @@ export default function LoginContent() {
     }
   }, [state])
 
-  // Force navigation when login is successful
+  // Force navigation when login is successful (only once)
   useEffect(() => {
-    if (state?.success) {
+    if (state?.success && !hasRedirected) {
       console.log('[Login] Success state detected, forcing navigation to /admin...')
+      setHasRedirected(true)
       // Force hard navigation to bypass any server/middleware conflicts
-      window.location.href = '/admin'
+      // Delay to ensure cookies are fully set and propagated before redirect
+      // This prevents middleware from not seeing the session cookie
+      setTimeout(() => {
+        console.log('[Login] Executing redirect to /admin after cookie propagation delay')
+        window.location.href = '/admin'
+      }, 300) // 300ms delay to ensure cookies are set
     }
-  }, [state])
+  }, [state, hasRedirected])
 
   return (
     <div className="w-full max-w-md">

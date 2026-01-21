@@ -28,6 +28,16 @@ export default async function middleware(request: NextRequest) {
   }
 
   // ============================================================================
+  // STEP 1.5: EXCLUDE login/signup routes from admin checks to prevent loops
+  // ============================================================================
+  const isLoginRoute = pathname.includes('/login') || pathname.includes('/signup')
+  if (isLoginRoute) {
+    // Allow login/signup pages to load without admin checks
+    console.log('[Middleware] Login/signup route detected, skipping admin check:', pathname)
+    return intlMiddleware(request)
+  }
+
+  // ============================================================================
   // STEP 2: 🛑 CRITICAL FIX - Bypass intl middleware for Admin routes
   // Admin is now at /admin (root level), not /[locale]/admin
   // This check MUST run BEFORE intlMiddleware to prevent redirect to /en/admin
