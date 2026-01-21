@@ -105,3 +105,41 @@ export function getShortDescriptionForLocale(
   // Fallback to legacy short_description field
   return fleet.short_description || ''
 }
+
+/**
+ * Helper to get description for current locale with fallback
+ * Supports both JSONB (description_i18n) and TEXT columns (description_en, description_es, description_de)
+ */
+export function getDescriptionForLocaleWithTextColumns(
+  fleet: { 
+    description_i18n?: Record<string, string> | null
+    description_en?: string | null
+    description_es?: string | null
+    description_de?: string | null
+    description?: string | null
+  },
+  locale: Locale
+): string {
+  // Priority 1: Try JSONB i18n column
+  const i18nText = getLocalizedText(fleet.description_i18n, locale)
+  if (i18nText) return i18nText
+  
+  // Priority 2: Try TEXT columns based on locale
+  switch (locale) {
+    case 'es':
+      if (fleet.description_es) return fleet.description_es
+      break
+    case 'de':
+      if (fleet.description_de) return fleet.description_de
+      break
+    case 'en':
+      if (fleet.description_en) return fleet.description_en
+      break
+  }
+  
+  // Priority 3: Fallback to English TEXT column
+  if (fleet.description_en) return fleet.description_en
+  
+  // Priority 4: Fallback to legacy description field
+  return fleet.description || ''
+}

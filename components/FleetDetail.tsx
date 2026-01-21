@@ -9,6 +9,7 @@ import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, W
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils'
 import { getFleetBySlugs } from '@/lib/data'
+import { getDescriptionForLocaleWithTextColumns } from '@/lib/i18nUtils'
 import BookingCalendar from './BookingCalendar'
 import BookingForm from './BookingForm'
 import SeasonalPriceCalculator, { type PriceBreakdown } from './SeasonalPriceCalculator'
@@ -473,12 +474,15 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                   </div>
                 </div>
               ) : (
-                /* Fallback to database description if no translations */
-                yacht.description && (
-                  <div className="prose max-w-none text-gray-700 whitespace-pre-line">
-                    {yacht.description}
-                  </div>
-                )
+                /* Fallback to database description with i18n support */
+                (() => {
+                  const description = getDescriptionForLocaleWithTextColumns(yacht, locale as 'en' | 'es' | 'de')
+                  return description ? (
+                    <div className="prose max-w-none text-gray-700 whitespace-pre-line">
+                      {description}
+                    </div>
+                  ) : null
+                })()
               )}
             </section>
 

@@ -183,7 +183,13 @@ TOTAL ESTIMATE: ${formatCurrency(priceBreakdown.totalEstimate)}
           success: result?.success,
           fullResult: result,
         })
-        setErrorMessage(errorMsg)
+        
+        // Special handling for RLS/permission errors (403)
+        if (response.status === 403 || errorMsg.includes('permission') || errorMsg.includes('security')) {
+          setErrorMessage(result?.message || 'We encountered a security restriction. Please contact us directly at +34 680 957 096 to complete your booking.')
+        } else {
+          setErrorMessage(errorMsg)
+        }
         throw new Error(errorMsg)
       }
 

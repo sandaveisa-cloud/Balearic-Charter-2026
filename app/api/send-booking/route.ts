@@ -140,7 +140,38 @@ export async function POST(request: NextRequest) {
 
     if (dbError) {
       console.error('[API] Database error:', dbError)
-      // Continue even if DB save fails, but log it
+      
+      // Check for RLS (Row Level Security) errors
+      const errorMessage = dbError.message || String(dbError)
+      const errorCode = (dbError as any)?.code || ''
+      
+      if (errorMessage.includes('row-level security') || 
+          errorMessage.includes('RLS') || 
+          errorMessage.includes('permission denied') ||
+          errorCode === '42501' || // PostgreSQL permission denied error code
+          errorMessage.includes('new row violates row-level security policy')) {
+        console.error('[API] RLS Policy Error - booking_inquiries table may not allow public INSERT')
+        return NextResponse.json(
+          { 
+            success: false,
+            error: 'Permission denied', 
+            details: 'Unable to save booking due to security policy. Please contact support directly.',
+            message: 'We encountered a security restriction. Please contact us directly at +34 680 957 096 or email us to complete your booking.'
+          },
+          { status: 403 }
+        )
+      }
+      
+      // For other database errors, return error but don't fail completely
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Database error', 
+          details: 'Failed to save booking to database. Please try again or contact support.',
+          message: 'We encountered an issue saving your booking. Please try again or contact us directly.'
+        },
+        { status: 500 }
+      )
     }
 
     // Prepare email content

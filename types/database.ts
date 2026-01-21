@@ -27,6 +27,10 @@ export interface Fleet {
   short_description: string | null // Legacy field, kept for backward compatibility
   description_i18n?: Record<string, string> | null // Multi-language descriptions: { "en": "...", "es": "...", "de": "..." }
   short_description_i18n?: Record<string, string> | null // Multi-language short descriptions: { "en": "...", "es": "...", "de": "..." }
+  description_en?: string | null // English description (TEXT column)
+  description_es?: string | null // Spanish description (TEXT column)
+  description_de?: string | null // German description (TEXT column)
+  boat_name?: string | null // Official name of the boat/yacht
   main_image_url: string | null
   gallery_images: string[]
   low_season_price: number | null

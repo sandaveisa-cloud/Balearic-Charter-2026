@@ -1,5 +1,5 @@
 import type { Fleet, Destination } from '@/types/database'
-import { getLocalizedText } from '@/lib/i18nUtils'
+import { getLocalizedText, getDescriptionForLocaleWithTextColumns } from '@/lib/i18nUtils'
 
 interface StructuredDataProps {
   type: 'TravelAgency' | 'BoatTrip' | 'Place'
@@ -71,11 +71,17 @@ export default function StructuredData({ type, settings = {}, yacht, destination
   }
 
   if (type === 'BoatTrip' && yacht) {
+    // Get localized description for SEO
+    const yachtDescription = getDescriptionForLocaleWithTextColumns(
+      yacht,
+      locale as 'en' | 'es' | 'de'
+    ) || getLocalizedText(yacht.short_description_i18n, locale as 'en' | 'es' | 'de') || yacht.short_description || ""
+    
     const boatTripSchema = {
       "@context": "https://schema.org",
       "@type": "BoatTrip",
       "name": yacht.name,
-      "description": yacht.short_description || yacht.description || "",
+      "description": yachtDescription,
       "provider": {
         "@type": "TravelAgency",
         "name": settings.company_name || "Wide Dream",
