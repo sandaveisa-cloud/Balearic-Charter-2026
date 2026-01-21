@@ -340,6 +340,7 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
                   <InteractiveDestinationsMap
                     destinations={[{
                       id: destination.id,
+                      title: destinationName,
                       name: destinationName,
                       slug: destinationSlug,
                       description: description,
