@@ -28,17 +28,14 @@ export default async function middleware(request: NextRequest) {
   }
 
   // ============================================================================
-  // STEP 2: CRITICAL SECURITY CHECK - Admin Route Protection
-  // STRICT: Block ANY path containing '/admin' if no session exists
-  // This MUST run BEFORE i18n middleware to catch all admin routes
+  // STEP 2: 🛑 CRITICAL FIX - Bypass intl middleware for Admin routes
+  // Admin is now at /admin (root level), not /[locale]/admin
+  // This check MUST run BEFORE intlMiddleware to prevent redirect to /en/admin
   // ============================================================================
   
-  // Strict check: Does the path include '/admin' anywhere?
-  // This catches: /admin, /en/admin, /es/admin, /de/admin, /en/admin/destinations, etc.
-  const isAdminRoute = pathname.toLowerCase().includes('/admin')
-
-  if (isAdminRoute) {
-    console.log('[Middleware] 🔒 SECURITY: Admin route detected:', pathname)
+  // Check if path starts with /admin (root-level admin route)
+  if (pathname.startsWith('/admin')) {
+    console.log('[Middleware] 🔒 SECURITY: Admin route detected (bypassing i18n):', pathname)
     
     try {
       // Create response object for Supabase client
@@ -59,14 +56,8 @@ export default async function middleware(request: NextRequest) {
         console.log('[Middleware] ❌ SECURITY BLOCK: No authenticated user found for admin route')
         console.log('[Middleware] Error:', error?.message || 'No user')
         
-        // Extract locale from pathname
-        const pathSegments = pathname.split('/').filter(Boolean)
-        let locale = defaultLocale
-        
-        // Check if first segment is a valid locale
-        if (pathSegments.length > 0 && locales.includes(pathSegments[0] as any)) {
-          locale = pathSegments[0] as typeof defaultLocale
-        }
+        // Admin uses 'en' locale for login redirect (hardcoded)
+        const locale = defaultLocale
 
         // IMMEDIATE REDIRECT to login - do not allow any admin access
         const loginUrl = new URL(`/${locale}/login`, request.url)
@@ -77,16 +68,12 @@ export default async function middleware(request: NextRequest) {
 
       // User is authenticated - log and allow access
       console.log('[Middleware] ✅ SECURITY PASS: User authenticated:', user.email, 'for path:', pathname)
-      // Skip i18n middleware for /admin routes (they're at root level, not localized)
-      // Just return the response directly
+      // Bypass intl middleware completely - return response directly
       return response
     } catch (error) {
       // FAIL SECURE: If ANY error occurs during auth check, block access
       console.error('[Middleware] ⚠️ SECURITY ERROR: Exception during auth check:', error)
-      const pathSegments = pathname.split('/').filter(Boolean)
-      const locale = (pathSegments.length > 0 && locales.includes(pathSegments[0] as any))
-        ? pathSegments[0] as typeof defaultLocale
-        : defaultLocale
+      const locale = defaultLocale
       const loginUrl = new URL(`/${locale}/login`, request.url)
       loginUrl.searchParams.set('redirect', pathname)
       console.log('[Middleware] 🔄 FAIL-SECURE REDIRECT to login:', loginUrl.toString())
