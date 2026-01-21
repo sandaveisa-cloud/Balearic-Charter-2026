@@ -1,5 +1,9 @@
 'use client'
 
+// NOTE: This is a client component, so we cannot use `export const dynamic` here.
+// However, the parent layout.tsx has `export const dynamic = 'force-dynamic'` which
+// ensures the auth check runs on every request before this component renders.
+
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'

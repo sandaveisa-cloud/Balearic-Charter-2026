@@ -1,3 +1,9 @@
+// CRITICAL: Force dynamic rendering to prevent caching
+// This ensures the auth check runs on EVERY request
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
+
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
