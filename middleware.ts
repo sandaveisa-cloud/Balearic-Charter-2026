@@ -77,8 +77,9 @@ export default async function middleware(request: NextRequest) {
 
       // User is authenticated - log and allow access
       console.log('[Middleware] ✅ SECURITY PASS: User authenticated:', user.email, 'for path:', pathname)
-      // Continue with intl middleware
-      return intlMiddleware(request)
+      // Skip i18n middleware for /admin routes (they're at root level, not localized)
+      // Just return the response directly
+      return response
     } catch (error) {
       // FAIL SECURE: If ANY error occurs during auth check, block access
       console.error('[Middleware] ⚠️ SECURITY ERROR: Exception during auth check:', error)

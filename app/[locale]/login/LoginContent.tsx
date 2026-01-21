@@ -9,7 +9,8 @@ export default function LoginContent() {
   const router = useRouter()
   const locale = useLocale()
   const searchParams = useSearchParams()
-  const redirectPath = searchParams.get('redirect') || `/${locale}/admin`
+  // Admin is now at /admin (root level), not /[locale]/admin
+  const redirectPath = searchParams.get('redirect') || '/admin'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
