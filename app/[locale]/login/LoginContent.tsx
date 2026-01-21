@@ -39,6 +39,36 @@ export default function LoginContent() {
     }
   }, [state])
 
+  // Force navigation if login was successful but server redirect didn't trigger
+  useEffect(() => {
+    // If state has success flag, navigate immediately
+    if (state?.success) {
+      console.log('[Login] Success state detected, forcing navigation...')
+      window.location.href = '/admin'
+      return
+    }
+
+    // If there's no error and form submission completed, check for session
+    // This handles the case where redirect() was called but didn't work
+    if (state === null && !isPending) {
+      // Small delay to allow server redirect to happen first
+      const timeoutId = setTimeout(async () => {
+        try {
+          const { data: { session } } = await supabase.auth.getSession()
+          if (session) {
+            // Session exists but we're still on login page - force navigation
+            console.log('[Login] Session detected but still on login page, forcing navigation...')
+            window.location.href = '/admin'
+          }
+        } catch (error) {
+          console.error('[Login] Error checking session:', error)
+        }
+      }, 1000) // 1 second delay to allow server redirect
+      
+      return () => clearTimeout(timeoutId)
+    }
+  }, [state, isPending])
+
   return (
     <div className="w-full max-w-md">
       <div className="bg-white rounded-2xl shadow-2xl p-8">
