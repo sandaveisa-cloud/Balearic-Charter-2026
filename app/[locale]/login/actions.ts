@@ -22,6 +22,7 @@ export async function loginAction(prevState: any, formData: FormData) {
     }
   }
 
+  // Handle sign-in logic in try/catch
   try {
     // Create server-side Supabase client
     const supabase = await createSupabaseServerClient()
@@ -49,13 +50,6 @@ export async function loginAction(prevState: any, formData: FormData) {
     }
 
     console.log('[Login Action] Login successful for user:', data.user.email)
-
-    // Revalidate the admin path to ensure fresh data
-    revalidatePath('/admin')
-
-    // Server-side redirect to /admin
-    // This happens after cookies are set, so middleware will see the session
-    redirect('/admin')
   } catch (err) {
     console.error('[Login Action] Unexpected error:', err)
     return {
@@ -63,4 +57,13 @@ export async function loginAction(prevState: any, formData: FormData) {
       success: false,
     }
   }
+
+  // If we reach here, login was successful
+  // Revalidate the admin path to ensure fresh data
+  revalidatePath('/admin')
+
+  // Server-side redirect to /admin
+  // This happens after cookies are set, so middleware will see the session
+  // NOTE: redirect() throws a special error to handle navigation, so it must be outside try/catch
+  redirect('/admin')
 }
