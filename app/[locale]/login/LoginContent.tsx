@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useActionState } from 'react'
+import { useState, useEffect } from 'react'
+import { useFormState } from 'react-dom'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { supabase } from '@/lib/supabase'
@@ -13,8 +14,9 @@ export default function LoginContent() {
   // Admin is now at /admin (root level), not /[locale]/admin
   const redirectPath = searchParams.get('redirect') || '/admin'
 
-  // Use server action with form state
-  const [state, formAction, isPending] = useActionState(loginAction, null)
+  // Use server action with form state (React 18 compatible)
+  const [state, formAction] = useFormState(loginAction, null)
+  const [isPending, setIsPending] = useState(false)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -29,6 +31,13 @@ export default function LoginContent() {
     }
     checkSession()
   }, [router, redirectPath])
+
+  // Reset pending state when form action completes (state changes)
+  useEffect(() => {
+    if (state !== null) {
+      setIsPending(false)
+    }
+  }, [state])
 
   return (
     <div className="w-full max-w-md">
@@ -66,7 +75,11 @@ export default function LoginContent() {
         )}
 
         {/* Login Form */}
-        <form action={formAction} className="space-y-6">
+        <form 
+          action={formAction}
+          onSubmit={() => setIsPending(true)}
+          className="space-y-6"
+        >
           <div>
             <label
               htmlFor="email"
@@ -77,12 +90,13 @@ export default function LoginContent() {
             <input
               id="email"
               type="email"
+              name="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent transition-all"
               placeholder="admin@example.com"
-              disabled={isLoading}
+              disabled={isPending}
             />
           </div>
 

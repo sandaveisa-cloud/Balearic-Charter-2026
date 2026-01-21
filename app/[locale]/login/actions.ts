@@ -8,8 +8,10 @@ import { revalidatePath } from 'next/cache'
  * Server Action for user login
  * This ensures cookies are set correctly on the server response,
  * which the middleware will see on the next request.
+ * 
+ * Note: prevState parameter is required for useFormState compatibility (React 18)
  */
-export async function loginAction(formData: FormData) {
+export async function loginAction(prevState: any, formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
