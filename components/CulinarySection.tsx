@@ -180,17 +180,10 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
 
                   {/* Description */}
                   {experience.description && (
-                    <p className="text-sm text-[#475569] leading-relaxed line-clamp-3 mb-4">
+                    <p className="text-sm text-[#475569] leading-relaxed line-clamp-3">
                       {experience.description}
                     </p>
                   )}
-
-                  {/* Verification Badge */}
-                  <div className="flex items-center justify-between pt-4 border-t border-[#E2E8F0]">
-                    <span className="text-xs text-gray-400">
-                      ✓ Verified & Logistically Synchronized
-                    </span>
-                  </div>
                 </div>
               </div>
             )

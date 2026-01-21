@@ -36,7 +36,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10">
           {fleet.map((yacht) => {
             const imageUrl = getOptimizedImageUrl(yacht.main_image_url, {
               width: 1200,
@@ -49,7 +49,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
             return (
               <div
                 key={yacht.id}
-                className="group relative overflow-hidden rounded-lg bg-white shadow-lg transition-transform hover:scale-105"
+                className="group relative overflow-hidden rounded-lg bg-white shadow-lg border border-gray-200 transition-transform hover:scale-105 hover:shadow-xl"
               >
                 {showImage ? (
                   <div className="aspect-[4/3] overflow-hidden relative">
@@ -166,12 +166,15 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                     </div>
                   )}
 
-                  <Link
-                    href={`/${locale}/fleet/${yacht.slug}`}
-                    className="inline-block w-full text-center rounded-lg bg-luxury-blue px-6 py-3 text-white font-semibold transition-colors hover:bg-luxury-gold hover:text-luxury-blue"
-                  >
-                    {t('viewDetails')}
-                  </Link>
+                  {/* View Details Button - Separated with proper spacing */}
+                  <div className="mt-6 pt-4 border-t border-gray-100">
+                    <Link
+                      href={`/${locale}/fleet/${yacht.slug}`}
+                      className="inline-block w-full text-center rounded-lg bg-luxury-blue px-6 py-3 text-white font-semibold transition-colors hover:bg-luxury-gold hover:text-luxury-blue"
+                    >
+                      {t('viewDetails')}
+                    </Link>
+                  </div>
                 </div>
               </div>
             )
