@@ -23,10 +23,7 @@ export function createSupabaseMiddlewareClient(
   return createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {
-        return Array.from(request.cookies.entries()).map(([name, value]) => ({
-          name,
-          value,
-        }))
+        return request.cookies.getAll()
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value, options }) => {
