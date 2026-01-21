@@ -22,27 +22,38 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url))
   }
 
-  // Check if this is an admin route (any path containing /admin)
+  // CRITICAL: Check for admin routes FIRST, before intl middleware
+  // This catches: /admin, /en/admin, /es/admin, /de/admin, /en/admin/destinations, etc.
+  // Match any path that contains '/admin' (with optional trailing path)
   const isAdminRoute = pathname.includes('/admin')
 
   if (isAdminRoute) {
+    console.log('[Middleware] Admin route detected:', pathname)
+    
     // Check for active Supabase session
     const user = await getSessionUser(request)
 
     if (!user) {
-      // No session - redirect to login
-      // Extract locale from pathname or use default
+      console.log('[Middleware] No session found, redirecting to login')
+      
+      // Extract locale from pathname
+      // Path format: /en/admin, /es/admin, /de/admin, etc.
       const pathSegments = pathname.split('/').filter(Boolean)
-      const locale = pathSegments[0] && locales.includes(pathSegments[0] as any)
-        ? pathSegments[0]
-        : defaultLocale
+      let locale = defaultLocale
+      
+      // Check if first segment is a valid locale
+      if (pathSegments.length > 0 && locales.includes(pathSegments[0] as any)) {
+        locale = pathSegments[0] as typeof defaultLocale
+      }
 
       // Redirect to login page with return URL
       const loginUrl = new URL(`/${locale}/login`, request.url)
       loginUrl.searchParams.set('redirect', pathname)
+      console.log('[Middleware] Redirecting to:', loginUrl.toString())
       return NextResponse.redirect(loginUrl)
     }
 
+    console.log('[Middleware] User authenticated:', user.email)
     // User is authenticated - allow access
     // Continue with intl middleware
     return intlMiddleware(request)
@@ -53,7 +64,7 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Match only internationalized pathnames
+  // Match all pathnames including localized admin routes
   matcher: [
     // Match root path
     '/',
@@ -62,7 +73,7 @@ export const config = {
     // - _next (Next.js internals)
     // - _vercel (Vercel internals)
     // - files with extensions (e.g. .ico, .png)
-    // Note: admin routes are now inside [locale], so they're included
+    // This includes: /en/admin, /es/admin, /de/admin, etc.
     '/((?!api|_next|_vercel|.*\\..*).*)'
   ]
 }

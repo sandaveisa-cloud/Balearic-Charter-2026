@@ -53,10 +53,24 @@ export async function getSessionUser(request: NextRequest) {
 
     const supabase = createSupabaseMiddlewareClient(request, response)
     
-    // Try to get the user from the session
-    const { data: { user }, error } = await supabase.auth.getUser()
+    // First, try to get the session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError) {
+      console.log('[Middleware] Session error:', sessionError.message)
+      return null
+    }
 
-    if (error || !user) {
+    if (!session) {
+      console.log('[Middleware] No active session found')
+      return null
+    }
+
+    // Verify the user from the session
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+    if (userError || !user) {
+      console.log('[Middleware] User verification failed:', userError?.message)
       return null
     }
 
