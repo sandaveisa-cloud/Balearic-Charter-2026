@@ -6,7 +6,7 @@ import OptimizedImage from './OptimizedImage'
 import TrustBar from './TrustBar'
 import { useEffect, useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { getLocalizedText } from '@/lib/i18nUtils'
+import { getLocalizedText, getDescriptionForLocaleWithTextColumns } from '@/lib/i18nUtils'
 import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
@@ -101,8 +101,9 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                   <TrustBar variant="compact" />
 
                   {(() => {
-                    // Use JSONB i18n with fallback to legacy field
-                    const shortDesc = getLocalizedText(yacht.short_description_i18n, locale) || yacht.short_description || ''
+                    // Use localized description with TEXT columns (description_en/es/de) with fallback
+                    const description = getDescriptionForLocaleWithTextColumns(yacht, locale)
+                    const shortDesc = getLocalizedText(yacht.short_description_i18n, locale) || yacht.short_description || description
                     return shortDesc ? (
                       <p className="text-gray-600 mb-4 line-clamp-2">{shortDesc}</p>
                     ) : null
@@ -135,6 +136,64 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                       </span>
                     )}
                   </div>
+
+                  {/* Extras List - Bullet Points */}
+                  {yachtExtras && yachtExtras.length > 0 && (
+                    <div className="mb-4">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Extras Included</p>
+                      <ul className="space-y-1">
+                        {yachtExtras.slice(0, 3).map((extra, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
+                            <span className="text-luxury-gold mt-1">•</span>
+                            <span>{extra}</span>
+                          </li>
+                        ))}
+                        {yachtExtras.length > 3 && (
+                          <li className="text-xs text-gray-500 italic">+{yachtExtras.length - 3} more</li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Technical Specs Grid */}
+                  {(() => {
+                    const specs = yacht.specs || yacht.technical_specs
+                    const hasSpecs = specs && (
+                      specs.beam || specs.draft || specs.fuel_tank || specs.fuel_capacity || 
+                      specs.water_tank || specs.water_capacity || specs.engine || specs.engines
+                    )
+                    return hasSpecs ? (
+                      <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Technical Specs</p>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          {specs.beam && (
+                            <div>
+                              <span className="text-gray-500">Beam:</span>
+                              <span className="ml-1 font-medium text-gray-700">{specs.beam}{typeof specs.beam === 'number' ? 'm' : ''}</span>
+                            </div>
+                          )}
+                          {specs.draft && (
+                            <div>
+                              <span className="text-gray-500">Draft:</span>
+                              <span className="ml-1 font-medium text-gray-700">{specs.draft}{typeof specs.draft === 'number' ? 'm' : ''}</span>
+                            </div>
+                          )}
+                          {(specs.fuel_tank || specs.fuel_capacity) && (
+                            <div>
+                              <span className="text-gray-500">Fuel:</span>
+                              <span className="ml-1 font-medium text-gray-700">{specs.fuel_tank || specs.fuel_capacity}</span>
+                            </div>
+                          )}
+                          {(specs.water_tank || specs.water_capacity) && (
+                            <div>
+                              <span className="text-gray-500">Water:</span>
+                              <span className="ml-1 font-medium text-gray-700">{specs.water_tank || specs.water_capacity}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : null
+                  })()}
 
                   {/* Amenities Tags */}
                   {yacht.amenities && Object.keys(yacht.amenities).filter(key => yacht.amenities?.[key]).length > 0 && (

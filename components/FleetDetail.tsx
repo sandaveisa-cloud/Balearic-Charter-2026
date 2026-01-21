@@ -492,6 +492,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
               <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                 <table className="w-full">
                   <tbody className="divide-y divide-gray-200">
+                    {/* Year - Always from database, no hardcoded values */}
                     {yacht.year && (
                       <tr className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm font-medium text-gray-700 w-1/3">Year Built</td>
@@ -504,24 +505,38 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                         <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.length}m</td>
                       </tr>
                     )}
-                    {yacht.technical_specs?.beam && (
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Beam</td>
-                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.beam}</td>
-                      </tr>
-                    )}
-                    {yacht.technical_specs?.draft && (
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Draft</td>
-                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.draft}</td>
-                      </tr>
-                    )}
-                    {yacht.technical_specs?.engines && (
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Engines</td>
-                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.engines}</td>
-                      </tr>
-                    )}
+                    {/* Use specs field first, fallback to technical_specs */}
+                    {(() => {
+                      const specs = yacht.specs || yacht.technical_specs
+                      return (
+                        <>
+                          {specs?.beam && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 text-sm font-medium text-gray-700">Beam</td>
+                              <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
+                                {specs.beam}{typeof specs.beam === 'number' ? 'm' : ''}
+                              </td>
+                            </tr>
+                          )}
+                          {specs?.draft && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 text-sm font-medium text-gray-700">Draft</td>
+                              <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
+                                {specs.draft}{typeof specs.draft === 'number' ? 'm' : ''}
+                              </td>
+                            </tr>
+                          )}
+                          {(specs?.engine || specs?.engines) && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 text-sm font-medium text-gray-700">Engines</td>
+                              <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
+                                {specs.engine || specs.engines}
+                              </td>
+                            </tr>
+                          )}
+                        </>
+                      )
+                    })()}
                     {yacht.capacity && (
                       <tr className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm font-medium text-gray-700">Capacity</td>
@@ -552,18 +567,29 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                         <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.max_speed}</td>
                       </tr>
                     )}
-                    {yacht.technical_specs?.fuel_capacity && (
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Fuel Capacity</td>
-                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.fuel_capacity}</td>
-                      </tr>
-                    )}
-                    {yacht.technical_specs?.water_capacity && (
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Water Capacity</td>
-                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.water_capacity}</td>
-                      </tr>
-                    )}
+                    {(() => {
+                      const specs = yacht.specs || yacht.technical_specs
+                      return (
+                        <>
+                          {(specs?.fuel_tank || specs?.fuel_capacity) && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 text-sm font-medium text-gray-700">Fuel Capacity</td>
+                              <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
+                                {specs.fuel_tank || specs.fuel_capacity}
+                              </td>
+                            </tr>
+                          )}
+                          {(specs?.water_tank || specs?.water_capacity) && (
+                            <tr className="hover:bg-gray-50">
+                              <td className="px-6 py-4 text-sm font-medium text-gray-700">Water Capacity</td>
+                              <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
+                                {specs.water_tank || specs.water_capacity}
+                              </td>
+                            </tr>
+                          )}
+                        </>
+                      )
+                    })()}
                   </tbody>
                 </table>
               </div>

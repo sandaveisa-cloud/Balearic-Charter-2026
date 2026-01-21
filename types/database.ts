@@ -12,6 +12,14 @@ export interface Fleet {
   slug: string
   year: number | null
   extras: string[] | null // Array of extra features/services like 'WiFi', 'Snorkeling', 'Towels', etc.
+  specs?: {
+    beam?: number | string // in meters/feet
+    draft?: number | string // in meters/feet
+    fuel_tank?: number | string // in liters
+    water_tank?: number | string // in liters
+    engine?: string // Engine description
+    [key: string]: any
+  } | null
   technical_specs: {
     engines?: string
     cruising_speed?: string
