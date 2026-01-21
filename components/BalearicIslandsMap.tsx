@@ -29,8 +29,8 @@ export default function BalearicIslandsMap({
   highlightedDestination,
   onDestinationHover,
 }: BalearicIslandsMapProps) {
-  const normalizeSlug = (input: string): string => {
-    return input
+  const normalizeSlug = (input: string | null | undefined): string => {
+    return (input || '')
       .toLowerCase()
       .replace(/\s+/g, '-')
       .replace(/[^a-z0-9-]/g, '')

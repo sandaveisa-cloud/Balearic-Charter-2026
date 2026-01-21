@@ -55,7 +55,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                   <div className="aspect-[4/3] overflow-hidden relative">
                     <OptimizedImage
                       src={imageUrl}
-                      alt={yacht.name}
+                      alt={yacht.name || 'Yacht'}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                       objectFit="cover"
@@ -85,7 +85,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
 
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-serif text-2xl font-bold text-luxury-blue">{yacht.name}</h3>
+                    <h3 className="font-serif text-2xl font-bold text-luxury-blue">{yacht.name || 'Yacht'}</h3>
                     {yacht.year && (
                       <span className="text-luxury-gold font-semibold">{yacht.year}</span>
                     )}

@@ -71,7 +71,7 @@ export default function LuxuryDestinationsGrid({ destinations = [] }: LuxuryDest
       'costa blanca': 'costaBlanca',
       'costa-blanca': 'costaBlanca',
     }
-    const key = keyMap[name] || name.replace(/\s+/g, '').replace(/-/g, '')
+    const key = keyMap[name] || (name || '').replace(/\s+/g, '').replace(/-/g, '')
     
     return {
       title: t(`${key}.title`) || destination.name,

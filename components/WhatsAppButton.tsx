@@ -19,13 +19,15 @@ export default function WhatsAppButton() {
   }
 
   // Format WhatsApp link - ensure it's a proper WhatsApp URL
-  const formatWhatsAppUrl = (link: string): string => {
+  const formatWhatsAppUrl = (link: string | null | undefined): string => {
+    if (!link) return ''
+    
     // If it's already a full WhatsApp URL, return as is
     if (link.startsWith('https://wa.me/') || link.startsWith('http://wa.me/')) {
       return link
     }
     // If it's a phone number, format it
-    const phoneNumber = link.replace(/[^\d+]/g, '')
+    const phoneNumber = (link || '').replace(/[^\d+]/g, '')
     if (phoneNumber) {
       return `https://wa.me/${phoneNumber}`
     }

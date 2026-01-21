@@ -41,7 +41,7 @@ export default function LanguageSwitcher() {
     setIsOpen(false)
     
     // Remove current locale from pathname
-    let pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/'
+    let pathWithoutLocale = (pathname || '').replace(`/${locale}`, '') || '/'
     
     // Ensure path starts with /
     if (!pathWithoutLocale.startsWith('/')) {

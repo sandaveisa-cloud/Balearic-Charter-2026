@@ -39,13 +39,13 @@ export default function ContactSection({ contactPersons, settings: initialSettin
   }
 
   // Format phone number for tel: link (remove spaces, keep +)
-  const formatPhoneForLink = (phone: string) => {
-    return phone.replace(/\s/g, '')
+  const formatPhoneForLink = (phone: string | null | undefined) => {
+    return (phone || '').replace(/\s/g, '')
   }
 
   // Format phone for WhatsApp (remove + and spaces)
-  const formatPhoneForWhatsApp = (phone: string) => {
-    return phone.replace(/\+/g, '').replace(/\s/g, '')
+  const formatPhoneForWhatsApp = (phone: string | null | undefined) => {
+    return (phone || '').replace(/\+/g, '').replace(/\s/g, '')
   }
 
   // Get WhatsApp link from settings (if available) or use phone

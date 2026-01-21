@@ -140,7 +140,7 @@ export default function StructuredData({ type, settings = {}, yacht, destination
       'costa-blanca': { lat: 38.3452, lng: -0.4810 },
     }
     
-    const slug = destination.slug?.toLowerCase() || destinationName.toLowerCase().replace(/\s+/g, '-')
+    const slug = destination.slug?.toLowerCase() || (destinationName || '').toLowerCase().replace(/\s+/g, '-')
     const coords = coordinates[slug] || coordinates[destinationName.toLowerCase()] || { lat: 39.5, lng: 2.5 }
     
     const placeSchema = {

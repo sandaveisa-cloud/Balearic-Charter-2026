@@ -37,7 +37,7 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
       'menorca': { lat: 39.9375, lng: 4.0000 },
       'costa-blanca': { lat: 38.3452, lng: -0.4810 },
     }
-    const key = destName.toLowerCase().replace(/\s+/g, '-')
+    const key = (destName || '').toLowerCase().replace(/\s+/g, '-')
     return coords[key] || coords[destName.toLowerCase()] || null
   }
 

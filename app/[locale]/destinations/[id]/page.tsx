@@ -127,7 +127,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   }
 
-  const slug = destination.slug?.toLowerCase() || destinationName.toLowerCase().replace(/\s+/g, '-')
+  const slug = destination.slug?.toLowerCase() || (destinationName || '').toLowerCase().replace(/\s+/g, '-')
   const seoTitle = seoTitles[slug]?.[locale] || `${destinationName} Yacht Charter | Wide Dream`
   const seoDescription = seoDescriptions[slug]?.[locale] || 
     (description.substring(0, 155) || `Explore ${destinationName} with our luxury yacht charter services. Professional crew, gourmet cuisine, premium boats. Book today!`)

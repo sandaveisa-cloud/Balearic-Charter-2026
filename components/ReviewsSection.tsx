@@ -29,7 +29,7 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
     const scoredReviews = reviews
       .filter((review) => review.is_approved) // Only approved reviews
       .map((review) => {
-        const text = review.review_text.toLowerCase()
+        const text = (review.review_text || '').toLowerCase()
         let score = 0
         
         // Base score from rating (5 stars = 5 points, 4 stars = 4 points, etc.)
@@ -53,7 +53,7 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
         })
         
         // Bonus for longer, detailed reviews (more than 100 characters)
-        if (review.review_text.length > 100) score += 1
+        if ((review.review_text || '').length > 100) score += 1
         
         return { review, score }
       })
