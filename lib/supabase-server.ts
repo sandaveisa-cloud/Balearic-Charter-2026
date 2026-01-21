@@ -3,12 +3,15 @@
  * Uses @supabase/ssr for proper cookie handling in server components
  */
 
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 /**
  * Create a Supabase client for server components that can read/write cookies
  * This is used in layouts, pages, and other server components
+ * 
+ * CRITICAL: Cookie setting must use the correct Next.js 14 cookies API format
+ * to ensure sessions persist across requests.
  */
 export async function createSupabaseServerClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -25,19 +28,22 @@ export async function createSupabaseServerClient() {
       get(name: string) {
         return cookieStore.get(name)?.value
       },
-      set(name: string, value: string, options: any) {
+      set(name: string, value: string, options: CookieOptions) {
         try {
-          cookieStore.set(name, value, options)
+          // CRITICAL FIX: Use Next.js 14 cookies API format: { name, value, ...options }
+          cookieStore.set({ name, value, ...options })
         } catch (error) {
-          // Cookie setting may fail in some contexts (e.g., during redirect)
-          // This is expected behavior and can be safely ignored
+          // The `set` method was called from a Server Component.
+          // This can be ignored if you have middleware refreshing the user session.
         }
       },
-      remove(name: string, options: any) {
+      remove(name: string, options: CookieOptions) {
         try {
-          cookieStore.set(name, '', { ...options, maxAge: 0 })
+          // CRITICAL FIX: Use Next.js 14 cookies API format: { name, value, ...options }
+          cookieStore.set({ name, value: '', ...options })
         } catch (error) {
-          // Cookie removal may fail in some contexts
+          // The `delete` method was called from a Server Component.
+          // This can be ignored if you have middleware refreshing the user session.
         }
       },
     },
