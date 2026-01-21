@@ -603,9 +603,9 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
 
             {/* Features & Extras Section */}
             {yacht.extras && yacht.extras.length > 0 && (
-              <section>
+              <section className="mt-8">
                 <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">Features & Extras</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                   {yacht.extras.map((extra, index) => {
                     // Map specific extras to icons and translations
                     const getExtraConfig = (extraName: string) => {

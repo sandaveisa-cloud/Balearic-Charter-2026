@@ -13,6 +13,9 @@ interface Destination {
   slug: string
   image_url?: string | null
   description?: string | null
+  description_en?: string | null
+  description_es?: string | null
+  description_de?: string | null
   boat_access_only?: boolean
 }
 
@@ -61,7 +64,7 @@ export default function LuxuryDestinationsGrid({ destinations = [] }: LuxuryDest
   const displayDestinations = destinations.length > 0 ? destinations : defaultDestinations
 
   const getDestinationInfo = (destination: Destination) => {
-    const name = destination.name.toLowerCase()
+    const name = (destination.name || '').toLowerCase()
     // Map destination names to translation keys
     const keyMap: Record<string, string> = {
       'ibiza': 'ibiza',
@@ -71,11 +74,34 @@ export default function LuxuryDestinationsGrid({ destinations = [] }: LuxuryDest
       'costa blanca': 'costaBlanca',
       'costa-blanca': 'costaBlanca',
     }
-    const key = keyMap[name] || (name || '').replace(/\s+/g, '').replace(/-/g, '')
+    const key = keyMap[name] || name.replace(/\s+/g, '').replace(/-/g, '')
+    
+    // Get localized description from database with fallback to translations
+    const getLocalizedDescription = (): string => {
+      // Try database columns first (description_en, description_es, description_de)
+      switch (locale) {
+        case 'es':
+          if (destination.description_es) return destination.description_es
+          break
+        case 'de':
+          if (destination.description_de) return destination.description_de
+          break
+        case 'en':
+        default:
+          if (destination.description_en) return destination.description_en
+          break
+      }
+      
+      // Fallback to legacy description field
+      if (destination.description) return destination.description
+      
+      // Fallback to translation keys
+      return t(`${key}.description`) || ''
+    }
     
     return {
-      title: t(`${key}.title`) || destination.name,
-      description: t(`${key}.description`) || destination.description || '',
+      title: t(`${key}.title`) || destination.name || 'Destination',
+      description: getLocalizedDescription(),
       imageUrl: destination.image_url || null,
     }
   }
