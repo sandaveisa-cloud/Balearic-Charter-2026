@@ -31,17 +31,6 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
       fleetResult = { data: [], error: null }
     } else {
       console.log('[Data] fleet fetched:', fleetResult.data?.length || 0, 'items')
-      // Log first yacht structure for debugging
-      if (fleetResult.data && fleetResult.data.length > 0) {
-        console.log('[Data] Sample yacht structure:', {
-          id: fleetResult.data[0].id,
-          name: fleetResult.data[0].name,
-          hasExtras: !!fleetResult.data[0].extras,
-          hasSpecs: !!(fleetResult.data[0].specs || fleetResult.data[0].technical_specs),
-          show_on_home: (fleetResult.data[0] as any)?.show_on_home,
-          keys: Object.keys(fleetResult.data[0])
-        })
-      }
     }
   } catch (error) {
     console.error('[Data] Exception fetching fleet:', error)
