@@ -35,30 +35,63 @@ export default function LoginContent() {
     setError(null)
     setMessage(null)
 
+    console.log('[Login] Login attempt started for:', email)
+
     try {
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
+      // Handle Supabase auth errors
       if (signInError) {
-        setError(signInError.message || 'Invalid email or password')
+        console.error('[Login] Login failed:', signInError.message)
+        const errorMessage = signInError.message || 'Invalid email or password'
+        setError(errorMessage)
         setIsLoading(false)
+        // Also show alert for visibility
+        alert(`Login failed: ${errorMessage}`)
         return
       }
 
-      if (data.user) {
-        setMessage('Login successful! Redirecting...')
-        // Redirect after a short delay
-        setTimeout(() => {
-          router.push(redirectPath)
-          router.refresh()
-        }, 500)
+      // Check if we have a user
+      if (!data?.user) {
+        console.error('[Login] Login failed: No user data returned')
+        const errorMessage = 'Login failed: No user data returned. Please try again.'
+        setError(errorMessage)
+        setIsLoading(false)
+        alert(errorMessage)
+        return
       }
-    } catch (err) {
-      console.error('[Login] Error:', err)
-      setError('An unexpected error occurred. Please try again.')
+
+      // Login successful
+      console.log('[Login] Login successful for user:', data.user.email)
+      setMessage('Login successful! Redirecting...')
+      
+      // CRITICAL: Always reset loading state, even on success
+      // This prevents the spinner from hanging if redirect fails
       setIsLoading(false)
+
+      // Force redirect to /admin (root level, not localized)
+      // First refresh to update server cookies/middleware state
+      router.refresh()
+      
+      // Then redirect after a short delay to ensure refresh completes
+      setTimeout(() => {
+        const finalRedirectPath = redirectPath || '/admin'
+        console.log('[Login] Redirecting to:', finalRedirectPath)
+        router.push(finalRedirectPath)
+      }, 300)
+
+    } catch (err) {
+      // Catch any unexpected errors
+      console.error('[Login] Unexpected error:', err)
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'An unexpected error occurred. Please try again.'
+      setError(errorMessage)
+      setIsLoading(false)
+      alert(`Login error: ${errorMessage}`)
     }
   }
 
