@@ -32,30 +32,35 @@ export default function LuxuryDestinationsGrid({ destinations = [] }: LuxuryDest
   const defaultDestinations: Destination[] = [
     {
       id: 'ibiza',
+      title: 'Ibiza',
       name: 'Ibiza',
       slug: 'ibiza',
       boat_access_only: true,
     },
     {
       id: 'formentera',
+      title: 'Formentera',
       name: 'Formentera',
       slug: 'formentera',
       boat_access_only: true,
     },
     {
       id: 'mallorca',
+      title: 'Mallorca',
       name: 'Mallorca',
       slug: 'mallorca',
       boat_access_only: false,
     },
     {
       id: 'menorca',
+      title: 'Menorca',
       name: 'Menorca',
       slug: 'menorca',
       boat_access_only: true,
     },
     {
       id: 'costa-blanca',
+      title: 'Costa Blanca',
       name: 'Costa Blanca',
       slug: 'costa-blanca',
       boat_access_only: false,
