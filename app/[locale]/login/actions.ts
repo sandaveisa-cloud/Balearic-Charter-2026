@@ -1,7 +1,6 @@
 'use server'
 
 import { createSupabaseServerClient } from '@/lib/supabase-server'
-import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
 /**
@@ -62,8 +61,10 @@ export async function loginAction(prevState: any, formData: FormData) {
   // Revalidate the admin path to ensure fresh data
   revalidatePath('/admin')
 
-  // Server-side redirect to /admin
-  // This happens after cookies are set, so middleware will see the session
-  // NOTE: redirect() throws a special error to handle navigation, so it must be outside try/catch
-  redirect('/admin')
+  // Return success state - client will handle navigation
+  // This allows useFormState to update and trigger the useEffect in the component
+  return {
+    success: true,
+    error: null,
+  }
 }
