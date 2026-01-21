@@ -72,16 +72,12 @@ export default function LoginContent() {
       // This prevents the spinner from hanging if redirect fails
       setIsLoading(false)
 
-      // Force redirect to /admin (root level, not localized)
-      // First refresh to update server cookies/middleware state
-      router.refresh()
-      
-      // Then redirect after a short delay to ensure refresh completes
-      setTimeout(() => {
-        const finalRedirectPath = redirectPath || '/admin'
-        console.log('[Login] Redirecting to:', finalRedirectPath)
-        router.push(finalRedirectPath)
-      }, 300)
+      // Force hard navigation to /admin to break locale redirect loops
+      // Using window.location.href bypasses Next.js client-side router's locale handling
+      // This guarantees we land on the strict /admin root path, not /en/admin
+      console.log('[Login] Force redirecting to /admin (hard navigation)...')
+      window.location.href = '/admin'
+      return
 
     } catch (err) {
       // Catch any unexpected errors
