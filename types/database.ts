@@ -93,7 +93,8 @@ export interface SeasonInfo {
 
 export interface Destination {
   id: string
-  name: string
+  title: string // Primary field from database
+  name?: string // Optional legacy field (code uses fallback: name || title)
   region: string | null
   description: string | null // Legacy field, kept for backward compatibility
   description_en: string | null // Legacy field, kept for backward compatibility
@@ -109,7 +110,6 @@ export interface Destination {
   created_at: string
   updated_at: string
   // Legacy fields for backward compatibility
-  title?: string
   image_urls?: string[]
 }
 
