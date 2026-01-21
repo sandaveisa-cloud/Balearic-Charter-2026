@@ -1,7 +1,7 @@
-import { headers } from 'next/headers'
+import { unstable_noStore as noStore } from 'next/cache'
 import AdminDashboard from '@/components/AdminDashboard'
 
-// Force dynamic rendering
+// Explicitly force dynamic
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
@@ -10,13 +10,11 @@ export const revalidate = 0
  * This server component wraps the client-side AdminDashboard to ensure
  * the route is dynamically rendered and the layout's auth check runs on every request.
  * 
- * MAGIC TRICK: Calling headers() forces dynamic rendering because headers
- * are only known at request time, preventing static generation.
+ * THE KILL SWITCH: unstable_noStore() guarantees the page cannot be static.
  */
 export default function AdminPage() {
-  // MAGIC TRICK: Calling headers() forces dynamic rendering
-  // because headers are only known at request time.
-  const headersList = headers()
+  // THE KILL SWITCH: This guarantees the page cannot be static
+  noStore()
   
   return <AdminDashboard />
 }
