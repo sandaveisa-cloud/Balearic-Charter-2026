@@ -29,17 +29,36 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboardData()
+    
+    // Safety timeout: Force loading to false after 10 seconds to prevent infinite spinner
+    const timeoutId = setTimeout(() => {
+      console.warn('[Dashboard] Safety timeout: Forcing loading to false after 10 seconds')
+      setLoading(false)
+    }, 10000)
+    
+    return () => clearTimeout(timeoutId)
   }, [])
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true)
+      console.log('[Dashboard] Starting data fetch...')
 
-      // Fetch all data in parallel
-      const [inquiriesResult, fleetResult] = await Promise.all([
+      // Fetch all data in parallel with timeout protection
+      // Use Promise.allSettled to ensure we always get results, even if one fails
+      const [inquiriesSettled, fleetSettled] = await Promise.allSettled([
         supabase.from('booking_inquiries').select('*'),
         supabase.from('fleet').select('id, gallery_images, low_season_price, medium_season_price, high_season_price'),
       ])
+
+      // Extract results from settled promises
+      const inquiriesResult = inquiriesSettled.status === 'fulfilled' 
+        ? inquiriesSettled.value 
+        : { data: null, error: { message: inquiriesSettled.reason?.message || 'Failed to fetch inquiries' } }
+      
+      const fleetResult = fleetSettled.status === 'fulfilled'
+        ? fleetSettled.value
+        : { data: null, error: { message: fleetSettled.reason?.message || 'Failed to fetch fleet' } }
 
       // Check for errors
       if (inquiriesResult.error) {
@@ -103,14 +122,15 @@ export default function AdminDashboard() {
         })
         .slice(0, 5) || []
 
-      // Fetch yacht names for inquiries
-      const inquiriesWithYachts = await Promise.all(
+      // Fetch yacht names for inquiries with timeout protection
+      // Use Promise.allSettled to ensure all inquiries are processed even if some fail
+      const inquiriesWithYachtsSettled = await Promise.allSettled(
         recentInquiriesData.map(async (inquiry: any) => {
           if (inquiry.yacht_id) {
             try {
               const { data: yachtData, error: yachtError } = await supabase
                 .from('fleet')
-                .select('name')
+                .select('name, boat_name')
                 .eq('id', inquiry.yacht_id)
                 .single()
 
@@ -120,7 +140,7 @@ export default function AdminDashboard() {
 
               return {
                 ...inquiry,
-                yacht_name: (yachtData as any)?.name || 'Unknown Yacht',
+                yacht_name: (yachtData as any)?.name || (yachtData as any)?.boat_name || 'Unknown Yacht',
               }
             } catch (error) {
               console.error('[Dashboard] Error in yacht fetch:', error)
@@ -136,6 +156,18 @@ export default function AdminDashboard() {
           }
         })
       )
+
+      // Extract successful results, use fallback for failed ones
+      const inquiriesWithYachts = inquiriesWithYachtsSettled.map((settled, index) => {
+        if (settled.status === 'fulfilled') {
+          return settled.value
+        }
+        // If a promise failed, return the original inquiry with default yacht name
+        return {
+          ...recentInquiriesData[index],
+          yacht_name: 'Unknown Yacht',
+        }
+      })
 
       setStats({
         totalInquiries,
@@ -183,7 +215,9 @@ export default function AdminDashboard() {
     }).format(amount)
   }
 
-  if (loading) {
+  // Always render the dashboard, even if loading
+  // Show loading state only for a brief moment, then show data (even if empty)
+  if (loading && stats.totalInquiries === 0 && recentInquiries.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-luxury-blue"></div>
