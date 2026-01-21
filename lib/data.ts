@@ -41,7 +41,7 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
     console.log('[Data] Fetching destinations...')
     destinationsResult = await supabase
       .from('destinations')
-      .select('id, name, title, description, description_en, description_es, description_de, description_i18n, image_url, image_urls, youtube_video_url, slug, region, order_index, is_active, seasonal_data, created_at, updated_at')
+      .select('id, title, description, description_en, description_es, description_de, description_i18n, image_url, image_urls, youtube_video_url, slug, region, order_index, is_active, seasonal_data, created_at, updated_at')
       .eq('is_active', true)
       .order('order_index', { ascending: true })
     if (destinationsResult.error) {

@@ -39,7 +39,7 @@ export default function DestinationEditModal({
   useEffect(() => {
     if (destination) {
       setFormData({
-        name: destination.name || '',
+        name: destination.name || destination.title || '',
         region: destination.region || '',
         slug: destination.slug || '',
         description: destination.description || '',

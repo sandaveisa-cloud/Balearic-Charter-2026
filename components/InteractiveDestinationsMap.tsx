@@ -137,7 +137,7 @@ function LeafletMap({
 
   // Get destination info with translations
   const getDestinationInfo = (destination: Destination) => {
-    const name = destination.name.toLowerCase()
+    const name = (destination.name || destination.title || '').toLowerCase()
     const keyMap: Record<string, string> = {
       'ibiza': 'ibiza',
       'formentera': 'formentera',
@@ -201,11 +201,12 @@ function LeafletMap({
 
       {/* Render markers for each destination */}
       {displayDestinations.map((destination) => {
+        const destinationName = (destination.name || destination.title || '').toLowerCase()
         const coords = destinationCoordinates[destination.slug.toLowerCase()] || 
-                      destinationCoordinates[destination.name.toLowerCase()]
+                      destinationCoordinates[destinationName]
         
         if (!coords) {
-          console.warn(`No coordinates found for destination: ${destination.name}`)
+          console.warn(`No coordinates found for destination: ${destination.name || destination.title || destination.slug}`)
           return null
         }
 
@@ -250,8 +251,9 @@ function LeafletMap({
           d => d.slug === highlightedDestination || d.id === highlightedDestination
         )
         if (dest) {
+          const destName = (dest.name || dest.title || '').toLowerCase()
           const coords = destinationCoordinates[dest.slug.toLowerCase()] || 
-                        destinationCoordinates[dest.name.toLowerCase()]
+                        destinationCoordinates[destName]
           if (coords) {
             return <MapUpdater center={coords} zoom={10} />
           }
