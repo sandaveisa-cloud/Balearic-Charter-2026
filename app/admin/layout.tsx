@@ -7,6 +7,7 @@ export const fetchCache = 'force-no-store'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import '../globals.css'
 import LogoutButton from './LogoutButton'
 
 interface AdminLayoutProps {
