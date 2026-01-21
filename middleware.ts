@@ -17,63 +17,77 @@ const intlMiddleware = createMiddleware({
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Handle root path explicitly
+  // ============================================================================
+  // STEP 1: Handle root path explicitly
+  // ============================================================================
   if (pathname === '/') {
     return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url))
   }
 
-  // CRITICAL: Check for admin routes FIRST, before intl middleware
+  // ============================================================================
+  // STEP 2: CRITICAL SECURITY CHECK - Admin Route Protection
+  // This MUST run BEFORE i18n middleware to catch all admin routes
+  // Generic check: Does the pathname include '/admin' anywhere?
   // This catches: /admin, /en/admin, /es/admin, /de/admin, /en/admin/destinations, etc.
-  // Match any path that contains '/admin' (with optional trailing path)
+  // ============================================================================
+  
   const isAdminRoute = pathname.includes('/admin')
 
   if (isAdminRoute) {
-    console.log('[Middleware] Admin route detected:', pathname)
+    console.log('[Middleware] 🔒 Admin route detected:', pathname)
     
-    // Check for active Supabase session
-    const user = await getSessionUser(request)
+    try {
+      // Check for active Supabase session
+      const user = await getSessionUser(request)
 
-    if (!user) {
-      console.log('[Middleware] No session found, redirecting to login')
-      
-      // Extract locale from pathname
-      // Path format: /en/admin, /es/admin, /de/admin, etc.
-      const pathSegments = pathname.split('/').filter(Boolean)
-      let locale = defaultLocale
-      
-      // Check if first segment is a valid locale
-      if (pathSegments.length > 0 && locales.includes(pathSegments[0] as any)) {
-        locale = pathSegments[0] as typeof defaultLocale
+      if (!user) {
+        console.log('[Middleware] ❌ No session found, redirecting to login')
+        
+        // Extract locale from pathname
+        // Path format: /en/admin, /es/admin, /de/admin, /admin, etc.
+        const pathSegments = pathname.split('/').filter(Boolean)
+        let locale = defaultLocale
+        
+        // Check if first segment is a valid locale
+        if (pathSegments.length > 0 && locales.includes(pathSegments[0] as any)) {
+          locale = pathSegments[0] as typeof defaultLocale
+        }
+
+        // Redirect to login page with return URL
+        const loginUrl = new URL(`/${locale}/login`, request.url)
+        loginUrl.searchParams.set('redirect', pathname)
+        console.log('[Middleware] 🔄 Redirecting to:', loginUrl.toString())
+        return NextResponse.redirect(loginUrl)
       }
 
-      // Redirect to login page with return URL
+      console.log('[Middleware] ✅ User authenticated:', user.email)
+      // User is authenticated - allow access and continue with intl middleware
+    } catch (error) {
+      // If session check fails, redirect to login for security (fail secure)
+      console.error('[Middleware] ⚠️ Error checking session:', error)
+      const pathSegments = pathname.split('/').filter(Boolean)
+      const locale = (pathSegments.length > 0 && locales.includes(pathSegments[0] as any))
+        ? pathSegments[0] as typeof defaultLocale
+        : defaultLocale
       const loginUrl = new URL(`/${locale}/login`, request.url)
       loginUrl.searchParams.set('redirect', pathname)
-      console.log('[Middleware] Redirecting to:', loginUrl.toString())
       return NextResponse.redirect(loginUrl)
     }
-
-    console.log('[Middleware] User authenticated:', user.email)
-    // User is authenticated - allow access
-    // Continue with intl middleware
-    return intlMiddleware(request)
   }
 
-  // Not an admin route - continue with intl middleware
+  // ============================================================================
+  // STEP 3: Continue with i18n middleware for all routes
+  // ============================================================================
   return intlMiddleware(request)
 }
 
 export const config = {
-  // Match all pathnames including localized admin routes
+  // Match ALL routes except static assets and Next.js internals
   matcher: [
-    // Match root path
-    '/',
-    // Match all pathnames except for
-    // - api routes
-    // - _next (Next.js internals)
-    // - _vercel (Vercel internals)
-    // - files with extensions (e.g. .ico, .png)
-    // This includes: /en/admin, /es/admin, /de/admin, etc.
-    '/((?!api|_next|_vercel|.*\\..*).*)'
+    // Match all pathnames except:
+    // - _next/static (static files)
+    // - _next/image (image optimization)
+    // - favicon.ico
+    '/((?!_next/static|_next/image|favicon.ico).*)'
   ]
 }
