@@ -18,6 +18,37 @@ export default function AdminPage() {
   const router = useRouter()
   const locale = useLocale()
   const pathname = usePathname()
+  const [user, setUser] = useState<any>(null)
+
+  // Check user session on mount
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+    }
+    checkUser()
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      if (!session) {
+        router.push(`/${locale}/login`)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [router, locale])
+
+  // Logout handler
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut()
+      router.push(`/${locale}/login`)
+      router.refresh()
+    } catch (error) {
+      console.error('[Admin] Logout error:', error)
+    }
+  }
   const [inquiries, setInquiries] = useState<BookingInquiry[]>([])
   const [fleet, setFleet] = useState<Fleet[]>([])
   const [destinations, setDestinations] = useState<Destination[]>([])
@@ -1692,9 +1723,22 @@ export default function AdminPage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <h1 className="font-serif text-2xl font-bold">Admin Panel</h1>
-            <Link href="/" className="text-white hover:text-luxury-gold transition-colors">
-              ← Back to Site
-            </Link>
+            <div className="flex items-center gap-4">
+              {user && (
+                <span className="text-sm text-white/80">
+                  {user.email}
+                </span>
+              )}
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-medium"
+              >
+                Logout
+              </button>
+              <Link href="/" className="text-white hover:text-luxury-gold transition-colors">
+                ← Back to Site
+              </Link>
+            </div>
           </div>
         </div>
       </header>
