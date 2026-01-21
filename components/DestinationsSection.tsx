@@ -16,8 +16,8 @@ import VideoModal from './VideoModal'
 
 interface Destination {
   id: string
-  name?: string
-  title?: string // Legacy field
+  title: string // Primary field from database
+  name?: string // Optional legacy field (code uses fallback: name || title)
   region?: string | null
   description: string | null
   description_en?: string | null

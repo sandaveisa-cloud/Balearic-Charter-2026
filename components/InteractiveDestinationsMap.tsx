@@ -18,7 +18,8 @@ const destinationCoordinates: Record<string, [number, number]> = {
 
 interface Destination {
   id: string
-  name: string
+  title: string // Primary field from database
+  name?: string // Optional legacy field (code uses fallback: name || title)
   slug: string
   description?: string | null
   description_en?: string | null

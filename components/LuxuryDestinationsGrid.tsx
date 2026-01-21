@@ -9,7 +9,8 @@ import { Anchor, ArrowRight } from 'lucide-react'
 
 interface Destination {
   id: string
-  name: string
+  title: string // Primary field from database
+  name?: string // Optional legacy field (code uses fallback: name || title)
   slug: string
   image_url?: string | null
   description?: string | null
