@@ -1,7 +1,7 @@
 import createMiddleware from 'next-intl/middleware'
 import { locales, defaultLocale } from './i18n'
 import { NextRequest, NextResponse } from 'next/server'
-import { getSessionUser } from './lib/supabase-middleware'
+import { createSupabaseMiddlewareClient } from './lib/supabase-middleware'
 
 const intlMiddleware = createMiddleware({
   // A list of all locales that are supported
@@ -15,7 +15,10 @@ const intlMiddleware = createMiddleware({
 })
 
 export default async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+  const pathname = request.nextUrl.pathname
+  
+  // Debug logging for Vercel
+  console.log('Middleware checking path:', pathname)
 
   // ============================================================================
   // STEP 1: Handle root path explicitly
@@ -27,21 +30,31 @@ export default async function middleware(request: NextRequest) {
   // ============================================================================
   // STEP 2: CRITICAL SECURITY CHECK - Admin Route Protection
   // This MUST run BEFORE i18n middleware to catch all admin routes
-  // Generic check: Does the pathname include '/admin' anywhere?
-  // This catches: /admin, /en/admin, /es/admin, /de/admin, /en/admin/destinations, etc.
   // ============================================================================
   
+  // Check: Does the path include '/admin'?
   const isAdminRoute = pathname.includes('/admin')
 
   if (isAdminRoute) {
     console.log('[Middleware] 🔒 Admin route detected:', pathname)
     
     try {
-      // Check for active Supabase session
-      const user = await getSessionUser(request)
+      // Create response object for Supabase client
+      const response = NextResponse.next({
+        request: {
+          headers: request.headers,
+        },
+      })
 
-      if (!user) {
-        console.log('[Middleware] ❌ No session found, redirecting to login')
+      // Create Supabase client
+      const supabase = createSupabaseMiddlewareClient(request, response)
+      
+      // Check for active user session
+      const { data: { user }, error } = await supabase.auth.getUser()
+
+      // IF NO USER: Redirect immediately to login
+      if (error || !user) {
+        console.log('[Middleware] ❌ No user found, redirecting to login')
         
         // Extract locale from pathname
         // Path format: /en/admin, /es/admin, /de/admin, /admin, etc.
@@ -62,6 +75,7 @@ export default async function middleware(request: NextRequest) {
 
       console.log('[Middleware] ✅ User authenticated:', user.email)
       // User is authenticated - allow access and continue with intl middleware
+      return intlMiddleware(request)
     } catch (error) {
       // If session check fails, redirect to login for security (fail secure)
       console.error('[Middleware] ⚠️ Error checking session:', error)
@@ -76,18 +90,14 @@ export default async function middleware(request: NextRequest) {
   }
 
   // ============================================================================
-  // STEP 3: Continue with i18n middleware for all routes
+  // STEP 3: Continue with i18n middleware for all non-admin routes
   // ============================================================================
   return intlMiddleware(request)
 }
 
 export const config = {
-  // Match ALL routes except static assets and Next.js internals
+  // Match ALL routes except API, static assets, and Next.js internals
   matcher: [
-    // Match all pathnames except:
-    // - _next/static (static files)
-    // - _next/image (image optimization)
-    // - favicon.ico
-    '/((?!_next/static|_next/image|favicon.ico).*)'
+    '/((?!api|_next/static|_next/image|favicon.ico).*)'
   ]
 }

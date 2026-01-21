@@ -20,7 +20,8 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
   const locale = useLocale() as 'en' | 'es' | 'de'
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
 
-  if (fleet.length === 0) {
+  // Safety check: Return null if fleet is empty or invalid
+  if (!fleet || fleet.length === 0) {
     return null
   }
 
@@ -37,7 +38,12 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10">
-          {fleet.map((yacht) => {
+          {fleet
+            .filter(yacht => yacht && yacht.id && yacht.is_active !== false)
+            .map((yacht) => {
+            // Safety check: Handle null/undefined extras
+            const yachtExtras = Array.isArray(yacht.extras) ? yacht.extras : []
+            
             const imageUrl = getOptimizedImageUrl(yacht.main_image_url, {
               width: 1200,
               quality: 80,

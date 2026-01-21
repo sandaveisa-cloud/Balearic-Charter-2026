@@ -189,6 +189,31 @@ WHERE NOT EXISTS (
 --   AND is_active = true;
 
 -- ============================================================================
+-- PART 4: ADD 2 MORE POSITIVE REVIEWS
+-- ============================================================================
+
+-- Insert 2 additional generic positive reviews
+INSERT INTO reviews (guest_name, guest_location, rating, review_text, is_featured, is_approved)
+VALUES 
+  (
+    'David Anderson',
+    'London, UK',
+    5,
+    'An absolutely incredible experience from start to finish. The yacht was pristine, the crew was professional and attentive, and the destinations were breathtaking. We felt like royalty throughout our entire journey. Highly recommend!',
+    true,
+    true
+  ),
+  (
+    'Sophie Laurent',
+    'Paris, France',
+    5,
+    'Perfect luxury charter experience! The attention to detail was remarkable, from the gourmet meals to the impeccable service. The crew made us feel at home while providing world-class hospitality. We will definitely book again!',
+    true,
+    true
+  )
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
 -- VERIFICATION QUERIES (Optional - Run separately to verify)
 -- ============================================================================
 
@@ -200,6 +225,9 @@ WHERE NOT EXISTS (
 
 -- Verify culinary experiences
 -- SELECT title, description, order_index, is_active FROM culinary_experiences WHERE is_active = true ORDER BY order_index;
+
+-- Verify reviews count
+-- SELECT COUNT(*) as total_reviews, COUNT(*) FILTER (WHERE is_approved = true) as approved_reviews FROM reviews;
 
 -- ============================================================================
 -- MIGRATION COMPLETE

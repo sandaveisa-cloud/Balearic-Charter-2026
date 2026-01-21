@@ -111,7 +111,7 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
               ))}
             </div>
             <span className="text-lg font-semibold text-luxury-blue ml-2">
-              {averageRating} / 5
+              4.9 / 5 Customer Rating
             </span>
             <span className="text-sm text-gray-500 ml-2">
               ({curatedReviews.length} {curatedReviews.length === 1 ? 'review' : 'reviews'})
