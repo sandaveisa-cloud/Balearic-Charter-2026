@@ -124,10 +124,10 @@ function LeafletMap({
 
   // Default destinations if none provided
   const defaultDestinations: Destination[] = [
-    { id: 'ibiza', name: 'Ibiza', slug: 'ibiza' },
-    { id: 'formentera', name: 'Formentera', slug: 'formentera' },
-    { id: 'mallorca', name: 'Mallorca', slug: 'mallorca' },
-    { id: 'menorca', name: 'Menorca', slug: 'menorca' },
+    { id: 'ibiza', title: 'Ibiza', name: 'Ibiza', slug: 'ibiza' },
+    { id: 'formentera', title: 'Formentera', name: 'Formentera', slug: 'formentera' },
+    { id: 'mallorca', title: 'Mallorca', name: 'Mallorca', slug: 'mallorca' },
+    { id: 'menorca', title: 'Menorca', name: 'Menorca', slug: 'menorca' },
   ]
 
   const displayDestinations = destinations && destinations.length > 0 ? destinations : defaultDestinations
