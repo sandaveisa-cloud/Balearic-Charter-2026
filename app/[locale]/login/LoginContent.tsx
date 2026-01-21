@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useActionState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { supabase } from '@/lib/supabase'
+import { loginAction } from './actions'
 
 export default function LoginContent() {
   const router = useRouter()
@@ -12,11 +13,11 @@ export default function LoginContent() {
   // Admin is now at /admin (root level), not /[locale]/admin
   const redirectPath = searchParams.get('redirect') || '/admin'
 
+  // Use server action with form state
+  const [state, formAction, isPending] = useActionState(loginAction, null)
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [message, setMessage] = useState<string | null>(null)
 
   // Check if user is already logged in
   useEffect(() => {
@@ -28,68 +29,6 @@ export default function LoginContent() {
     }
     checkSession()
   }, [router, redirectPath])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError(null)
-    setMessage(null)
-
-    console.log('[Login] Login attempt started for:', email)
-
-    try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      // Handle Supabase auth errors
-      if (signInError) {
-        console.error('[Login] Login failed:', signInError.message)
-        const errorMessage = signInError.message || 'Invalid email or password'
-        setError(errorMessage)
-        setIsLoading(false)
-        // Also show alert for visibility
-        alert(`Login failed: ${errorMessage}`)
-        return
-      }
-
-      // Check if we have a user
-      if (!data?.user) {
-        console.error('[Login] Login failed: No user data returned')
-        const errorMessage = 'Login failed: No user data returned. Please try again.'
-        setError(errorMessage)
-        setIsLoading(false)
-        alert(errorMessage)
-        return
-      }
-
-      // Login successful
-      console.log('[Login] Login successful for user:', data.user.email)
-      setMessage('Login successful! Redirecting...')
-      
-      // CRITICAL: Always reset loading state, even on success
-      // This prevents the spinner from hanging if redirect fails
-      setIsLoading(false)
-
-      // Force hard navigation to /admin to break locale redirect loops
-      // Using window.location.href bypasses Next.js client-side router's locale handling
-      // This guarantees we land on the strict /admin root path, not /en/admin
-      console.log('[Login] Force redirecting to /admin (hard navigation)...')
-      window.location.href = '/admin'
-      return
-
-    } catch (err) {
-      // Catch any unexpected errors
-      console.error('[Login] Unexpected error:', err)
-      const errorMessage = err instanceof Error 
-        ? err.message 
-        : 'An unexpected error occurred. Please try again.'
-      setError(errorMessage)
-      setIsLoading(false)
-      alert(`Login error: ${errorMessage}`)
-    }
-  }
 
   return (
     <div className="w-full max-w-md">
@@ -105,7 +44,7 @@ export default function LoginContent() {
         </div>
 
         {/* Error Message */}
-        {error && (
+        {state?.error && (
           <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
             <div className="flex items-center">
               <svg
@@ -121,35 +60,13 @@ export default function LoginContent() {
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Success Message */}
-        {message && (
-          <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-lg">
-            <div className="flex items-center">
-              <svg
-                className="w-5 h-5 text-green-500 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <p className="text-sm text-green-700">{message}</p>
+              <p className="text-sm text-red-700">{state.error}</p>
             </div>
           </div>
         )}
 
         {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form action={formAction} className="space-y-6">
           <div>
             <label
               htmlFor="email"
@@ -184,16 +101,17 @@ export default function LoginContent() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent transition-all"
               placeholder="Enter your password"
-              disabled={isLoading}
+              disabled={isPending}
+              name="password"
             />
           </div>
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isPending}
             className="w-full bg-gradient-to-r from-luxury-blue to-luxury-gold text-white py-3 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
           >
-            {isLoading ? (
+            {isPending ? (
               <span className="flex items-center justify-center">
                 <svg
                   className="animate-spin h-5 w-5 mr-2"
