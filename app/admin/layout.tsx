@@ -9,6 +9,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import '../globals.css'
 import LogoutButton from './LogoutButton'
+import AdminSidebar from '@/components/AdminSidebar'
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -94,15 +95,23 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
   console.log('[AdminLayout] SECURITY PASS: User authenticated:', user.email)
 
   return (
-    <div className="admin-layout min-h-screen bg-gray-50">
-      {/* Admin Top Bar with Logout */}
-      <div className="bg-gray-900 text-white p-4 flex justify-between items-center shadow-lg">
-        <span className="font-bold text-lg">Admin Panel</span>
-        <LogoutButton />
-      </div>
+    <div className="admin-layout min-h-screen bg-gray-50 flex">
+      {/* Admin Sidebar */}
+      <AdminSidebar />
       
-      {/* Admin Content */}
-      {children}
+      {/* Main Content Area */}
+      <div className="flex-1 ml-64">
+        {/* Admin Top Bar with Logout */}
+        <div className="bg-gray-900 text-white p-4 flex justify-between items-center shadow-lg sticky top-0 z-10">
+          <span className="font-bold text-lg">Admin Panel</span>
+          <LogoutButton />
+        </div>
+        
+        {/* Admin Content */}
+        <div className="p-6">
+          {children}
+        </div>
+      </div>
     </div>
   )
 }
