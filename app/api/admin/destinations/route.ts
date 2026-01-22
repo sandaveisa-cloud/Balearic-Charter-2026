@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch all destinations
     const { data: destinations, error } = await supabase
-      .from('destinations')
+      .from('destinations' as any)
       .select('*')
       .order('order_index', { ascending: true })
 
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     // Insert new destination
     const { data, error } = await supabase
-      .from('destinations')
+      .from('destinations' as any)
       .insert({
         name,
         title: name, // Also set title for backward compatibility
@@ -150,7 +150,7 @@ export async function PUT(request: NextRequest) {
 
     // Update destination
     const { data, error } = await supabase
-      .from('destinations')
+      .from('destinations' as any)
       .update({
         name,
         title: name, // Also update title for backward compatibility
@@ -217,7 +217,7 @@ export async function DELETE(request: NextRequest) {
 
     // Delete destination
     const { error } = await supabase
-      .from('destinations')
+      .from('destinations' as any)
       .delete()
       .eq('id', id)
 
