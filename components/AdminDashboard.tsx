@@ -71,30 +71,55 @@ export default function AdminDashboard() {
       const statsData = await statsResponse.json()
       const inquiriesData = await inquiriesResponse.json()
 
-      console.log('[Dashboard] ✅ Stats data received:', statsData)
-      console.log('[Dashboard] ✅ Inquiries data received:', inquiriesData)
-      console.log('[Dashboard] Total inquiries:', inquiriesData.total || 0)
+      console.log('[Dashboard] ✅ Stats data received:', JSON.stringify(statsData, null, 2))
+      console.log('[Dashboard] ✅ Inquiries data received:', JSON.stringify(inquiriesData, null, 2))
+      console.log('[Dashboard] Stats object keys:', Object.keys(statsData))
+      console.log('[Dashboard] Inquiries object keys:', Object.keys(inquiriesData))
+      console.log('[Dashboard] Total inquiries from API:', inquiriesData.total || 0)
       console.log('[Dashboard] Inquiries array length:', inquiriesData.inquiries?.length || 0)
+      console.log('[Dashboard] Stats.stats exists:', !!statsData.stats)
+      console.log('[Dashboard] Stats.stats values:', statsData.stats)
+
+      // Validate response structure
+      if (!statsData.stats) {
+        console.error('[Dashboard] ⚠️ WARNING: statsData.stats is missing!')
+        console.error('[Dashboard] Full statsData:', statsData)
+      }
+
+      if (!inquiriesData.inquiries) {
+        console.error('[Dashboard] ⚠️ WARNING: inquiriesData.inquiries is missing!')
+        console.error('[Dashboard] Full inquiriesData:', inquiriesData)
+      }
 
       // Set stats from API response
-      setStats(statsData.stats || {
+      const stats = statsData.stats || {
         totalInquiries: 0,
         fleetSize: 0,
         galleryImages: 0,
         revenuePotential: 0,
-      })
+      }
+      
+      console.log('[Dashboard] Setting stats:', stats)
+      setStats(stats)
 
       // Get recent inquiries (already sorted and with yacht names from API)
-      const recentInquiriesList = (inquiriesData.inquiries || [])
-        .slice(0, 5) // Take top 5 most recent
+      const inquiriesList = inquiriesData.inquiries || []
+      const recentInquiriesList = inquiriesList.slice(0, 5) // Take top 5 most recent
       
+      console.log('[Dashboard] Raw inquiries list length:', inquiriesList.length)
       console.log('[Dashboard] Setting recentInquiries with', recentInquiriesList.length, 'items')
-      console.log('[Dashboard] Recent inquiries details:', recentInquiriesList.map((i: any) => ({
-        id: i.id,
-        name: i.name,
-        email: i.email,
-        yacht_name: i.yacht_name
-      })))
+      if (recentInquiriesList.length > 0) {
+        console.log('[Dashboard] Recent inquiries details:', recentInquiriesList.map((i: any) => ({
+          id: i.id,
+          name: i.name,
+          email: i.email,
+          yacht_name: i.yacht_name,
+          created_at: i.created_at,
+        })))
+      } else {
+        console.warn('[Dashboard] ⚠️ No inquiries to display!')
+        console.warn('[Dashboard] Raw inquiriesData:', inquiriesData)
+      }
       
       setRecentInquiries(recentInquiriesList)
       

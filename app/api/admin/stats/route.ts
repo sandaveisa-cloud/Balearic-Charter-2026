@@ -27,11 +27,28 @@ export async function GET(request: NextRequest) {
     ])
 
     if (inquiriesResult.error) {
-      console.error('[Admin API] Error fetching inquiries:', inquiriesResult.error)
+      console.error('[Admin API] ❌ Error fetching inquiries:', inquiriesResult.error)
+      console.error('[Admin API] Error code:', inquiriesResult.error.code)
+      console.error('[Admin API] Error message:', inquiriesResult.error.message)
+    } else {
+      console.log('[Admin API] ✅ Fetched inquiries:', inquiriesResult.data?.length || 0, 'items')
     }
 
     if (fleetResult.error) {
-      console.error('[Admin API] Error fetching fleet:', fleetResult.error)
+      console.error('[Admin API] ❌ Error fetching fleet:', fleetResult.error)
+      console.error('[Admin API] Error code:', fleetResult.error.code)
+      console.error('[Admin API] Error message:', fleetResult.error.message)
+    } else {
+      console.log('[Admin API] ✅ Fetched fleet:', fleetResult.data?.length || 0, 'items')
+      if (fleetResult.data && fleetResult.data.length > 0) {
+        const sampleYacht = fleetResult.data[0] as any
+        console.log('[Admin API] Sample yacht prices:', {
+          id: sampleYacht.id,
+          low_season_price: sampleYacht.low_season_price,
+          medium_season_price: sampleYacht.medium_season_price,
+          high_season_price: sampleYacht.high_season_price,
+        })
+      }
     }
 
     // Calculate stats
@@ -48,6 +65,8 @@ export async function GET(request: NextRequest) {
 
     // Calculate revenue potential
     let revenuePotential = 0
+    let revenueCalculationDetails: any[] = []
+    
     if (inquiriesResult.data && fleetResult.data) {
       inquiriesResult.data.forEach((inquiry: any) => {
         if (inquiry.start_date && inquiry.end_date) {
@@ -59,27 +78,74 @@ export async function GET(request: NextRequest) {
 
             // Type casting to fix TypeScript error
             const y = yacht as any
-            const avgPrice =
-              ((y.low_season_price || 0) +
-                (y.medium_season_price || 0) +
-                (y.high_season_price || 0)) /
-              3
+            const lowPrice = parseFloat(y.low_season_price) || 0
+            const mediumPrice = parseFloat(y.medium_season_price) || 0
+            const highPrice = parseFloat(y.high_season_price) || 0
+            
+            // Calculate average price (only count non-zero prices)
+            const prices = [lowPrice, mediumPrice, highPrice].filter(p => p > 0)
+            const avgPrice = prices.length > 0 
+              ? prices.reduce((sum, p) => sum + p, 0) / prices.length
+              : 0
 
-            const basePrice = avgPrice * days
-            const estimatedTotal = basePrice * 1.51 // 1 + 0.30 (APA) + 0.21 (tax)
-            revenuePotential += estimatedTotal
+            if (avgPrice > 0 && days > 0) {
+              const basePrice = avgPrice * days
+              const estimatedTotal = basePrice * 1.51 // 1 + 0.30 (APA) + 0.21 (tax)
+              revenuePotential += estimatedTotal
+              
+              revenueCalculationDetails.push({
+                inquiry_id: inquiry.id,
+                yacht_id: inquiry.yacht_id,
+                days,
+                avgPrice,
+                basePrice,
+                estimatedTotal,
+                hasPrices: prices.length > 0,
+              })
+            } else {
+              revenueCalculationDetails.push({
+                inquiry_id: inquiry.id,
+                yacht_id: inquiry.yacht_id,
+                days,
+                avgPrice: 0,
+                reason: avgPrice === 0 ? 'No prices set for yacht' : 'Invalid date range',
+              })
+            }
+          } else {
+            revenueCalculationDetails.push({
+              inquiry_id: inquiry.id,
+              yacht_id: inquiry.yacht_id,
+              reason: 'Yacht not found in fleet',
+            })
           }
+        } else {
+          revenueCalculationDetails.push({
+            inquiry_id: inquiry.id,
+            reason: 'Missing start_date or end_date',
+          })
         }
       })
     }
+    
+    console.log('[Admin API] Revenue calculation details:', {
+      totalInquiries: inquiriesResult.data?.length || 0,
+      inquiriesWithDates: revenueCalculationDetails.filter(d => d.days).length,
+      inquiriesWithPrices: revenueCalculationDetails.filter(d => d.hasPrices).length,
+      revenuePotential,
+      details: revenueCalculationDetails.slice(0, 3), // Log first 3 for debugging
+    })
 
+    const stats = {
+      totalInquiries,
+      fleetSize,
+      galleryImages,
+      revenuePotential,
+    }
+    
+    console.log('[Admin API] ✅ Returning stats:', stats)
+    
     return NextResponse.json({
-      stats: {
-        totalInquiries,
-        fleetSize,
-        galleryImages,
-        revenuePotential,
-      },
+      stats,
     })
   } catch (error) {
     console.error('[Admin API] Unexpected error:', error)

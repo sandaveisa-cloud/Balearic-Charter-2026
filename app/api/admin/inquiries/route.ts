@@ -28,11 +28,25 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
 
     if (inquiriesError) {
-      console.error('[Admin API] Error fetching inquiries:', inquiriesError)
+      console.error('[Admin API] ❌ Error fetching inquiries:', inquiriesError)
+      console.error('[Admin API] Error code:', inquiriesError.code)
+      console.error('[Admin API] Error message:', inquiriesError.message)
+      console.error('[Admin API] Error details:', inquiriesError.details)
+      console.error('[Admin API] Error hint:', inquiriesError.hint)
       return NextResponse.json(
         { error: 'Failed to fetch inquiries', details: inquiriesError.message },
         { status: 500 }
       )
+    }
+
+    console.log('[Admin API] ✅ Fetched inquiries:', inquiries?.length || 0, 'items')
+    if (inquiries && inquiries.length > 0) {
+      console.log('[Admin API] Sample inquiry:', {
+        id: inquiries[0].id,
+        name: (inquiries[0] as any).name,
+        email: (inquiries[0] as any).email,
+        yacht_id: (inquiries[0] as any).yacht_id,
+      })
     }
 
     // Fetch fleet data for yacht names
@@ -55,6 +69,14 @@ export async function GET(request: NextRequest) {
         yacht_name: yachtData?.name || yachtData?.boat_name || 'Unknown Yacht',
       }
     })
+
+    console.log('[Admin API] ✅ Returning inquiries with yacht names:', inquiriesWithYachts.length, 'items')
+    console.log('[Admin API] First inquiry with yacht:', inquiriesWithYachts[0] ? {
+      id: inquiriesWithYachts[0].id,
+      name: inquiriesWithYachts[0].name,
+      email: inquiriesWithYachts[0].email,
+      yacht_name: inquiriesWithYachts[0].yacht_name,
+    } : 'No inquiries')
 
     return NextResponse.json({
       inquiries: inquiriesWithYachts,
