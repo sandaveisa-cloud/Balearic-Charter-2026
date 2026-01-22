@@ -30,11 +30,16 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchDashboardData()
     
-    // Safety timeout: Force loading to false after 10 seconds to prevent infinite spinner
+    // Safety timeout: Force loading to false after 5 seconds (reduced from 10)
+    // This prevents infinite spinner but still allows reasonable fetch time
     const timeoutId = setTimeout(() => {
-      console.warn('[Dashboard] Safety timeout: Forcing loading to false after 10 seconds')
+      console.warn('[Dashboard] ⚠️ Safety timeout: Forcing loading to false after 5 seconds')
+      console.warn('[Dashboard] This may indicate:')
+      console.warn('[Dashboard] 1. Network issues')
+      console.warn('[Dashboard] 2. RLS blocking access')
+      console.warn('[Dashboard] 3. Supabase connection problems')
       setLoading(false)
-    }, 10000)
+    }, 5000) // Reduced from 10000 to 5000
     
     return () => clearTimeout(timeoutId)
   }, [])
@@ -43,6 +48,34 @@ export default function AdminDashboard() {
     try {
       setLoading(true)
       console.log('[Dashboard] Starting data fetch...')
+
+      // Check Supabase environment variables
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      
+      if (!supabaseUrl || !supabaseAnonKey) {
+        console.error('[Dashboard] ❌ CRITICAL: Supabase environment variables are missing!')
+        console.error('[Dashboard] NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? '✅ Set' : '❌ Missing')
+        console.error('[Dashboard] NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? '✅ Set' : '❌ Missing')
+        setLoading(false)
+        return
+      }
+
+      // CRITICAL: Check if user session exists before fetching data
+      // This ensures RLS policies work correctly
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      
+      if (sessionError) {
+        console.error('[Dashboard] ❌ Session error:', sessionError)
+        console.error('[Dashboard] This may cause RLS to block access')
+      }
+      
+      if (!session) {
+        console.warn('[Dashboard] ⚠️ No active session found - RLS may block access')
+        console.warn('[Dashboard] User may need to log in again')
+      } else {
+        console.log('[Dashboard] ✅ Active session found for user:', session.user.email)
+      }
 
       // Fetch all data in parallel with timeout protection
       // Use Promise.allSettled to ensure we always get results, even if one fails
@@ -60,17 +93,53 @@ export default function AdminDashboard() {
         ? fleetSettled.value
         : { data: null, error: { message: fleetSettled.reason?.message || 'Failed to fetch fleet' } }
 
-      // Check for errors
+      // CRITICAL: Detailed error logging for RLS and permission issues
       if (inquiriesResult.error) {
-        console.error('[Dashboard] Error fetching inquiries:', inquiriesResult.error)
+        console.error('[Dashboard] ❌ Error fetching inquiries:', inquiriesResult.error)
+        console.error('[Dashboard] Error code:', inquiriesResult.error.code)
+        console.error('[Dashboard] Error message:', inquiriesResult.error.message)
+        console.error('[Dashboard] Error details:', inquiriesResult.error.details)
+        console.error('[Dashboard] Error hint:', inquiriesResult.error.hint)
+        
+        // Check for RLS (Row Level Security) errors
+        if (inquiriesResult.error.code === 'PGRST116' || inquiriesResult.error.message?.includes('permission denied') || inquiriesResult.error.message?.includes('RLS')) {
+          console.error('[Dashboard] 🚨 RLS ERROR DETECTED: Row Level Security is blocking access to booking_inquiries table')
+          console.error('[Dashboard] This usually means:')
+          console.error('[Dashboard] 1. RLS policies are not set up correctly')
+          console.error('[Dashboard] 2. User session is not authenticated properly')
+          console.error('[Dashboard] 3. RLS policies do not allow SELECT for authenticated users')
+        }
       }
+      
       if (fleetResult.error) {
-        console.error('[Dashboard] Error fetching fleet:', fleetResult.error)
+        console.error('[Dashboard] ❌ Error fetching fleet:', fleetResult.error)
+        console.error('[Dashboard] Error code:', fleetResult.error.code)
+        console.error('[Dashboard] Error message:', fleetResult.error.message)
+        console.error('[Dashboard] Error details:', fleetResult.error.details)
+        console.error('[Dashboard] Error hint:', fleetResult.error.hint)
+        
+        // Check for RLS errors
+        if (fleetResult.error.code === 'PGRST116' || fleetResult.error.message?.includes('permission denied') || fleetResult.error.message?.includes('RLS')) {
+          console.error('[Dashboard] 🚨 RLS ERROR DETECTED: Row Level Security is blocking access to fleet table')
+        }
       }
 
-      // Calculate stats
-      const totalInquiries = inquiriesResult.data?.length || 0
-      const fleetSize = fleetResult.data?.length || 0
+      // Calculate stats - if data is null due to error, use 0 immediately
+      const totalInquiries = (inquiriesResult.data && !inquiriesResult.error) ? inquiriesResult.data.length : 0
+      const fleetSize = (fleetResult.data && !fleetResult.error) ? fleetResult.data.length : 0
+      
+      // Log success/failure
+      if (inquiriesResult.error) {
+        console.warn('[Dashboard] ⚠️ Using default value 0 for inquiries due to error')
+      } else {
+        console.log('[Dashboard] ✅ Successfully fetched', totalInquiries, 'inquiries')
+      }
+      
+      if (fleetResult.error) {
+        console.warn('[Dashboard] ⚠️ Using default value 0 for fleet due to error')
+      } else {
+        console.log('[Dashboard] ✅ Successfully fetched', fleetSize, 'fleet items')
+      }
 
       // Calculate gallery images
       let galleryImages = 0
@@ -85,7 +154,7 @@ export default function AdminDashboard() {
       // Calculate revenue potential
       // Estimate based on average price and number of inquiries
       let revenuePotential = 0
-      if (inquiriesResult.data && fleetResult.data) {
+      if (inquiriesResult.data && !inquiriesResult.error && fleetResult.data && !fleetResult.error) {
         inquiriesResult.data.forEach((inquiry: any) => {
           if (inquiry.start_date && inquiry.end_date) {
             // Find the yacht for this inquiry
@@ -113,14 +182,16 @@ export default function AdminDashboard() {
         })
       }
 
-      // Fetch recent inquiries with yacht names
-      const recentInquiriesData = (inquiriesResult.data as any[])
-        ?.sort((a: any, b: any) => {
-          const dateA = new Date(a.created_at).getTime()
-          const dateB = new Date(b.created_at).getTime()
-          return dateB - dateA
-        })
-        .slice(0, 5) || []
+      // Fetch recent inquiries with yacht names - only if we have data
+      const recentInquiriesData = (inquiriesResult.data && !inquiriesResult.error)
+        ? (inquiriesResult.data as any[])
+            .sort((a: any, b: any) => {
+              const dateA = new Date(a.created_at).getTime()
+              const dateB = new Date(b.created_at).getTime()
+              return dateB - dateA
+            })
+            .slice(0, 5)
+        : []
 
       // Fetch yacht names for inquiries with timeout protection
       // Use Promise.allSettled to ensure all inquiries are processed even if some fail
@@ -176,8 +247,17 @@ export default function AdminDashboard() {
         revenuePotential,
       })
       setRecentInquiries(inquiriesWithYachts)
+      
+      // CRITICAL: Set loading to false immediately after setting data
+      // Don't wait for timeout - if we have data (even if empty), show it
+      setLoading(false)
+      console.log('[Dashboard] ✅ Data fetch completed, loading set to false')
     } catch (error) {
-      console.error('[Dashboard] Error fetching data:', error)
+      console.error('[Dashboard] ❌ CRITICAL ERROR in fetchDashboardData:', error)
+      console.error('[Dashboard] Error type:', error instanceof Error ? error.constructor.name : typeof error)
+      console.error('[Dashboard] Error message:', error instanceof Error ? error.message : String(error))
+      console.error('[Dashboard] Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+      
       // Set default values on error to prevent crashes
       setStats({
         totalInquiries: 0,
@@ -186,8 +266,7 @@ export default function AdminDashboard() {
         revenuePotential: 0,
       })
       setRecentInquiries([])
-    } finally {
-      setLoading(false)
+      setLoading(false) // Always set loading to false, even on error
     }
   }
 
@@ -215,12 +294,13 @@ export default function AdminDashboard() {
     }).format(amount)
   }
 
-  // Always render the dashboard, even if loading
-  // Show loading state only for a brief moment, then show data (even if empty)
+  // Show loading state only briefly - if we have initial data, show it immediately
+  // If loading takes too long or fails, show 0 values instead of spinner
   if (loading && stats.totalInquiries === 0 && recentInquiries.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-luxury-blue"></div>
+        <p className="text-sm text-gray-500">Loading dashboard data...</p>
       </div>
     )
   }
