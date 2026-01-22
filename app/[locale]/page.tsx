@@ -10,7 +10,6 @@ import ReviewsSection from '@/components/ReviewsSection'
 import StatsSection from '@/components/StatsSection'
 import CulinarySection from '@/components/CulinarySection'
 import CrewSection from '@/components/CrewSection'
-import ContactSection from '@/components/ContactSection'
 import StructuredData from '@/components/StructuredData'
 import FloatingCTA from '@/components/FloatingCTA'
 
@@ -164,14 +163,6 @@ export default async function Home({ params }: Props) {
             
             {/* Consolidated Reviews Section - Single high-impact section */}
             <ReviewsSection reviews={safeContent.reviews || []} />
-            
-            {/* Contact Section - If visibility is enabled */}
-            {visibility.contact && (
-              <ContactSection 
-                contactPersons={safeContent.contactPersons || []} 
-                settings={safeSettings}
-              />
-            )}
           </main>
           
           {/* Floating CTA Button */}
