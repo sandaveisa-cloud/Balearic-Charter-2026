@@ -30,74 +30,54 @@ export default function AdminDashboard() {
     fetchDashboardData()
   }, [])
 
+  // @ts-ignore
   const fetchDashboardData = async () => {
     console.log('[Diagnostic] 🔍 Sākam visu datu pārbaudi...')
     const startTime = Date.now()
 
     // Funkcija, kas mēra katru atsevišķu pieprasījumu
-    const trackFetch = async (name: string, fetchFn: () => Promise<any>) => {
+    const trackFetch = async (name: string, url: string) => {
       const start = Date.now()
       try {
-        const result = await fetchFn()
-        const elapsed = Date.now() - start
-        console.log(`[Diagnostic] ✅ ${name} ielādēts (${elapsed}ms)`)
-        return result
+        const res = await fetch(url)
+        if (!res.ok) throw new Error(`Status: ${res.status}`)
+        const data = await res.json()
+        console.log(`[Diagnostic] ✅ ${name} ielādēts (${Date.now() - start}ms)`)
+        return data
       } catch (err) {
-        const elapsed = Date.now() - start
-        console.error(`[Diagnostic] ❌ ${name} kļūda pēc ${elapsed}ms:`, err)
+        console.error(`[Diagnostic] ❌ ${name} kļūda pēc ${Date.now() - start}ms:`, err)
         return null
       }
     }
 
     try {
       setLoading(true)
-      console.log('[Diagnostic] Starting data fetch via admin API...')
-
-      // Palaižam visus pieprasījumus reizē, bet katru izsekojam atsevišķi
-      const [statsResult, inquiriesResult] = await Promise.all([
-        trackFetch('Stats', async () => {
-          const response = await fetch('/api/admin/stats')
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}))
-            throw new Error(`HTTP ${response.status}: ${JSON.stringify(errorData)}`)
-          }
-          return response.json()
-        }),
-        trackFetch('Inquiries', async () => {
-          const response = await fetch('/api/admin/inquiries')
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}))
-            throw new Error(`HTTP ${response.status}: ${JSON.stringify(errorData)}`)
-          }
-          return response.json()
-        }),
+      // Palaižam visus pieprasījumus reizē, lai redzētu, kurš iestrēgst
+      const [stats, inquiries, destinations, fleet] = await Promise.all([
+        trackFetch('Stats', '/api/admin/stats'),
+        trackFetch('Inquiries', '/api/admin/inquiries'),
+        trackFetch('Destinations', '/api/admin/destinations'),
+        trackFetch('Fleet', '/api/admin/fleet') // Pārbaudām, vai šis maršruts eksistē
       ])
 
-      // Šeit mēs iestatām datus tikai tad, ja tie ir veiksmīgi saņemti
-      if (statsResult) {
-        const statsData = statsResult
-        console.log('[Diagnostic] Stats data structure:', {
-          hasStats: !!statsData.stats,
-          keys: Object.keys(statsData),
-          statsKeys: statsData.stats ? Object.keys(statsData.stats) : [],
-        })
-
+      // Iestatām datus tikai tad, ja tie ir saņemti
+      if (stats?.stats) {
+        const statsData = stats.stats
         // Set stats from API response - ensure all values are numbers and handle null/undefined
-        const stats = {
-          totalInquiries: Number(statsData.stats?.totalInquiries) || 0,
-          fleetSize: Number(statsData.stats?.fleetSize) || 0,
-          galleryImages: Number(statsData.stats?.galleryImages) || 0,
-          revenuePotential: Number(statsData.stats?.revenuePotential) || 0,
+        const processedStats = {
+          totalInquiries: Number(statsData.totalInquiries) || 0,
+          fleetSize: Number(statsData.fleetSize) || 0,
+          galleryImages: Number(statsData.galleryImages) || 0,
+          revenuePotential: Number(statsData.revenuePotential) || 0,
         }
         
         // Ensure no NaN values
-        if (isNaN(stats.totalInquiries)) stats.totalInquiries = 0
-        if (isNaN(stats.fleetSize)) stats.fleetSize = 0
-        if (isNaN(stats.galleryImages)) stats.galleryImages = 0
-        if (isNaN(stats.revenuePotential)) stats.revenuePotential = 0
+        if (isNaN(processedStats.totalInquiries)) processedStats.totalInquiries = 0
+        if (isNaN(processedStats.fleetSize)) processedStats.fleetSize = 0
+        if (isNaN(processedStats.galleryImages)) processedStats.galleryImages = 0
+        if (isNaN(processedStats.revenuePotential)) processedStats.revenuePotential = 0
         
-        console.log('[Diagnostic] Setting stats:', stats)
-        setStats(stats)
+        setStats(processedStats)
       } else {
         console.warn('[Diagnostic] ⚠️ Stats nav saņemti, izmantojam noklusējuma vērtības')
         setStats({
@@ -108,19 +88,9 @@ export default function AdminDashboard() {
         })
       }
 
-      if (inquiriesResult) {
-        const inquiriesData = inquiriesResult
-        console.log('[Diagnostic] Inquiries data structure:', {
-          hasInquiries: !!inquiriesData.inquiries,
-          keys: Object.keys(inquiriesData),
-          inquiriesLength: inquiriesData.inquiries?.length || 0,
-        })
-
-        // Get recent inquiries (already sorted and with yacht names from API)
-        const inquiriesList = inquiriesData.inquiries || []
+      if (inquiries?.inquiries) {
+        const inquiriesList = inquiries.inquiries || []
         const recentInquiriesList = inquiriesList.slice(0, 5) // Take top 5 most recent
-        
-        console.log('[Diagnostic] Setting recentInquiries with', recentInquiriesList.length, 'items')
         setRecentInquiries(recentInquiriesList)
       } else {
         console.warn('[Diagnostic] ⚠️ Inquiries nav saņemti, izmantojam tukšu masīvu')
@@ -130,10 +100,6 @@ export default function AdminDashboard() {
       console.log(`[Diagnostic] 🎉 Viss process pabeigts ${Date.now() - startTime}ms`)
     } catch (error) {
       console.error('[Diagnostic] 🚨 Kritiska kļūda kopējā ielādē:', error)
-      console.error('[Diagnostic] Error type:', error instanceof Error ? error.constructor.name : typeof error)
-      console.error('[Diagnostic] Error message:', error instanceof Error ? error.message : String(error))
-      console.error('[Diagnostic] Error stack:', error instanceof Error ? error.stack : 'No stack trace')
-      
       // Set default values on error to prevent crashes
       setStats({
         totalInquiries: 0,
@@ -143,10 +109,7 @@ export default function AdminDashboard() {
       })
       setRecentInquiries([])
     } finally {
-      // CRITICAL: Always set loading to false, regardless of success or error
-      // This prevents infinite spinner and ensures UI is always responsive
-      setLoading(false)
-      console.log('[Diagnostic] ✅ Loading set to false (finally block)')
+      setLoading(false) // Šis OBLIGĀTI pārtrauc "Loading..." rādīšanu
       console.log(`[Diagnostic] ⏱️ Kopējais laiks: ${Date.now() - startTime}ms`)
     }
   }
