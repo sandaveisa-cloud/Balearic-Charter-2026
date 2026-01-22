@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     console.log('[Admin API] ✅ Fetched inquiries:', inquiries?.length || 0, 'items')
     if (inquiries && inquiries.length > 0) {
       console.log('[Admin API] Sample inquiry:', {
-        id: inquiries[0].id,
+        id: (inquiries[0] as any).id,
         name: (inquiries[0] as any).name,
         email: (inquiries[0] as any).email,
         yacht_id: (inquiries[0] as any).yacht_id,
