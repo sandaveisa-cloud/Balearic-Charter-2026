@@ -65,7 +65,9 @@ export default async function AdminLayout({ children, params }: AdminLayoutProps
   if (!user || error) {
     console.log('[AdminLayout] SECURITY BLOCK: No authenticated user found')
     console.log('[AdminLayout] Error:', error?.message || 'No user')
-    redirect(`/${locale}/login?redirect=/${locale}/admin`)
+    // CRITICAL FIX: Redirect to /admin (root level) to prevent redirect loops
+    // The middleware will handle redirecting /[locale]/admin to /admin anyway
+    redirect(`/${locale}/login?redirect=/admin`)
   }
 
   // User is authenticated - render admin layout
