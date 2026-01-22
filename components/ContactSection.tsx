@@ -236,6 +236,8 @@ export default function ContactSection({ contactPersons, settings: initialSettin
                       <a
                         href={`mailto:${contact.email}`}
                         className="flex items-center gap-3 w-full px-4 py-3 bg-gray-100 text-luxury-blue rounded-lg hover:bg-luxury-gold hover:text-white transition-all duration-300 font-semibold group"
+                        // Obfuscate email display to prevent spam bots
+                        data-email={contact.email.split('@')[0] + '[at]' + contact.email.split('@')[1]}
                       >
                         <Mail className="w-5 h-5 group-hover:scale-110 transition-transform flex-shrink-0" />
                         <span className="flex-grow text-left truncate">{contact.email}</span>

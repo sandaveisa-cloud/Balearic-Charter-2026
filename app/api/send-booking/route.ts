@@ -386,7 +386,7 @@ export async function POST(request: NextRequest) {
       // Note: For production, replace with your verified domain (e.g., noreply@yourdomain.com)
       notificationEmailResult = await resend.emails.send({
       from: 'Balearic & Costa Blanca Charters <onboarding@resend.dev>',
-      to: 'sanda.veisa@gmail.com',
+      to: 'peter.sutter@gmail.com',
       subject: `New Booking Inquiry: ${body.yachtName} - ${body.name}`,
       html: `
         <!DOCTYPE html>
