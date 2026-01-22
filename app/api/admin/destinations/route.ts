@@ -83,15 +83,15 @@ export async function POST(request: NextRequest) {
         title: name, // Also set title for backward compatibility
         region: region || null,
         slug,
-        description: description || null,
-        description_en: description_en || null,
-        description_es: description_es || null,
-        description_de: description_de || null,
-        image_urls: image_urls || [],
-        youtube_video_url: youtube_video_url || null,
-        order_index: order_index || 0,
-        is_active: is_active !== false,
-      })
+        description,
+        description_en,
+        description_es,
+        description_de,
+        image_urls,
+        youtube_video_url,
+        order_index,
+        is_active: true,
+      } as any)
       .select()
       .single()
 
@@ -156,16 +156,16 @@ export async function PUT(request: NextRequest) {
         title: name, // Also update title for backward compatibility
         region: region || null,
         slug,
-        description: description || null,
-        description_en: description_en || null,
-        description_es: description_es || null,
-        description_de: description_de || null,
-        image_urls: image_urls || [],
-        youtube_video_url: youtube_video_url || null,
-        order_index: order_index || 0,
-        is_active: is_active !== false,
+        description,
+        description_en,
+        description_es,
+        description_de,
+        image_urls,
+        youtube_video_url,
+        order_index,
+        is_active,
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', id)
       .select()
       .single()
