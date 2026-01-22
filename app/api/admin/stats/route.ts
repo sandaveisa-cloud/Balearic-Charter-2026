@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     // Fetch all data in parallel
     const [inquiriesResult, fleetResult] = await Promise.all([
       supabase.from('booking_inquiries').select('*'),
-      supabase.from('fleet').select('id, gallery_images, low_season_price, medium_season_price, high_season_price'),
+      supabase.from('fleet').select('id, name, slug, gallery_images, low_season_price, medium_season_price, high_season_price'),
     ])
 
     if (inquiriesResult.error) {
@@ -41,12 +41,13 @@ export async function GET(request: NextRequest) {
     } else {
       console.log('[Admin API] ✅ Fetched fleet:', fleetResult.data?.length || 0, 'items')
       if (fleetResult.data && fleetResult.data.length > 0) {
-        const sampleYacht = fleetResult.data[0] as any
-        console.log('[Admin API] Sample yacht prices:', {
-          id: sampleYacht.id,
-          low_season_price: sampleYacht.low_season_price,
-          medium_season_price: sampleYacht.medium_season_price,
-          high_season_price: sampleYacht.high_season_price,
+        console.log('[Admin API] ✅ Fleet prices loaded:')
+        fleetResult.data.forEach((yacht: any) => {
+          console.log('[Admin API]   -', yacht.name || yacht.slug || yacht.id, ':', {
+            low: yacht.low_season_price || 'null',
+            medium: yacht.medium_season_price || 'null',
+            high: yacht.high_season_price || 'null',
+          })
         })
       }
     }
@@ -83,12 +84,27 @@ export async function GET(request: NextRequest) {
             const mediumPrice = Number(y.medium_season_price) || 0
             const highPrice = Number(y.high_season_price) || 0
             
+            // Log yacht info for verification
+            const yachtName = y.name || y.slug || y.id
+            console.log(`[Admin API] Calculating revenue for inquiry ${(inquiry as any).id} on yacht ${yachtName}:`, {
+              low_season_price: lowPrice,
+              medium_season_price: mediumPrice,
+              high_season_price: highPrice,
+              days,
+            })
+            
             // Calculate average price (only count non-zero prices)
             // This ensures we never crash if all prices are null/0
             const prices = [lowPrice, mediumPrice, highPrice].filter(p => p > 0 && !isNaN(p))
             const avgPrice = prices.length > 0 
               ? prices.reduce((sum, p) => sum + p, 0) / prices.length
               : 0
+            
+            console.log(`[Admin API]   Average price calculated:`, {
+              validPrices: prices,
+              avgPrice,
+              pricesCount: prices.length,
+            })
 
             // Ensure days is valid and > 0, and avgPrice is valid number
             if (avgPrice > 0 && !isNaN(avgPrice) && days > 0 && !isNaN(days)) {
@@ -104,14 +120,23 @@ export async function GET(request: NextRequest) {
                   revenueCalculationDetails.push({
                     inquiry_id: (inquiry as any).id,
                     yacht_id: (inquiry as any).yacht_id,
+                    yacht_name: yachtName,
                     days,
-                    avgPrice,
-                    basePrice,
-                    estimatedTotal,
+                    avgPrice: Math.round(avgPrice * 100) / 100, // Round to 2 decimals
+                    basePrice: Math.round(basePrice * 100) / 100,
+                    estimatedTotal: Math.round(estimatedTotal * 100) / 100,
                     hasPrices: prices.length > 0,
                     lowPrice,
                     mediumPrice,
                     highPrice,
+                  })
+                  
+                  console.log(`[Admin API]   ✅ Revenue calculated:`, {
+                    yacht: yachtName,
+                    days,
+                    avgPrice: Math.round(avgPrice * 100) / 100,
+                    basePrice: Math.round(basePrice * 100) / 100,
+                    estimatedTotal: Math.round(estimatedTotal * 100) / 100,
                   })
                 } else {
                   // Invalid estimatedTotal
@@ -173,12 +198,18 @@ export async function GET(request: NextRequest) {
       })
     }
     
-    console.log('[Admin API] Revenue calculation details:', {
+    console.log('[Admin API] 📊 Revenue calculation summary:', {
       totalInquiries: inquiriesResult.data?.length || 0,
       inquiriesWithDates: revenueCalculationDetails.filter(d => d.days).length,
       inquiriesWithPrices: revenueCalculationDetails.filter(d => d.hasPrices).length,
-      revenuePotential,
-      details: revenueCalculationDetails.slice(0, 3), // Log first 3 for debugging
+      revenuePotential: Math.round(revenuePotential * 100) / 100,
+      revenuePotentialFormatted: new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(revenuePotential),
+      details: revenueCalculationDetails.slice(0, 5), // Log first 5 for debugging
     })
 
     const stats = {
