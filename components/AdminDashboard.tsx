@@ -28,19 +28,6 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboardData()
-    
-    // Safety timeout: Force loading to false after 5 seconds (reduced from 10)
-    // This prevents infinite spinner but still allows reasonable fetch time
-    const timeoutId = setTimeout(() => {
-      console.warn('[Dashboard] ⚠️ Safety timeout: Forcing loading to false after 5 seconds')
-      console.warn('[Dashboard] This may indicate:')
-      console.warn('[Dashboard] 1. Network issues')
-      console.warn('[Dashboard] 2. RLS blocking access')
-      console.warn('[Dashboard] 3. Supabase connection problems')
-      setLoading(false)
-    }, 5000) // Reduced from 10000 to 5000
-    
-    return () => clearTimeout(timeoutId)
   }, [])
 
   const fetchDashboardData = async () => {
