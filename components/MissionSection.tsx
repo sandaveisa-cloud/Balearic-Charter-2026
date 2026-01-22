@@ -1,5 +1,6 @@
 import { Ship, ShieldCheck, Utensils } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
+import ScrollToTopButton from './ScrollToTopButton'
 
 export default async function MissionSection() {
   const t = await getTranslations('mission')
@@ -66,6 +67,9 @@ export default async function MissionSection() {
             ✓ 2026 Season | Verified & Logistically Synchronized
           </p>
         </div>
+
+        {/* Scroll to Top Button */}
+        <ScrollToTopButton />
       </div>
     </section>
   )
