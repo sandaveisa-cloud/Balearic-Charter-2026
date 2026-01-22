@@ -156,7 +156,9 @@ export default function StructuredData({ type, settings = {}, yacht, destination
       "@type": "Place",
       "name": destinationName,
       "description": description.substring(0, 200),
-      "image": destination.image_url || undefined,
+      "image": (destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0) 
+        ? destination.image_urls[0] 
+        : undefined,
       "geo": {
         "@type": "GeoCoordinates",
         "latitude": coords.lat,

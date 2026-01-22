@@ -23,9 +23,8 @@ interface Destination {
   description_en?: string | null
   description_es?: string | null
   description_de?: string | null
-  image_url?: string | null
+  image_urls?: string[] | null // Primary field: JSONB array of image URLs
   youtube_video_url?: string | null
-  image_urls?: string[] // Legacy field
   slug?: string
   order_index: number
   is_active: boolean
@@ -241,12 +240,9 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
     return destination.name || destination.title || 'Destination'
   }
 
-  // Get image URL (support both new 'image_url' and legacy 'image_urls')
+  // Get image URL from image_urls array (first image)
   const getDestinationImage = (destination: Destination): string | null => {
-    if (destination.image_url) {
-      return destination.image_url
-    }
-    if (destination.image_urls && destination.image_urls.length > 0) {
+    if (destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0) {
       return destination.image_urls[0]
     }
     return null

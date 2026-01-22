@@ -12,7 +12,7 @@ interface Destination {
   title: string // Primary field from database
   name?: string // Optional legacy field (code uses fallback: name || title)
   slug: string
-  image_url?: string | null
+  image_urls?: string[] | null
   description?: string | null
   description_en?: string | null
   description_es?: string | null
@@ -108,7 +108,9 @@ export default function LuxuryDestinationsGrid({ destinations = [] }: LuxuryDest
     return {
       title: t(`${key}.title`) || destination.name || 'Destination',
       description: getLocalizedDescription(),
-      imageUrl: destination.image_url || null,
+      imageUrl: (destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0) 
+        ? destination.image_urls[0] 
+        : null,
     }
   }
 

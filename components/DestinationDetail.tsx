@@ -91,11 +91,7 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
   }
 
   const getDestinationImage = (dest: Destination): string | null => {
-    // Try image_url first
-    if (dest.image_url) {
-      return dest.image_url
-    }
-    // Fallback to image_urls array
+    // Use image_urls array (first image)
     if (dest.image_urls && Array.isArray(dest.image_urls) && dest.image_urls.length > 0) {
       return dest.image_urls[0]
     }

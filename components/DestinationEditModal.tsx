@@ -46,7 +46,9 @@ export default function DestinationEditModal({
         description_en: destination.description_en || '',
         description_es: destination.description_es || '',
         description_de: destination.description_de || '',
-        image_url: destination.image_url || '',
+        image_url: (destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0) 
+          ? destination.image_urls[0] 
+          : '',
         youtube_video_url: destination.youtube_video_url || '',
         order_index: destination.order_index || 0,
         is_active: destination.is_active !== false,
@@ -102,7 +104,7 @@ export default function DestinationEditModal({
             description_en: formData.description_en || null,
             description_es: formData.description_es || null,
             description_de: formData.description_de || null,
-            image_url: formData.image_url || null,
+            image_urls: formData.image_url ? [formData.image_url] : [],
             youtube_video_url: formData.youtube_video_url || null,
             order_index: formData.order_index,
             is_active: formData.is_active,

@@ -172,13 +172,13 @@ export default function DestinationsAdminPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 text-xs text-gray-600">
-                        {destination.image_url && (
+                        {destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0 && (
                           <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">Image</span>
                         )}
                         {destination.youtube_video_url && (
                           <span className="px-2 py-1 bg-red-100 text-red-800 rounded">Video</span>
                         )}
-                        {!destination.image_url && !destination.youtube_video_url && (
+                        {(!destination.image_urls || !Array.isArray(destination.image_urls) || destination.image_urls.length === 0) && !destination.youtube_video_url && (
                           <span className="text-gray-400">No media</span>
                         )}
                       </div>

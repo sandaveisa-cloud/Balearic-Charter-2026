@@ -130,7 +130,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const seoDescription = seoDescriptions[slug]?.[locale] || 
     (description.substring(0, 155) || `Explore ${destinationName} with our luxury yacht charter services. Professional crew, gourmet cuisine, premium boats. Book today!`)
 
-  const imageUrl = destination.image_url || null
+  const imageUrl = (destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0) 
+    ? destination.image_urls[0] 
+    : null
   const canonicalUrl = `${baseUrl}/${locale}/destinations/${slug}`
 
   return {

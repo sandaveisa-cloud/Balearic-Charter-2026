@@ -101,7 +101,7 @@ export interface Destination {
   description_es: string | null // Legacy field, kept for backward compatibility
   description_de: string | null // Legacy field, kept for backward compatibility
   description_i18n?: Record<string, string> | null // Multi-language descriptions: { "en": "...", "es": "...", "de": "..." }
-  image_url: string | null
+  image_urls: string[] | null // Primary field: JSONB array of image URLs
   youtube_video_url: string | null
   slug: string
   order_index: number
@@ -109,8 +109,6 @@ export interface Destination {
   seasonal_data?: SeasonalData | null // JSONB field for seasonal sailing information
   created_at: string
   updated_at: string
-  // Legacy fields for backward compatibility
-  image_urls?: string[]
 }
 
 export interface Review {
