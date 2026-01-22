@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { generateBookingPDF } from '@/lib/pdfGenerator'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 import type { PriceBreakdown } from '@/components/SeasonalPriceCalculator'
 
 // Force Node.js runtime for PDF generation
@@ -119,27 +119,111 @@ export async function POST(request: NextRequest) {
 
     // Save to Supabase first
     console.log('[API] Saving to Supabase...')
+    
+    // Validate that required fields are not empty strings
+    if (!body.name || body.name.trim() === '') {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Validation error', 
+          details: 'Name is required and cannot be empty'
+        },
+        { status: 400 }
+      )
+    }
+    
+    if (!body.email || body.email.trim() === '') {
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Validation error', 
+          details: 'Email is required and cannot be empty'
+        },
+        { status: 400 }
+      )
+    }
+    
+    // Create Supabase client with anon key for public inserts
+    // This ensures we use the correct client for public RLS policies
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('[API] ❌ Supabase environment variables missing!')
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Server configuration error', 
+          details: 'Database connection not configured'
+        },
+        { status: 500 }
+      )
+    }
+    
+    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+    
+    // Prepare insert payload - ensure all fields match schema exactly
+    // Schema: name (NOT NULL), email (NOT NULL), phone (nullable), yacht_id (nullable), 
+    //         start_date (nullable), end_date (nullable), guests (nullable), message (nullable), status (default 'pending')
+    const insertPayload: any = {
+      name: body.name.trim(),
+      email: body.email.trim(),
+      phone: body.phone && body.phone.trim() !== '' ? body.phone.trim() : null,
+      yacht_id: body.yachtId && body.yachtId.trim() !== '' ? body.yachtId.trim() : null,
+      start_date: body.startDate && body.startDate.trim() !== '' ? body.startDate.trim() : null,
+      end_date: body.endDate && body.endDate.trim() !== '' ? body.endDate.trim() : null,
+      guests: body.guests ? parseInt(String(body.guests), 10) : null,
+      message: body.message && body.message.trim() !== '' ? body.message.trim() : null,
+      status: 'pending',
+    }
+    
+    // Validate guests is a valid number if provided
+    if (insertPayload.guests !== null && (isNaN(insertPayload.guests) || insertPayload.guests < 1)) {
+      insertPayload.guests = null
+    }
+    
+    console.log('[API] Final insert payload:', JSON.stringify(insertPayload, null, 2))
+    console.log('[API] Payload validation:', {
+      hasName: !!insertPayload.name,
+      hasEmail: !!insertPayload.email,
+      nameLength: insertPayload.name?.length,
+      emailLength: insertPayload.email?.length,
+      yacht_id: insertPayload.yacht_id,
+      start_date: insertPayload.start_date,
+      end_date: insertPayload.end_date,
+      guests: insertPayload.guests,
+      phone: insertPayload.phone ? 'provided' : 'null',
+      message: insertPayload.message ? 'provided' : 'null',
+    })
+    
+    console.log('[API] Supabase client info:', {
+      url: supabaseUrl ? '✅ Set' : '❌ Missing',
+      anonKey: supabaseAnonKey ? '✅ Set' : '❌ Missing',
+      anonKeyLength: supabaseAnonKey?.length || 0,
+    })
+    
+    // Attempt insert
+    console.log('[API] Attempting to insert into booking_inquiries...')
     const { data: inquiry, error: dbError } = await supabase
       .from('booking_inquiries')
-      // @ts-expect-error - Supabase type inference limitation with dynamic table inserts
-      .insert([
-        {
-          name: body.name,
-          email: body.email,
-          phone: body.phone || null,
-          yacht_id: body.yachtId,
-          start_date: body.startDate,
-          end_date: body.endDate,
-          guests: body.guests || null,
-          message: body.message || null,
-          status: 'pending',
-        },
-      ])
+      .insert([insertPayload])
       .select()
       .single()
+    
+    if (inquiry) {
+      console.log('[API] ✅ Successfully inserted inquiry:', {
+        id: (inquiry as any)?.id,
+        name: (inquiry as any)?.name,
+        email: (inquiry as any)?.email,
+      })
+    }
 
     if (dbError) {
-      console.error('[API] Database error:', dbError)
+      console.error('[API] ❌ Database error:', dbError)
+      console.error('[API] Error code:', (dbError as any)?.code)
+      console.error('[API] Error message:', dbError.message)
+      console.error('[API] Error details:', (dbError as any)?.details)
+      console.error('[API] Error hint:', (dbError as any)?.hint)
       
       // Check for RLS (Row Level Security) errors
       const errorMessage = dbError.message || String(dbError)
@@ -150,15 +234,55 @@ export async function POST(request: NextRequest) {
           errorMessage.includes('permission denied') ||
           errorCode === '42501' || // PostgreSQL permission denied error code
           errorMessage.includes('new row violates row-level security policy')) {
-        console.error('[API] RLS Policy Error - booking_inquiries table may not allow public INSERT')
+        console.error('[API] 🚨 RLS Policy Error - booking_inquiries table may not allow public INSERT')
+        console.error('[API] Please verify RLS policy exists: CREATE POLICY "booking_inquiries_public_insert" ON booking_inquiries FOR INSERT WITH CHECK (true);')
         return NextResponse.json(
           { 
             success: false,
             error: 'Permission denied', 
             details: 'Unable to save booking due to security policy. Please contact support directly.',
-            message: 'We encountered a security restriction. Please contact us directly at +34 680 957 096 or email us to complete your booking.'
+            message: 'We encountered a security restriction. Please contact us directly at +34 680 957 096 or email us to complete your booking.',
+            debug: process.env.NODE_ENV === 'development' ? {
+              errorCode,
+              errorMessage,
+              hint: (dbError as any)?.hint,
+            } : undefined,
           },
           { status: 403 }
+        )
+      }
+      
+      // Check for NOT NULL constraint violations
+      if (errorMessage.includes('null value') || 
+          errorMessage.includes('violates not-null constraint') ||
+          errorCode === '23502') { // PostgreSQL NOT NULL violation
+        console.error('[API] 🚨 NOT NULL constraint violation')
+        console.error('[API] Required fields: name, email (NOT NULL in schema)')
+        console.error('[API] Payload sent:', insertPayload)
+        return NextResponse.json(
+          { 
+            success: false,
+            error: 'Validation error', 
+            details: 'Missing required fields. Please ensure name and email are provided.',
+            message: 'Please fill in all required fields (name and email) and try again.'
+          },
+          { status: 400 }
+        )
+      }
+      
+      // Check for foreign key constraint violations
+      if (errorMessage.includes('foreign key') || 
+          errorMessage.includes('violates foreign key constraint') ||
+          errorCode === '23503') {
+        console.error('[API] 🚨 Foreign key constraint violation - yacht_id may not exist in fleet table')
+        return NextResponse.json(
+          { 
+            success: false,
+            error: 'Invalid yacht selection', 
+            details: 'The selected yacht does not exist in our fleet.',
+            message: 'Please refresh the page and select a valid yacht.'
+          },
+          { status: 400 }
         )
       }
       
@@ -167,8 +291,14 @@ export async function POST(request: NextRequest) {
         { 
           success: false,
           error: 'Database error', 
-          details: 'Failed to save booking to database. Please try again or contact support.',
-          message: 'We encountered an issue saving your booking. Please try again or contact us directly.'
+          details: `Failed to save booking to database: ${errorMessage}`,
+          message: 'We encountered an issue saving your booking. Please try again or contact us directly.',
+          debug: process.env.NODE_ENV === 'development' ? {
+            errorCode,
+            errorMessage,
+            hint: (dbError as any)?.hint,
+            details: (dbError as any)?.details,
+          } : undefined,
         },
         { status: 500 }
       )
