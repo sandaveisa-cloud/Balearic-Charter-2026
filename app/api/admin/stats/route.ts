@@ -57,10 +57,12 @@ export async function GET(request: NextRequest) {
             const end = new Date(inquiry.end_date)
             const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
 
+            // Type casting to fix TypeScript error
+            const y = yacht as any
             const avgPrice =
-              ((yacht.low_season_price || 0) +
-                (yacht.medium_season_price || 0) +
-                (yacht.high_season_price || 0)) /
+              ((y.low_season_price || 0) +
+                (y.medium_season_price || 0) +
+                (y.high_season_price || 0)) /
               3
 
             const basePrice = avgPrice * days
