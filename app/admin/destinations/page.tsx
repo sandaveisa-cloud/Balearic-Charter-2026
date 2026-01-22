@@ -134,6 +134,7 @@ export default function DestinationsAdminPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Image</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Name</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Region</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Slug</th>
@@ -144,16 +145,41 @@ export default function DestinationsAdminPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {destinations.map((destination) => (
-                  <tr key={destination.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="font-semibold text-gray-800">{destination.name || destination.title}</div>
-                      {destination.description && (
-                        <div className="text-sm text-gray-500 mt-1 line-clamp-1">
-                          {destination.description}
-                        </div>
-                      )}
-                    </td>
+                {destinations.map((destination) => {
+                  const imageUrl = destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0
+                    ? destination.image_urls[0]
+                    : null
+
+                  return (
+                    <tr key={destination.id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4">
+                        {imageUrl ? (
+                          <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
+                            <img
+                              src={imageUrl}
+                              alt={destination.name || destination.title || 'Destination'}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                // Fallback if image fails to load
+                                const target = e.target as HTMLImageElement
+                                target.style.display = 'none'
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-16 h-16 rounded-lg border border-gray-200 bg-gray-100 flex items-center justify-center">
+                            <span className="text-xs text-gray-400">No image</span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-semibold text-gray-800">{destination.name || destination.title}</div>
+                        {destination.description && (
+                          <div className="text-sm text-gray-500 mt-1 line-clamp-1">
+                            {destination.description}
+                          </div>
+                        )}
+                      </td>
                     <td className="px-6 py-4 text-gray-600">{destination.region || '-'}</td>
                     <td className="px-6 py-4">
                       <code className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-700">
@@ -209,7 +235,8 @@ export default function DestinationsAdminPage() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  )
+                })}
               </tbody>
             </table>
           </div>

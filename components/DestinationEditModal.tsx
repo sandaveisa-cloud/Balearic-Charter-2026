@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import { extractYouTubeId, buildYouTubeEmbedUrl, getYouTubeThumbnail } from '@/lib/youtubeUtils'
+import ImageUpload from '@/components/ImageUpload'
 import type { Destination } from '@/types/database'
 
 interface DestinationEditModalProps {
@@ -285,18 +286,13 @@ export default function DestinationEditModal({
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-800">Media</h3>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Image URL
-              </label>
-              <input
-                type="url"
-                value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
-                placeholder="https://..."
-              />
-            </div>
+            {/* Image Upload Component */}
+            <ImageUpload
+              currentImageUrl={formData.image_url}
+              onImageUploaded={(url) => setFormData({ ...formData, image_url: url })}
+              folder="destinations"
+              bucket="fleet-images"
+            />
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
