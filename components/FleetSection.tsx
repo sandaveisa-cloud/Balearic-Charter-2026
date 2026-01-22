@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { Ruler, Users, BedDouble, Ship, Sparkles, ChevronDown, ChevronUp } from 'lucide-react'
+import { Ruler, Users, BedDouble, Ship, Sparkles, ChevronDown, ChevronUp, Calendar, Maximize2 } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import OptimizedImage from './OptimizedImage'
 import TrustBar from './TrustBar'
@@ -187,30 +187,24 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                         </p>
                       )}
 
-                      {/* Compact Specs: Single Row with Icons */}
-                      <div className="flex items-center gap-4 mb-4 pb-4 border-b border-gray-100">
+                      {/* Compact Specs: Single Horizontal Row with Icons */}
+                      <div className="flex items-center justify-between gap-6 mb-4 pb-4 border-b border-gray-100">
                         {yacht.year && (
-                          <div className="flex items-center gap-1.5">
-                            <Ship className="w-4 h-4 text-luxury-gold flex-shrink-0" />
-                            <span className="text-xs text-gray-600">{yacht.year}</span>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="w-[18px] h-[18px] text-slate-400 flex-shrink-0" />
+                            <span className="text-xs text-gray-600">Built {yacht.year}</span>
                           </div>
                         )}
                         {yacht.cabins && (
-                          <div className="flex items-center gap-1.5">
-                            <BedDouble className="w-4 h-4 text-luxury-gold flex-shrink-0" />
-                            <span className="text-xs text-gray-600">{yacht.cabins} {t('fleet.cabins') || t('cabins') || 'Cabins'}</span>
+                          <div className="flex items-center gap-2">
+                            <BedDouble className="w-[18px] h-[18px] text-slate-400 flex-shrink-0" />
+                            <span className="text-xs text-gray-600">{yacht.cabins} {yacht.cabins === 1 ? 'Cabin' : 'Cabins'}</span>
                           </div>
                         )}
                         {yacht.length && (
-                          <div className="flex items-center gap-1.5">
-                            <Ruler className="w-4 h-4 text-luxury-gold flex-shrink-0" />
+                          <div className="flex items-center gap-2">
+                            <Maximize2 className="w-[18px] h-[18px] text-slate-400 flex-shrink-0" />
                             <span className="text-xs text-gray-600">{yacht.length}m</span>
-                          </div>
-                        )}
-                        {yacht.capacity && (
-                          <div className="flex items-center gap-1.5">
-                            <Users className="w-4 h-4 text-luxury-gold flex-shrink-0" />
-                            <span className="text-xs text-gray-600">{yacht.capacity} {t('fleet.guests') || t('guests') || 'Guests'}</span>
                           </div>
                         )}
                       </div>
@@ -244,8 +238,11 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                         </div>
                       )}
 
+                      {/* Thin Separator Line */}
+                      <div className="mb-4 border-t border-gray-200"></div>
+
                       {/* Unified Bottom: Price (if not shown above) and View Details Button */}
-                      <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between gap-4">
+                      <div className="mt-auto flex items-center justify-between gap-4">
                         {!startingPrice && (
                           <div className="flex items-baseline gap-1">
                             <span className="text-gray-600 text-xs">{t('from')} </span>
