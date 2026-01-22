@@ -44,98 +44,108 @@ export default function AdminDashboard() {
   }, [])
 
   const fetchDashboardData = async () => {
+    console.log('[Diagnostic] 🔍 Sākam visu datu pārbaudi...')
+    const startTime = Date.now()
+
+    // Funkcija, kas mēra katru atsevišķu pieprasījumu
+    const trackFetch = async (name: string, fetchFn: () => Promise<any>) => {
+      const start = Date.now()
+      try {
+        const result = await fetchFn()
+        const elapsed = Date.now() - start
+        console.log(`[Diagnostic] ✅ ${name} ielādēts (${elapsed}ms)`)
+        return result
+      } catch (err) {
+        const elapsed = Date.now() - start
+        console.error(`[Diagnostic] ❌ ${name} kļūda pēc ${elapsed}ms:`, err)
+        return null
+      }
+    }
+
     try {
       setLoading(true)
-      console.log('[Dashboard] Starting data fetch via admin API...')
+      console.log('[Diagnostic] Starting data fetch via admin API...')
 
-      // Use admin API routes that bypass RLS using service role key
-      const [statsResponse, inquiriesResponse] = await Promise.all([
-        fetch('/api/admin/stats'),
-        fetch('/api/admin/inquiries'),
+      // Palaižam visus pieprasījumus reizē, bet katru izsekojam atsevišķi
+      const [statsResult, inquiriesResult] = await Promise.all([
+        trackFetch('Stats', async () => {
+          const response = await fetch('/api/admin/stats')
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}))
+            throw new Error(`HTTP ${response.status}: ${JSON.stringify(errorData)}`)
+          }
+          return response.json()
+        }),
+        trackFetch('Inquiries', async () => {
+          const response = await fetch('/api/admin/inquiries')
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}))
+            throw new Error(`HTTP ${response.status}: ${JSON.stringify(errorData)}`)
+          }
+          return response.json()
+        }),
       ])
 
-      // Check if responses are OK
-      if (!statsResponse.ok) {
-        const errorData = await statsResponse.json().catch(() => ({}))
-        console.error('[Dashboard] ❌ Error fetching stats:', statsResponse.status, errorData)
-        throw new Error(`Failed to fetch stats: ${statsResponse.status}`)
-      }
+      // Šeit mēs iestatām datus tikai tad, ja tie ir veiksmīgi saņemti
+      if (statsResult) {
+        const statsData = statsResult
+        console.log('[Diagnostic] Stats data structure:', {
+          hasStats: !!statsData.stats,
+          keys: Object.keys(statsData),
+          statsKeys: statsData.stats ? Object.keys(statsData.stats) : [],
+        })
 
-      if (!inquiriesResponse.ok) {
-        const errorData = await inquiriesResponse.json().catch(() => ({}))
-        console.error('[Dashboard] ❌ Error fetching inquiries:', inquiriesResponse.status, errorData)
-        throw new Error(`Failed to fetch inquiries: ${inquiriesResponse.status}`)
-      }
-
-      // Parse responses
-      const statsData = await statsResponse.json()
-      const inquiriesData = await inquiriesResponse.json()
-
-      console.log('[Dashboard] ✅ Stats data received:', JSON.stringify(statsData, null, 2))
-      console.log('[Dashboard] ✅ Inquiries data received:', JSON.stringify(inquiriesData, null, 2))
-      console.log('[Dashboard] Stats object keys:', Object.keys(statsData))
-      console.log('[Dashboard] Inquiries object keys:', Object.keys(inquiriesData))
-      console.log('[Dashboard] Total inquiries from API:', inquiriesData.total || 0)
-      console.log('[Dashboard] Inquiries array length:', inquiriesData.inquiries?.length || 0)
-      console.log('[Dashboard] Stats.stats exists:', !!statsData.stats)
-      console.log('[Dashboard] Stats.stats values:', statsData.stats)
-
-      // Validate response structure
-      if (!statsData.stats) {
-        console.error('[Dashboard] ⚠️ WARNING: statsData.stats is missing!')
-        console.error('[Dashboard] Full statsData:', statsData)
-      }
-
-      if (!inquiriesData.inquiries) {
-        console.error('[Dashboard] ⚠️ WARNING: inquiriesData.inquiries is missing!')
-        console.error('[Dashboard] Full inquiriesData:', inquiriesData)
-      }
-
-      // Set stats from API response - ensure all values are numbers and handle null/undefined
-      const stats = {
-        totalInquiries: Number(statsData.stats?.totalInquiries) || 0,
-        fleetSize: Number(statsData.stats?.fleetSize) || 0,
-        galleryImages: Number(statsData.stats?.galleryImages) || 0,
-        revenuePotential: Number(statsData.stats?.revenuePotential) || 0,
-      }
-      
-      // Ensure no NaN values
-      if (isNaN(stats.totalInquiries)) stats.totalInquiries = 0
-      if (isNaN(stats.fleetSize)) stats.fleetSize = 0
-      if (isNaN(stats.galleryImages)) stats.galleryImages = 0
-      if (isNaN(stats.revenuePotential)) stats.revenuePotential = 0
-      
-      console.log('[Dashboard] Setting stats:', stats)
-      setStats(stats)
-
-      // Get recent inquiries (already sorted and with yacht names from API)
-      const inquiriesList = inquiriesData.inquiries || []
-      const recentInquiriesList = inquiriesList.slice(0, 5) // Take top 5 most recent
-      
-      console.log('[Dashboard] Raw inquiries list length:', inquiriesList.length)
-      console.log('[Dashboard] Setting recentInquiries with', recentInquiriesList.length, 'items')
-      if (recentInquiriesList.length > 0) {
-        console.log('[Dashboard] Recent inquiries details:', recentInquiriesList.map((i: any) => ({
-          id: i.id,
-          name: i.name,
-          email: i.email,
-          yacht_name: i.yacht_name,
-          created_at: i.created_at,
-        })))
+        // Set stats from API response - ensure all values are numbers and handle null/undefined
+        const stats = {
+          totalInquiries: Number(statsData.stats?.totalInquiries) || 0,
+          fleetSize: Number(statsData.stats?.fleetSize) || 0,
+          galleryImages: Number(statsData.stats?.galleryImages) || 0,
+          revenuePotential: Number(statsData.stats?.revenuePotential) || 0,
+        }
+        
+        // Ensure no NaN values
+        if (isNaN(stats.totalInquiries)) stats.totalInquiries = 0
+        if (isNaN(stats.fleetSize)) stats.fleetSize = 0
+        if (isNaN(stats.galleryImages)) stats.galleryImages = 0
+        if (isNaN(stats.revenuePotential)) stats.revenuePotential = 0
+        
+        console.log('[Diagnostic] Setting stats:', stats)
+        setStats(stats)
       } else {
-        console.warn('[Dashboard] ⚠️ No inquiries to display!')
-        console.warn('[Dashboard] Raw inquiriesData:', inquiriesData)
+        console.warn('[Diagnostic] ⚠️ Stats nav saņemti, izmantojam noklusējuma vērtības')
+        setStats({
+          totalInquiries: 0,
+          fleetSize: 0,
+          galleryImages: 0,
+          revenuePotential: 0,
+        })
+      }
+
+      if (inquiriesResult) {
+        const inquiriesData = inquiriesResult
+        console.log('[Diagnostic] Inquiries data structure:', {
+          hasInquiries: !!inquiriesData.inquiries,
+          keys: Object.keys(inquiriesData),
+          inquiriesLength: inquiriesData.inquiries?.length || 0,
+        })
+
+        // Get recent inquiries (already sorted and with yacht names from API)
+        const inquiriesList = inquiriesData.inquiries || []
+        const recentInquiriesList = inquiriesList.slice(0, 5) // Take top 5 most recent
+        
+        console.log('[Diagnostic] Setting recentInquiries with', recentInquiriesList.length, 'items')
+        setRecentInquiries(recentInquiriesList)
+      } else {
+        console.warn('[Diagnostic] ⚠️ Inquiries nav saņemti, izmantojam tukšu masīvu')
+        setRecentInquiries([])
       }
       
-      setRecentInquiries(recentInquiriesList)
-      
-      console.log('[Dashboard] ✅ Data fetch completed')
-      console.log('[Dashboard] Final state - totalInquiries:', statsData.stats?.totalInquiries || 0, 'recentInquiries:', recentInquiriesList.length)
+      console.log(`[Diagnostic] 🎉 Viss process pabeigts ${Date.now() - startTime}ms`)
     } catch (error) {
-      console.error('[Dashboard] ❌ CRITICAL ERROR in fetchDashboardData:', error)
-      console.error('[Dashboard] Error type:', error instanceof Error ? error.constructor.name : typeof error)
-      console.error('[Dashboard] Error message:', error instanceof Error ? error.message : String(error))
-      console.error('[Dashboard] Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+      console.error('[Diagnostic] 🚨 Kritiska kļūda kopējā ielādē:', error)
+      console.error('[Diagnostic] Error type:', error instanceof Error ? error.constructor.name : typeof error)
+      console.error('[Diagnostic] Error message:', error instanceof Error ? error.message : String(error))
+      console.error('[Diagnostic] Error stack:', error instanceof Error ? error.stack : 'No stack trace')
       
       // Set default values on error to prevent crashes
       setStats({
@@ -149,7 +159,8 @@ export default function AdminDashboard() {
       // CRITICAL: Always set loading to false, regardless of success or error
       // This prevents infinite spinner and ensures UI is always responsive
       setLoading(false)
-      console.log('[Dashboard] ✅ Loading set to false (finally block)')
+      console.log('[Diagnostic] ✅ Loading set to false (finally block)')
+      console.log(`[Diagnostic] ⏱️ Kopējais laiks: ${Date.now() - startTime}ms`)
     }
   }
 
