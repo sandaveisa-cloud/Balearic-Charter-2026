@@ -126,10 +126,18 @@ export default function StructuredData({ type, settings = {}, yacht, destination
 
   if (type === 'Place' && destination) {
     const destinationName = destination.name || destination.title || 'Destination'
-    const description = getLocalizedText(
-      (destination as any).description_i18n, 
-      locale as 'en' | 'es' | 'de'
-    ) || destination.description || destination.description_en || ''
+    // Use description_en/es/de columns (not description_i18n JSONB)
+    let description = ''
+    switch (locale) {
+      case 'es':
+        description = destination.description_es || destination.description || ''
+        break
+      case 'de':
+        description = destination.description_de || destination.description || ''
+        break
+      default:
+        description = destination.description_en || destination.description || ''
+    }
     
     // Map destination names to coordinates
     const coordinates: Record<string, { lat: number; lng: number }> = {

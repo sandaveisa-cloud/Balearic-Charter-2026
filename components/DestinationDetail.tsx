@@ -79,11 +79,7 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
   }
 
   const getLocalizedDescription = (dest: Destination): string => {
-    // Try JSONB i18n first
-    const i18nDesc = getLocalizedText((dest as any).description_i18n, locale)
-    if (i18nDesc) return i18nDesc
-    
-    // Fallback to legacy columns
+    // Use description_en, description_es, description_de columns (not description_i18n JSONB)
     switch (locale) {
       case 'es':
         return dest.description_es || dest.description || ''

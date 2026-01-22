@@ -252,13 +252,9 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
     return null
   }
 
-  // Get localized description with JSONB fallback
+  // Get localized description - use description_en/es/de columns (not description_i18n)
   const getLocalizedDescription = (destination: Destination): string => {
-    // Try JSONB i18n first
-    const i18nDesc = getLocalizedText((destination as any).description_i18n, locale as 'en' | 'es' | 'de')
-    if (i18nDesc) return i18nDesc
-    
-    // Fallback to legacy columns
+    // Use description_en, description_es, description_de columns (not description_i18n JSONB)
     switch (locale) {
       case 'es':
         return destination.description_es || destination.description || ''

@@ -21,6 +21,14 @@ export async function createSupabaseServerClient() {
     throw new Error('Missing Supabase environment variables')
   }
 
+  // Log environment variable status (for debugging)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Supabase Server] Environment check:')
+    console.log('[Supabase Server] NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? '✅ Set' : '❌ Missing')
+    console.log('[Supabase Server] NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? '✅ Set' : '❌ Missing')
+    console.log('[Supabase Server] SUPABASE_SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? '✅ Set' : '❌ Missing')
+  }
+
   const cookieStore = await cookies()
 
   return createServerClient(supabaseUrl, supabaseAnonKey, {

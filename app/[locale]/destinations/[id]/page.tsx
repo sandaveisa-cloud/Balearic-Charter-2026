@@ -52,11 +52,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const destinationName = destination.name || destination.title || 'Destination'
   
-  // Get localized description
+  // Get localized description - use description_en/es/de columns (not description_i18n)
   const getLocalizedDescription = (dest: typeof destination, loc: string): string => {
-    const i18nDesc = getLocalizedText((dest as any).description_i18n, loc as 'en' | 'es' | 'de')
-    if (i18nDesc) return i18nDesc
-    
+    // Use description_en, description_es, description_de columns (not description_i18n JSONB)
     switch (loc) {
       case 'es':
         return dest.description_es || dest.description || ''

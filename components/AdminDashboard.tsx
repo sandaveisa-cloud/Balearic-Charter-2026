@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { Users, Ship, Image as ImageIcon, Euro, Clock, Mail, Phone } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
 import type { BookingInquiry, Fleet } from '@/types/database'
 
@@ -47,244 +46,63 @@ export default function AdminDashboard() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true)
-      console.log('[Dashboard] Starting data fetch...')
+      console.log('[Dashboard] Starting data fetch via admin API...')
 
-      // Check Supabase environment variables
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      
-      if (!supabaseUrl || !supabaseAnonKey) {
-        console.error('[Dashboard] ❌ CRITICAL: Supabase environment variables are missing!')
-        console.error('[Dashboard] NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl ? '✅ Set' : '❌ Missing')
-        console.error('[Dashboard] NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? '✅ Set' : '❌ Missing')
-        setLoading(false)
-        return
-      }
-
-      // CRITICAL: Check if user session exists before fetching data
-      // This ensures RLS policies work correctly
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      
-      if (sessionError) {
-        console.error('[Dashboard] ❌ Session error:', sessionError)
-        console.error('[Dashboard] This may cause RLS to block access')
-      }
-      
-      if (!session) {
-        console.warn('[Dashboard] ⚠️ No active session found - RLS may block access')
-        console.warn('[Dashboard] User may need to log in again')
-      } else {
-        console.log('[Dashboard] ✅ Active session found for user:', session.user.email)
-      }
-
-      // Fetch all data in parallel with timeout protection
-      // Use Promise.allSettled to ensure we always get results, even if one fails
-      const [inquiriesSettled, fleetSettled] = await Promise.allSettled([
-        supabase.from('booking_inquiries').select('*'),
-        supabase.from('fleet').select('id, gallery_images, low_season_price, medium_season_price, high_season_price'),
+      // Use admin API routes that bypass RLS using service role key
+      const [statsResponse, inquiriesResponse] = await Promise.all([
+        fetch('/api/admin/stats'),
+        fetch('/api/admin/inquiries'),
       ])
 
-      // Extract results from settled promises
-      const inquiriesResult = inquiriesSettled.status === 'fulfilled' 
-        ? inquiriesSettled.value 
-        : { data: null, error: { message: inquiriesSettled.reason?.message || 'Failed to fetch inquiries' } }
-      
-      const fleetResult = fleetSettled.status === 'fulfilled'
-        ? fleetSettled.value
-        : { data: null, error: { message: fleetSettled.reason?.message || 'Failed to fetch fleet' } }
-
-      // CRITICAL DEBUG: Log raw results immediately
-      console.log('[Dashboard] 🔍 RAW RESULTS:')
-      console.log('[Dashboard] inquiriesSettled.status:', inquiriesSettled.status)
-      console.log('[Dashboard] inquiriesResult:', inquiriesResult)
-      console.log('[Dashboard] inquiriesResult.data:', inquiriesResult.data)
-      console.log('[Dashboard] inquiriesResult.error:', inquiriesResult.error)
-      console.log('[Dashboard] inquiriesResult.data type:', typeof inquiriesResult.data)
-      console.log('[Dashboard] inquiriesResult.data is array:', Array.isArray(inquiriesResult.data))
-      if (inquiriesResult.data) {
-        console.log('[Dashboard] inquiriesResult.data.length:', inquiriesResult.data.length)
-        console.log('[Dashboard] First inquiry:', inquiriesResult.data[0])
+      // Check if responses are OK
+      if (!statsResponse.ok) {
+        const errorData = await statsResponse.json().catch(() => ({}))
+        console.error('[Dashboard] ❌ Error fetching stats:', statsResponse.status, errorData)
+        throw new Error(`Failed to fetch stats: ${statsResponse.status}`)
       }
 
-      // CRITICAL: Detailed error logging for RLS and permission issues
-      if (inquiriesResult.error) {
-        const err = inquiriesResult.error as any; // Mēs pasakām TS, lai neuztraucas par tipiem šeit
-        console.error('[Dashboard] ❌ Error fetching inquiries:', err)
-        console.error('[Dashboard] Error code:', err.code)
-        console.error('[Dashboard] Error message:', err.message)
-        console.error('[Dashboard] Error details:', err.details)
-        console.error('[Dashboard] Error hint:', err.hint)
-        
-        // Check for RLS (Row Level Security) errors
-        if (err.code === 'PGRST116' || err.message?.includes('permission denied') || err.message?.includes('RLS')) {
-          console.error('[Dashboard] 🚨 RLS ERROR DETECTED: Row Level Security is blocking access to booking_inquiries table')
-          console.error('[Dashboard] This usually means:')
-          console.error('[Dashboard] 1. RLS policies are not set up correctly')
-          console.error('[Dashboard] 2. User session is not authenticated properly')
-          console.error('[Dashboard] 3. RLS policies do not allow SELECT for authenticated users')
-        }
-      }
-      
-      if (fleetResult.error) {
-        const err = fleetResult.error as any; // Mēs pasakām TS, lai neuztraucas par tipiem šeit
-        console.error('[Dashboard] ❌ Error fetching fleet:', err)
-        console.error('[Dashboard] Error code:', err.code)
-        console.error('[Dashboard] Error message:', err.message)
-        console.error('[Dashboard] Error details:', err.details)
-        console.error('[Dashboard] Error hint:', err.hint)
-        
-        // Check for RLS errors
-        if (err.code === 'PGRST116' || err.message?.includes('permission denied') || err.message?.includes('RLS')) {
-          console.error('[Dashboard] 🚨 RLS ERROR DETECTED: Row Level Security is blocking access to fleet table')
-        }
+      if (!inquiriesResponse.ok) {
+        const errorData = await inquiriesResponse.json().catch(() => ({}))
+        console.error('[Dashboard] ❌ Error fetching inquiries:', inquiriesResponse.status, errorData)
+        throw new Error(`Failed to fetch inquiries: ${inquiriesResponse.status}`)
       }
 
-      // Calculate stats - if data is null due to error, use 0 immediately
-      const totalInquiries = (inquiriesResult.data && !inquiriesResult.error) ? inquiriesResult.data.length : 0
-      const fleetSize = (fleetResult.data && !fleetResult.error) ? fleetResult.data.length : 0
-      
-      // Log success/failure
-      if (inquiriesResult.error) {
-        console.warn('[Dashboard] ⚠️ Using default value 0 for inquiries due to error')
-      } else {
-        console.log('[Dashboard] ✅ Successfully fetched', totalInquiries, 'inquiries')
-      }
-      
-      if (fleetResult.error) {
-        console.warn('[Dashboard] ⚠️ Using default value 0 for fleet due to error')
-      } else {
-        console.log('[Dashboard] ✅ Successfully fetched', fleetSize, 'fleet items')
-      }
+      // Parse responses
+      const statsData = await statsResponse.json()
+      const inquiriesData = await inquiriesResponse.json()
 
-      // Calculate gallery images
-      let galleryImages = 0
-      fleetResult.data?.forEach((yacht: any) => {
-        if (yacht.gallery_images && Array.isArray(yacht.gallery_images)) {
-          galleryImages += yacht.gallery_images.length
-        }
-        // Also count main_image_url if it exists
-        // (Note: main_image_url is not in gallery_images, so we count it separately if needed)
+      console.log('[Dashboard] ✅ Stats data received:', statsData)
+      console.log('[Dashboard] ✅ Inquiries data received:', inquiriesData)
+      console.log('[Dashboard] Total inquiries:', inquiriesData.total || 0)
+      console.log('[Dashboard] Inquiries array length:', inquiriesData.inquiries?.length || 0)
+
+      // Set stats from API response
+      setStats(statsData.stats || {
+        totalInquiries: 0,
+        fleetSize: 0,
+        galleryImages: 0,
+        revenuePotential: 0,
       })
 
-      // Calculate revenue potential
-      // Estimate based on average price and number of inquiries
-      let revenuePotential = 0
-      if (inquiriesResult.data && !inquiriesResult.error && fleetResult.data && !fleetResult.error) {
-        inquiriesResult.data.forEach((inquiry: any) => {
-          if (inquiry.start_date && inquiry.end_date) {
-            // Find the yacht for this inquiry
-            const yacht = fleetResult.data.find((y: any) => y.id === inquiry.yacht_id)
-            if (yacht) {
-              const yachtData = yacht as any
-              // Calculate days
-              const start = new Date(inquiry.start_date)
-              const end = new Date(inquiry.end_date)
-              const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
-
-              // Determine season and use average price
-              const avgPrice =
-                ((yachtData.low_season_price || 0) +
-                  (yachtData.medium_season_price || 0) +
-                  (yachtData.high_season_price || 0)) /
-                3
-
-              // Estimate: base price + 30% APA + 21% tax
-              const basePrice = avgPrice * days
-              const estimatedTotal = basePrice * 1.51 // 1 + 0.30 (APA) + 0.21 (tax)
-              revenuePotential += estimatedTotal
-            }
-          }
-        })
-      }
-
-      // Fetch recent inquiries with yacht names - only if we have data
-      console.log('[Dashboard] Raw inquiries data:', inquiriesResult.data)
-      console.log('[Dashboard] Inquiries error:', inquiriesResult.error)
-      console.log('[Dashboard] Has data:', !!inquiriesResult.data)
-      console.log('[Dashboard] Data length:', inquiriesResult.data?.length || 0)
+      // Get recent inquiries (already sorted and with yacht names from API)
+      const recentInquiriesList = (inquiriesData.inquiries || [])
+        .slice(0, 5) // Take top 5 most recent
       
-      const recentInquiriesData = (inquiriesResult.data && !inquiriesResult.error)
-        ? (inquiriesResult.data as any[])
-            .sort((a: any, b: any) => {
-              const dateA = new Date(a.created_at).getTime()
-              const dateB = new Date(b.created_at).getTime()
-              return dateB - dateA
-            })
-            .slice(0, 5)
-        : []
-      
-      console.log('[Dashboard] Recent inquiries after sort/slice:', recentInquiriesData.length, 'items')
-      console.log('[Dashboard] Recent inquiries data:', recentInquiriesData)
-
-      // Fetch yacht names for inquiries with timeout protection
-      // Use Promise.allSettled to ensure all inquiries are processed even if some fail
-      const inquiriesWithYachtsSettled = await Promise.allSettled(
-        recentInquiriesData.map(async (inquiry: any) => {
-          if (inquiry.yacht_id) {
-            try {
-              const { data: yachtData, error: yachtError } = await supabase
-                .from('fleet')
-                .select('name, boat_name')
-                .eq('id', inquiry.yacht_id)
-                .single()
-
-              if (yachtError) {
-                console.error('[Dashboard] Error fetching yacht:', yachtError)
-              }
-
-              return {
-                ...inquiry,
-                yacht_name: (yachtData as any)?.name || (yachtData as any)?.boat_name || 'Unknown Yacht',
-              }
-            } catch (error) {
-              console.error('[Dashboard] Error in yacht fetch:', error)
-              return {
-                ...inquiry,
-                yacht_name: 'Unknown Yacht',
-              }
-            }
-          }
-          return {
-            ...inquiry,
-            yacht_name: 'No Yacht Selected',
-          }
-        })
-      )
-
-      // Extract successful results, use fallback for failed ones
-      const inquiriesWithYachts = inquiriesWithYachtsSettled.map((settled, index) => {
-        if (settled.status === 'fulfilled') {
-          return settled.value
-        }
-        // If a promise failed, return the original inquiry with default yacht name
-        return {
-          ...recentInquiriesData[index],
-          yacht_name: 'Unknown Yacht',
-        }
-      })
-
-      setStats({
-        totalInquiries,
-        fleetSize,
-        galleryImages,
-        revenuePotential,
-      })
-      
-      console.log('[Dashboard] Setting recentInquiries with', inquiriesWithYachts.length, 'items')
-      console.log('[Dashboard] Recent inquiries details:', inquiriesWithYachts.map(i => ({
+      console.log('[Dashboard] Setting recentInquiries with', recentInquiriesList.length, 'items')
+      console.log('[Dashboard] Recent inquiries details:', recentInquiriesList.map((i: any) => ({
         id: i.id,
         name: i.name,
         email: i.email,
         yacht_name: i.yacht_name
       })))
       
-      setRecentInquiries(inquiriesWithYachts)
+      setRecentInquiries(recentInquiriesList)
       
       // CRITICAL: Set loading to false immediately after setting data
       // Don't wait for timeout - if we have data (even if empty), show it
       setLoading(false)
       console.log('[Dashboard] ✅ Data fetch completed, loading set to false')
-      console.log('[Dashboard] Final state - totalInquiries:', totalInquiries, 'recentInquiries:', inquiriesWithYachts.length)
+      console.log('[Dashboard] Final state - totalInquiries:', statsData.stats?.totalInquiries || 0, 'recentInquiries:', recentInquiriesList.length)
     } catch (error) {
       console.error('[Dashboard] ❌ CRITICAL ERROR in fetchDashboardData:', error)
       console.error('[Dashboard] Error type:', error instanceof Error ? error.constructor.name : typeof error)
