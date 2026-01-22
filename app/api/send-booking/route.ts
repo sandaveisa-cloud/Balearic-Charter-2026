@@ -319,7 +319,7 @@ export async function POST(request: NextRequest) {
     let clientEmailResult: { error?: any } | null = null
     if (resend) {
       clientEmailResult = await resend.emails.send({
-      from: 'Balearic & Costa Blanca Charters <onboarding@resend.dev>',
+      from: 'Peter Sutter - Wide Dream <onboarding@resend.dev>',
       to: body.email,
       subject: `Your Charter Booking Offer - ${body.yachtName}`,
       html: `
@@ -332,14 +332,16 @@ export async function POST(request: NextRequest) {
               .container { max-width: 600px; margin: 0 auto; padding: 20px; }
               .header { background: linear-gradient(135deg, #002366 0%, #D4AF37 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
               .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
-              .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+              .footer { text-align: center; margin-top: 20px; padding: 20px; background: #f0f0f0; border-radius: 4px; color: #666; font-size: 12px; line-height: 1.8; }
+              .footer a { color: #002366; text-decoration: none; }
+              .footer a:hover { text-decoration: underline; }
               .button { display: inline-block; background: #002366; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; margin-top: 20px; }
             </style>
           </head>
           <body>
             <div class="container">
               <div class="header">
-                <h1>Balearic & Costa Blanca Charters</h1>
+                <h1>Wide Dream</h1>
                 <p>Premium Yacht Charter Services</p>
               </div>
               <div class="content">
@@ -352,10 +354,12 @@ export async function POST(request: NextRequest) {
                 <p>Our team will review your request and contact you shortly to confirm availability and finalize the details.</p>
                 <p>If you have any questions, please don't hesitate to contact us:</p>
                 <p><strong>Phone:</strong> +34 680 957 096</p>
-                <p>Best regards,<br>Balearic & Costa Blanca Charters Team</p>
+                <p>Best regards,<br>Peter Sutter<br>Wide Dream</p>
               </div>
               <div class="footer">
-                <p>Balearic & Costa Blanca Charters | +34 680 957 096</p>
+                <p><strong>Manager:</strong> Peter Sutter</p>
+                <p><strong>Phone:</strong> +34 680 957 096</p>
+                <p><strong>Website:</strong> <a href="https://widedream.es">https://widedream.es</a></p>
               </div>
             </div>
           </body>
@@ -385,7 +389,7 @@ export async function POST(request: NextRequest) {
       console.log('[API] Sending admin notification...')
       // Note: For production, replace with your verified domain (e.g., noreply@yourdomain.com)
       notificationEmailResult = await resend.emails.send({
-      from: 'Balearic & Costa Blanca Charters <onboarding@resend.dev>',
+      from: 'Peter Sutter - Wide Dream <onboarding@resend.dev>',
       to: 'peter.sutter@gmail.com',
       subject: `New Booking Inquiry: ${body.yachtName} - ${body.name}`,
       html: `
@@ -400,6 +404,9 @@ export async function POST(request: NextRequest) {
               .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px; }
               .info-box { background: white; padding: 15px; margin: 10px 0; border-left: 4px solid #D4AF37; }
               .label { font-weight: bold; color: #002366; }
+              .footer { text-align: center; margin-top: 20px; padding: 20px; background: #f0f0f0; border-radius: 4px; color: #666; font-size: 12px; line-height: 1.8; }
+              .footer a { color: #002366; text-decoration: none; }
+              .footer a:hover { text-decoration: underline; }
             </style>
           </head>
           <body>
@@ -430,6 +437,11 @@ export async function POST(request: NextRequest) {
                 </div>
                 ${body.message ? `<div class="info-box"><p><span class="label">Client Message:</span></p><p>${body.message.replace(/\n/g, '<br>')}</p></div>` : ''}
                 ${inquiry ? `<p style="margin-top: 20px; color: #666; font-size: 12px;">Inquiry ID: ${(inquiry as any)?.id || 'N/A'}</p>` : ''}
+              </div>
+              <div class="footer">
+                <p><strong>Manager:</strong> Peter Sutter</p>
+                <p><strong>Phone:</strong> +34 680 957 096</p>
+                <p><strong>Website:</strong> <a href="https://widedream.es">https://widedream.es</a></p>
               </div>
             </div>
           </body>
