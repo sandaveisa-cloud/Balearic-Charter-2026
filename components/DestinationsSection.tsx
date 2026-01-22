@@ -1,11 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import OptimizedImage from './OptimizedImage'
 import Link from 'next/link'
 import { useLocale } from 'next-intl'
 import { useTranslations } from 'next-intl'
-import { ArrowRight } from 'lucide-react'
 
 interface Destination {
   id: string
@@ -29,89 +27,81 @@ interface DestinationsSectionProps {
 
 interface DestinationCardProps {
   destinationName: string
-  region: string | null | undefined
   description: string
   imageUrl: string | null
   destinationSlug: string
   locale: string
-  t: (key: string) => string
+  tags?: string[]
 }
 
 function DestinationCard({
   destinationName,
-  region,
   description,
   imageUrl,
   destinationSlug,
   locale,
-  t,
+  tags = [],
 }: DestinationCardProps) {
-  // Extract first 2-3 sentences for highlights (premium magazine style)
-  const getHighlights = (text: string): string => {
-    if (!text) return ''
-    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0)
-    return sentences.slice(0, 2).join('. ').trim() + (sentences.length > 2 ? '...' : '')
+  // Default images from Unsplash if no image provided
+  const defaultImages: Record<string, string> = {
+    'ibiza': 'https://images.unsplash.com/photo-1512753360425-42468305c10a?auto=format&fit=crop&q=80&w=800',
+    'formentera': 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&q=80&w=800',
+    'mallorca': 'https://images.unsplash.com/photo-1559494489-91880915ba31?auto=format&fit=crop&q=80&w=800',
+    'menorca': 'https://images.unsplash.com/photo-1544033527-b192daee1f5b?auto=format&fit=crop&q=80&w=800',
+    'costa blanca': 'https://images.unsplash.com/photo-1590001158193-790f3c6f443a?auto=format&fit=crop&q=80&w=800',
   }
 
-  const highlights = getHighlights(description)
+  const imageSrc = imageUrl || defaultImages[destinationName.toLowerCase()] || null
 
   return (
     <Link
       href={`/${locale}/destinations/${destinationSlug}`}
-      className="group relative block bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-luxury-gold/50"
+      className="group cursor-pointer"
     >
-      {/* Image Container - Premium Magazine Style */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-        {imageUrl ? (
+      {/* Image Container */}
+      <div className="relative overflow-hidden rounded-sm h-64 shadow-sm transition-shadow hover:shadow-xl">
+        {imageSrc ? (
           <OptimizedImage
-            src={imageUrl}
+            src={imageSrc}
             alt={destinationName}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             objectFit="cover"
             aspectRatio="4/3"
             loading="lazy"
-            quality={90}
-            className="group-hover:scale-105 transition-transform duration-700 ease-out"
+            quality={85}
+            className="transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-luxury-blue/10 to-luxury-gold/10">
-            <span className="text-3xl font-serif font-bold text-gray-400">{destinationName}</span>
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+            <span className="text-2xl font-semibold text-slate-600">{destinationName}</span>
           </div>
         )}
         
-        {/* Subtle overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/0 via-transparent to-transparent group-hover:from-black/5 transition-all duration-500" />
+        {/* Overlay that darkens on hover */}
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
+        
+        {/* Destination Name Overlay */}
+        <div className="absolute bottom-6 left-6 text-white">
+          <h3 className="text-2xl font-semibold mb-1">{destinationName}</h3>
+        </div>
       </div>
 
-      {/* Content - Clean and Elegant */}
-      <div className="p-6 md:p-8">
-        {/* Region Badge - Subtle */}
-        {region && (
-          <div className="mb-3">
-            <span className="inline-block px-3 py-1 bg-luxury-gold/10 text-luxury-gold text-xs font-semibold uppercase tracking-wider rounded-full border border-luxury-gold/20">
-              {region}
-            </span>
+      {/* Content Below Image */}
+      <div className="mt-4">
+        <p className="text-slate-600 leading-relaxed mb-3">{description}</p>
+        {tags.length > 0 && (
+          <div className="flex gap-2 flex-wrap">
+            {tags.map(tag => (
+              <span 
+                key={tag} 
+                className="text-[10px] uppercase tracking-widest text-slate-400 border border-slate-200 px-2 py-1"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
         )}
-
-        {/* Destination Name - Elegant Typography */}
-        <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#0F172A] mb-4 group-hover:text-luxury-blue transition-colors duration-300">
-          {destinationName}
-        </h3>
-
-        {/* Highlights - Short and Premium */}
-        {highlights && (
-          <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6 line-clamp-3">
-            {highlights}
-          </p>
-        )}
-
-        {/* Explore Link - Elegant CTA */}
-        <div className="inline-flex items-center gap-2 text-luxury-blue font-semibold text-sm uppercase tracking-wider group-hover:gap-3 transition-all duration-300">
-          <span>{t('exploreRoutes') || 'Explore'}</span>
-          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-        </div>
       </div>
     </Link>
   )
@@ -156,38 +146,51 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
     }
   }
 
+  // Map destination names to tags (can be extended with database field later)
+  const getDestinationTags = (destinationName: string): string[] => {
+    const name = destinationName.toLowerCase()
+    const tagMap: Record<string, string[]> = {
+      'ibiza': ['Beach Clubs', 'Luxury', 'Nightlife'],
+      'formentera': ['Crystal Water', 'Nature', 'Relax'],
+      'mallorca': ['Calas', 'Culture', 'Sailing'],
+      'menorca': ['Peaceful', 'Unspoiled', 'Eco'],
+      'costa blanca': ['Sun', 'Coastal Towns', 'Local Vibe'],
+    }
+    return tagMap[name] || []
+  }
+
   return (
-    <section className="py-20 md:py-24 bg-white">
-      <div className="container mx-auto px-4 max-w-7xl">
-        {/* Section Header - Elegant and Minimal */}
-        <div className="text-center mb-16 md:mb-20">
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-[#0F172A] mb-4 md:mb-6">
+    <section className="bg-white py-20 px-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-light text-slate-900 mb-4 tracking-wide uppercase">
             {t('title') || 'Exclusive Destinations'}
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            {t('subtitle') || 'Discover the Mediterranean\'s most captivating coastlines and hidden gems'}
+          <p className="text-slate-500 max-w-2xl mx-auto italic">
+            {t('subtitle') || 'Explore the most beautiful locations in the Mediterranean from the deck of our premium fleet.'}
           </p>
         </div>
 
-        {/* Premium Grid Layout - Clean and Elegant */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        {/* Destinations Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {activeDestinations.map((destination) => {
             const destinationImage = getDestinationImage(destination)
             const imageUrl = destinationImage || null
             const destinationName = getDestinationName(destination)
             const description = getLocalizedDescription(destination)
             const destinationSlug = destination.slug || destination.id
+            const tags = getDestinationTags(destinationName)
 
             return (
               <DestinationCard
                 key={destination.id}
                 destinationName={destinationName}
-                region={destination.region}
                 description={description}
                 imageUrl={imageUrl}
                 destinationSlug={destinationSlug}
                 locale={locale}
-                t={t}
+                tags={tags}
               />
             )
           })}
