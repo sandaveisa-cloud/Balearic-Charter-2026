@@ -45,13 +45,35 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
       .eq('is_active', true)
       .order('order_index', { ascending: true })
     if (destinationsResult.error) {
-      console.error('[Data] Error fetching destinations:', destinationsResult.error)
+      console.error('[Data] ❌ Error fetching destinations:', destinationsResult.error)
+      console.error('[Data] Error code:', destinationsResult.error.code)
+      console.error('[Data] Error message:', destinationsResult.error.message)
+      console.error('[Data] Error hint:', destinationsResult.error.hint)
+      // Check if error is due to missing column
+      if (destinationsResult.error.message?.includes('youtube_video_url') || 
+          destinationsResult.error.message?.includes('column') ||
+          destinationsResult.error.code === '42703') {
+        console.error('[Data] 🚨 CRITICAL: youtube_video_url column may not exist in database!')
+        console.error('[Data] Please run: ALTER TABLE destinations ADD COLUMN IF NOT EXISTS youtube_video_url TEXT;')
+      }
       destinationsResult = { data: [], error: null }
     } else {
-      console.log('[Data] destinations fetched:', destinationsResult.data?.length || 0, 'items')
+      console.log('[Data] ✅ destinations fetched:', destinationsResult.data?.length || 0, 'items')
+      // Log sample data to verify youtube_video_url is being fetched
+      if (destinationsResult.data && destinationsResult.data.length > 0) {
+        const sample = destinationsResult.data[0] as any
+        console.log('[Data] Sample destination:', {
+          id: sample.id,
+          title: sample.title,
+          has_youtube_video_url: !!sample.youtube_video_url,
+          youtube_video_url: sample.youtube_video_url || '(null)',
+        })
+      }
     }
   } catch (error) {
-    console.error('[Data] Exception fetching destinations:', error)
+    console.error('[Data] ❌ Exception fetching destinations:', error)
+    console.error('[Data] Error type:', error instanceof Error ? error.constructor.name : typeof error)
+    console.error('[Data] Error message:', error instanceof Error ? error.message : String(error))
     destinationsResult = { data: [], error: null }
   }
 

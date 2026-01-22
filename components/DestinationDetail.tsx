@@ -369,11 +369,11 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
       </main>
 
       {/* Video Modal */}
-      {youtubeVideoId && (
+      {youtubeVideoId && destination.youtube_video_url && (
         <VideoModal
           isOpen={isVideoModalOpen}
           onClose={() => setIsVideoModalOpen(false)}
-          videoUrl={destination.youtube_video_url || ''}
+          videoUrl={destination.youtube_video_url}
           title={destinationName}
         />
       )}
