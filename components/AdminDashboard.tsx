@@ -93,16 +93,30 @@ export default function AdminDashboard() {
         ? fleetSettled.value
         : { data: null, error: { message: fleetSettled.reason?.message || 'Failed to fetch fleet' } }
 
+      // CRITICAL DEBUG: Log raw results immediately
+      console.log('[Dashboard] 🔍 RAW RESULTS:')
+      console.log('[Dashboard] inquiriesSettled.status:', inquiriesSettled.status)
+      console.log('[Dashboard] inquiriesResult:', inquiriesResult)
+      console.log('[Dashboard] inquiriesResult.data:', inquiriesResult.data)
+      console.log('[Dashboard] inquiriesResult.error:', inquiriesResult.error)
+      console.log('[Dashboard] inquiriesResult.data type:', typeof inquiriesResult.data)
+      console.log('[Dashboard] inquiriesResult.data is array:', Array.isArray(inquiriesResult.data))
+      if (inquiriesResult.data) {
+        console.log('[Dashboard] inquiriesResult.data.length:', inquiriesResult.data.length)
+        console.log('[Dashboard] First inquiry:', inquiriesResult.data[0])
+      }
+
       // CRITICAL: Detailed error logging for RLS and permission issues
       if (inquiriesResult.error) {
-        console.error('[Dashboard] ❌ Error fetching inquiries:', inquiriesResult.error)
-        console.error('[Dashboard] Error code:', inquiriesResult.error.code)
-        console.error('[Dashboard] Error message:', inquiriesResult.error.message)
-        console.error('[Dashboard] Error details:', inquiriesResult.error.details)
-        console.error('[Dashboard] Error hint:', inquiriesResult.error.hint)
+        const err = inquiriesResult.error as any; // Mēs pasakām TS, lai neuztraucas par tipiem šeit
+        console.error('[Dashboard] ❌ Error fetching inquiries:', err)
+        console.error('[Dashboard] Error code:', err.code)
+        console.error('[Dashboard] Error message:', err.message)
+        console.error('[Dashboard] Error details:', err.details)
+        console.error('[Dashboard] Error hint:', err.hint)
         
         // Check for RLS (Row Level Security) errors
-        if (inquiriesResult.error.code === 'PGRST116' || inquiriesResult.error.message?.includes('permission denied') || inquiriesResult.error.message?.includes('RLS')) {
+        if (err.code === 'PGRST116' || err.message?.includes('permission denied') || err.message?.includes('RLS')) {
           console.error('[Dashboard] 🚨 RLS ERROR DETECTED: Row Level Security is blocking access to booking_inquiries table')
           console.error('[Dashboard] This usually means:')
           console.error('[Dashboard] 1. RLS policies are not set up correctly')
@@ -112,14 +126,15 @@ export default function AdminDashboard() {
       }
       
       if (fleetResult.error) {
-        console.error('[Dashboard] ❌ Error fetching fleet:', fleetResult.error)
-        console.error('[Dashboard] Error code:', fleetResult.error.code)
-        console.error('[Dashboard] Error message:', fleetResult.error.message)
-        console.error('[Dashboard] Error details:', fleetResult.error.details)
-        console.error('[Dashboard] Error hint:', fleetResult.error.hint)
+        const err = fleetResult.error as any; // Mēs pasakām TS, lai neuztraucas par tipiem šeit
+        console.error('[Dashboard] ❌ Error fetching fleet:', err)
+        console.error('[Dashboard] Error code:', err.code)
+        console.error('[Dashboard] Error message:', err.message)
+        console.error('[Dashboard] Error details:', err.details)
+        console.error('[Dashboard] Error hint:', err.hint)
         
         // Check for RLS errors
-        if (fleetResult.error.code === 'PGRST116' || fleetResult.error.message?.includes('permission denied') || fleetResult.error.message?.includes('RLS')) {
+        if (err.code === 'PGRST116' || err.message?.includes('permission denied') || err.message?.includes('RLS')) {
           console.error('[Dashboard] 🚨 RLS ERROR DETECTED: Row Level Security is blocking access to fleet table')
         }
       }
@@ -183,6 +198,11 @@ export default function AdminDashboard() {
       }
 
       // Fetch recent inquiries with yacht names - only if we have data
+      console.log('[Dashboard] Raw inquiries data:', inquiriesResult.data)
+      console.log('[Dashboard] Inquiries error:', inquiriesResult.error)
+      console.log('[Dashboard] Has data:', !!inquiriesResult.data)
+      console.log('[Dashboard] Data length:', inquiriesResult.data?.length || 0)
+      
       const recentInquiriesData = (inquiriesResult.data && !inquiriesResult.error)
         ? (inquiriesResult.data as any[])
             .sort((a: any, b: any) => {
@@ -192,6 +212,9 @@ export default function AdminDashboard() {
             })
             .slice(0, 5)
         : []
+      
+      console.log('[Dashboard] Recent inquiries after sort/slice:', recentInquiriesData.length, 'items')
+      console.log('[Dashboard] Recent inquiries data:', recentInquiriesData)
 
       // Fetch yacht names for inquiries with timeout protection
       // Use Promise.allSettled to ensure all inquiries are processed even if some fail
@@ -246,12 +269,22 @@ export default function AdminDashboard() {
         galleryImages,
         revenuePotential,
       })
+      
+      console.log('[Dashboard] Setting recentInquiries with', inquiriesWithYachts.length, 'items')
+      console.log('[Dashboard] Recent inquiries details:', inquiriesWithYachts.map(i => ({
+        id: i.id,
+        name: i.name,
+        email: i.email,
+        yacht_name: i.yacht_name
+      })))
+      
       setRecentInquiries(inquiriesWithYachts)
       
       // CRITICAL: Set loading to false immediately after setting data
       // Don't wait for timeout - if we have data (even if empty), show it
       setLoading(false)
       console.log('[Dashboard] ✅ Data fetch completed, loading set to false')
+      console.log('[Dashboard] Final state - totalInquiries:', totalInquiries, 'recentInquiries:', inquiriesWithYachts.length)
     } catch (error) {
       console.error('[Dashboard] ❌ CRITICAL ERROR in fetchDashboardData:', error)
       console.error('[Dashboard] Error type:', error instanceof Error ? error.constructor.name : typeof error)
@@ -383,6 +416,13 @@ export default function AdminDashboard() {
           <div className="text-center py-12 text-gray-500">
             <Mail className="w-12 h-12 mx-auto mb-4 text-gray-300" />
             <p>No inquiries yet</p>
+            {/* Debug info - remove after fixing */}
+            {process.env.NODE_ENV === 'development' && (
+              <p className="text-xs text-gray-400 mt-2">
+                Debug: recentInquiries.length = {recentInquiries.length}, 
+                stats.totalInquiries = {stats.totalInquiries}
+              </p>
+            )}
           </div>
         ) : (
           <div className="space-y-4">
