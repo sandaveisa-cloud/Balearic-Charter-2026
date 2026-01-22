@@ -3,8 +3,7 @@
 import { useState, FormEvent } from 'react'
 import { useTranslations } from 'next-intl'
 import { Send, CheckCircle2, ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
-import { useLocale } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 
 interface ContactFormProps {
   onSubmit?: (data: { name: string; email: string; phone: string; message: string }) => Promise<void>
@@ -12,7 +11,6 @@ interface ContactFormProps {
 
 export default function ContactForm({ onSubmit }: ContactFormProps) {
   const t = useTranslations('contact')
-  const locale = useLocale()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -73,7 +71,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
           {t('successMessage') || 'We have received your message and will get back to you shortly.'}
         </p>
         <Link
-          href={`/${locale}`}
+          href="/"
           className="inline-flex items-center gap-2 px-6 py-3 bg-luxury-blue text-white font-semibold rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300"
         >
           <ArrowLeft className="w-5 h-5" />

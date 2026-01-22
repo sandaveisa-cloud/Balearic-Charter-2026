@@ -2,12 +2,10 @@
 
 import { useTranslations } from 'next-intl'
 import { Shield, Database, Lock, Mail, FileText } from 'lucide-react'
-import Link from 'next/link'
-import { useLocale } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 
 export default function PrivacyPolicy() {
   const t = useTranslations('privacy')
-  const locale = useLocale()
 
   return (
     <article className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white py-16">
@@ -140,7 +138,7 @@ export default function PrivacyPolicy() {
         {/* Back to Home Link */}
         <div className="mt-8 text-center">
           <Link
-            href={`/${locale}`}
+            href="/"
             className="inline-flex items-center gap-2 px-6 py-3 bg-luxury-blue text-white font-semibold rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300"
           >
             {t('backToHome')}

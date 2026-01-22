@@ -13,7 +13,7 @@ import WeatherForecast from './WeatherForecast'
 import TideMoonInfo from './TideMoonInfo'
 import HighlightsGallery from './HighlightsGallery'
 import { ArrowLeft, Play, MapPin, Navigation, Calendar, Ship, Sparkles } from 'lucide-react'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import type { Destination } from '@/types/database'
 
 interface DestinationDetailProps {
@@ -140,7 +140,7 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
         {/* Back Button */}
         <div className="absolute top-4 left-4 z-20">
           <Link
-            href={`/${locale}/#destinations`}
+            href="/"
             className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-lg hover:bg-white/30 transition-all"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -168,14 +168,14 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
               {/* CTA Buttons */}
               <div className="flex gap-3 pointer-events-auto">
                 <Link
-                  href={`/${locale}/#fleet`}
+                  href="/"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-luxury-gold text-luxury-blue font-bold rounded-lg hover:bg-white hover:text-luxury-blue transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   <Ship className="w-5 h-5" />
                   <span>{t('viewFleet') || 'View Our Fleet'}</span>
                 </Link>
                 <Link
-                  href={`/${locale}/#contact`}
+                  href="/"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm text-white font-bold rounded-lg hover:bg-white hover:text-luxury-blue transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border border-white/30"
                 >
                   <Navigation className="w-5 h-5" />
@@ -198,14 +198,14 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
-              href={`/${locale}/#fleet`}
+              href="/"
               className="inline-flex items-center gap-2 px-8 py-4 bg-luxury-gold text-luxury-blue font-bold text-lg rounded-lg hover:bg-luxury-blue hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <Ship className="w-6 h-6" />
               <span>{t('viewFleet') || 'View Our Fleet'}</span>
             </Link>
             <Link
-              href={`/${locale}/#contact`}
+              href="/"
               className="inline-flex items-center gap-2 px-8 py-4 bg-luxury-blue text-white font-bold text-lg rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <Navigation className="w-6 h-6" />
@@ -371,7 +371,7 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
       {/* Back Navigation Section - Prominent button before footer */}
       <div className="mt-20 mb-12 flex justify-center">
         <Link
-          href={`/${locale}`}
+          href="/"
           className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-luxury-blue via-luxury-gold to-luxury-blue text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
         >
           <span className="relative z-10 flex items-center gap-2">
