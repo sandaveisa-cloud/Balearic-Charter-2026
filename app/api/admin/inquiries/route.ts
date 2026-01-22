@@ -48,9 +48,11 @@ export async function GET(request: NextRequest) {
     // Map yacht names to inquiries
     const inquiriesWithYachts = (inquiries || []).map((inquiry: any) => {
       const yacht = fleet?.find((y: any) => y.id === inquiry.yacht_id)
+      // Type casting to fix TypeScript error
+      const yachtData = yacht as any
       return {
         ...inquiry,
-        yacht_name: yacht?.name || yacht?.boat_name || 'Unknown Yacht',
+        yacht_name: yachtData?.name || yachtData?.boat_name || 'Unknown Yacht',
       }
     })
 
