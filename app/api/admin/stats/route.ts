@@ -99,23 +99,53 @@ export async function GET(request: NextRequest) {
                 // Only add if estimatedTotal is valid
                 if (!isNaN(estimatedTotal) && estimatedTotal > 0) {
                   revenuePotential += estimatedTotal
+                  
+                  // Push success details
+                  revenueCalculationDetails.push({
+                    inquiry_id: (inquiry as any).id,
+                    yacht_id: (inquiry as any).yacht_id,
+                    days,
+                    avgPrice,
+                    basePrice,
+                    estimatedTotal,
+                    hasPrices: prices.length > 0,
+                    lowPrice,
+                    mediumPrice,
+                    highPrice,
+                  })
+                } else {
+                  // Invalid estimatedTotal
+                  revenueCalculationDetails.push({
+                    inquiry_id: (inquiry as any).id,
+                    yacht_id: (inquiry as any).yacht_id,
+                    days,
+                    avgPrice,
+                    basePrice,
+                    estimatedTotal: 0,
+                    reason: 'Invalid estimatedTotal calculation',
+                    hasPrices: prices.length > 0,
+                    lowPrice,
+                    mediumPrice,
+                    highPrice,
+                  })
                 }
+              } else {
+                // Invalid basePrice
+                revenueCalculationDetails.push({
+                  inquiry_id: (inquiry as any).id,
+                  yacht_id: (inquiry as any).yacht_id,
+                  days,
+                  avgPrice,
+                  basePrice: 0,
+                  reason: 'Invalid basePrice calculation',
+                  hasPrices: prices.length > 0,
+                  lowPrice,
+                  mediumPrice,
+                  highPrice,
+                })
               }
-            }
-              
-              revenueCalculationDetails.push({
-                inquiry_id: (inquiry as any).id,
-                yacht_id: (inquiry as any).yacht_id,
-                days,
-                avgPrice,
-                basePrice: avgPrice * days,
-                estimatedTotal: (avgPrice * days) * 1.51,
-                hasPrices: prices.length > 0,
-                lowPrice,
-                mediumPrice,
-                highPrice,
-              })
             } else {
+              // Invalid avgPrice or days
               revenueCalculationDetails.push({
                 inquiry_id: (inquiry as any).id,
                 yacht_id: (inquiry as any).yacht_id,
