@@ -1,4 +1,4 @@
-﻿import createNextIntlPlugin from 'next-intl/plugin';
+import createNextIntlPlugin from 'next-intl/plugin';
 
 // next-intl App Router request config
 // See: https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing
@@ -25,6 +25,11 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: '**.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '**',
       },
     ],
     // Enable automatic image optimization

@@ -217,7 +217,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                             className="flex items-center gap-2 text-xs font-semibold text-gray-600 hover:text-luxury-blue transition-colors w-full"
                           >
                             <span className="uppercase tracking-wide">
-                              {t('extras') || 'Extras Included'} ({yachtExtras.length})
+                              Extras Included ({yachtExtras.length})
                             </span>
                             {isExtrasExpanded ? (
                               <ChevronUp className="w-3 h-3" />
@@ -227,12 +227,33 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                           </button>
                           {isExtrasExpanded && (
                             <ul className="mt-2 space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
-                              {yachtExtras.map((extra, idx) => (
-                                <li key={idx} className="flex items-start gap-2 text-xs text-gray-600">
-                                  <span className="text-luxury-gold mt-0.5">•</span>
-                                  <span>{extra}</span>
-                                </li>
-                              ))}
+                              {yachtExtras.map((extra, idx) => {
+                                // Try to translate the extra using fleet.extras.{key} path
+                                // If extra is a key like "efoil", "snorkel", etc., use translation
+                                // Otherwise, display the extra as-is
+                                const extraKey = typeof extra === 'string' ? extra.toLowerCase().trim() : String(extra);
+                                let translatedExtra = extra;
+                                
+                                try {
+                                  // Try to get translation for fleet.extras.{key}
+                                  const translationKey = `extras.${extraKey}`;
+                                  const translation = t(translationKey as any);
+                                  // Check if translation was found (not the same as the key path)
+                                  if (translation && translation !== `fleet.${translationKey}`) {
+                                    translatedExtra = translation;
+                                  }
+                                } catch (error) {
+                                  // If translation fails, use original value
+                                  translatedExtra = extra;
+                                }
+                                
+                                return (
+                                  <li key={idx} className="flex items-start gap-2 text-xs text-gray-600">
+                                    <span className="text-luxury-gold mt-0.5">•</span>
+                                    <span>{translatedExtra}</span>
+                                  </li>
+                                );
+                              })}
                             </ul>
                           )}
                         </div>
