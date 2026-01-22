@@ -44,13 +44,22 @@ export default function SeasonalPriceCalculator({
 }: SeasonalPriceCalculatorProps) {
   const [showApaTooltip, setShowApaTooltip] = useState(false)
 
-  // Determine season based on month (1-12)
-  const determineSeason = (month: number): 'low' | 'medium' | 'high' => {
-    // HIGH SEASON: July (7) and August (8)
+  // Determine season based on month (1-12) and day
+  // Updated seasonality:
+  // Low Season: Nov 1 to May 1 (Nov=11, Dec=12, Jan=1, Feb=2, Mar=3, Apr=4, May=5 but only until May 1)
+  // Medium Season: June (6) and transition months (May after May 1, Sept before Sept 1)
+  // High Season: July (7) to Sept 1 (Aug=8, Sept=9 but only until Sept 1)
+  const determineSeason = (month: number, day: number = 1): 'low' | 'medium' | 'high' => {
+    // HIGH SEASON: July (7) to August (8), and September (9) until Sept 1
     if (month === 7 || month === 8) return 'high'
-    // MEDIUM SEASON: June (6) and September (9)
-    if (month === 6 || month === 9) return 'medium'
-    // LOW SEASON: All other months
+    if (month === 9 && day <= 1) return 'high'
+    
+    // MEDIUM SEASON: June (6), May after May 1, and September after Sept 1
+    if (month === 6) return 'medium'
+    if (month === 5 && day > 1) return 'medium'
+    if (month === 9 && day > 1) return 'medium'
+    
+    // LOW SEASON: All other months (Nov, Dec, Jan, Feb, Mar, Apr, May until May 1)
     return 'low'
   }
 
@@ -98,7 +107,8 @@ export default function SeasonalPriceCalculator({
     const currentDate = new Date(startDate)
     while (currentDate <= endDate) {
       const month = currentDate.getMonth() + 1 // getMonth() returns 0-11
-      const season = determineSeason(month)
+      const day = currentDate.getDate() // getDate() returns 1-31
+      const season = determineSeason(month, day)
       seasonDays[season]++
       currentDate.setDate(currentDate.getDate() + 1)
     }
@@ -110,14 +120,19 @@ export default function SeasonalPriceCalculator({
     Object.entries(seasonDays).forEach(([season, days]) => {
       if (days > 0) {
         const pricePerDay = seasonPrices[season as 'low' | 'medium' | 'high']
-        const subtotal = pricePerDay ? pricePerDay * days : 0
-        baseCharterFee += subtotal
-        breakdown.push({
-          season: season.charAt(0).toUpperCase() + season.slice(1),
-          days,
-          pricePerDay,
-          subtotal,
-        })
+        // Ensure pricePerDay is a valid number, default to 0 if null/undefined
+        const price = (pricePerDay && !isNaN(Number(pricePerDay))) ? Number(pricePerDay) : 0
+        const subtotal = price * days
+        // Only add if subtotal is valid
+        if (!isNaN(subtotal) && subtotal >= 0) {
+          baseCharterFee += subtotal
+          breakdown.push({
+            season: season.charAt(0).toUpperCase() + season.slice(1),
+            days,
+            pricePerDay: price > 0 ? price : null,
+            subtotal,
+          })
+        }
       }
     })
 
@@ -128,18 +143,29 @@ export default function SeasonalPriceCalculator({
 
     const pricePerDay = getSeasonPrice(primarySeason)
 
-    // Calculate additional costs
-    const taxAmount = baseCharterFee * ((taxPercentage || 21) / 100)
-    const apaAmount = baseCharterFee * ((apaPercentage || 30) / 100)
-    const fixedFees = (crewServiceFee || 0) + (cleaningFee || 0)
-    const totalEstimate = baseCharterFee + taxAmount + apaAmount + fixedFees
+    // Calculate additional costs - ensure all values are valid numbers
+    const taxPct = Number(taxPercentage) || 21
+    const apaPct = Number(apaPercentage) || 30
+    const crewFee = Number(crewServiceFee) || 0
+    const cleanFee = Number(cleaningFee) || 0
+    
+    // Ensure baseCharterFee is valid before calculations
+    const baseFee = Number(baseCharterFee) || 0
+    const taxAmount = baseFee * (taxPct / 100)
+    const apaAmount = baseFee * (apaPct / 100)
+    const fixedFees = crewFee + cleanFee
+    // Ensure all values are valid numbers before calculating total
+    const totalEstimate = baseFee + (Number(taxAmount) || 0) + (Number(apaAmount) || 0) + (Number(fixedFees) || 0)
+    
+    // Final validation - ensure no NaN values
+    const finalTotal = isNaN(totalEstimate) ? 0 : totalEstimate
 
     const result: PriceBreakdown = {
-      baseCharterFee,
-      taxAmount,
-      apaAmount,
-      fixedFees,
-      totalEstimate,
+      baseCharterFee: baseFee,
+      taxAmount: Number(taxAmount) || 0,
+      apaAmount: Number(apaAmount) || 0,
+      fixedFees: Number(fixedFees) || 0,
+      totalEstimate: finalTotal,
       days,
       pricePerDay,
       primarySeason,

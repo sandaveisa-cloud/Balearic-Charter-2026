@@ -91,13 +91,19 @@ export default function AdminDashboard() {
         console.error('[Dashboard] Full inquiriesData:', inquiriesData)
       }
 
-      // Set stats from API response
-      const stats = statsData.stats || {
-        totalInquiries: 0,
-        fleetSize: 0,
-        galleryImages: 0,
-        revenuePotential: 0,
+      // Set stats from API response - ensure all values are numbers and handle null/undefined
+      const stats = {
+        totalInquiries: Number(statsData.stats?.totalInquiries) || 0,
+        fleetSize: Number(statsData.stats?.fleetSize) || 0,
+        galleryImages: Number(statsData.stats?.galleryImages) || 0,
+        revenuePotential: Number(statsData.stats?.revenuePotential) || 0,
       }
+      
+      // Ensure no NaN values
+      if (isNaN(stats.totalInquiries)) stats.totalInquiries = 0
+      if (isNaN(stats.fleetSize)) stats.fleetSize = 0
+      if (isNaN(stats.galleryImages)) stats.galleryImages = 0
+      if (isNaN(stats.revenuePotential)) stats.revenuePotential = 0
       
       console.log('[Dashboard] Setting stats:', stats)
       setStats(stats)

@@ -76,51 +76,67 @@ export async function GET(request: NextRequest) {
             const end = new Date(inquiry.end_date)
             const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
 
-            // Type casting to fix TypeScript error
+            // Type casting to fix TypeScript error - ensure robust null/0 handling
             const y = yacht as any
-            const lowPrice = parseFloat(y.low_season_price) || 0
-            const mediumPrice = parseFloat(y.medium_season_price) || 0
-            const highPrice = parseFloat(y.high_season_price) || 0
+            // Use Number() with || 0 fallback to handle null, undefined, empty string, etc.
+            const lowPrice = Number(y.low_season_price) || 0
+            const mediumPrice = Number(y.medium_season_price) || 0
+            const highPrice = Number(y.high_season_price) || 0
             
             // Calculate average price (only count non-zero prices)
-            const prices = [lowPrice, mediumPrice, highPrice].filter(p => p > 0)
+            // This ensures we never crash if all prices are null/0
+            const prices = [lowPrice, mediumPrice, highPrice].filter(p => p > 0 && !isNaN(p))
             const avgPrice = prices.length > 0 
               ? prices.reduce((sum, p) => sum + p, 0) / prices.length
               : 0
 
-            if (avgPrice > 0 && days > 0) {
+            // Ensure days is valid and > 0, and avgPrice is valid number
+            if (avgPrice > 0 && !isNaN(avgPrice) && days > 0 && !isNaN(days)) {
               const basePrice = avgPrice * days
-              const estimatedTotal = basePrice * 1.51 // 1 + 0.30 (APA) + 0.21 (tax)
-              revenuePotential += estimatedTotal
+              // Ensure basePrice is valid before calculating total
+              if (!isNaN(basePrice) && basePrice > 0) {
+                const estimatedTotal = basePrice * 1.51 // 1 + 0.30 (APA) + 0.21 (tax)
+                // Only add if estimatedTotal is valid
+                if (!isNaN(estimatedTotal) && estimatedTotal > 0) {
+                  revenuePotential += estimatedTotal
+                }
+              }
+            }
               
               revenueCalculationDetails.push({
-                inquiry_id: inquiry.id,
-                yacht_id: inquiry.yacht_id,
+                inquiry_id: (inquiry as any).id,
+                yacht_id: (inquiry as any).yacht_id,
                 days,
                 avgPrice,
-                basePrice,
-                estimatedTotal,
+                basePrice: avgPrice * days,
+                estimatedTotal: (avgPrice * days) * 1.51,
                 hasPrices: prices.length > 0,
+                lowPrice,
+                mediumPrice,
+                highPrice,
               })
             } else {
               revenueCalculationDetails.push({
-                inquiry_id: inquiry.id,
-                yacht_id: inquiry.yacht_id,
+                inquiry_id: (inquiry as any).id,
+                yacht_id: (inquiry as any).yacht_id,
                 days,
                 avgPrice: 0,
                 reason: avgPrice === 0 ? 'No prices set for yacht' : 'Invalid date range',
+                lowPrice,
+                mediumPrice,
+                highPrice,
               })
             }
           } else {
             revenueCalculationDetails.push({
-              inquiry_id: inquiry.id,
-              yacht_id: inquiry.yacht_id,
+              inquiry_id: (inquiry as any).id,
+              yacht_id: (inquiry as any).yacht_id,
               reason: 'Yacht not found in fleet',
             })
           }
         } else {
           revenueCalculationDetails.push({
-            inquiry_id: inquiry.id,
+            inquiry_id: (inquiry as any).id,
             reason: 'Missing start_date or end_date',
           })
         }
