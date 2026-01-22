@@ -58,13 +58,32 @@ export default async function middleware(request: NextRequest) {
       // Create Supabase client
       const supabase = createSupabaseMiddlewareClient(request, response)
       
-      // Check for active user session - STRICT CHECK
-      const { data: { user }, error } = await supabase.auth.getUser()
+      // First check session to refresh it, then verify user
+      // This ensures cookies are properly refreshed before checking user
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      
+      // CRITICAL: IF NO SESSION - BLOCK ACCESS IMMEDIATELY
+      if (sessionError || !session) {
+        console.log('[Middleware] ❌ SECURITY BLOCK: No active session found for admin route')
+        console.log('[Middleware] Error:', sessionError?.message || 'No session')
+        
+        // Admin uses 'en' locale for login redirect (hardcoded)
+        const locale = defaultLocale
+
+        // IMMEDIATE REDIRECT to login - do not allow any admin access
+        const loginUrl = new URL(`/${locale}/login`, request.url)
+        loginUrl.searchParams.set('redirect', pathname)
+        console.log('[Middleware] 🔄 SECURITY REDIRECT to login:', loginUrl.toString())
+        return NextResponse.redirect(loginUrl)
+      }
+
+      // Verify user from session
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
 
       // CRITICAL: IF NO USER OR ERROR - BLOCK ACCESS IMMEDIATELY
-      if (error || !user || !user.id) {
-        console.log('[Middleware] ❌ SECURITY BLOCK: No authenticated user found for admin route')
-        console.log('[Middleware] Error:', error?.message || 'No user')
+      if (userError || !user || !user.id) {
+        console.log('[Middleware] ❌ SECURITY BLOCK: User verification failed for admin route')
+        console.log('[Middleware] Error:', userError?.message || 'No user')
         
         // Admin uses 'en' locale for login redirect (hardcoded)
         const locale = defaultLocale

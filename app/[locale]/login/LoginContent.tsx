@@ -36,23 +36,27 @@ export default function LoginContent() {
           const targetPath = redirectPath || '/admin'
           if (targetPath.includes('/login') || targetPath.includes('/signup')) {
             console.log('[Login] Redirect path is login page, using /admin instead')
-            window.location.href = '/admin'
+            setHasRedirected(true)
+            // Use longer delay to ensure cookies are fully propagated
+            setTimeout(() => {
+              window.location.href = '/admin'
+            }, 500)
             return
           }
           console.log('[Login] Session found, redirecting to:', targetPath)
           setHasRedirected(true)
           // Use hard navigation to prevent loops
-          // Small delay to ensure we don't conflict with form submission
+          // Longer delay to ensure cookies are fully propagated before redirect
           setTimeout(() => {
             window.location.href = targetPath
-          }, 100)
+          }, 500)
         }
       } catch (error) {
         console.error('[Login] Error checking session:', error)
       }
     }
     checkSession()
-  }, []) // Only run once on mount
+  }, [redirectPath]) // Include redirectPath in dependencies
 
   // Reset pending state when form action completes (state changes)
   useEffect(() => {
@@ -67,14 +71,17 @@ export default function LoginContent() {
       console.log('[Login] Success state detected, forcing navigation to /admin...')
       setHasRedirected(true)
       // Force hard navigation to bypass any server/middleware conflicts
-      // Delay to ensure cookies are fully set and propagated before redirect
-      // This prevents middleware from not seeing the session cookie
+      // Longer delay to ensure cookies are fully set and propagated before redirect
+      // This prevents middleware/layout from not seeing the session cookie
+      // Increased delay to 800ms to ensure proper cookie propagation
       setTimeout(() => {
         console.log('[Login] Executing redirect to /admin after cookie propagation delay')
-        window.location.href = '/admin'
-      }, 300) // 300ms delay to ensure cookies are set
+        // Use the redirectPath from URL params, or default to /admin
+        const targetPath = redirectPath || '/admin'
+        window.location.href = targetPath
+      }, 800) // 800ms delay to ensure cookies are fully propagated
     }
-  }, [state, hasRedirected])
+  }, [state, hasRedirected, redirectPath])
 
   return (
     <div className="w-full max-w-md">

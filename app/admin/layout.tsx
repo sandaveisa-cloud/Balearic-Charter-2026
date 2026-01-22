@@ -67,12 +67,26 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
   })
 
   // CRITICAL: Check for authenticated user on the server
-  const { data: { user }, error } = await supabase.auth.getUser()
+  // Use getSession first to refresh the session, then getUser
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+  
+  // If no session, redirect immediately (don't check getUser to avoid extra call)
+  if (sessionError || !session) {
+    console.log('[AdminLayout] SECURITY BLOCK: No active session found')
+    console.log('[AdminLayout] Error:', sessionError?.message || 'No session')
+    // Only redirect if not already on login page (prevent loops)
+    const loginUrl = `/${locale}/login?redirect=/admin`
+    console.log('[AdminLayout] Redirecting to:', loginUrl)
+    redirect(loginUrl)
+  }
+
+  // Verify user from session
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
 
   // HARD REDIRECT if no user or error
-  if (!user || error) {
-    console.log('[AdminLayout] SECURITY BLOCK: No authenticated user found')
-    console.log('[AdminLayout] Error:', error?.message || 'No user')
+  if (!user || userError) {
+    console.log('[AdminLayout] SECURITY BLOCK: User verification failed')
+    console.log('[AdminLayout] Error:', userError?.message || 'No user')
     redirect(`/${locale}/login?redirect=/admin`)
   }
 
