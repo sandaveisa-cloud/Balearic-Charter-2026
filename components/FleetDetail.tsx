@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { useTranslations, useLocale } from 'next-intl'
-import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles, Home, ChevronRight, Wind } from 'lucide-react'
+import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles, Home, ChevronRight, Wind, ArrowLeft } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils'
 import { getFleetBySlugs } from '@/lib/data'
@@ -773,8 +773,22 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
           </div>
         </div>
 
+        {/* Back Navigation Section - Prominent button before footer */}
+        <div className="mt-20 mb-12 flex justify-center">
+          <Link
+            href={`/${locale}`}
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-luxury-blue via-luxury-gold to-luxury-blue text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back to Home</span>
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-luxury-gold via-luxury-blue to-luxury-gold opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </Link>
+        </div>
+
         {/* Return to Overview Section */}
-        <div className="mt-20 mb-12 bg-gradient-to-br from-luxury-blue/5 via-luxury-gold/5 to-luxury-blue/5 rounded-2xl p-8 md:p-12 border border-luxury-gold/20">
+        <div className="mt-8 mb-12 bg-gradient-to-br from-luxury-blue/5 via-luxury-gold/5 to-luxury-blue/5 rounded-2xl p-8 md:p-12 border border-luxury-gold/20">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-luxury-blue mb-4">
               {tBreadcrumb('discoverMore')}

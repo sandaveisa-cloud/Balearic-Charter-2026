@@ -368,6 +368,20 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
         </div>
       </main>
 
+      {/* Back Navigation Section - Prominent button before footer */}
+      <div className="mt-20 mb-12 flex justify-center">
+        <Link
+          href={`/${locale}/destinations`}
+          className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-luxury-blue via-luxury-gold to-luxury-blue text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
+        >
+          <span className="relative z-10 flex items-center gap-2">
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Destinations</span>
+          </span>
+          <div className="absolute inset-0 bg-gradient-to-r from-luxury-gold via-luxury-blue to-luxury-gold opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        </Link>
+      </div>
+
       {/* Video Modal */}
       {youtubeVideoId && destination.youtube_video_url && (
         <VideoModal
