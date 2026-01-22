@@ -116,7 +116,14 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-gray-700 pt-8">
+        {/* Verification Badge */}
+        <div className="mt-8 pt-4 border-t border-gray-700">
+          <p className="text-xs text-gray-400 text-center mb-4">
+            ✓ 2026 Season | Verified & Logistically Synchronized
+          </p>
+        </div>
+
+        <div className="mt-4 border-t border-gray-700 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-gray-400">
             <p>&copy; {new Date().getFullYear()} {settings.company_name || 'Balearic & Costa Blanca Charters'}. {t('rights')}</p>
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm">

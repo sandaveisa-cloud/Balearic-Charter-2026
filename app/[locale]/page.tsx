@@ -172,20 +172,6 @@ export default async function Home({ params }: Props) {
                 settings={safeSettings}
               />
             )}
-            
-            {/* Final Trust Badge - Prominent at the end before footer */}
-            <section className="py-8 bg-gradient-to-r from-green-50 via-amber-50 to-green-50 border-t border-[#E2E8F0]">
-              <div className="container mx-auto px-4">
-                <div className="text-center">
-                  <p className="text-sm md:text-base font-semibold text-[#0F172A] mb-1">
-                    ✓ 2026 Season | Verified & Logistically Synchronized
-                  </p>
-                  <p className="text-xs text-[#475569]">
-                    Trusted by hundreds of satisfied guests across the Balearic Islands
-                  </p>
-                </div>
-              </div>
-            </section>
           </main>
           
           {/* Floating CTA Button */}
