@@ -129,10 +129,7 @@ export default function AdminDashboard() {
       
       setRecentInquiries(recentInquiriesList)
       
-      // CRITICAL: Set loading to false immediately after setting data
-      // Don't wait for timeout - if we have data (even if empty), show it
-      setLoading(false)
-      console.log('[Dashboard] ✅ Data fetch completed, loading set to false')
+      console.log('[Dashboard] ✅ Data fetch completed')
       console.log('[Dashboard] Final state - totalInquiries:', statsData.stats?.totalInquiries || 0, 'recentInquiries:', recentInquiriesList.length)
     } catch (error) {
       console.error('[Dashboard] ❌ CRITICAL ERROR in fetchDashboardData:', error)
@@ -148,7 +145,11 @@ export default function AdminDashboard() {
         revenuePotential: 0,
       })
       setRecentInquiries([])
-      setLoading(false) // Always set loading to false, even on error
+    } finally {
+      // CRITICAL: Always set loading to false, regardless of success or error
+      // This prevents infinite spinner and ensures UI is always responsive
+      setLoading(false)
+      console.log('[Dashboard] ✅ Loading set to false (finally block)')
     }
   }
 
