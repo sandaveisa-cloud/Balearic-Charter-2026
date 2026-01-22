@@ -10,6 +10,7 @@ import Footer from '@/components/Footer'
 import StickyHeader from '@/components/StickyHeader'
 import ScrollToTop from '@/components/ScrollToTop'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import ChatBot from '@/components/ChatBot'
 import ThemeProvider from '@/components/ThemeProvider'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -123,6 +124,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         {/* Floating Action Buttons */}
         <WhatsAppButton />
         <ScrollToTop />
+        <ChatBot />
         {/* FloatingCTA is added per-page (home page only) */}
       </NextIntlClientProvider>
     )
