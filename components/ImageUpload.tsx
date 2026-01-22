@@ -111,67 +111,79 @@ export default function ImageUpload({
     }
   }
 
+  // Normalize image URL for preview - handle both local paths and external URLs
+  const getPreviewUrl = (url: string | null) => {
+    if (!url) return null
+    // If it's already a full URL (http/https), use as-is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url
+    }
+    // If it's a local path starting with /, use as-is (Next.js will serve from public)
+    if (url.startsWith('/')) {
+      return url
+    }
+    // Otherwise, assume it's a relative path and prepend /
+    return url.startsWith('/') ? url : `/${url}`
+  }
+
+  const previewUrl = getPreviewUrl(preview)
+
   return (
     <div className="space-y-4">
       <label className="block text-sm font-medium text-gray-700 mb-2">
         Image
       </label>
 
-      {/* Current Image Preview */}
-      {preview && (
-        <div className="relative w-full max-w-md">
-          <div className="relative aspect-video rounded-lg overflow-hidden border border-gray-300 bg-gray-100">
-            <img
-              src={preview}
-              alt="Preview"
-              className="w-full h-full object-cover"
-              onError={() => setError('Failed to load image preview')}
-            />
+      {/* Manual Path/URL Input - Always visible */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          Image Path or URL
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={preview || ''}
+            onChange={(e) => {
+              const value = e.target.value.trim()
+              setPreview(value)
+              onImageUploaded(value)
+              setError(null) // Clear error when user types
+            }}
+            placeholder="/images/destinations/ibiza.jpg or https://..."
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+          />
+          {preview && (
             <button
               type="button"
               onClick={handleRemove}
-              className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-              title="Remove image"
+              className="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+              title="Clear image"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
-          </div>
-          {/* Replace Image Button */}
-          <div className="mt-2">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileSelect}
-              className="hidden"
-              id="image-replace"
-              disabled={uploading}
-            />
-            <label
-              htmlFor="image-replace"
-              className={`inline-flex items-center gap-2 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer ${
-                uploading ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-            >
-              {uploading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Uploading...
-                </>
-              ) : (
-                <>
-                  <Upload className="w-4 h-4" />
-                  Replace Image
-                </>
-              )}
-            </label>
-          </div>
+          )}
         </div>
-      )}
+        <p className="text-xs text-gray-500">
+          Enter a local path (e.g., <code className="bg-gray-100 px-1 rounded">/images/fleet/simona.jpg</code>) or a full URL (e.g., <code className="bg-gray-100 px-1 rounded">https://...</code>)
+        </p>
+      </div>
 
-      {/* Upload Area - Show when no preview or allow re-upload */}
-      {!preview && !uploading && (
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-luxury-blue transition-colors">
+      {/* Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">OR</span>
+        </div>
+      </div>
+
+      {/* Upload New Image Section */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          Upload New Image to Supabase
+        </label>
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-luxury-blue transition-colors bg-gray-50">
           <input
             ref={fileInputRef}
             type="file"
@@ -190,43 +202,52 @@ export default function ImageUpload({
             {uploading ? (
               <>
                 <Loader2 className="w-8 h-8 text-luxury-blue animate-spin" />
-                <span className="text-sm text-gray-600">Uploading...</span>
+                <span className="text-sm text-gray-600 font-medium">Uploading to Supabase...</span>
+                <span className="text-xs text-gray-500">Please wait</span>
               </>
             ) : (
               <>
                 <Upload className="w-8 h-8 text-gray-400" />
-                <span className="text-sm text-gray-600">
-                  Click to upload or drag and drop
+                <span className="text-sm text-gray-700 font-medium">
+                  Click to upload new image
                 </span>
                 <span className="text-xs text-gray-500">
-                  PNG, JPG, GIF up to 5MB
+                  PNG, JPG, GIF up to 5MB • Will be uploaded to fleet-images bucket
                 </span>
               </>
             )}
           </label>
         </div>
-      )}
-
-      {/* Manual URL/Path Input (Alternative) */}
-      <div>
-        <label className="block text-xs text-gray-500 mb-1">
-          Or enter image URL or local path (e.g., /images/my-image.jpg):
-        </label>
-        <input
-          type="text"
-          value={preview || ''}
-          onChange={(e) => {
-            const value = e.target.value
-            setPreview(value)
-            onImageUploaded(value)
-          }}
-          placeholder="https://... or /images/filename.jpg"
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
-        />
-        <p className="text-xs text-gray-400 mt-1">
-          Use local paths like /images/filename.jpg for files in the public folder, or full URLs for external images
-        </p>
       </div>
+
+      {/* Current Image Preview */}
+      {previewUrl && (
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Preview
+          </label>
+          <div className="relative w-full max-w-md">
+            <div className="relative aspect-video rounded-lg overflow-hidden border border-gray-300 bg-gray-100">
+              <img
+                src={previewUrl}
+                alt="Preview"
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  setError('Failed to load image preview. Please check the path or URL.')
+                  const target = e.target as HTMLImageElement
+                  target.style.display = 'none'
+                }}
+                onLoad={() => {
+                  setError(null) // Clear error if image loads successfully
+                }}
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Current: <code className="bg-gray-100 px-1 rounded text-xs">{preview}</code>
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Error Message */}
       {error && (
