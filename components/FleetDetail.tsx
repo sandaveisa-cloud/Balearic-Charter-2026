@@ -400,7 +400,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
           <ol className="flex items-center space-x-2 text-sm text-gray-600">
             <li>
               <Link 
-                href={`/${locale}`}
+                href="/"
                 className="flex items-center hover:text-luxury-blue transition-colors"
               >
                 <Home className="w-4 h-4 mr-1" />
@@ -412,7 +412,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
             </li>
             <li>
               <a 
-                href={`/${locale}#fleet`}
+                href="/"
                 className="hover:text-luxury-blue transition-colors"
               >
                 {tBreadcrumb('fleet')}

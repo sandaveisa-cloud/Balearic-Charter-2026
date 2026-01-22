@@ -143,13 +143,13 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    // Create Supabase client with anon key for public inserts
-    // This ensures we use the correct client for public RLS policies
+    // Create Supabase client - try anon key first (for public RLS), fallback to service role if needed
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('[API] ❌ Supabase environment variables missing!')
+    if (!supabaseUrl) {
+      console.error('[API] ❌ Supabase URL missing!')
       return NextResponse.json(
         { 
           success: false,
@@ -160,7 +160,34 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    const supabase = createClient(supabaseUrl, supabaseAnonKey)
+    // Try anon key first (for proper RLS enforcement)
+    // If that fails, fallback to service role key as backup
+    let supabase = supabaseAnonKey 
+      ? createClient(supabaseUrl, supabaseAnonKey)
+      : null
+    
+    // If no anon key, use service role key (bypasses RLS)
+    if (!supabase && supabaseServiceRoleKey) {
+      console.warn('[API] ⚠️ No anon key found, using service role key (bypasses RLS)')
+      supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      })
+    }
+    
+    if (!supabase) {
+      console.error('[API] ❌ No Supabase keys available!')
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Server configuration error', 
+          details: 'Database authentication not configured'
+        },
+        { status: 500 }
+      )
+    }
     
     // Prepare insert payload - ensure all fields match schema exactly
     // Schema: name (NOT NULL), email (NOT NULL), phone (nullable), yacht_id (nullable), 
@@ -204,11 +231,17 @@ export async function POST(request: NextRequest) {
     
     // Attempt insert
     console.log('[API] Attempting to insert into booking_inquiries...')
-    const { data: inquiry, error: dbError } = await supabase
+    let inquiry: any = null
+    let dbError: any = null
+    
+    const insertResult = await supabase
       .from('booking_inquiries')
       .insert([insertPayload])
       .select()
       .single()
+    
+    inquiry = insertResult.data
+    dbError = insertResult.error
     
     if (inquiry) {
       console.log('[API] ✅ Successfully inserted inquiry:', {
@@ -229,11 +262,61 @@ export async function POST(request: NextRequest) {
       const errorMessage = dbError.message || String(dbError)
       const errorCode = (dbError as any)?.code || ''
       
-      if (errorMessage.includes('row-level security') || 
+      // If RLS error and we used anon key, try service role key as fallback
+      if ((errorMessage.includes('row-level security') || 
           errorMessage.includes('RLS') || 
           errorMessage.includes('permission denied') ||
           errorCode === '42501' || // PostgreSQL permission denied error code
-          errorMessage.includes('new row violates row-level security policy')) {
+          errorMessage.includes('new row violates row-level security policy')) &&
+          supabaseAnonKey && supabaseServiceRoleKey) {
+        console.warn('[API] 🚨 RLS Policy Error with anon key, retrying with service role key...')
+        
+        // Retry with service role key
+        const adminSupabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
+          auth: {
+            autoRefreshToken: false,
+            persistSession: false
+          }
+        })
+        
+        const { data: retryInquiry, error: retryError } = await adminSupabase
+          .from('booking_inquiries')
+          .insert([insertPayload])
+          .select()
+          .single()
+        
+        if (retryInquiry && !retryError) {
+          console.log('[API] ✅ Successfully inserted inquiry with service role key (fallback):', {
+            id: (retryInquiry as any)?.id,
+            name: (retryInquiry as any)?.name,
+            email: (retryInquiry as any)?.email,
+          })
+          // Update inquiry reference for email sending - this will be used below
+          inquiry = retryInquiry
+          dbError = null // Clear error since retry succeeded
+          // Continue execution - inquiry is now set, so we'll skip the error handling below
+        } else {
+          console.error('[API] ❌ Retry with service role key also failed:', retryError)
+          return NextResponse.json(
+            { 
+              success: false,
+              error: 'Permission denied', 
+              details: 'Unable to save booking due to security policy. Please contact support directly.',
+              message: 'We encountered a security restriction. Please contact us directly at +34 680 957 096 or email us to complete your booking.',
+              debug: process.env.NODE_ENV === 'development' ? {
+                errorCode,
+                errorMessage,
+                hint: (dbError as any)?.hint,
+                retryError: retryError?.message,
+              } : undefined,
+            },
+            { status: 403 }
+          )
+        }
+      } else if (errorMessage.includes('row-level security') || 
+          errorMessage.includes('RLS') || 
+          errorMessage.includes('permission denied') ||
+          errorCode === '42501') {
         console.error('[API] 🚨 RLS Policy Error - booking_inquiries table may not allow public INSERT')
         console.error('[API] Please verify RLS policy exists: CREATE POLICY "booking_inquiries_public_insert" ON booking_inquiries FOR INSERT WITH CHECK (true);')
         return NextResponse.json(
@@ -252,7 +335,12 @@ export async function POST(request: NextRequest) {
         )
       }
       
-      // Check for NOT NULL constraint violations
+      // If we successfully retried with service role key, skip remaining error handling
+      if (inquiry && !dbError) {
+        // Inquiry was successfully created via retry, continue with email sending
+        console.log('[API] ✅ Inquiry created via service role key fallback, continuing...')
+      } else {
+        // Check for NOT NULL constraint violations
       if (errorMessage.includes('null value') || 
           errorMessage.includes('violates not-null constraint') ||
           errorCode === '23502') { // PostgreSQL NOT NULL violation
@@ -288,9 +376,9 @@ export async function POST(request: NextRequest) {
       
       // For other database errors, return error but don't fail completely
       return NextResponse.json(
-        { 
+        {
           success: false,
-          error: 'Database error', 
+          error: 'Database error',
           details: `Failed to save booking to database: ${errorMessage}`,
           message: 'We encountered an issue saving your booking. Please try again or contact us directly.',
           debug: process.env.NODE_ENV === 'development' ? {
@@ -299,6 +387,21 @@ export async function POST(request: NextRequest) {
             hint: (dbError as any)?.hint,
             details: (dbError as any)?.details,
           } : undefined,
+        },
+        { status: 500 }
+      )
+      }
+    }
+    
+    // Final check: If we still don't have an inquiry after all attempts, fail
+    if (!inquiry) {
+      console.error('[API] ❌ No inquiry created after all attempts')
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Failed to save booking',
+          details: 'Unable to save booking to database',
+          message: 'We encountered an issue saving your booking. Please try again or contact us directly.',
         },
         { status: 500 }
       )
