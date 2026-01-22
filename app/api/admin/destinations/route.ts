@@ -103,8 +103,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('[Admin API] ✅ Created destination:', data.id)
-    return NextResponse.json({ destination: data }, { status: 201 })
+    console.log('[Admin API] ✅ Created destination:', (data as any)?.id)
+    return NextResponse.json({ destination: data as any }, { status: 201 })
   } catch (error) {
     console.error('[Admin API] Unexpected error:', error)
     return NextResponse.json(
@@ -178,8 +178,8 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    console.log('[Admin API] ✅ Updated destination:', data.id)
-    return NextResponse.json({ destination: data })
+    console.log('[Admin API] ✅ Updated destination:', (data as any)?.id)
+    return NextResponse.json({ destination: data as any })
   } catch (error) {
     console.error('[Admin API] Unexpected error:', error)
     return NextResponse.json(
