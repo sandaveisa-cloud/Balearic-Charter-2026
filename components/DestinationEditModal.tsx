@@ -90,35 +90,36 @@ export default function DestinationEditModal({
     setSuccess(false)
 
     try {
-      const { supabase } = await import('@/lib/supabase')
-      const { data, error: supabaseError } = await supabase
-        .from('destinations')
-        // @ts-expect-error - Supabase type inference limitation with dynamic table upserts
-        .upsert(
-          {
-            ...(destination?.id && { id: destination.id }),
-            name: formData.name,
-            region: formData.region || null,
-            slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-'),
-            description: formData.description || null,
-            description_en: formData.description_en || null,
-            description_es: formData.description_es || null,
-            description_de: formData.description_de || null,
-            image_urls: formData.image_url ? [formData.image_url] : [],
-            youtube_video_url: formData.youtube_video_url || null,
-            order_index: formData.order_index,
-            is_active: formData.is_active,
-            updated_at: new Date().toISOString(),
-          },
-          {
-            onConflict: 'id',
-          }
-        )
-        .select()
-        .single()
+      const payload = {
+        ...(destination?.id && { id: destination.id }),
+        name: formData.name,
+        region: formData.region || null,
+        slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-'),
+        description: formData.description || null,
+        description_en: formData.description_en || null,
+        description_es: formData.description_es || null,
+        description_de: formData.description_de || null,
+        image_urls: formData.image_url ? [formData.image_url] : [],
+        youtube_video_url: formData.youtube_video_url || null,
+        order_index: formData.order_index,
+        is_active: formData.is_active,
+      }
 
-      if (supabaseError) {
-        throw supabaseError
+      // Use Admin API route with SERVICE_ROLE_KEY
+      const url = '/api/admin/destinations'
+      const method = destination?.id ? 'PUT' : 'POST'
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to save destination')
       }
 
       setSuccess(true)

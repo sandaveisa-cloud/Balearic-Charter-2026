@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { Plus, Edit, Trash2, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
 import DestinationEditModal from '@/components/DestinationEditModal'
 import type { Destination } from '@/types/database'
 
@@ -22,16 +21,15 @@ export default function DestinationsAdminPage() {
   const fetchDestinations = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('destinations')
-        .select('*')
-        .order('order_index', { ascending: true })
-
-      if (error) {
-        throw error
+      // Use Admin API route with SERVICE_ROLE_KEY
+      const response = await fetch('/api/admin/destinations')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch destinations')
       }
 
-      setDestinations(data || [])
+      const { destinations } = await response.json()
+      setDestinations(destinations || [])
     } catch (error) {
       console.error('[DestinationsAdmin] Error fetching:', error)
       setErrorMessage('Failed to load destinations')
@@ -57,10 +55,14 @@ export default function DestinationsAdminPage() {
 
     try {
       setDeletingId(id)
-      const { error } = await supabase.from('destinations').delete().eq('id', id)
+      // Use Admin API route with SERVICE_ROLE_KEY
+      const response = await fetch(`/api/admin/destinations?id=${id}`, {
+        method: 'DELETE',
+      })
 
-      if (error) {
-        throw error
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to delete destination')
       }
 
       setSuccessMessage('Destination deleted successfully')
@@ -68,7 +70,7 @@ export default function DestinationsAdminPage() {
       setTimeout(() => setSuccessMessage(null), 3000)
     } catch (error) {
       console.error('[DestinationsAdmin] Error deleting:', error)
-      setErrorMessage('Failed to delete destination')
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to delete destination')
       setTimeout(() => setErrorMessage(null), 3000)
     } finally {
       setDeletingId(null)
