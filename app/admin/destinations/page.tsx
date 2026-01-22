@@ -146,17 +146,25 @@ export default function DestinationsAdminPage() {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {destinations.map((destination) => {
+                  // Handle both Supabase URLs and local paths
                   const imageUrl = destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0
                     ? destination.image_urls[0]
+                    : null
+
+                  // Normalize image URL - handle both full URLs and local paths
+                  const normalizedImageUrl = imageUrl
+                    ? imageUrl.startsWith('/')
+                      ? imageUrl // Local path like /images/filename.jpg
+                      : imageUrl // Full URL
                     : null
 
                   return (
                     <tr key={destination.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
-                        {imageUrl ? (
+                        {normalizedImageUrl ? (
                           <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
                             <img
-                              src={imageUrl}
+                              src={normalizedImageUrl}
                               alt={destination.name || destination.title || 'Destination'}
                               className="w-full h-full object-cover"
                               onError={(e) => {

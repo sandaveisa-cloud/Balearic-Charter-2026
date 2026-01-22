@@ -207,21 +207,25 @@ export default function ImageUpload({
         </div>
       )}
 
-      {/* Manual URL Input (Alternative) */}
+      {/* Manual URL/Path Input (Alternative) */}
       <div>
         <label className="block text-xs text-gray-500 mb-1">
-          Or enter image URL manually:
+          Or enter image URL or local path (e.g., /images/my-image.jpg):
         </label>
         <input
-          type="url"
+          type="text"
           value={preview || ''}
           onChange={(e) => {
-            setPreview(e.target.value)
-            onImageUploaded(e.target.value)
+            const value = e.target.value
+            setPreview(value)
+            onImageUploaded(value)
           }}
-          placeholder="https://..."
+          placeholder="https://... or /images/filename.jpg"
           className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
         />
+        <p className="text-xs text-gray-400 mt-1">
+          Use local paths like /images/filename.jpg for files in the public folder, or full URLs for external images
+        </p>
       </div>
 
       {/* Error Message */}
