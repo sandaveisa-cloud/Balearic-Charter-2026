@@ -24,8 +24,9 @@ export async function GET(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
 
     // Fetch all destinations
-    const { data: destinations, error } = await supabase
-      .from('destinations' as any)
+    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
+    const { data: destinations, error } = await (supabase
+      .from('destinations' as any) as any)
       .select('*')
       .order('order_index', { ascending: true })
 

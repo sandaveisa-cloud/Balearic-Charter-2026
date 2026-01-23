@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Upload, X, Loader2, Image as ImageIcon } from 'lucide-react'
-import { createClient } from '@supabase/supabase-js'
+import { Upload, X, Loader2 } from 'lucide-react'
 
 interface ImageUploadProps {
   currentImageUrl?: string
@@ -27,17 +26,9 @@ export default function ImageUpload({
     setPreview(currentImageUrl || null)
   }, [currentImageUrl])
 
-  // Create Supabase client for storage operations
-  const getSupabaseClient = () => {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error('Supabase environment variables are not configured')
-    }
-
-    return createClient(supabaseUrl, supabaseAnonKey)
-  }
+  // Note: We now use the admin API route (/api/admin/upload-image) 
+  // which uses service_role key to bypass RLS, so we don't need
+  // a client-side Supabase client for uploads anymore
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -45,13 +36,13 @@ export default function ImageUpload({
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      setError('Please select an image file')
+      setError('Please select an image file (PNG, JPG, GIF, etc.)')
       return
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      setError('Image size must be less than 5MB')
+      setError('Image size must be less than 5MB. Please compress the image and try again.')
       return
     }
 
@@ -59,33 +50,29 @@ export default function ImageUpload({
     setUploading(true)
 
     try {
-      const supabase = getSupabaseClient()
+      // Use admin API route that bypasses RLS using service_role key
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('folder', folder)
+      formData.append('bucket', bucket)
 
-      // Generate unique filename
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-      const filePath = fileName
+      const response = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        body: formData,
+      })
 
-      // Upload file to Supabase storage
-      // @ts-ignore - Supabase storage types
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false,
-        })
-
-      if (uploadError) {
-        throw uploadError
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        const errorMessage = errorData.error || errorData.details || `Upload failed: ${response.status} ${response.statusText}`
+        throw new Error(errorMessage)
       }
 
-      // Get public URL
-      // @ts-ignore - Supabase storage types
-      const { data: urlData } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(filePath)
+      const data = await response.json()
+      const publicUrl = data.url
 
-      const publicUrl = urlData.publicUrl
+      if (!publicUrl) {
+        throw new Error('Server did not return image URL')
+      }
 
       // Update preview
       setPreview(publicUrl)
@@ -97,7 +84,18 @@ export default function ImageUpload({
       }
     } catch (err) {
       console.error('[ImageUpload] Error uploading:', err)
-      setError(err instanceof Error ? err.message : 'Failed to upload image')
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'Failed to upload image. Please check your connection and try again.'
+      
+      // Provide helpful error messages
+      if (errorMessage.includes('RLS') || errorMessage.includes('permission') || errorMessage.includes('policy')) {
+        setError('Storage permission error. Please ensure storage bucket RLS policies are configured correctly. Contact administrator.')
+      } else if (errorMessage.includes('size') || errorMessage.includes('5MB')) {
+        setError('Image is too large. Maximum size is 5MB. Please compress the image and try again.')
+      } else {
+        setError(errorMessage)
+      }
     } finally {
       setUploading(false)
     }

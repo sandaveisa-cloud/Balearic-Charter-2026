@@ -119,8 +119,9 @@ export default function DestinationEditModal({
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to save destination')
+        const errorData = await response.json().catch(() => ({}))
+        const errorMessage = errorData.error || errorData.details || `Failed to save destination: ${response.status} ${response.statusText}`
+        throw new Error(errorMessage)
       }
 
       setSuccess(true)
@@ -130,7 +131,18 @@ export default function DestinationEditModal({
       }, 1000)
     } catch (err) {
       console.error('[DestinationEditModal] Error saving:', err)
-      setError(err instanceof Error ? err.message : 'Failed to save destination')
+      const errorMessage = err instanceof Error 
+        ? err.message 
+        : 'Failed to save destination. Please check your connection and try again.'
+      
+      // Provide helpful error messages
+      if (errorMessage.includes('RLS') || errorMessage.includes('permission') || errorMessage.includes('policy')) {
+        setError('Database permission error. Please ensure RLS policies are configured correctly. Contact administrator.')
+      } else if (errorMessage.includes('500') || errorMessage.includes('Internal server')) {
+        setError('Server error. Please check that SUPABASE_SERVICE_ROLE_KEY is configured correctly.')
+      } else {
+        setError(errorMessage)
+      }
     } finally {
       setSaving(false)
     }
