@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 import { 
   LayoutDashboard, 
   Ship, 
-  MapPin, 
+  Globe, 
   UtensilsCrossed, 
   Users, 
   Contact, 
@@ -28,7 +28,7 @@ const navigation: NavItem[] = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Fleet', href: '/admin/fleet', icon: Ship },
   { name: 'Inquiries', href: '/admin/inquiries', icon: Mail },
-  { name: 'Destinations', href: '/admin/destinations', icon: MapPin },
+  { name: 'Destinations', href: '/admin/destinations', icon: Globe },
   { name: 'Culinary', href: '/admin/culinary', icon: UtensilsCrossed },
   { name: 'Gallery', href: '/admin/gallery', icon: ImageIcon },
   { name: 'Crew', href: '/admin/crew', icon: Users },
