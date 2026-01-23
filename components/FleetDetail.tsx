@@ -29,6 +29,18 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
   const tBreadcrumb = useTranslations('breadcrumb')
   const locale = useLocale()
   
+  // Scroll to booking section if URL has #booking anchor
+  useEffect(() => {
+    if (window.location.hash === '#booking') {
+      setTimeout(() => {
+        const bookingSection = document.getElementById('booking')
+        if (bookingSection) {
+          bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 100) // Small delay to ensure page is rendered
+    }
+  }, [])
+  
   useEffect(() => {
     console.log('[FleetDetail] Component loaded with yacht:', {
       id: yacht.id,
@@ -710,7 +722,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
           </div>
 
           {/* Booking Sidebar */}
-          <div className="lg:col-span-1">
+          <div id="booking" className="lg:col-span-1">
             <div className="sticky top-8 space-y-6">
               {/* Calendar - Date Selection */}
               <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">

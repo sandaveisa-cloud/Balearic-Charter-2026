@@ -304,8 +304,8 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                       {/* Thin Separator Line */}
                       <div className="mb-4 border-t border-gray-200"></div>
 
-                      {/* Unified Bottom: Price (if not shown above) and View Details Button */}
-                      <div className="mt-auto flex items-center justify-between gap-4">
+                      {/* Unified Bottom: Price (if not shown above) and Action Buttons */}
+                      <div className="mt-auto flex items-center justify-between gap-3">
                         {!startingPrice && (
                           <div className="flex items-baseline gap-1">
                             <span className="text-gray-600 text-xs">{t('from')} </span>
@@ -328,12 +328,30 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                             <span className="text-gray-600 text-xs">/{t('perDay')}</span>
                           </div>
                         )}
-                        <Link
-                          href={`/${locale}/fleet/${yacht.slug}`}
-                          className="ml-auto rounded-lg bg-luxury-blue px-6 py-2.5 text-white font-semibold text-sm transition-colors hover:bg-luxury-gold hover:text-luxury-blue whitespace-nowrap"
-                        >
-                          {t('viewDetails')}
-                        </Link>
+                        <div className="ml-auto flex gap-2">
+                          <Link
+                            href={`/${locale}/fleet/${yacht.slug}#booking`}
+                            className="rounded-lg bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue px-5 py-2.5 font-bold text-sm transition-all hover:shadow-lg hover:scale-105 whitespace-nowrap"
+                            onClick={(e) => {
+                              // If already on the page, scroll to booking section
+                              if (window.location.pathname === `/${locale}/fleet/${yacht.slug}`) {
+                                e.preventDefault()
+                                const bookingSection = document.getElementById('booking')
+                                if (bookingSection) {
+                                  bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                                }
+                              }
+                            }}
+                          >
+                            Reserve Now
+                          </Link>
+                          <Link
+                            href={`/${locale}/fleet/${yacht.slug}`}
+                            className="rounded-lg bg-luxury-blue px-5 py-2.5 text-white font-semibold text-sm transition-colors hover:bg-luxury-gold hover:text-luxury-blue whitespace-nowrap"
+                          >
+                            {t('viewDetails')}
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </div>

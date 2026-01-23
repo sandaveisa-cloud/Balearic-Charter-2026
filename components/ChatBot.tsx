@@ -218,12 +218,12 @@ export default function ChatBot() {
 
   return (
     <>
-      {/* Chat Bubble Button */}
+      {/* Chat Bubble Button - Primary position */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           className="fixed bottom-8 right-8 z-50 flex items-center justify-center w-16 h-16 bg-luxury-blue text-white rounded-full shadow-xl hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 hover:scale-110 group"
-          aria-label="Open chat"
+          aria-label="Open AI Assistant"
         >
           <span className="absolute inset-0 rounded-full bg-luxury-blue opacity-0 group-hover:opacity-75 group-hover:animate-ping transition-opacity duration-300"></span>
           <MessageCircle className="w-7 h-7 relative z-10" />

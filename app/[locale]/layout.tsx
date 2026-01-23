@@ -5,7 +5,6 @@ import { notFound } from 'next/navigation'
 import { locales } from '../../i18n'
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
-import Script from 'next/script'
 import '../globals.css'
 import Footer from '@/components/Footer'
 import StickyHeader from '@/components/StickyHeader'
@@ -111,21 +110,6 @@ export default async function LocaleLayout({ children, params }: Props) {
 
     return (
       <NextIntlClientProvider messages={messages}>
-        {/* Crisp Chat SDK */}
-        <Script id="crisp-chat" strategy="afterInteractive">
-          {`
-            window.$crisp=[];
-            window.CRISP_WEBSITE_ID="a7370889-8d70-4498-a493-dc3dc23eda8d";
-            (function(){
-              d=document;
-              s=d.createElement("script");
-              s.src="https://client.crisp.chat/l.js";
-              s.async=1;
-              d.getElementsByTagName("head")[0].appendChild(s);
-            })();
-          `}
-        </Script>
-        
         {/* Theme Provider - Applies dynamic theme colors */}
         <ThemeProvider />
         
@@ -137,10 +121,10 @@ export default async function LocaleLayout({ children, params }: Props) {
         </div>
         <Footer />
         
-        {/* Floating Action Buttons */}
-        <WhatsAppButton />
-        <ScrollToTop />
+        {/* Floating Action Buttons - Consolidated */}
+        {/* ChatBot includes WhatsApp integration, so we don't need separate WhatsAppButton */}
         <ChatBot />
+        <ScrollToTop />
         {/* FloatingCTA is added per-page (home page only) */}
       </NextIntlClientProvider>
     )
