@@ -20,37 +20,27 @@ export async function GET(request: NextRequest) {
     // Create admin client (bypasses RLS)
     const supabase = createSupabaseAdminClient()
 
-    // Fetch all data in parallel
+    // Fetch only required fields for stats calculation (optimized)
     // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
     const [inquiriesResult, fleetResult] = await Promise.all([
-      (supabase.from('booking_inquiries' as any) as any).select('*'),
-      (supabase.from('fleet' as any) as any).select('id, name, slug, gallery_images, low_season_price, medium_season_price, high_season_price'),
+      (supabase.from('booking_inquiries' as any) as any).select('id, start_date, end_date, yacht_id'),
+      (supabase.from('fleet' as any) as any).select('id, gallery_images, low_season_price, medium_season_price, high_season_price'),
     ])
 
     if (inquiriesResult.error) {
-      console.error('[Admin API] ❌ Error fetching inquiries:', inquiriesResult.error)
-      console.error('[Admin API] Error code:', inquiriesResult.error.code)
-      console.error('[Admin API] Error message:', inquiriesResult.error.message)
-    } else {
-      console.log('[Admin API] ✅ Fetched inquiries:', inquiriesResult.data?.length || 0, 'items')
+      console.error('[Admin API] Error fetching inquiries:', inquiriesResult.error.message)
+      return NextResponse.json(
+        { error: 'Failed to fetch inquiries', details: inquiriesResult.error.message },
+        { status: 500 }
+      )
     }
 
     if (fleetResult.error) {
-      console.error('[Admin API] ❌ Error fetching fleet:', fleetResult.error)
-      console.error('[Admin API] Error code:', fleetResult.error.code)
-      console.error('[Admin API] Error message:', fleetResult.error.message)
-    } else {
-      console.log('[Admin API] ✅ Fetched fleet:', fleetResult.data?.length || 0, 'items')
-      if (fleetResult.data && fleetResult.data.length > 0) {
-        console.log('[Admin API] ✅ Fleet prices loaded:')
-        fleetResult.data.forEach((yacht: any) => {
-          console.log('[Admin API]   -', yacht.name || yacht.slug || yacht.id, ':', {
-            low: yacht.low_season_price || 'null',
-            medium: yacht.medium_season_price || 'null',
-            high: yacht.high_season_price || 'null',
-          })
-        })
-      }
+      console.error('[Admin API] Error fetching fleet:', fleetResult.error.message)
+      return NextResponse.json(
+        { error: 'Failed to fetch fleet', details: fleetResult.error.message },
+        { status: 500 }
+      )
     }
 
     // Calculate stats
@@ -85,142 +75,33 @@ export async function GET(request: NextRequest) {
             const mediumPrice = Number(y.medium_season_price) || 0
             const highPrice = Number(y.high_season_price) || 0
             
-            // Log yacht info for verification
-            const yachtName = y.name || y.slug || y.id
-            console.log(`[Admin API] Calculating revenue for inquiry ${(inquiry as any).id} on yacht ${yachtName}:`, {
-              low_season_price: lowPrice,
-              medium_season_price: mediumPrice,
-              high_season_price: highPrice,
-              days,
-            })
-            
             // Calculate average price (only count non-zero prices)
-            // This ensures we never crash if all prices are null/0
             const prices = [lowPrice, mediumPrice, highPrice].filter(p => p > 0 && !isNaN(p))
             const avgPrice = prices.length > 0 
               ? prices.reduce((sum, p) => sum + p, 0) / prices.length
               : 0
-            
-            console.log(`[Admin API]   Average price calculated:`, {
-              validPrices: prices,
-              avgPrice,
-              pricesCount: prices.length,
-            })
 
-            // Ensure days is valid and > 0, and avgPrice is valid number
+            // Calculate revenue if valid
             if (avgPrice > 0 && !isNaN(avgPrice) && days > 0 && !isNaN(days)) {
               const basePrice = avgPrice * days
-              // Ensure basePrice is valid before calculating total
               if (!isNaN(basePrice) && basePrice > 0) {
                 const estimatedTotal = basePrice * 1.51 // 1 + 0.30 (APA) + 0.21 (tax)
-                // Only add if estimatedTotal is valid
                 if (!isNaN(estimatedTotal) && estimatedTotal > 0) {
                   revenuePotential += estimatedTotal
-                  
-                  // Push success details
-                  revenueCalculationDetails.push({
-                    inquiry_id: (inquiry as any).id,
-                    yacht_id: (inquiry as any).yacht_id,
-                    yacht_name: yachtName,
-                    days,
-                    avgPrice: Math.round(avgPrice * 100) / 100, // Round to 2 decimals
-                    basePrice: Math.round(basePrice * 100) / 100,
-                    estimatedTotal: Math.round(estimatedTotal * 100) / 100,
-                    hasPrices: prices.length > 0,
-                    lowPrice,
-                    mediumPrice,
-                    highPrice,
-                  })
-                  
-                  console.log(`[Admin API]   ✅ Revenue calculated:`, {
-                    yacht: yachtName,
-                    days,
-                    avgPrice: Math.round(avgPrice * 100) / 100,
-                    basePrice: Math.round(basePrice * 100) / 100,
-                    estimatedTotal: Math.round(estimatedTotal * 100) / 100,
-                  })
-                } else {
-                  // Invalid estimatedTotal
-                  revenueCalculationDetails.push({
-                    inquiry_id: (inquiry as any).id,
-                    yacht_id: (inquiry as any).yacht_id,
-                    days,
-                    avgPrice,
-                    basePrice,
-                    estimatedTotal: 0,
-                    reason: 'Invalid estimatedTotal calculation',
-                    hasPrices: prices.length > 0,
-                    lowPrice,
-                    mediumPrice,
-                    highPrice,
-                  })
                 }
-              } else {
-                // Invalid basePrice
-                revenueCalculationDetails.push({
-                  inquiry_id: (inquiry as any).id,
-                  yacht_id: (inquiry as any).yacht_id,
-                  days,
-                  avgPrice,
-                  basePrice: 0,
-                  reason: 'Invalid basePrice calculation',
-                  hasPrices: prices.length > 0,
-                  lowPrice,
-                  mediumPrice,
-                  highPrice,
-                })
               }
-            } else {
-              // Invalid avgPrice or days
-              revenueCalculationDetails.push({
-                inquiry_id: (inquiry as any).id,
-                yacht_id: (inquiry as any).yacht_id,
-                days,
-                avgPrice: 0,
-                reason: avgPrice === 0 ? 'No prices set for yacht' : 'Invalid date range',
-                lowPrice,
-                mediumPrice,
-                highPrice,
-              })
             }
-          } else {
-            revenueCalculationDetails.push({
-              inquiry_id: (inquiry as any).id,
-              yacht_id: (inquiry as any).yacht_id,
-              reason: 'Yacht not found in fleet',
-            })
           }
-        } else {
-          revenueCalculationDetails.push({
-            inquiry_id: (inquiry as any).id,
-            reason: 'Missing start_date or end_date',
-          })
         }
       })
     }
-    
-    console.log('[Admin API] 📊 Revenue calculation summary:', {
-      totalInquiries: inquiriesResult.data?.length || 0,
-      inquiriesWithDates: revenueCalculationDetails.filter(d => d.days).length,
-      inquiriesWithPrices: revenueCalculationDetails.filter(d => d.hasPrices).length,
-      revenuePotential: Math.round(revenuePotential * 100) / 100,
-      revenuePotentialFormatted: new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'EUR',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(revenuePotential),
-      details: revenueCalculationDetails.slice(0, 5), // Log first 5 for debugging
-    })
 
     const stats = {
       totalInquiries,
       fleetSize,
       galleryImages,
-      revenuePotential,
+      revenuePotential: Math.round(revenuePotential * 100) / 100,
     }
-    
-    console.log('[Admin API] ✅ Returning stats:', stats)
     
     return NextResponse.json({
       stats,

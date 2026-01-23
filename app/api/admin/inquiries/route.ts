@@ -21,64 +21,35 @@ export async function GET(request: NextRequest) {
     // Create admin client (bypasses RLS)
     const supabase = createSupabaseAdminClient()
 
-    // Fetch all inquiries
+    // Fetch inquiries with fleet data in parallel (optimized)
     // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { data: inquiries, error: inquiriesError } = await (supabase
-      .from('booking_inquiries' as any) as any)
-      .select('*')
-      .order('created_at', { ascending: false })
+    const [inquiriesResult, fleetResult] = await Promise.all([
+      (supabase.from('booking_inquiries' as any) as any)
+        .select('*')
+        .order('created_at', { ascending: false }),
+      (supabase.from('fleet' as any) as any)
+        .select('id, name, boat_name'),
+    ])
 
-    if (inquiriesError) {
-      console.error('[Admin API] ❌ Error fetching inquiries:', inquiriesError)
-      console.error('[Admin API] Error code:', inquiriesError.code)
-      console.error('[Admin API] Error message:', inquiriesError.message)
-      console.error('[Admin API] Error details:', inquiriesError.details)
-      console.error('[Admin API] Error hint:', inquiriesError.hint)
+    if (inquiriesResult.error) {
+      console.error('[Admin API] Error fetching inquiries:', inquiriesResult.error.message)
       return NextResponse.json(
-        { error: 'Failed to fetch inquiries', details: inquiriesError.message },
+        { error: 'Failed to fetch inquiries', details: inquiriesResult.error.message },
         { status: 500 }
       )
     }
 
-    console.log('[Admin API] ✅ Fetched inquiries:', inquiries?.length || 0, 'items')
-    if (inquiries && inquiries.length > 0) {
-      console.log('[Admin API] Sample inquiry:', {
-        id: (inquiries[0] as any).id,
-        name: (inquiries[0] as any).name,
-        email: (inquiries[0] as any).email,
-        yacht_id: (inquiries[0] as any).yacht_id,
-      })
-    }
-
-    // Fetch fleet data for yacht names
-    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { data: fleet, error: fleetError } = await (supabase
-      .from('fleet' as any) as any)
-      .select('id, name, boat_name')
-
-    if (fleetError) {
-      console.error('[Admin API] Error fetching fleet:', fleetError)
-      // Don't fail completely if fleet fetch fails
-    }
+    const inquiries = inquiriesResult.data || []
+    const fleet = fleetResult.data || []
 
     // Map yacht names to inquiries
-    const inquiriesWithYachts = (inquiries || []).map((inquiry: any) => {
-      const yacht = fleet?.find((y: any) => y.id === inquiry.yacht_id)
-      // Type casting to fix TypeScript error
-      const yachtData = yacht as any
+    const inquiriesWithYachts = inquiries.map((inquiry: any) => {
+      const yacht = fleet.find((y: any) => y.id === inquiry.yacht_id)
       return {
         ...inquiry,
-        yacht_name: yachtData?.name || yachtData?.boat_name || 'Unknown Yacht',
+        yacht_name: yacht?.name || yacht?.boat_name || 'Unknown Yacht',
       }
     })
-
-    console.log('[Admin API] ✅ Returning inquiries with yacht names:', inquiriesWithYachts.length, 'items')
-    console.log('[Admin API] First inquiry with yacht:', inquiriesWithYachts[0] ? {
-      id: inquiriesWithYachts[0].id,
-      name: inquiriesWithYachts[0].name,
-      email: inquiriesWithYachts[0].email,
-      yacht_name: inquiriesWithYachts[0].yacht_name,
-    } : 'No inquiries')
 
     return NextResponse.json({
       inquiries: inquiriesWithYachts,

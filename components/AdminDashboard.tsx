@@ -30,56 +30,41 @@ export default function AdminDashboard() {
     fetchDashboardData()
   }, [])
 
-  // @ts-ignore
   const fetchDashboardData = async () => {
-    console.log('[Diagnostic] 🔍 Sākam visu datu pārbaudi...')
     const startTime = Date.now()
-
-    // Funkcija, kas mēra katru atsevišķu pieprasījumu
-    const trackFetch = async (name: string, url: string) => {
-      const start = Date.now()
-      try {
-        const res = await fetch(url)
-        if (!res.ok) throw new Error(`Status: ${res.status}`)
-        const data = await res.json()
-        console.log(`[Diagnostic] ✅ ${name} ielādēts (${Date.now() - start}ms)`)
-        return data
-      } catch (err) {
-        console.error(`[Diagnostic] ❌ ${name} kļūda pēc ${Date.now() - start}ms:`, err)
-        return null
-      }
-    }
-
+    
     try {
       setLoading(true)
-      // Palaižam visus pieprasījumus reizē, lai redzētu, kurš iestrēgst
-      const [stats, inquiries, destinations, fleet] = await Promise.all([
-        trackFetch('Stats', '/api/admin/stats'),
-        trackFetch('Inquiries', '/api/admin/inquiries'),
-        trackFetch('Destinations', '/api/admin/destinations'),
-        trackFetch('Fleet', '/api/admin/fleet') // Pārbaudām, vai šis maršruts eksistē
+      
+      // Fetch only essential data for dashboard (stats and inquiries)
+      // Removed destinations and fleet fetches as they're not displayed on dashboard
+      const [statsResponse, inquiriesResponse] = await Promise.all([
+        fetch('/api/admin/stats'),
+        fetch('/api/admin/inquiries'),
       ])
 
-      // Iestatām datus tikai tad, ja tie ir saņemti
-      if (stats?.stats) {
-        const statsData = stats.stats
-        // Set stats from API response - ensure all values are numbers and handle null/undefined
-        const processedStats = {
-          totalInquiries: Number(statsData.totalInquiries) || 0,
-          fleetSize: Number(statsData.fleetSize) || 0,
-          galleryImages: Number(statsData.galleryImages) || 0,
-          revenuePotential: Number(statsData.revenuePotential) || 0,
+      // Process stats
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json()
+        if (statsData?.stats) {
+          const processedStats = {
+            totalInquiries: Number(statsData.stats.totalInquiries) || 0,
+            fleetSize: Number(statsData.stats.fleetSize) || 0,
+            galleryImages: Number(statsData.stats.galleryImages) || 0,
+            revenuePotential: Number(statsData.stats.revenuePotential) || 0,
+          }
+          
+          // Ensure no NaN values
+          Object.keys(processedStats).forEach((key) => {
+            if (isNaN(processedStats[key as keyof typeof processedStats])) {
+              processedStats[key as keyof typeof processedStats] = 0
+            }
+          })
+          
+          setStats(processedStats)
         }
-        
-        // Ensure no NaN values
-        if (isNaN(processedStats.totalInquiries)) processedStats.totalInquiries = 0
-        if (isNaN(processedStats.fleetSize)) processedStats.fleetSize = 0
-        if (isNaN(processedStats.galleryImages)) processedStats.galleryImages = 0
-        if (isNaN(processedStats.revenuePotential)) processedStats.revenuePotential = 0
-        
-        setStats(processedStats)
       } else {
-        console.warn('[Diagnostic] ⚠️ Stats nav saņemti, izmantojam noklusējuma vērtības')
+        console.error('[Dashboard] Failed to fetch stats:', statsResponse.status)
         setStats({
           totalInquiries: 0,
           fleetSize: 0,
@@ -88,19 +73,26 @@ export default function AdminDashboard() {
         })
       }
 
-      if (inquiries?.inquiries) {
-        const inquiriesList = inquiries.inquiries || []
-        const recentInquiriesList = inquiriesList.slice(0, 5) // Take top 5 most recent
-        setRecentInquiries(recentInquiriesList)
+      // Process inquiries
+      if (inquiriesResponse.ok) {
+        const inquiriesData = await inquiriesResponse.json()
+        if (inquiriesData?.inquiries) {
+          const recentInquiriesList = inquiriesData.inquiries.slice(0, 5)
+          setRecentInquiries(recentInquiriesList)
+        } else {
+          setRecentInquiries([])
+        }
       } else {
-        console.warn('[Diagnostic] ⚠️ Inquiries nav saņemti, izmantojam tukšu masīvu')
+        console.error('[Dashboard] Failed to fetch inquiries:', inquiriesResponse.status)
         setRecentInquiries([])
       }
       
-      console.log(`[Diagnostic] 🎉 Viss process pabeigts ${Date.now() - startTime}ms`)
+      const duration = Date.now() - startTime
+      if (duration > 3000) {
+        console.warn(`[Dashboard] Slow fetch: ${duration}ms`)
+      }
     } catch (error) {
-      console.error('[Diagnostic] 🚨 Kritiska kļūda kopējā ielādē:', error)
-      // Set default values on error to prevent crashes
+      console.error('[Dashboard] Error fetching data:', error)
       setStats({
         totalInquiries: 0,
         fleetSize: 0,
@@ -109,8 +101,7 @@ export default function AdminDashboard() {
       })
       setRecentInquiries([])
     } finally {
-      setLoading(false) // Šis OBLIGĀTI pārtrauc "Loading..." rādīšanu
-      console.log(`[Diagnostic] ⏱️ Kopējais laiks: ${Date.now() - startTime}ms`)
+      setLoading(false)
     }
   }
 
