@@ -20,15 +20,20 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ['localhost', 'supabase.co'],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: '**.supabase.co',
+        pathname: '**',
       },
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
         pathname: '**',
       },
     ],
