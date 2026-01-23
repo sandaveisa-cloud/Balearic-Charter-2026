@@ -114,6 +114,22 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
     loadUpsellYacht()
   }, [yacht])
   
+  // All hooks must be declared before any conditional logic or function calls
+  const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null)
+  const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false)
+  const [priceBreakdown, setPriceBreakdown] = useState<PriceBreakdown | null>(null)
+  const [addOnsTotal, setAddOnsTotal] = useState(0)
+  const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
+  const [comparisonBoats, setComparisonBoats] = useState<Fleet[]>([])
+  const [upsellYacht, setUpsellYacht] = useState<Fleet | null>(null)
+  const [galleryView, setGalleryView] = useState<'grid' | 'layout'>('grid')
+  
+  // Touch/swipe support for lightbox
+  const touchStartX = useRef<number | null>(null)
+  const touchEndX = useRef<number | null>(null)
+
   // Get ship-specific translations based on slug
   const getShipTranslations = () => {
     const slug = yacht.slug?.toLowerCase()
@@ -143,20 +159,6 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
   }
   
   const shipTranslations = getShipTranslations()
-  const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null)
-  const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false)
-  const [priceBreakdown, setPriceBreakdown] = useState<PriceBreakdown | null>(null)
-  const [addOnsTotal, setAddOnsTotal] = useState(0)
-  const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
-  const [comparisonBoats, setComparisonBoats] = useState<Fleet[]>([])
-  const [upsellYacht, setUpsellYacht] = useState<Fleet | null>(null)
-  const [galleryView, setGalleryView] = useState<'grid' | 'layout'>('grid')
-  
-  // Touch/swipe support for lightbox
-  const touchStartX = useRef<number | null>(null)
-  const touchEndX = useRef<number | null>(null)
 
   // Combine main_image_url and gallery_images into a single array
   const allImages = (() => {
