@@ -431,7 +431,12 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
             onClick={(e) => e.stopPropagation()}
           >
             {(() => {
-              const lightboxImageUrl = getOptimizedImageUrl(allImages[currentImageIndex], {
+              // If viewing layout, show layout image; otherwise show current gallery image
+              const imageToShow = galleryView === 'layout' && layoutImage 
+                ? layoutImage 
+                : allImages[currentImageIndex]
+              
+              const lightboxImageUrl = getOptimizedImageUrl(imageToShow, {
                 width: 2048,
                 quality: 90,
                 format: 'webp',
@@ -440,7 +445,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                 <div className="relative w-full h-full max-h-[90vh]" style={{ aspectRatio: 'auto' }}>
                   <OptimizedImage
                     src={lightboxImageUrl}
-                    alt={`${yacht.name} - Image ${currentImageIndex + 1}`}
+                    alt={`${yacht.name} - ${galleryView === 'layout' ? 'Layout' : `Image ${currentImageIndex + 1}`}`}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1280px"
                     objectFit="contain"
@@ -451,7 +456,8 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                 </div>
               ) : null
             })()}
-            {allImages.length > 1 && (
+            {/* Lightbox Navigation - Only show arrows in grid view, not layout view */}
+            {galleryView === 'grid' && allImages.length > 1 && (
               <>
                 <button
                   onClick={(e) => {
