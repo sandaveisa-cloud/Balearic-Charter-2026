@@ -154,21 +154,26 @@ export async function PUT(request: NextRequest) {
     // Create admin client (bypasses RLS)
     const supabase = createSupabaseAdminClient()
 
-    const updateData = {
+    // Build update data object, only including fields that are provided
+    const updateData: any = {
       name: name.trim(),
       title: name.trim(), // Also update title for backward compatibility
-      region: region?.trim() || null,
       slug: slug.trim(),
-      description: description?.trim() || null,
-      description_en: description_en?.trim() || null,
-      description_es: description_es?.trim() || null,
-      description_de: description_de?.trim() || null,
-      image_urls: image_urls || [],
-      youtube_video_url: youtube_video_url?.trim() || null,
       order_index: order_index || 0,
       is_active: is_active !== false,
-      updated_at: new Date().toISOString(),
     }
+
+    // Add optional fields only if they are provided
+    if (region !== undefined) updateData.region = region?.trim() || null
+    if (description !== undefined) updateData.description = description?.trim() || null
+    if (description_en !== undefined) updateData.description_en = description_en?.trim() || null
+    if (description_es !== undefined) updateData.description_es = description_es?.trim() || null
+    if (description_de !== undefined) updateData.description_de = description_de?.trim() || null
+    if (image_urls !== undefined) updateData.image_urls = Array.isArray(image_urls) ? image_urls : []
+    if (youtube_video_url !== undefined) updateData.youtube_video_url = youtube_video_url?.trim() || null
+    
+    // Don't manually set updated_at if it's auto-managed by Supabase
+    // updateData.updated_at = new Date().toISOString()
 
     console.log('[Admin API] 🔄 Updating destination with data:', updateData)
 
@@ -183,8 +188,32 @@ export async function PUT(request: NextRequest) {
 
     if (error) {
       console.error('[Admin API] ❌ Error updating destination:', error)
+      console.error('[Admin API] ❌ Error code:', error.code)
+      console.error('[Admin API] ❌ Error message:', error.message)
+      console.error('[Admin API] ❌ Error details:', error.details)
+      console.error('[Admin API] ❌ Error hint:', error.hint)
+      
+      // Provide more detailed error message
+      let errorMessage = error.message || 'Failed to update destination'
+      
+      // Check for common Supabase errors
+      if (error.code === '42703') {
+        errorMessage = `Column does not exist: ${error.message}. Please check database schema.`
+      } else if (error.code === '23502') {
+        errorMessage = `Required field is missing: ${error.message}`
+      } else if (error.code === '23505') {
+        errorMessage = `Duplicate entry: ${error.message}. Slug might already exist.`
+      } else if (error.message?.includes('column') || error.message?.includes('does not exist')) {
+        errorMessage = `Database schema error: ${error.message}. Please check if all columns exist.`
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to update destination', details: error.message },
+        { 
+          error: 'Failed to update destination',
+          details: errorMessage,
+          code: error.code,
+          hint: error.hint
+        },
         { status: 500 }
       )
     }

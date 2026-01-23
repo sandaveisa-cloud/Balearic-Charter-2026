@@ -150,8 +150,20 @@ export default function DestinationEditModal({
         }
         
         console.error('[DestinationEditModal] ❌ API Error:', errorData)
+        console.error('[DestinationEditModal] ❌ Error code:', errorData.code)
+        console.error('[DestinationEditModal] ❌ Error hint:', errorData.hint)
         
-        const errorMessage = errorData.error || errorData.details || `Failed to save destination: ${response.status} ${response.statusText}`
+        // Build detailed error message
+        let errorMessage = errorData.error || errorData.details || `Failed to save destination: ${response.status} ${response.statusText}`
+        
+        if (errorData.details) {
+          errorMessage = errorData.details
+        }
+        
+        if (errorData.hint) {
+          errorMessage += ` (${errorData.hint})`
+        }
+        
         throw new Error(errorMessage)
       }
 
