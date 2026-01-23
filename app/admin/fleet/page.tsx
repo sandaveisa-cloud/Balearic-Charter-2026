@@ -3,12 +3,15 @@
 import { useState, useEffect } from 'react'
 import { Plus, Edit, Trash2, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import type { Fleet } from '@/types/database'
+import BoatEditModal from '@/components/BoatEditModal'
 
 export default function FleetAdminPage() {
   const [fleet, setFleet] = useState<Fleet[]>([])
   const [loading, setLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [selectedBoat, setSelectedBoat] = useState<Fleet | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     fetchFleet()
@@ -75,7 +78,10 @@ export default function FleetAdminPage() {
           <p className="text-gray-600 mt-1">Manage your yacht fleet</p>
         </div>
         <button
-          onClick={() => window.location.href = '/admin/fleet/new'}
+          onClick={() => {
+            setSelectedBoat(null)
+            setIsModalOpen(true)
+          }}
           className="flex items-center gap-2 px-6 py-3 bg-luxury-blue text-white rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-colors shadow-lg"
         >
           <Plus className="w-5 h-5" />
@@ -149,7 +155,10 @@ export default function FleetAdminPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
                         <button
-                          onClick={() => window.location.href = `/admin/fleet/${yacht.id}`}
+                          onClick={() => {
+                            setSelectedBoat(yacht)
+                            setIsModalOpen(true)
+                          }}
                           className="p-2 text-luxury-blue hover:bg-luxury-blue/10 rounded-lg transition-colors"
                           title="Edit"
                         >
@@ -171,6 +180,21 @@ export default function FleetAdminPage() {
           </div>
         )}
       </div>
+
+      {/* Boat Edit Modal */}
+      <BoatEditModal
+        boat={selectedBoat}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          setSelectedBoat(null)
+        }}
+        onSave={() => {
+          fetchFleet()
+          setSuccessMessage(selectedBoat ? 'Yacht updated successfully!' : 'Yacht created successfully!')
+          setTimeout(() => setSuccessMessage(null), 3000)
+        }}
+      />
     </div>
   )
 }

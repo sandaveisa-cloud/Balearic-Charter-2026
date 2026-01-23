@@ -506,7 +506,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
           <ol className="flex items-center space-x-2 text-sm text-gray-600">
             <li>
               <Link 
-                href={`/${locale}/`}
+                href="/"
                 className="flex items-center hover:text-luxury-blue transition-colors"
               >
                 <Home className="w-4 h-4 mr-1" />
@@ -518,7 +518,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
             </li>
             <li>
               <Link 
-                href={`/${locale}/#fleet`}
+                href="/#fleet"
                 className="hover:text-luxury-blue transition-colors"
                 scroll={false}
               >
@@ -984,7 +984,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                         )}
                       </div>
                       <Link
-                        href={`/${locale}/fleet/${upsellYacht.slug}`}
+                        href={`/fleet/${upsellYacht.slug}`}
                         className="inline-flex items-center justify-center gap-2 w-full bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue font-bold px-6 py-3 rounded-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                       >
                         <span>View {upsellYacht.name}</span>
@@ -1051,7 +1051,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                     </div>
                   )}
                   <Link
-                    href={`/${locale}/fleet/${upsellYacht.slug}`}
+                    href={`/fleet/${upsellYacht.slug}`}
                     className="inline-flex items-center justify-center gap-2 bg-luxury-blue text-white font-semibold px-6 py-3 rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 shadow-lg hover:shadow-xl"
                   >
                     <span>Discover {upsellYacht.name}</span>
@@ -1068,7 +1068,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
         {/* Back to Home Section - Single prominent button before footer */}
         <div className="mt-12 mb-12 flex justify-center">
           <Link
-            href={`/${locale}/`}
+            href="/"
             className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-luxury-blue via-luxury-gold to-luxury-blue text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
           >
             <span className="relative z-10 flex items-center gap-2">
