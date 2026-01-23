@@ -126,7 +126,18 @@ export default function DestinationEditor({
         return coords[key] || coords[destName.toLowerCase()] || null
       }
 
-      const coords = getCoordinates(destination.name || destination.title || '')
+      // Get coordinates from database first, then fallback to lookup
+      let coords: { lat: number; lng: number } | null = null
+      if ((destination as any).coordinates && typeof (destination as any).coordinates === 'object') {
+        const dbCoords = (destination as any).coordinates
+        if (typeof dbCoords.lat === 'number' && typeof dbCoords.lng === 'number') {
+          coords = { lat: dbCoords.lat, lng: dbCoords.lng }
+        }
+      }
+      // Fallback to lookup if not in database
+      if (!coords) {
+        coords = getCoordinates(destination.name || destination.title || '')
+      }
       
       // Parse highlights from destination (if stored in a JSONB field)
       const highlights: Highlight[] = Array.isArray((destination as any).highlights_data) 
@@ -182,6 +193,9 @@ export default function DestinationEditor({
         highlights: [],
         gallery_images: [],
         youtube_video_url: '',
+      })
+    }
+  }, [destination, reset, isOpen])
         order_index: 0,
         is_active: true,
       })

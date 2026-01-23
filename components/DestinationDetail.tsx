@@ -12,6 +12,7 @@ import SailingCalendarWidget from './SailingCalendarWidget'
 import WeatherForecast from './WeatherForecast'
 import TideMoonInfo from './TideMoonInfo'
 import HighlightsGallery from './HighlightsGallery'
+import HappyGuestsGallery from './HappyGuestsGallery'
 import { ArrowLeft, Play, MapPin, Navigation, Calendar, Ship, Sparkles } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import type { Destination } from '@/types/database'
@@ -127,50 +128,9 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
   const databaseHighlights = (destination as any).highlights_data || null
   const galleryImages = (destination as any).gallery_images || null
   
-  // If we have gallery images but no highlights, create highlights from gallery images
-  let displayHighlights = databaseHighlights || generatedContent?.highlights || null
-  
-  // Merge gallery images into highlights if highlights are missing images
-  if (galleryImages && Array.isArray(galleryImages) && galleryImages.length > 0) {
-    if (!displayHighlights || displayHighlights.length === 0) {
-      // Create highlights from gallery images
-      displayHighlights = galleryImages.map((url: string, index: number) => ({
-        id: `gallery-${index}`,
-        name: `Customer Photo ${index + 1}`,
-        name_en: `Customer Photo ${index + 1}`,
-        description: 'Customer experience photo',
-        description_en: 'Customer experience photo',
-        image_url: url,
-        category: 'other' as const,
-      }))
-    } else {
-      // Merge gallery images with existing highlights, filling in missing images
-      displayHighlights = displayHighlights.map((highlight: any, index: number) => {
-        // If highlight has no image but we have a gallery image, use it
-        if (!highlight.image_url && galleryImages[index]) {
-          return {
-            ...highlight,
-            image_url: galleryImages[index],
-          }
-        }
-        return highlight
-      })
-      
-      // Add any remaining gallery images as new highlights
-      const remainingImages = galleryImages.slice(displayHighlights.length)
-      remainingImages.forEach((url: string, index: number) => {
-        displayHighlights.push({
-          id: `gallery-${displayHighlights.length + index}`,
-          name: `Customer Photo ${displayHighlights.length + index + 1}`,
-          name_en: `Customer Photo ${displayHighlights.length + index + 1}`,
-          description: 'Customer experience photo',
-          description_en: 'Customer experience photo',
-          image_url: url,
-          category: 'other' as const,
-        })
-      })
-    }
-  }
+  // Use database highlights if available, otherwise use generated content
+  // DO NOT merge gallery images into highlights - they are separate
+  const displayHighlights = databaseHighlights || generatedContent?.highlights || null
 
   return (
     <article className="min-h-screen bg-white">
@@ -382,6 +342,15 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
               destinationName={destinationName}
               locale={locale}
             />
+
+            {/* Happy Guests Gallery */}
+            {galleryImages && Array.isArray(galleryImages) && galleryImages.length > 0 && (
+              <HappyGuestsGallery
+                images={galleryImages}
+                destinationName={destinationName}
+                locale={locale}
+              />
+            )}
           </div>
 
           {/* Sidebar */}
