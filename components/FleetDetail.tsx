@@ -5,10 +5,10 @@ import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { format } from 'date-fns'
 import { useTranslations, useLocale } from 'next-intl'
-import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles, Home, ChevronRight, Wind, ArrowLeft } from 'lucide-react'
+import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles, Home, ChevronRight, Wind, ArrowLeft, TrendingUp, Sparkles as SparklesIcon, AirVent, Battery, ArrowRight } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils'
-import { getFleetBySlugs } from '@/lib/data'
+import { getFleetBySlugs, getFleetBySlug } from '@/lib/data'
 import { getDescriptionForLocaleWithTextColumns } from '@/lib/i18nUtils'
 import BookingCalendar from './BookingCalendar'
 import BookingForm from './BookingForm'
@@ -19,6 +19,7 @@ import OptimizedImage from './OptimizedImage'
 import StructuredData from './StructuredData'
 import SocialProof from './SocialProof'
 import TrustBar from './TrustBar'
+import { calculateEarlyBirdPrice, formatEarlyBirdDeadline, isEarlyBirdEligible } from '@/lib/earlyBirdDiscount'
 
 interface FleetDetailProps {
   yacht: Fleet
@@ -82,6 +83,35 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
     }
     
     loadComparisonBoats()
+    
+    // Load upsell yacht (Wide Dream for Simona, Simona for Wide Dream)
+    const loadUpsellYacht = async () => {
+      try {
+        const currentSlug = yacht.slug?.toLowerCase() || yacht.name?.toLowerCase() || ''
+        let targetSlug = ''
+        
+        // Determine which yacht to upsell
+        if (currentSlug.includes('simona') || yacht.name?.toLowerCase().includes('simona')) {
+          // If viewing Simona, show Wide Dream
+          targetSlug = 'wide-dream'
+        } else if (currentSlug.includes('wide-dream') || currentSlug.includes('widedream') || yacht.name?.toLowerCase().includes('wide dream')) {
+          // If viewing Wide Dream, show Simona
+          targetSlug = 'simona'
+        }
+        
+        if (targetSlug) {
+          // Use getFleetBySlugs which works client-side
+          const upsells = await getFleetBySlugs([targetSlug])
+          if (upsells && upsells.length > 0) {
+            setUpsellYacht(upsells[0])
+          }
+        }
+      } catch (error) {
+        console.error('[FleetDetail] Error loading upsell yacht:', error)
+      }
+    }
+    
+    loadUpsellYacht()
   }, [yacht])
   
   // Get ship-specific translations based on slug
@@ -121,6 +151,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
   const [addOnsTotal, setAddOnsTotal] = useState(0)
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
   const [comparisonBoats, setComparisonBoats] = useState<Fleet[]>([])
+  const [upsellYacht, setUpsellYacht] = useState<Fleet | null>(null)
   
   // Touch/swipe support for lightbox
   const touchStartX = useRef<number | null>(null)
@@ -785,8 +816,190 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
           </div>
         </div>
 
+        {/* Upsell Section - Show different content based on current yacht */}
+        {upsellYacht && (() => {
+          const currentSlug = yacht.slug?.toLowerCase() || yacht.name?.toLowerCase() || ''
+          const isSimona = currentSlug.includes('simona') || yacht.name?.toLowerCase().includes('simona')
+          const isWideDream = currentSlug.includes('wide-dream') || currentSlug.includes('widedream') || yacht.name?.toLowerCase().includes('wide dream')
+          
+          // Get starting price for upsell yacht
+          const upsellBasePrice = upsellYacht.low_season_price || upsellYacht.high_season_price || null
+          const upsellPriceInfo = upsellBasePrice ? calculateEarlyBirdPrice(upsellBasePrice) : null
+          const upsellPrice = upsellPriceInfo?.discountedPrice || upsellBasePrice
+          const showUpsellEarlyBird = upsellPriceInfo?.isEligible || false
+          
+          // Simona page: Show "Upgrade to Premium" for Wide Dream
+          if (isSimona && upsellYacht.name?.toLowerCase().includes('wide dream')) {
+            return (
+              <div className="mt-20 mb-12 bg-gradient-to-br from-luxury-gold/10 via-yellow-400/5 to-luxury-gold/10 rounded-2xl p-8 md:p-12 border-2 border-luxury-gold/30 shadow-xl">
+                <div className="max-w-4xl mx-auto">
+                  <div className="flex items-center gap-3 mb-6">
+                    <TrendingUp className="w-8 h-8 text-luxury-gold" />
+                    <h2 className="font-serif text-3xl md:text-4xl font-bold text-luxury-blue">
+                      Looking for more comfort? Upgrade to our Flagship: {upsellYacht.name}
+                    </h2>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-8 mb-8">
+                    {/* Features Grid */}
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-semibold text-gray-800 mb-4">Premium Features:</h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-luxury-gold/20 flex items-center justify-center">
+                            <Wind className="w-5 h-5 text-luxury-gold" />
+                          </div>
+                          <span className="text-gray-700 font-medium">Spacious Flybridge</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-luxury-gold/20 flex items-center justify-center">
+                            <Snowflake className="w-5 h-5 text-luxury-gold" />
+                          </div>
+                          <span className="text-gray-700 font-medium">Air Conditioning</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-luxury-gold/20 flex items-center justify-center">
+                            <Zap className="w-5 h-5 text-luxury-gold" />
+                          </div>
+                          <span className="text-gray-700 font-medium">Onboard Generator</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-luxury-gold/20 flex items-center justify-center">
+                            <BedDouble className="w-5 h-5 text-luxury-gold" />
+                          </div>
+                          <span className="text-gray-700 font-medium">Extra Large Cabins</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Price & CTA */}
+                    <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                      {upsellPrice && (
+                        <div className="mb-4">
+                          {showUpsellEarlyBird && upsellPriceInfo ? (
+                            <div className="space-y-2">
+                              <div className="flex items-baseline gap-2">
+                                <span className="text-lg line-through text-gray-400">
+                                  {new Intl.NumberFormat('en-US', {
+                                    style: 'currency',
+                                    currency: upsellYacht.currency || 'EUR',
+                                    minimumFractionDigits: 0,
+                                  }).format(upsellPriceInfo.originalPrice)}
+                                </span>
+                                <span className="text-2xl font-bold text-luxury-blue">
+                                  {new Intl.NumberFormat('en-US', {
+                                    style: 'currency',
+                                    currency: upsellYacht.currency || 'EUR',
+                                    minimumFractionDigits: 0,
+                                  }).format(upsellPrice)}
+                                </span>
+                                <span className="text-sm text-gray-600">/day</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="px-2 py-0.5 bg-gradient-to-r from-luxury-gold to-yellow-400 text-white text-xs font-bold rounded-full">
+                                  Early Bird: -10%
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  until {formatEarlyBirdDeadline(locale)}
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="text-2xl font-bold text-luxury-blue">
+                              {new Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency: upsellYacht.currency || 'EUR',
+                                minimumFractionDigits: 0,
+                              }).format(upsellPrice)}
+                              <span className="text-sm text-gray-600 font-normal">/day</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <Link
+                        href={`/${locale}/fleet/${upsellYacht.slug}`}
+                        className="inline-flex items-center justify-center gap-2 w-full bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue font-bold px-6 py-3 rounded-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                      >
+                        <span>View {upsellYacht.name}</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          }
+          
+          // Wide Dream page: Show "Value Alternative" for Simona
+          if (isWideDream && upsellYacht.name?.toLowerCase().includes('simona')) {
+            return (
+              <div className="mt-20 mb-12 bg-gradient-to-br from-luxury-blue/5 via-gray-50 to-luxury-blue/5 rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg">
+                <div className="max-w-3xl mx-auto text-center">
+                  <h2 className="font-serif text-2xl md:text-3xl font-bold text-luxury-blue mb-4">
+                    Looking for a classic experience? View Yacht {upsellYacht.name}
+                  </h2>
+                  <p className="text-gray-600 mb-6">
+                    Experience the charm of our classic yacht with excellent value for money.
+                  </p>
+                  {upsellPrice && (
+                    <div className="mb-6">
+                      {showUpsellEarlyBird && upsellPriceInfo ? (
+                        <div className="inline-flex flex-col items-center gap-2">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-lg line-through text-gray-400">
+                              {new Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency: upsellYacht.currency || 'EUR',
+                                minimumFractionDigits: 0,
+                              }).format(upsellPriceInfo.originalPrice)}
+                            </span>
+                            <span className="text-2xl font-bold text-luxury-blue">
+                              {new Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency: upsellYacht.currency || 'EUR',
+                                minimumFractionDigits: 0,
+                              }).format(upsellPrice)}
+                            </span>
+                            <span className="text-sm text-gray-600">/day</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 bg-gradient-to-r from-luxury-gold to-yellow-400 text-white text-xs font-bold rounded-full">
+                              Early Bird: -10%
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              until {formatEarlyBirdDeadline(locale)}
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-2xl font-bold text-luxury-blue">
+                          {new Intl.NumberFormat('en-US', {
+                            style: 'currency',
+                            currency: upsellYacht.currency || 'EUR',
+                            minimumFractionDigits: 0,
+                          }).format(upsellPrice)}
+                          <span className="text-sm text-gray-600 font-normal">/day</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <Link
+                    href={`/${locale}/fleet/${upsellYacht.slug}`}
+                    className="inline-flex items-center justify-center gap-2 bg-luxury-blue text-white font-semibold px-6 py-3 rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    <span>View {upsellYacht.name}</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </div>
+              </div>
+            )
+          }
+          
+          return null
+        })()}
+
         {/* Back to Home Section - Single prominent button before footer */}
-        <div className="mt-20 mb-12 flex justify-center">
+        <div className="mt-12 mb-12 flex justify-center">
           <Link
             href={`/${locale}`}
             className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-luxury-blue via-luxury-gold to-luxury-blue text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
