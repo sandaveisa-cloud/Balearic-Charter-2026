@@ -412,7 +412,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
           <ol className="flex items-center space-x-2 text-sm text-gray-600">
             <li>
               <Link 
-                href="/"
+                href={`/${locale}`}
                 className="flex items-center hover:text-luxury-blue transition-colors"
               >
                 <Home className="w-4 h-4 mr-1" />
@@ -423,12 +423,12 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
               <ChevronRight className="w-4 h-4 text-gray-400" />
             </li>
             <li>
-              <a 
-                href="/"
+              <Link 
+                href={`/${locale}/#fleet`}
                 className="hover:text-luxury-blue transition-colors"
               >
                 {tBreadcrumb('fleet')}
-              </a>
+              </Link>
             </li>
             <li>
               <ChevronRight className="w-4 h-4 text-gray-400" />
@@ -785,37 +785,18 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
           </div>
         </div>
 
-        {/* Back Navigation Section - Prominent button before footer */}
+        {/* Back to Home Section - Single prominent button before footer */}
         <div className="mt-20 mb-12 flex justify-center">
           <Link
-            href="/"
+            href={`/${locale}`}
             className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-luxury-blue via-luxury-gold to-luxury-blue text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
           >
             <span className="relative z-10 flex items-center gap-2">
               <ArrowLeft className="w-5 h-5" />
-              <span>Back to Home</span>
+              <span>{tBreadcrumb('backToHome') || 'Back to Home'}</span>
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-luxury-gold via-luxury-blue to-luxury-gold opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </Link>
-        </div>
-
-        {/* Return to Overview Section */}
-        <div className="mt-8 mb-12 bg-gradient-to-br from-luxury-blue/5 via-luxury-gold/5 to-luxury-blue/5 rounded-2xl p-8 md:p-12 border border-luxury-gold/20">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-luxury-blue mb-4">
-              {tBreadcrumb('discoverMore')}
-            </h2>
-            <p className="text-lg text-gray-700 mb-8">
-              {tBreadcrumb('discoverMoreDescription')}
-            </p>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-luxury-gold text-luxury-blue font-bold text-lg rounded-lg hover:bg-luxury-blue hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-            >
-              <Home className="w-5 h-5" />
-              <span>{tBreadcrumb('backToHome')}</span>
-            </Link>
-          </div>
         </div>
       </div>
     </div>
