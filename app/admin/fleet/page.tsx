@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Plus, Edit, Trash2, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import type { Fleet } from '@/types/database'
-import BoatEditModal from '@/components/BoatEditModal'
+import FleetEditor from '@/components/FleetEditor'
+import Toast from '@/components/Toast'
 
 export default function FleetAdminPage() {
   const [fleet, setFleet] = useState<Fleet[]>([])
@@ -12,6 +13,7 @@ export default function FleetAdminPage() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [selectedBoat, setSelectedBoat] = useState<Fleet | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
 
   useEffect(() => {
     fetchFleet()
@@ -52,6 +54,7 @@ export default function FleetAdminPage() {
       }
 
       setSuccessMessage('Yacht deleted successfully')
+      setToast({ message: 'Yacht deleted successfully', type: 'success' })
       fetchFleet()
       setTimeout(() => setSuccessMessage(null), 3000)
     } catch (error) {
@@ -181,19 +184,33 @@ export default function FleetAdminPage() {
         )}
       </div>
 
-      {/* Boat Edit Modal */}
-      <BoatEditModal
-        boat={selectedBoat}
+      {/* Fleet Editor Modal */}
+      <FleetEditor
+        fleet={selectedBoat}
         isOpen={isModalOpen}
         onClose={() => {
+          console.log('[FleetAdmin] Closing modal')
           setIsModalOpen(false)
           setSelectedBoat(null)
         }}
         onSave={() => {
+          console.log('[FleetAdmin] Save callback triggered')
           fetchFleet()
-          setSuccessMessage(selectedBoat ? 'Yacht updated successfully!' : 'Yacht created successfully!')
+          const message = selectedBoat ? 'Yacht updated successfully!' : 'Yacht created successfully!'
+          setSuccessMessage(message)
+          setToast({ message, type: 'success' })
           setTimeout(() => setSuccessMessage(null), 3000)
+          setIsModalOpen(false)
+          setSelectedBoat(null)
         }}
+      />
+
+      {/* Toast Notification */}
+      <Toast
+        message={toast?.message || ''}
+        type={toast?.type || 'success'}
+        isVisible={!!toast}
+        onClose={() => setToast(null)}
       />
     </div>
   )
