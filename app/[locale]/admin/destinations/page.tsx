@@ -254,21 +254,21 @@ export default function DestinationsAdminPage() {
       </div>
 
       {/* Edit Modal - DestinationEditor with Tabs */}
-      {isModalOpen && (
-        <DestinationEditor
-          destination={editingDestination}
-          isOpen={isModalOpen}
-          onClose={() => {
-            console.log('[DestinationsAdmin] Closing modal')
-            setIsModalOpen(false)
-            setEditingDestination(null)
-          }}
-          onSave={() => {
-            console.log('[DestinationsAdmin] Save callback triggered')
-            handleSave()
-          }}
-        />
-      )}
+      <DestinationEditor
+        destination={editingDestination}
+        isOpen={isModalOpen}
+        onClose={() => {
+          console.log('[DestinationsAdmin] Closing modal')
+          setIsModalOpen(false)
+          setEditingDestination(null)
+        }}
+        onSave={() => {
+          console.log('[DestinationsAdmin] Save callback triggered')
+          handleSave()
+          setIsModalOpen(false)
+          setEditingDestination(null)
+        }}
+      />
     </div>
   )
 }

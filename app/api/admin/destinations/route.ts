@@ -67,7 +67,8 @@ export async function POST(request: NextRequest) {
     const { 
       name, region, slug, description, description_en, description_es, description_de, 
       image_urls, youtube_video_url, order_index, is_active,
-      highlights_data, coordinates, ready_to_explore_title_en, ready_to_explore_title_es, ready_to_explore_title_de
+      highlights_data, coordinates, ready_to_explore_title_en, ready_to_explore_title_es, ready_to_explore_title_de,
+      gallery_images
     } = body
 
     // Validate required fields
@@ -104,6 +105,7 @@ export async function POST(request: NextRequest) {
     if (ready_to_explore_title_en) insertData.ready_to_explore_title_en = ready_to_explore_title_en
     if (ready_to_explore_title_es) insertData.ready_to_explore_title_es = ready_to_explore_title_es
     if (ready_to_explore_title_de) insertData.ready_to_explore_title_de = ready_to_explore_title_de
+    if (gallery_images) insertData.gallery_images = gallery_images
 
     // Insert new destination
     // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
@@ -181,7 +183,8 @@ export async function PUT(request: NextRequest) {
     const { 
       id, name, region, slug, description, description_en, description_es, description_de, 
       image_urls, youtube_video_url, order_index, is_active,
-      highlights_data, coordinates, ready_to_explore_title_en, ready_to_explore_title_es, ready_to_explore_title_de
+      highlights_data, coordinates, ready_to_explore_title_en, ready_to_explore_title_es, ready_to_explore_title_de,
+      gallery_images
     } = body
 
     // Validate required fields
@@ -233,6 +236,7 @@ export async function PUT(request: NextRequest) {
     if (ready_to_explore_title_en !== undefined) updateData.ready_to_explore_title_en = ready_to_explore_title_en?.trim() || null
     if (ready_to_explore_title_es !== undefined) updateData.ready_to_explore_title_es = ready_to_explore_title_es?.trim() || null
     if (ready_to_explore_title_de !== undefined) updateData.ready_to_explore_title_de = ready_to_explore_title_de?.trim() || null
+    if (gallery_images !== undefined) updateData.gallery_images = gallery_images
 
     console.log('[Admin API] 🔄 Updating destination with data:', updateData)
 

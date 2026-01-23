@@ -51,7 +51,13 @@ export default function HighlightsGallery({ highlights, destinationName, locale 
     },
   ]
 
-  const displayHighlights = highlights && highlights.length > 0 ? highlights : defaultHighlights
+  // Use provided highlights if available, otherwise use defaults
+  let displayHighlights = highlights && highlights.length > 0 ? highlights : defaultHighlights
+  
+  // If we have gallery images from the destination, merge them with highlights
+  // This allows gallery images to replace placeholder highlights
+  // Note: This would need to be passed as a prop from DestinationDetail
+  // For now, we'll use highlights_data which may contain images
 
   const getCategoryIcon = (category?: string) => {
     switch (category) {

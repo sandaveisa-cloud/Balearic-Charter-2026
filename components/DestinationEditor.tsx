@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { X, Loader2, CheckCircle2, AlertCircle, Plus, Trash2, GripVertical, MapPin } from 'lucide-react'
 import ImageUpload from '@/components/ImageUpload'
+import GalleryImageManager from '@/components/GalleryImageManager'
 import type { Destination } from '@/types/database'
 
 interface Highlight {
@@ -44,6 +45,9 @@ interface DestinationFormData {
   // Highlights & Attractions
   highlights: Highlight[]
   
+  // Customer Gallery
+  gallery_images: string[]
+  
   // Media
   youtube_video_url: string
   
@@ -68,7 +72,7 @@ export default function DestinationEditor({
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'highlights' | 'settings'>('hero')
+  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'highlights' | 'gallery' | 'settings'>('hero')
 
   const {
     register,
@@ -93,6 +97,7 @@ export default function DestinationEditor({
       about_description_es: '',
       about_description_de: '',
       highlights: [],
+      gallery_images: [],
       youtube_video_url: '',
       order_index: 0,
       is_active: true,
@@ -153,6 +158,9 @@ export default function DestinationEditor({
         about_description_es: destination.description_es || '',
         about_description_de: destination.description_de || '',
         highlights: highlights.length > 0 ? highlights : [],
+        gallery_images: Array.isArray((destination as any).gallery_images) 
+          ? (destination as any).gallery_images 
+          : [],
         youtube_video_url: destination.youtube_video_url || '',
         order_index: destination.order_index || 0,
         is_active: destination.is_active !== false,
@@ -172,6 +180,7 @@ export default function DestinationEditor({
         about_description_es: '',
         about_description_de: '',
         highlights: [],
+        gallery_images: [],
         youtube_video_url: '',
         order_index: 0,
         is_active: true,
@@ -237,6 +246,10 @@ export default function DestinationEditor({
               : null,
           }
         }) : null,
+        // Store gallery images as JSONB array
+        gallery_images: Array.isArray(data.gallery_images) && data.gallery_images.length > 0
+          ? data.gallery_images.filter((url: string) => url && url.trim())
+          : null,
       }
 
       console.log('[DestinationEditor] 📤 Sending payload:', payload)
@@ -340,7 +353,7 @@ export default function DestinationEditor({
         {/* Tabs */}
         <div className="border-b border-gray-200 bg-gray-50">
           <div className="flex gap-1 px-6">
-            {(['hero', 'about', 'highlights', 'settings'] as const).map((tab) => (
+            {(['hero', 'about', 'highlights', 'gallery', 'settings'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -353,6 +366,7 @@ export default function DestinationEditor({
                 {tab === 'hero' && 'Hero Section'}
                 {tab === 'about' && 'About Section'}
                 {tab === 'highlights' && 'Highlights & Attractions'}
+                {tab === 'gallery' && 'Customer Gallery'}
                 {tab === 'settings' && 'Settings'}
               </button>
             ))}
@@ -764,6 +778,28 @@ export default function DestinationEditor({
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Customer Gallery Tab */}
+          {activeTab === 'gallery' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-semibold text-gray-800 border-b pb-2 flex-1">Customer Gallery</h3>
+              </div>
+              
+              <p className="text-sm text-gray-600 mb-4">
+                Upload photos with customers. These images will be displayed on the public destination page, replacing placeholder images.
+              </p>
+
+              <div data-gallery-images>
+                <GalleryImageManager
+                  images={watch('gallery_images') || []}
+                  onImagesChange={(images) => setValue('gallery_images', images)}
+                  folder="destinations/gallery"
+                  bucket="fleet-images"
+                />
+              </div>
             </div>
           )}
 
