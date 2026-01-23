@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Plus, Edit, Trash2, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
-import DestinationEditModal from '@/components/DestinationEditModal'
+import DestinationEditor from '@/components/DestinationEditor'
 import type { Destination } from '@/types/database'
 
 export default function DestinationsAdminPage() {
@@ -252,7 +252,7 @@ export default function DestinationsAdminPage() {
       </div>
 
       {/* Edit Modal */}
-      <DestinationEditModal
+      <DestinationEditor
         destination={editingDestination}
         isOpen={isModalOpen}
         onClose={() => {

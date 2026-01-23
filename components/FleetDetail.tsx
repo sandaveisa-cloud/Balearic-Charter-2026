@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { Link, useRouter } from '@/i18n/navigation'
+import { Link } from '@/i18n/navigation'
 import { format } from 'date-fns'
 import { useTranslations, useLocale } from 'next-intl'
 import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles, Home, ChevronRight, Wind, ArrowLeft, TrendingUp, Sparkles as SparklesIcon, AirVent, Battery, ArrowRight } from 'lucide-react'
@@ -29,7 +29,6 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
   const t = useTranslations('fleet')
   const tBreadcrumb = useTranslations('breadcrumb')
   const locale = useLocale()
-  const router = useRouter()
   
   // Scroll to booking section if URL has #booking anchor
   useEffect(() => {
@@ -1069,7 +1068,10 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
         {/* Back to Home Section - Single prominent button before footer */}
         <div className="mt-12 mb-12 flex justify-center">
           <button
-            onClick={() => router.push('/')}
+            onClick={() => {
+              // Use direct window.location to avoid double locale prefix issues
+              window.location.href = `/${locale}`
+            }}
             className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-luxury-blue via-luxury-gold to-luxury-blue text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
           >
             <span className="relative z-10 flex items-center gap-2">

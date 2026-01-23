@@ -10,8 +10,9 @@ const intlMiddleware = createMiddleware({
   // Used when no locale matches
   defaultLocale,
 
-  // Always show locale prefix in URL
-  localePrefix: 'always'
+  // Use 'as-needed' to avoid double prefixes when router.push('/') is called
+  // This allows the router to handle locale prefixes correctly
+  localePrefix: 'as-needed'
 })
 
 export default async function middleware(request: NextRequest) {

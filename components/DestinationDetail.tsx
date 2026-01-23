@@ -28,7 +28,17 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
   const [isGenerating, setIsGenerating] = useState(false)
 
   // Get coordinates for destination (for hero display)
-  const getDestinationCoordinates = (destName: string): { lat: number; lng: number } | null => {
+  const getDestinationCoordinates = (dest: Destination): { lat: number; lng: number } | null => {
+    // First check if coordinates are stored in the destination object
+    if ((dest as any).coordinates && typeof (dest as any).coordinates === 'object') {
+      const coords = (dest as any).coordinates
+      if (typeof coords.lat === 'number' && typeof coords.lng === 'number') {
+        return { lat: coords.lat, lng: coords.lng }
+      }
+    }
+    
+    // Fallback to hardcoded coordinates based on name
+    const destName = dest.name || dest.title || ''
     const coords: Record<string, { lat: number; lng: number }> = {
       'ibiza': { lat: 38.9067, lng: 1.4206 },
       'formentera': { lat: 38.7050, lng: 1.4500 },
@@ -37,7 +47,7 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
       'menorca': { lat: 39.9375, lng: 4.0000 },
       'costa-blanca': { lat: 38.3452, lng: -0.4810 },
     }
-    const key = (destName || '').toLowerCase().replace(/\s+/g, '-')
+    const key = destName.toLowerCase().replace(/\s+/g, '-')
     return coords[key] || coords[destName.toLowerCase()] || null
   }
 
@@ -110,8 +120,12 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
     ? extractYouTubeId(destination.youtube_video_url)
     : null
   const destinationSlug = destination.slug || destination.id
-  const coordinates = getDestinationCoordinates(destinationName)
+  const coordinates = getDestinationCoordinates(destination)
   const seasonalData = destination.seasonal_data
+  
+  // Get highlights from database (highlights_data JSONB field) or generated content
+  const databaseHighlights = (destination as any).highlights_data || null
+  const displayHighlights = databaseHighlights || generatedContent?.highlights || null
 
   return (
     <article className="min-h-screen bg-white">
@@ -191,7 +205,10 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
         {/* Ready to Explore CTA Section */}
         <div className="mb-12 text-center py-8 bg-gradient-to-r from-luxury-blue/5 via-luxury-gold/5 to-luxury-blue/5 rounded-2xl border border-luxury-gold/20">
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-luxury-blue mb-4">
-            {t('readyToExplore') || 'Ready to Explore?'}
+            {(destination as any).ready_to_explore_title_en && locale === 'en' && (destination as any).ready_to_explore_title_en}
+            {(destination as any).ready_to_explore_title_es && locale === 'es' && (destination as any).ready_to_explore_title_es}
+            {(destination as any).ready_to_explore_title_de && locale === 'de' && (destination as any).ready_to_explore_title_de}
+            {!((destination as any).ready_to_explore_title_en || (destination as any).ready_to_explore_title_es || (destination as any).ready_to_explore_title_de) && (t('readyToExplore') || 'Ready to Explore?')}
           </h2>
           <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto">
             {t('readyToExploreDescription', { destination: destinationName }) || `Discover ${destinationName} aboard one of our luxury yachts. Professional crew, gourmet cuisine, and unforgettable memories await.`}
@@ -313,7 +330,7 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
 
             {/* Highlights Gallery */}
             <HighlightsGallery
-              highlights={generatedContent?.highlights}
+              highlights={displayHighlights}
               destinationName={destinationName}
               locale={locale}
             />

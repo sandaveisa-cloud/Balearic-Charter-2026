@@ -64,7 +64,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, region, slug, description, description_en, description_es, description_de, image_urls, youtube_video_url, order_index, is_active } = body
+    const { 
+      name, region, slug, description, description_en, description_es, description_de, 
+      image_urls, youtube_video_url, order_index, is_active,
+      highlights_data, coordinates, ready_to_explore_title_en, ready_to_explore_title_es, ready_to_explore_title_de
+    } = body
 
     // Validate required fields
     if (!name || !slug) {
@@ -94,6 +98,12 @@ export async function POST(request: NextRequest) {
     if (description_de) insertData.description_de = description_de
     if (image_urls) insertData.image_urls = Array.isArray(image_urls) ? image_urls : []
     if (youtube_video_url) insertData.youtube_video_url = youtube_video_url
+    // Store additional fields as JSONB (if your schema supports it)
+    if (highlights_data) insertData.highlights_data = highlights_data
+    if (coordinates) insertData.coordinates = coordinates
+    if (ready_to_explore_title_en) insertData.ready_to_explore_title_en = ready_to_explore_title_en
+    if (ready_to_explore_title_es) insertData.ready_to_explore_title_es = ready_to_explore_title_es
+    if (ready_to_explore_title_de) insertData.ready_to_explore_title_de = ready_to_explore_title_de
 
     // Insert new destination
     // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
@@ -168,7 +178,11 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     console.log('[Admin API] 📥 PUT request body:', body)
     
-    const { id, name, region, slug, description, description_en, description_es, description_de, image_urls, youtube_video_url, order_index, is_active } = body
+    const { 
+      id, name, region, slug, description, description_en, description_es, description_de, 
+      image_urls, youtube_video_url, order_index, is_active,
+      highlights_data, coordinates, ready_to_explore_title_en, ready_to_explore_title_es, ready_to_explore_title_de
+    } = body
 
     // Validate required fields
     if (!id) {
@@ -213,6 +227,12 @@ export async function PUT(request: NextRequest) {
     if (description_de !== undefined) updateData.description_de = description_de?.trim() || null
     if (image_urls !== undefined) updateData.image_urls = Array.isArray(image_urls) ? image_urls : []
     if (youtube_video_url !== undefined) updateData.youtube_video_url = youtube_video_url?.trim() || null
+    // Store additional fields as JSONB (if your schema supports it)
+    if (highlights_data !== undefined) updateData.highlights_data = highlights_data
+    if (coordinates !== undefined) updateData.coordinates = coordinates
+    if (ready_to_explore_title_en !== undefined) updateData.ready_to_explore_title_en = ready_to_explore_title_en?.trim() || null
+    if (ready_to_explore_title_es !== undefined) updateData.ready_to_explore_title_es = ready_to_explore_title_es?.trim() || null
+    if (ready_to_explore_title_de !== undefined) updateData.ready_to_explore_title_de = ready_to_explore_title_de?.trim() || null
 
     console.log('[Admin API] 🔄 Updating destination with data:', updateData)
 
