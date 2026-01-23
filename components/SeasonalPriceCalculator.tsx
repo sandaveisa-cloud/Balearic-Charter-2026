@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { format } from 'date-fns'
+import { calculateEarlyBirdPrice, isEarlyBirdEligible, formatEarlyBirdDeadline } from '@/lib/earlyBirdDiscount'
 
 interface SeasonalPriceCalculatorProps {
   lowSeasonPrice: number | null
@@ -27,6 +28,11 @@ export interface PriceBreakdown {
   pricePerDay: number | null
   primarySeason: string
   breakdown: Array<{ season: string; days: number; pricePerDay: number | null; subtotal: number }>
+  earlyBirdDiscount?: {
+    originalBaseFee: number
+    discountAmount: number
+    discountedBaseFee: number
+  }
 }
 
 export default function SeasonalPriceCalculator({
@@ -151,17 +157,22 @@ export default function SeasonalPriceCalculator({
     
     // Ensure baseCharterFee is valid before calculations
     const baseFee = Number(baseCharterFee) || 0
-    const taxAmount = baseFee * (taxPct / 100)
-    const apaAmount = baseFee * (apaPct / 100)
+    
+    // Apply Early Bird discount to base charter fee
+    const earlyBirdPrice = calculateEarlyBirdPrice(baseFee)
+    const discountedBaseFee = earlyBirdPrice.discountedPrice
+    
+    const taxAmount = discountedBaseFee * (taxPct / 100)
+    const apaAmount = discountedBaseFee * (apaPct / 100)
     const fixedFees = crewFee + cleanFee
     // Ensure all values are valid numbers before calculating total
-    const totalEstimate = baseFee + (Number(taxAmount) || 0) + (Number(apaAmount) || 0) + (Number(fixedFees) || 0)
+    const totalEstimate = discountedBaseFee + (Number(taxAmount) || 0) + (Number(apaAmount) || 0) + (Number(fixedFees) || 0)
     
     // Final validation - ensure no NaN values
     const finalTotal = isNaN(totalEstimate) ? 0 : totalEstimate
 
     const result: PriceBreakdown = {
-      baseCharterFee: baseFee,
+      baseCharterFee: discountedBaseFee,
       taxAmount: Number(taxAmount) || 0,
       apaAmount: Number(apaAmount) || 0,
       fixedFees: Number(fixedFees) || 0,
@@ -170,6 +181,12 @@ export default function SeasonalPriceCalculator({
       pricePerDay,
       primarySeason,
       breakdown,
+      // Add Early Bird discount info
+      earlyBirdDiscount: earlyBirdPrice.isEligible ? {
+        originalBaseFee: baseFee,
+        discountAmount: earlyBirdPrice.discountAmount,
+        discountedBaseFee: discountedBaseFee,
+      } : undefined,
     }
 
     // Notify parent component of breakdown change
@@ -360,6 +377,28 @@ export default function SeasonalPriceCalculator({
 
         {/* Total Estimate */}
         <div className="pt-6 border-t-2 border-luxury-gold">
+          {priceBreakdown.earlyBirdDiscount && (
+            <div className="mb-4 p-4 bg-gradient-to-r from-luxury-gold/10 to-yellow-400/10 border border-luxury-gold/30 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1 bg-gradient-to-r from-luxury-gold to-yellow-400 text-white text-xs font-bold rounded-full">
+                    Early Bird: -10%
+                  </span>
+                  <span className="text-xs text-gray-600">
+                    until {formatEarlyBirdDeadline()}
+                  </span>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-gray-500 line-through">
+                    {formatCurrency(priceBreakdown.earlyBirdDiscount.originalBaseFee + priceBreakdown.taxAmount + priceBreakdown.apaAmount + priceBreakdown.fixedFees)}
+                  </p>
+                </div>
+              </div>
+              <p className="text-xs text-green-600 font-medium">
+                ✓ Best Price Guaranteed - Direct Booking Discount applied
+              </p>
+            </div>
+          )}
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-bold text-gray-800">TOTAL ESTIMATE</p>

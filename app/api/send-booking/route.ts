@@ -3,6 +3,7 @@ import { Resend } from 'resend'
 import { generateBookingPDF } from '@/lib/pdfGenerator'
 import { createClient } from '@supabase/supabase-js'
 import type { PriceBreakdown } from '@/components/SeasonalPriceCalculator'
+import { calculateEarlyBirdPrice, isEarlyBirdEligible } from '@/lib/earlyBirdDiscount'
 
 // Force Node.js runtime for PDF generation
 export const runtime = 'nodejs'
@@ -532,11 +533,22 @@ export async function POST(request: NextRequest) {
                 </div>
                 <div class="info-box">
                   <p><span class="label">Price Breakdown:</span></p>
-                  <p>Base Charter Fee: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: body.currency, minimumFractionDigits: 0 }).format(body.priceBreakdown.baseCharterFee)}</p>
+                  ${body.priceBreakdown.earlyBirdDiscount ? `
+                    <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                      <p style="color: white; font-weight: bold; margin: 0; font-size: 14px;">🎉 Early Bird Discount Applied: -10%</p>
+                      <p style="color: white; margin: 4px 0 0 0; font-size: 12px;">Best Price Guaranteed - Direct Booking Discount</p>
+                    </div>
+                    <p style="text-decoration: line-through; color: #999;">Base Charter Fee: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: body.currency, minimumFractionDigits: 0 }).format(body.priceBreakdown.earlyBirdDiscount.originalBaseFee)}</p>
+                    <p>Base Charter Fee (After Discount): ${new Intl.NumberFormat('en-US', { style: 'currency', currency: body.currency, minimumFractionDigits: 0 }).format(body.priceBreakdown.baseCharterFee)}</p>
+                    <p style="color: #059669; font-size: 12px;">✓ You saved ${new Intl.NumberFormat('en-US', { style: 'currency', currency: body.currency, minimumFractionDigits: 0 }).format(body.priceBreakdown.earlyBirdDiscount.discountAmount)}!</p>
+                  ` : `
+                    <p>Base Charter Fee: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: body.currency, minimumFractionDigits: 0 }).format(body.priceBreakdown.baseCharterFee)}</p>
+                  `}
                   <p>IVA (${body.taxPercentage}%): ${new Intl.NumberFormat('en-US', { style: 'currency', currency: body.currency, minimumFractionDigits: 0 }).format(body.priceBreakdown.taxAmount)}</p>
                   <p>APA (${body.apaPercentage}%): ${new Intl.NumberFormat('en-US', { style: 'currency', currency: body.currency, minimumFractionDigits: 0 }).format(body.priceBreakdown.apaAmount)}</p>
                   ${body.priceBreakdown.fixedFees > 0 ? `<p>Fixed Fees: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: body.currency, minimumFractionDigits: 0 }).format(body.priceBreakdown.fixedFees)}</p>` : ''}
                   <p><strong>TOTAL ESTIMATE: ${totalEstimate}</strong></p>
+                  ${body.priceBreakdown.earlyBirdDiscount ? `<p style="color: #059669; font-size: 12px; margin-top: 8px;">✓ Best Price Guaranteed - Direct Booking Discount applied</p>` : ''}
                 </div>
                 ${body.message ? `<div class="info-box"><p><span class="label">Client Message:</span></p><p>${body.message.replace(/\n/g, '<br>')}</p></div>` : ''}
                 ${inquiry ? `<p style="margin-top: 20px; color: #666; font-size: 12px;">Inquiry ID: ${(inquiry as any)?.id || 'N/A'}</p>` : ''}

@@ -12,6 +12,7 @@ import CulinarySection from '@/components/CulinarySection'
 import CrewSection from '@/components/CrewSection'
 import StructuredData from '@/components/StructuredData'
 import FloatingCTA from '@/components/FloatingCTA'
+import EarlyBirdBanner from '@/components/EarlyBirdBanner'
 
 // Cache data for 1 hour (3600 seconds)
 export const revalidate = 3600
@@ -138,6 +139,9 @@ export default async function Home({ params }: Props) {
           <StructuredData type="TravelAgency" settings={safeSettings} locale={locale} />
           
           <main className="min-h-screen pt-16">
+            {/* Early Bird Discount Banner */}
+            <EarlyBirdBanner />
+            
             {/* Hero Section - Always at the top */}
             <Hero settings={safeSettings} />
             

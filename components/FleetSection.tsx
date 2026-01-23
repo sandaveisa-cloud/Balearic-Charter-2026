@@ -9,6 +9,7 @@ import OptimizedImage from './OptimizedImage'
 import TrustBar from './TrustBar'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
 import { getDescriptionForLocaleWithTextColumns } from '@/lib/i18nUtils'
+import { calculateEarlyBirdPrice, formatEarlyBirdDeadline, isEarlyBirdEligible } from '@/lib/earlyBirdDiscount'
 
 interface FleetSectionProps {
   fleet: Fleet[]
@@ -91,8 +92,13 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
               const hasError = imageErrors[yacht.id]
               const showImage = imageUrl && !hasError
 
-              // Get starting price
-              const startingPrice = yacht.low_season_price || yacht.high_season_price || null
+              // Get starting price and apply Early Bird discount
+              const baseStartingPrice = yacht.low_season_price || yacht.high_season_price || null
+              const priceInfo = baseStartingPrice 
+                ? calculateEarlyBirdPrice(baseStartingPrice)
+                : null
+              const startingPrice = priceInfo?.discountedPrice || baseStartingPrice
+              const showEarlyBird = priceInfo?.isEligible || false
 
               // Toggle extras visibility
               const toggleExtras = () => {
@@ -160,16 +166,52 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                             )}
                           </div>
                           {startingPrice && (
-                            <div className="flex items-baseline gap-1">
-                              <span className="text-gray-600 text-xs">{t('from')} </span>
-                              <span className="text-xl lg:text-2xl font-bold text-luxury-blue">
-                                {new Intl.NumberFormat('en-US', {
-                                  style: 'currency',
-                                  currency: yacht.currency || 'EUR',
-                                  minimumFractionDigits: 0,
-                                }).format(startingPrice)}
-                              </span>
-                              <span className="text-gray-600 text-xs">/{t('perDay')}</span>
+                            <div className="flex flex-col gap-1">
+                              {showEarlyBird && baseStartingPrice ? (
+                                <>
+                                  <div className="flex items-baseline gap-2">
+                                    <span className="text-gray-600 text-xs">{t('from')} </span>
+                                    <span className="text-lg line-through text-gray-400">
+                                      {new Intl.NumberFormat('en-US', {
+                                        style: 'currency',
+                                        currency: yacht.currency || 'EUR',
+                                        minimumFractionDigits: 0,
+                                      }).format(baseStartingPrice)}
+                                    </span>
+                                    <span className="text-xl lg:text-2xl font-bold text-luxury-blue">
+                                      {new Intl.NumberFormat('en-US', {
+                                        style: 'currency',
+                                        currency: yacht.currency || 'EUR',
+                                        minimumFractionDigits: 0,
+                                      }).format(startingPrice)}
+                                    </span>
+                                    <span className="text-gray-600 text-xs">/{t('perDay')}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="px-2 py-0.5 bg-gradient-to-r from-luxury-gold to-yellow-400 text-white text-xs font-bold rounded-full">
+                                      Early Bird: -10%
+                                    </span>
+                                    <span className="text-xs text-gray-500">
+                                      until {formatEarlyBirdDeadline(locale)}
+                                    </span>
+                                  </div>
+                                  <p className="text-xs text-green-600 font-medium mt-0.5">
+                                    ✓ Best Price Guaranteed - Direct Booking Discount applied
+                                  </p>
+                                </>
+                              ) : (
+                                <div className="flex items-baseline gap-1">
+                                  <span className="text-gray-600 text-xs">{t('from')} </span>
+                                  <span className="text-xl lg:text-2xl font-bold text-luxury-blue">
+                                    {new Intl.NumberFormat('en-US', {
+                                      style: 'currency',
+                                      currency: yacht.currency || 'EUR',
+                                      minimumFractionDigits: 0,
+                                    }).format(startingPrice)}
+                                  </span>
+                                  <span className="text-gray-600 text-xs">/{t('perDay')}</span>
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
