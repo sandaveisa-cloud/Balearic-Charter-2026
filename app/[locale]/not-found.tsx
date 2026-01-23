@@ -1,7 +1,13 @@
+'use client'
+
 import React from 'react'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
 
 export default function NotFound() {
+  const params = useParams()
+  const locale = params?.locale as string || 'en'
+  
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="text-center">
@@ -9,7 +15,7 @@ export default function NotFound() {
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">Page Not Found</h2>
         <p className="text-gray-600 mb-8">The page you're looking for doesn't exist.</p>
         <Link
-          href="/en"
+          href={`/${locale}/`}
           className="inline-block rounded-lg bg-luxury-blue px-6 py-3 text-white font-semibold transition-colors hover:bg-luxury-gold hover:text-luxury-blue"
         >
           Return Home

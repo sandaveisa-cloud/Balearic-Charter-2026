@@ -31,7 +31,7 @@ export default function Error({ error, reset }: ErrorProps) {
             Try Again
           </button>
           <Link
-            href={`/${locale}`}
+            href={`/${locale}/`}
             className="inline-block rounded-lg border border-gray-300 px-6 py-3 text-gray-700 font-semibold transition-colors hover:bg-gray-50"
           >
             Return Home
