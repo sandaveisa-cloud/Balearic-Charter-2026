@@ -156,7 +156,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
       console.log('[FleetDetail] Translation not found for slug:', slug, error)
     }
     return null
-  }
+  
   
   const shipTranslations = getShipTranslations()
 
