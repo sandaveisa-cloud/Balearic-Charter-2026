@@ -204,7 +204,11 @@ export default function DestinationEditModal({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form 
+          onSubmit={handleSubmit} 
+          className="p-6 space-y-6"
+          noValidate
+        >
           {/* Success Message */}
           {success && (
             <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
@@ -401,15 +405,6 @@ export default function DestinationEditModal({
             <button
               type="submit"
               disabled={saving || !formData.name?.trim()}
-              onClick={(e) => {
-                // Ensure form submission
-                if (!formData.name?.trim()) {
-                  e.preventDefault()
-                  setError('Name is required')
-                  return
-                }
-                console.log('[DestinationEditModal] 🔘 Save button clicked')
-              }}
               className="px-6 py-2 bg-luxury-blue text-white rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {saving ? (
