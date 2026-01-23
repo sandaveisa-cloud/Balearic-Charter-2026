@@ -144,6 +144,9 @@ export default function FleetEditPage() {
         length: formData.length,
         is_active: formData.is_active,
         is_featured: formData.is_featured,
+        // Required fields with defaults
+        currency: 'EUR', // Default currency
+        technical_specs: {}, // Empty object as default (required field)
       }
 
       // For existing yacht, add ID and use PUT
