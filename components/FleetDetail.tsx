@@ -156,8 +156,8 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
       console.log('[FleetDetail] Translation not found for slug:', slug, error)
     }
     return null
-  
-  
+  }
+
   const shipTranslations = getShipTranslations()
 
   // Combine main_image_url and gallery_images into a single array
@@ -268,34 +268,37 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
             )}
 
             {/* Layout View */}
-            {galleryView === 'layout' && layoutImage ? (
-              <div className="relative h-full w-full">
-                <OptimizedImage
-                  src={getOptimizedImageUrl(layoutImage, {
-                    width: 1920,
-                    quality: 90,
-                    format: 'webp',
-                  })}
-                  alt={`${yacht.name} - Layout`}
-                  fill
-                  sizes="100vw"
-                  priority
-                  objectFit="contain"
-                  aspectRatio="16/9"
-                  onClick={() => setIsLightboxOpen(true)}
-                  quality={90}
-                  className="cursor-zoom-in"
-                />
-                <button
-                  onClick={() => setIsLightboxOpen(true)}
-                  className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors"
-                >
-                  <span className="text-white text-sm font-medium bg-black/50 px-4 py-2 rounded-lg">
-                    Click to view full screen
-                  </span>
-                </button>
-              </div>
-            ) : null}
+            {galleryView === 'layout' && layoutImage ? (() => {
+              const layoutImageUrl = getOptimizedImageUrl(layoutImage, {
+                width: 1920,
+                quality: 90,
+                format: 'webp',
+              })
+              return layoutImageUrl ? (
+                <div className="relative h-full w-full">
+                  <OptimizedImage
+                    src={layoutImageUrl}
+                    alt={`${yacht.name} - Layout`}
+                    fill
+                    sizes="100vw"
+                    priority
+                    objectFit="contain"
+                    aspectRatio="16/9"
+                    onClick={() => setIsLightboxOpen(true)}
+                    quality={90}
+                    className="cursor-zoom-in"
+                  />
+                  <button
+                    onClick={() => setIsLightboxOpen(true)}
+                    className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors"
+                  >
+                    <span className="text-white text-sm font-medium bg-black/50 px-4 py-2 rounded-lg">
+                      Click to view full screen
+                    </span>
+                  </button>
+                </div>
+              ) : null
+            })() : null}
 
             {/* Main Image Slider (Grid View) */}
             {galleryView === 'grid' && (
