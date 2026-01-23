@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Plus, Edit, Trash2, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
-import DestinationEditModal from '@/components/DestinationEditModal'
+import DestinationEditor from '@/components/DestinationEditor'
 import type { Destination } from '@/types/database'
 
 export default function DestinationsAdminPage() {
@@ -39,11 +39,13 @@ export default function DestinationsAdminPage() {
   }
 
   const handleAddNew = () => {
+    console.log('[DestinationsAdmin] Opening modal for new destination')
     setEditingDestination(null)
     setIsModalOpen(true)
   }
 
   const handleEdit = (destination: Destination) => {
+    console.log('[DestinationsAdmin] Opening modal to edit destination:', destination.id, destination.name)
     setEditingDestination(destination)
     setIsModalOpen(true)
   }
@@ -134,6 +136,7 @@ export default function DestinationsAdminPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Image</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Name</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Region</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Slug</th>
@@ -144,8 +147,41 @@ export default function DestinationsAdminPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {destinations.map((destination) => (
+                {destinations.map((destination) => {
+                  // Handle both Supabase URLs and local paths
+                  const imageUrl = destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0
+                    ? destination.image_urls[0]
+                    : null
+
+                  // Normalize image URL - handle both full URLs and local paths
+                  const normalizedImageUrl = imageUrl
+                    ? imageUrl.startsWith('/')
+                      ? imageUrl // Local path like /images/filename.jpg
+                      : imageUrl // Full URL
+                    : null
+
+                  return (
                   <tr key={destination.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4">
+                      {normalizedImageUrl ? (
+                        <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
+                          <img
+                            src={normalizedImageUrl}
+                            alt={destination.name || destination.title || 'Destination'}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              // Fallback if image fails to load
+                              const target = e.target as HTMLImageElement
+                              target.style.display = 'none'
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-16 h-16 rounded-lg border border-gray-200 bg-gray-100 flex items-center justify-center">
+                          <span className="text-xs text-gray-400">No image</span>
+                        </div>
+                      )}
+                    </td>
                     <td className="px-6 py-4">
                       <div className="font-semibold text-gray-800">{destination.name || destination.title}</div>
                       {destination.description && (
@@ -209,23 +245,30 @@ export default function DestinationsAdminPage() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  )
+                })}
               </tbody>
             </table>
           </div>
         )}
       </div>
 
-      {/* Edit Modal */}
-      <DestinationEditModal
-        destination={editingDestination}
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setEditingDestination(null)
-        }}
-        onSave={handleSave}
-      />
+      {/* Edit Modal - DestinationEditor with Tabs */}
+      {isModalOpen && (
+        <DestinationEditor
+          destination={editingDestination}
+          isOpen={isModalOpen}
+          onClose={() => {
+            console.log('[DestinationsAdmin] Closing modal')
+            setIsModalOpen(false)
+            setEditingDestination(null)
+          }}
+          onSave={() => {
+            console.log('[DestinationsAdmin] Save callback triggered')
+            handleSave()
+          }}
+        />
+      )}
     </div>
   )
 }
