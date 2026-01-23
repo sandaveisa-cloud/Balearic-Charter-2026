@@ -100,7 +100,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
       <AdminSidebar />
       
       {/* Main Content Area */}
-      <div className="flex-1 ml-64">
+      <div className="flex-1 lg:ml-64">
         {/* Admin Top Bar with Logout */}
         <div className="bg-gray-900 text-white p-4 flex justify-between items-center shadow-lg sticky top-0 z-10">
           <span className="font-bold text-lg">Admin Panel</span>
@@ -108,7 +108,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
         </div>
         
         {/* Admin Content */}
-        <div className="p-6">
+        <div className="p-4 lg:p-6">
           {children}
         </div>
       </div>

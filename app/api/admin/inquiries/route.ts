@@ -2,13 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdminClient } from '@/lib/supabase-admin'
 
 /**
- * Admin API Route for fetching booking inquiries
+ * Admin API Route for managing booking inquiries
  * Uses service role key to bypass RLS
- * This ensures admin users can always access inquiries regardless of RLS policies
  */
 export async function GET(request: NextRequest) {
   try {
-    // Check if service role key is configured
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     if (!serviceRoleKey) {
       console.error('[Admin API] SUPABASE_SERVICE_ROLE_KEY is not configured')
@@ -18,7 +16,6 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Create admin client (bypasses RLS)
     const supabase = createSupabaseAdminClient()
 
     // Fetch inquiries with fleet data in parallel (optimized)
@@ -54,6 +51,111 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       inquiries: inquiriesWithYachts,
       total: inquiriesWithYachts.length,
+    })
+  } catch (error) {
+    console.error('[Admin API] Unexpected error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error', details: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * Update an inquiry (status, notes, etc.)
+ */
+export async function PUT(request: NextRequest) {
+  try {
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (!serviceRoleKey) {
+      return NextResponse.json(
+        { error: 'Server configuration error: Admin access not configured' },
+        { status: 500 }
+      )
+    }
+
+    const body = await request.json()
+    const { id, ...updates } = body
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Inquiry ID is required' },
+        { status: 400 }
+      )
+    }
+
+    const supabase = createSupabaseAdminClient()
+
+    // @ts-ignore
+    const { data, error } = await (supabase
+      .from('booking_inquiries' as any) as any)
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('[Admin API] Error updating inquiry:', error)
+      return NextResponse.json(
+        { error: 'Failed to update inquiry', details: error.message },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({
+      inquiry: data,
+      message: 'Inquiry updated successfully',
+    })
+  } catch (error) {
+    console.error('[Admin API] Unexpected error:', error)
+    return NextResponse.json(
+      { error: 'Internal server error', details: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * Delete an inquiry
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    if (!serviceRoleKey) {
+      return NextResponse.json(
+        { error: 'Server configuration error: Admin access not configured' },
+        { status: 500 }
+      )
+    }
+
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Inquiry ID is required' },
+        { status: 400 }
+      )
+    }
+
+    const supabase = createSupabaseAdminClient()
+
+    // @ts-ignore
+    const { error } = await (supabase
+      .from('booking_inquiries' as any) as any)
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('[Admin API] Error deleting inquiry:', error)
+      return NextResponse.json(
+        { error: 'Failed to delete inquiry', details: error.message },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({
+      message: 'Inquiry deleted successfully',
     })
   } catch (error) {
     console.error('[Admin API] Unexpected error:', error)
