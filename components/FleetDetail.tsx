@@ -152,6 +152,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
   const [comparisonBoats, setComparisonBoats] = useState<Fleet[]>([])
   const [upsellYacht, setUpsellYacht] = useState<Fleet | null>(null)
+  const [galleryView, setGalleryView] = useState<'grid' | 'layout'>('grid')
   
   // Touch/swipe support for lightbox
   const touchStartX = useRef<number | null>(null)
@@ -165,6 +166,16 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
       return [main, ...gallery]
     }
     return gallery.length > 0 ? gallery : (main ? [main] : [])
+  })()
+
+  // Check if layout image exists (look for layout/blueprint in gallery or as a separate field)
+  const layoutImage = (() => {
+    const layoutKeywords = ['layout', 'blueprint', 'floor', 'plan', 'deck']
+    return allImages.find(img => 
+      layoutKeywords.some(keyword => 
+        img.toLowerCase().includes(keyword)
+      )
+    ) || null
   })()
 
   const nextImage = () => {
@@ -228,69 +239,107 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
       <div className="relative h-[60vh] w-full overflow-hidden bg-gray-900">
         {allImages.length > 0 ? (
           <>
-            {/* Main Image Slider */}
-            <div className="relative h-full w-full">
-              {allImages.map((imageUrl, index) => {
-                const optimizedUrl = getOptimizedImageUrl(imageUrl, {
-                  width: 1920,
-                  quality: 85,
-                  format: 'webp',
-                })
-                const isActive = index === currentImageIndex
-
-                return (
-                  <div
-                    key={index}
-                    className={`absolute inset-0 transition-opacity duration-500 ${
-                      isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                    }`}
-                  >
-                    {optimizedUrl && (
-                      <OptimizedImage
-                        src={optimizedUrl}
-                        alt={`${yacht.name} - Image ${index + 1}`}
-                        fill
-                        sizes="100vw"
-                        priority={index === 0}
-                        loading={index === 0 ? undefined : "lazy"}
-                        objectFit="cover"
-                        aspectRatio="16/9"
-                        onClick={() => setIsLightboxOpen(true)}
-                        quality={85}
-                        className="cursor-pointer"
-                      />
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Navigation Arrows */}
-            {allImages.length > 1 && (
-              <>
+            {/* View Toggle (Layout/Grid) */}
+            {layoutImage && (
+              <div className="absolute top-4 right-4 z-30 flex gap-2 bg-black/50 backdrop-blur-sm rounded-lg p-1">
                 <button
-                  onClick={prevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full transition-all shadow-lg"
-                  aria-label="Previous image"
+                  onClick={() => setGalleryView('grid')}
+                  className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                    galleryView === 'grid'
+                      ? 'bg-luxury-gold text-luxury-blue'
+                      : 'text-white hover:bg-white/20'
+                  }`}
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
+                  Gallery
                 </button>
                 <button
-                  onClick={nextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full transition-all shadow-lg"
-                  aria-label="Next image"
+                  onClick={() => setGalleryView('layout')}
+                  className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                    galleryView === 'layout'
+                      ? 'bg-luxury-gold text-luxury-blue'
+                      : 'text-white hover:bg-white/20'
+                  }`}
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  Layout
                 </button>
-              </>
+              </div>
             )}
 
-            {/* Image Indicators */}
-            {allImages.length > 1 && (
+            {/* Layout View */}
+            {galleryView === 'layout' && layoutImage ? (
+              <div className="relative h-full w-full">
+                <OptimizedImage
+                  src={getOptimizedImageUrl(layoutImage, {
+                    width: 1920,
+                    quality: 90,
+                    format: 'webp',
+                  })}
+                  alt={`${yacht.name} - Layout`}
+                  fill
+                  sizes="100vw"
+                  priority
+                  objectFit="contain"
+                  aspectRatio="16/9"
+                  onClick={() => setIsLightboxOpen(true)}
+                  quality={90}
+                  className="cursor-zoom-in"
+                />
+                <button
+                  onClick={() => setIsLightboxOpen(true)}
+                  className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors"
+                >
+                  <span className="text-white text-sm font-medium bg-black/50 px-4 py-2 rounded-lg">
+                    Click to view full screen
+                  </span>
+                </button>
+              </div>
+            ) : null}
+
+            {/* Main Image Slider (Grid View) */}
+            {galleryView === 'grid' && (
+              <div className="relative h-full w-full">
+                {allImages.map((imageUrl, index) => {
+                  const optimizedUrl = getOptimizedImageUrl(imageUrl, {
+                    width: 1920,
+                    quality: 85,
+                    format: 'webp',
+                  })
+                  const isActive = index === currentImageIndex
+
+                  return (
+                    <div
+                      key={index}
+                      className={`absolute inset-0 transition-opacity duration-500 ${
+                        isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                      }`}
+                    >
+                      {optimizedUrl && (
+                        <OptimizedImage
+                          src={optimizedUrl}
+                          alt={`${yacht.name} - Image ${index + 1}`}
+                          fill
+                          sizes="100vw"
+                          priority={index === 0}
+                          loading={index === 0 ? undefined : "lazy"}
+                          objectFit="cover"
+                          aspectRatio="16/9"
+                          onClick={() => setIsLightboxOpen(true)}
+                          quality={85}
+                          className="cursor-pointer"
+                        />
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Navigation Arrows - Only show in grid view */}
+            {galleryView === 'grid' && allImages.length > 1 && (
+              <>
+
+            {/* Image Indicators - Only show in grid view */}
+            {galleryView === 'grid' && allImages.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
                 {allImages.map((_, index) => (
                   <button
@@ -305,8 +354,8 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
               </div>
             )}
 
-            {/* Thumbnail Strip (on mobile/tablet) */}
-            {allImages.length > 1 && (
+            {/* Thumbnail Strip (on mobile/tablet) - Only show in grid view */}
+            {galleryView === 'grid' && allImages.length > 1 && (
               <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/60 to-transparent pb-20 px-4">
                 <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
                   {allImages.map((imageUrl, index) => {

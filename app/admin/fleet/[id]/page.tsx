@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, Save } from 'lucide-react'
+import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, Save, Snowflake, Zap, Wind, BedDouble, Waves, Anchor, Droplets, Flame } from 'lucide-react'
 import ImageUpload from '@/components/ImageUpload'
+import GalleryImageManager from '@/components/GalleryImageManager'
 import type { Fleet } from '@/types/database'
 
 export default function FleetEditPage() {
@@ -26,6 +27,7 @@ export default function FleetEditPage() {
     description_es: '',
     description_de: '',
     main_image_url: '',
+    gallery_images: [] as string[],
     low_season_price: null as number | null,
     medium_season_price: null as number | null,
     high_season_price: null as number | null,
@@ -33,8 +35,34 @@ export default function FleetEditPage() {
     cabins: null as number | null,
     toilets: null as number | null,
     length: null as number | null,
+    beam: null as number | null,
+    draft: null as number | null,
     is_active: true,
     is_featured: false,
+    // Amenities
+    amenities: {
+      ac: false,
+      watermaker: false,
+      generator: false,
+      flybridge: false,
+      heating: false,
+      teak_deck: false,
+      full_batten: false,
+      folding_table: false,
+      fridge: false,
+      dinghy: false,
+      water_entertainment: false,
+    } as Record<string, boolean>,
+    // Extras
+    extras: [] as string[],
+    // Technical specs
+    technical_specs: {
+      engines: '',
+      cruising_speed: '',
+      max_speed: '',
+      fuel_capacity: '',
+      water_capacity: '',
+    } as Record<string, any>,
   })
 
   const isNew = id === 'new'
@@ -85,6 +113,13 @@ export default function FleetEditPage() {
       }
 
       setFleet(yacht)
+      
+      // Extract beam and draft from technical_specs or specs
+      const techSpecs = yacht.technical_specs || {}
+      const specs = yacht.specs || {}
+      const beam = techSpecs.beam || specs.beam || null
+      const draft = techSpecs.draft || specs.draft || null
+      
       setFormData({
         name: yacht.name || '',
         slug: yacht.slug || '',
@@ -94,6 +129,7 @@ export default function FleetEditPage() {
         description_es: yacht.description_es || '',
         description_de: yacht.description_de || '',
         main_image_url: yacht.main_image_url || (yacht.gallery_images && yacht.gallery_images.length > 0 ? yacht.gallery_images[0] : ''),
+        gallery_images: yacht.gallery_images || [],
         low_season_price: yacht.low_season_price || null,
         medium_season_price: yacht.medium_season_price || null,
         high_season_price: yacht.high_season_price || null,
@@ -101,8 +137,31 @@ export default function FleetEditPage() {
         cabins: yacht.cabins || null,
         toilets: yacht.toilets || null,
         length: yacht.length || null,
+        beam: typeof beam === 'number' ? beam : (typeof beam === 'string' ? parseFloat(beam) || null : null),
+        draft: typeof draft === 'number' ? draft : (typeof draft === 'string' ? parseFloat(draft) || null : null),
         is_active: yacht.is_active !== false,
         is_featured: yacht.is_featured || false,
+        amenities: yacht.amenities || {
+          ac: false,
+          watermaker: false,
+          generator: false,
+          flybridge: false,
+          heating: false,
+          teak_deck: false,
+          full_batten: false,
+          folding_table: false,
+          fridge: false,
+          dinghy: false,
+          water_entertainment: false,
+        },
+        extras: yacht.extras || [],
+        technical_specs: {
+          engines: techSpecs.engines || '',
+          cruising_speed: techSpecs.cruising_speed || '',
+          max_speed: techSpecs.max_speed || '',
+          fuel_capacity: techSpecs.fuel_capacity || '',
+          water_capacity: techSpecs.water_capacity || '',
+        },
       })
     } catch (error) {
       console.error('[FleetEdit] Error fetching:', error)
@@ -133,8 +192,8 @@ export default function FleetEditPage() {
         description_en: formData.description_en || null,
         description_es: formData.description_es || null,
         description_de: formData.description_de || null,
-        main_image_url: formData.main_image_url || null,
-        gallery_images: formData.main_image_url ? [formData.main_image_url] : [],
+        main_image_url: formData.gallery_images && formData.gallery_images.length > 0 ? formData.gallery_images[0] : formData.main_image_url || null,
+        gallery_images: formData.gallery_images || [],
         low_season_price: formData.low_season_price,
         medium_season_price: formData.medium_season_price,
         high_season_price: formData.high_season_price,
@@ -144,9 +203,19 @@ export default function FleetEditPage() {
         length: formData.length,
         is_active: formData.is_active,
         is_featured: formData.is_featured,
+        // Amenities
+        amenities: formData.amenities || {},
+        // Extras
+        extras: formData.extras || [],
+        // Technical specs
+        technical_specs: {
+          ...formData.technical_specs,
+          length: formData.length,
+          beam: formData.beam,
+          draft: formData.draft,
+        },
         // Required fields with defaults
         currency: 'EUR', // Default currency
-        technical_specs: {}, // Empty object as default (required field)
       }
 
       // For existing yacht, add ID and use PUT
@@ -456,14 +525,238 @@ export default function FleetEditPage() {
           </div>
         </div>
 
-        {/* Image Upload */}
+        {/* Main Image */}
         <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Main Image
+          </label>
           <ImageUpload
             currentImageUrl={formData.main_image_url}
             onImageUploaded={(url) => setFormData({ ...formData, main_image_url: url })}
             folder="fleet"
             bucket="fleet-images"
           />
+        </div>
+
+        {/* Gallery Images Manager */}
+        <div>
+          <GalleryImageManager
+            images={formData.gallery_images}
+            onImagesChange={(images) => {
+              setFormData({ 
+                ...formData, 
+                gallery_images: images,
+                // Update main_image_url to first gallery image if not set
+                main_image_url: formData.main_image_url || (images.length > 0 ? images[0] : '')
+              })
+            }}
+            folder="fleet"
+            bucket="fleet-images"
+          />
+        </div>
+
+        {/* Technical Specifications */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-800">Technical Specifications</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Beam (meters)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                value={formData.beam || ''}
+                onChange={(e) => setFormData({ ...formData, beam: e.target.value ? parseFloat(e.target.value) : null })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Draft (meters)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                value={formData.draft || ''}
+                onChange={(e) => setFormData({ ...formData, draft: e.target.value ? parseFloat(e.target.value) : null })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Engines
+              </label>
+              <input
+                type="text"
+                value={formData.technical_specs.engines || ''}
+                onChange={(e) => setFormData({ 
+                  ...formData, 
+                  technical_specs: { ...formData.technical_specs, engines: e.target.value }
+                })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="e.g., 2x Yanmar 54HP"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Cruising Speed
+              </label>
+              <input
+                type="text"
+                value={formData.technical_specs.cruising_speed || ''}
+                onChange={(e) => setFormData({ 
+                  ...formData, 
+                  technical_specs: { ...formData.technical_specs, cruising_speed: e.target.value }
+                })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="e.g., 8 knots"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Max Speed
+              </label>
+              <input
+                type="text"
+                value={formData.technical_specs.max_speed || ''}
+                onChange={(e) => setFormData({ 
+                  ...formData, 
+                  technical_specs: { ...formData.technical_specs, max_speed: e.target.value }
+                })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="e.g., 10 knots"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Fuel Capacity
+              </label>
+              <input
+                type="text"
+                value={formData.technical_specs.fuel_capacity || ''}
+                onChange={(e) => setFormData({ 
+                  ...formData, 
+                  technical_specs: { ...formData.technical_specs, fuel_capacity: e.target.value }
+                })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="e.g., 500L"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Water Capacity
+              </label>
+              <input
+                type="text"
+                value={formData.technical_specs.water_capacity || ''}
+                onChange={(e) => setFormData({ 
+                  ...formData, 
+                  technical_specs: { ...formData.technical_specs, water_capacity: e.target.value }
+                })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="e.g., 300L"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Amenities */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-800">Amenities</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              { key: 'ac', label: 'Air Conditioning', icon: Snowflake },
+              { key: 'generator', label: 'Generator', icon: Zap },
+              { key: 'flybridge', label: 'Flybridge', icon: Wind },
+              { key: 'watermaker', label: 'Watermaker', icon: Droplets },
+              { key: 'heating', label: 'Heating', icon: Flame },
+              { key: 'teak_deck', label: 'Teak Deck', icon: Waves },
+              { key: 'fridge', label: 'Refrigerator', icon: Anchor },
+              { key: 'dinghy', label: 'Dinghy', icon: Waves },
+              { key: 'water_entertainment', label: 'Water Toys', icon: Waves },
+            ].map(({ key, label, icon: Icon }) => (
+              <div key={key} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id={`amenity_${key}`}
+                  checked={formData.amenities[key] || false}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    amenities: { ...formData.amenities, [key]: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-luxury-blue border-gray-300 rounded focus:ring-luxury-blue"
+                />
+                <label htmlFor={`amenity_${key}`} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                  <Icon className="w-4 h-4 text-luxury-gold" />
+                  <span>{label}</span>
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Extras */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-800">Extras & Services</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              'WiFi',
+              'Snorkeling Equipment',
+              'Towels',
+              'Linens',
+              'Beach Towels',
+              'Kitchen Equipment',
+              'Safety Equipment',
+              'Navigation Equipment',
+            ].map((extra) => (
+              <div key={extra} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id={`extra_${extra}`}
+                  checked={formData.extras.includes(extra)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setFormData({
+                        ...formData,
+                        extras: [...formData.extras, extra]
+                      })
+                    } else {
+                      setFormData({
+                        ...formData,
+                        extras: formData.extras.filter(e => e !== extra)
+                      })
+                    }
+                  }}
+                  className="w-4 h-4 text-luxury-blue border-gray-300 rounded focus:ring-luxury-blue"
+                />
+                <label htmlFor={`extra_${extra}`} className="text-sm text-gray-700 cursor-pointer">
+                  {extra}
+                </label>
+              </div>
+            ))}
+          </div>
+          {/* Custom Extra Input */}
+          <div>
+            <input
+              type="text"
+              placeholder="Add custom extra (press Enter)"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                  e.preventDefault()
+                  const value = e.currentTarget.value.trim()
+                  if (!formData.extras.includes(value)) {
+                    setFormData({
+                      ...formData,
+                      extras: [...formData.extras, value]
+                    })
+                  }
+                  e.currentTarget.value = ''
+                }
+              }}
+            />
+          </div>
         </div>
 
         {/* Status */}
