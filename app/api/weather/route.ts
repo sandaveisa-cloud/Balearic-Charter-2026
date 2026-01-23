@@ -22,9 +22,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Fetch 7-day forecast from OpenWeatherMap
+    // Fetch 5-day forecast from OpenWeatherMap (free tier provides 5 days with 3-hour intervals)
+    // Note: For true 7-day forecast, you'd need OpenWeatherMap One Call API 3.0 (paid tier)
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric&cnt=56`
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`
     )
 
     if (!response.ok) {
@@ -76,26 +77,34 @@ function processForecastData(data: any) {
     })
   }
 
-  // Process each day
-  const sortedDates = Object.keys(dailyData).sort().slice(0, 7) // Get next 7 days
+  // Process each day - OpenWeatherMap free tier provides 5 days, we'll use all available
+  const sortedDates = Object.keys(dailyData).sort()
+  const maxDays = Math.min(sortedDates.length, 7) // Get up to 7 days (or available days)
 
-  sortedDates.forEach((dateKey, index) => {
+  sortedDates.slice(0, maxDays).forEach((dateKey) => {
     const dayForecasts = dailyData[dateKey]
     if (!dayForecasts || dayForecasts.length === 0) return
 
-    // Get min/max temperatures
+    // Get min/max temperatures from all forecasts for this day
     const temps = dayForecasts.map((f: any) => f.main?.temp).filter((t: any) => t != null)
+    if (temps.length === 0) return
+    
     const high = Math.round(Math.max(...temps))
     const low = Math.round(Math.min(...temps))
 
-    // Get most common weather condition for the day
-    const mainCondition = dayForecasts[0].weather?.[0]?.main?.toLowerCase() || 'clear'
-    const condition = dayForecasts[0].weather?.[0]?.description || 'Clear'
+    // Get the most representative weather condition (use midday forecast if available, otherwise first)
+    const middayForecast = dayForecasts.find((f: any) => {
+      const hour = new Date(f.dt * 1000).getHours()
+      return hour >= 11 && hour <= 15
+    }) || dayForecasts[Math.floor(dayForecasts.length / 2)] || dayForecasts[0]
+
+    const mainCondition = middayForecast.weather?.[0]?.main?.toLowerCase() || 'clear'
+    const condition = middayForecast.weather?.[0]?.description || 'Clear'
 
     // Map weather condition to icon type
     const iconType = mapWeatherToIcon(mainCondition)
 
-    const date = new Date(dateKey)
+    const date = new Date(dateKey + 'T12:00:00') // Use noon to avoid timezone issues
     const dayName = date.toLocaleDateString('en-US', { weekday: 'short' })
     const dayNumber = date.getDate().toString()
 
@@ -116,15 +125,40 @@ function processForecastData(data: any) {
 function mapWeatherToIcon(condition: string): 'sun' | 'cloud' | 'rain' | 'drizzle' {
   const conditionLower = condition.toLowerCase()
 
-  if (conditionLower.includes('clear') || conditionLower.includes('sun')) {
+  // Clear sky / sunny
+  if (conditionLower === 'clear' || conditionLower === 'clear sky') {
     return 'sun'
   }
-  if (conditionLower.includes('rain') || conditionLower.includes('storm')) {
+
+  // Rain conditions
+  if (conditionLower.includes('rain') || 
+      conditionLower.includes('storm') || 
+      conditionLower.includes('thunderstorm')) {
     return 'rain'
   }
-  if (conditionLower.includes('drizzle') || conditionLower.includes('shower')) {
+
+  // Drizzle / light rain
+  if (conditionLower.includes('drizzle') || 
+      conditionLower.includes('shower') ||
+      conditionLower.includes('light rain')) {
     return 'drizzle'
   }
-  // Default to cloud for cloudy, mist, fog, etc.
-  return 'cloud'
+
+  // Cloudy conditions (clouds, mist, fog, haze, etc.)
+  if (conditionLower.includes('cloud') || 
+      conditionLower.includes('mist') || 
+      conditionLower.includes('fog') ||
+      conditionLower.includes('haze') ||
+      conditionLower.includes('dust') ||
+      conditionLower.includes('sand')) {
+    return 'cloud'
+  }
+
+  // Snow conditions (map to cloud for now, or could add snow icon)
+  if (conditionLower.includes('snow')) {
+    return 'cloud'
+  }
+
+  // Default to sun for unknown conditions
+  return 'sun'
 }

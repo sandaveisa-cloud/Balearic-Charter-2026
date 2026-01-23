@@ -38,44 +38,72 @@ export default function WeatherForecast({ forecast, latitude, longitude }: Weath
 
   // Fetch weather data if coordinates are provided
   useEffect(() => {
+    // Reset state when coordinates change
+    setWeatherData([])
+    setError(null)
+
     if (forecast) {
       // Use provided forecast
       setWeatherData(forecast)
       return
     }
 
-    if (latitude && longitude) {
+    if (latitude && longitude && typeof latitude === 'number' && typeof longitude === 'number') {
       // Fetch real weather data
       setLoading(true)
-      setError(null)
       
-      fetch(`/api/weather?lat=${latitude}&lng=${longitude}`)
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+      
+      fetch(`/api/weather?lat=${latitude}&lng=${longitude}`, {
+        signal: controller.signal,
+      })
         .then((res) => {
+          clearTimeout(timeoutId)
           if (!res.ok) {
-            throw new Error('Failed to fetch weather data')
+            return res.json().then((err) => {
+              throw new Error(err.error || `HTTP ${res.status}: Failed to fetch weather data`)
+            })
           }
           return res.json()
         })
         .then((data) => {
-          if (data.success && data.forecast) {
+          if (data.success && data.forecast && Array.isArray(data.forecast) && data.forecast.length > 0) {
             setWeatherData(data.forecast)
+            setError(null)
           } else {
-            throw new Error(data.error || 'Invalid weather data')
+            throw new Error(data.error || 'Invalid weather data received')
           }
         })
         .catch((err) => {
-          console.error('[WeatherForecast] Error fetching weather:', err)
-          setError('Failed to load weather forecast')
-          setWeatherData(defaultForecast) // Fallback to mock data
+          clearTimeout(timeoutId)
+          if (err.name === 'AbortError') {
+            console.error('[WeatherForecast] Request timeout')
+            setError('Request timed out. Please try again.')
+          } else {
+            console.error('[WeatherForecast] Error fetching weather:', err)
+            setError(err.message || 'Failed to load weather forecast')
+          }
+          // Fallback to mock data only if we have no data at all
+          if (weatherData.length === 0) {
+            setWeatherData(defaultForecast)
+          }
         })
         .finally(() => {
           setLoading(false)
         })
+
+      // Cleanup function to abort request if component unmounts or coordinates change
+      return () => {
+        clearTimeout(timeoutId)
+        controller.abort()
+      }
     } else {
-      // No coordinates, use default mock data
+      // No valid coordinates, use default mock data
+      setLoading(false)
       setWeatherData(defaultForecast)
     }
-  }, [latitude, longitude, forecast])
+  }, [latitude, longitude, forecast]) // Removed weatherData from dependencies to avoid infinite loop
 
   const getIcon = (iconType: string) => {
     switch (iconType) {
@@ -120,7 +148,7 @@ export default function WeatherForecast({ forecast, latitude, longitude }: Weath
           <div className="flex gap-4 min-w-max md:min-w-0 md:grid md:grid-cols-7">
             {weatherData.map((day, index) => (
               <div
-                key={index}
+                key={`${day.day}-${day.date}-${index}`}
                 className="flex-shrink-0 w-20 md:w-auto text-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <div className="text-xs text-gray-500 mb-1">{day.day}</div>
@@ -138,7 +166,10 @@ export default function WeatherForecast({ forecast, latitude, longitude }: Weath
       </div>
 
       <p className="text-xs text-gray-400 mt-4 text-center">
-        {t('weatherNote') || 'Forecast data is approximate. Actual conditions may vary.'}
+        {latitude && longitude 
+          ? (t('weatherNote') || 'Forecast data from OpenWeatherMap. Actual conditions may vary.')
+          : (t('weatherNote') || 'Forecast data is approximate. Actual conditions may vary.')
+        }
       </p>
     </div>
   )
