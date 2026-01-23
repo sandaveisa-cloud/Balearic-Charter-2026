@@ -7,15 +7,21 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Disable source maps in production to prevent 404 errors for .map files
+  productionBrowserSourceMaps: false,
   // Ensure date-fns is properly transpiled
   transpilePackages: ['date-fns'],
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     // Fix for date-fns vendor chunk issue
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
       };
+    }
+    // Disable source maps in production
+    if (!dev) {
+      config.devtool = false;
     }
     return config;
   },
