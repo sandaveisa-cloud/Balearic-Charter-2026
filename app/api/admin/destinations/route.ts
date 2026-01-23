@@ -130,10 +130,13 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json()
+    console.log('[Admin API] 📥 PUT request body:', body)
+    
     const { id, name, region, slug, description, description_en, description_es, description_de, image_urls, youtube_video_url, order_index, is_active } = body
 
     // Validate required fields
     if (!id) {
+      console.error('[Admin API] ❌ Missing ID in PUT request')
       return NextResponse.json(
         { error: 'Destination ID is required' },
         { status: 400 }
@@ -141,6 +144,7 @@ export async function PUT(request: NextRequest) {
     }
 
     if (!name || !slug) {
+      console.error('[Admin API] ❌ Missing name or slug:', { name, slug })
       return NextResponse.json(
         { error: 'Name and slug are required' },
         { status: 400 }
@@ -150,25 +154,29 @@ export async function PUT(request: NextRequest) {
     // Create admin client (bypasses RLS)
     const supabase = createSupabaseAdminClient()
 
+    const updateData = {
+      name: name.trim(),
+      title: name.trim(), // Also update title for backward compatibility
+      region: region?.trim() || null,
+      slug: slug.trim(),
+      description: description?.trim() || null,
+      description_en: description_en?.trim() || null,
+      description_es: description_es?.trim() || null,
+      description_de: description_de?.trim() || null,
+      image_urls: image_urls || [],
+      youtube_video_url: youtube_video_url?.trim() || null,
+      order_index: order_index || 0,
+      is_active: is_active !== false,
+      updated_at: new Date().toISOString(),
+    }
+
+    console.log('[Admin API] 🔄 Updating destination with data:', updateData)
+
     // Update destination
     // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
     const { data, error } = await (supabase
       .from('destinations' as any) as any)
-      .update({
-        name,
-        title: name, // Also update title for backward compatibility
-        region: region || null,
-        slug,
-        description,
-        description_en,
-        description_es,
-        description_de,
-        image_urls,
-        youtube_video_url,
-        order_index,
-        is_active,
-        updated_at: new Date().toISOString(),
-      } as any)
+      .update(updateData as any)
       .eq('id', id)
       .select()
       .single()

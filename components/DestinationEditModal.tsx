@@ -86,29 +86,50 @@ export default function DestinationEditModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    e.stopPropagation()
+    
+    console.log('[DestinationEditModal] 🚀 Starting save process...')
+    console.log('[DestinationEditModal] Form data:', formData)
+    console.log('[DestinationEditModal] Destination ID:', destination?.id)
+    
     setSaving(true)
     setError(null)
     setSuccess(false)
 
     try {
+      // Validate required fields
+      if (!formData.name || !formData.name.trim()) {
+        throw new Error('Name is required')
+      }
+
+      const slug = formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+      
+      if (!slug || !slug.trim()) {
+        throw new Error('Slug is required and must be valid')
+      }
+
       const payload = {
         ...(destination?.id && { id: destination.id }),
-        name: formData.name,
-        region: formData.region || null,
-        slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-'),
-        description: formData.description || null,
-        description_en: formData.description_en || null,
-        description_es: formData.description_es || null,
-        description_de: formData.description_de || null,
+        name: formData.name.trim(),
+        region: formData.region?.trim() || null,
+        slug: slug.trim(),
+        description: formData.description?.trim() || null,
+        description_en: formData.description_en?.trim() || null,
+        description_es: formData.description_es?.trim() || null,
+        description_de: formData.description_de?.trim() || null,
         image_urls: formData.image_url ? [formData.image_url] : [],
-        youtube_video_url: formData.youtube_video_url || null,
-        order_index: formData.order_index,
-        is_active: formData.is_active,
+        youtube_video_url: formData.youtube_video_url?.trim() || null,
+        order_index: formData.order_index || 0,
+        is_active: formData.is_active !== false,
       }
+
+      console.log('[DestinationEditModal] 📤 Sending payload:', payload)
 
       // Use Admin API route with SERVICE_ROLE_KEY
       const url = '/api/admin/destinations'
       const method = destination?.id ? 'PUT' : 'POST'
+
+      console.log('[DestinationEditModal] 📡 Making request:', method, url)
 
       const response = await fetch(url, {
         method,
@@ -118,11 +139,24 @@ export default function DestinationEditModal({
         body: JSON.stringify(payload),
       })
 
+      console.log('[DestinationEditModal] 📥 Response status:', response.status, response.statusText)
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
+        let errorData
+        try {
+          errorData = await response.json()
+        } catch {
+          errorData = { error: `HTTP ${response.status}: ${response.statusText}` }
+        }
+        
+        console.error('[DestinationEditModal] ❌ API Error:', errorData)
+        
         const errorMessage = errorData.error || errorData.details || `Failed to save destination: ${response.status} ${response.statusText}`
         throw new Error(errorMessage)
       }
+
+      const result = await response.json()
+      console.log('[DestinationEditModal] ✅ Success! Result:', result)
 
       setSuccess(true)
       setTimeout(() => {
@@ -130,7 +164,7 @@ export default function DestinationEditModal({
         onClose()
       }, 1000)
     } catch (err) {
-      console.error('[DestinationEditModal] Error saving:', err)
+      console.error('[DestinationEditModal] ❌ Error saving:', err)
       const errorMessage = err instanceof Error 
         ? err.message 
         : 'Failed to save destination. Please check your connection and try again.'
@@ -140,6 +174,8 @@ export default function DestinationEditModal({
         setError('Database permission error. Please ensure RLS policies are configured correctly. Contact administrator.')
       } else if (errorMessage.includes('500') || errorMessage.includes('Internal server')) {
         setError('Server error. Please check that SUPABASE_SERVICE_ROLE_KEY is configured correctly.')
+      } else if (errorMessage.includes('required')) {
+        setError(errorMessage)
       } else {
         setError(errorMessage)
       }
@@ -364,7 +400,16 @@ export default function DestinationEditModal({
             </button>
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || !formData.name?.trim()}
+              onClick={(e) => {
+                // Ensure form submission
+                if (!formData.name?.trim()) {
+                  e.preventDefault()
+                  setError('Name is required')
+                  return
+                }
+                console.log('[DestinationEditModal] 🔘 Save button clicked')
+              }}
               className="px-6 py-2 bg-luxury-blue text-white rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {saving ? (
