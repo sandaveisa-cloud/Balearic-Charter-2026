@@ -25,6 +25,7 @@ interface Destination {
   description_en?: string | null
   description_es?: string | null
   description_de?: string | null
+  coordinates?: { lat: number; lng: number } | null
 }
 
 interface InteractiveDestinationsMapProps {
@@ -100,7 +101,7 @@ function LeafletMap({
             color: white;
             font-size: 16px;
             font-weight: bold;
-          ">⚓</div>
+          ">⛵</div>
         </div>
       `,
       iconSize: [32, 32],
@@ -132,9 +133,27 @@ function LeafletMap({
 
   const displayDestinations = destinations && destinations.length > 0 ? destinations : defaultDestinations
 
-  // Center map on Balearic Islands
-  const mapCenter: [number, number] = [39.5, 2.5]
-  const mapZoom = 7
+  // Center map on destination if only one is shown, otherwise center on Balearic Islands
+  let mapCenter: [number, number] = [39.5, 2.5]
+  let mapZoom = 7
+  
+  if (displayDestinations.length === 1) {
+    const dest = displayDestinations[0]
+    // Check if coordinates are provided in the destination object
+    if (dest.coordinates && typeof dest.coordinates.lat === 'number' && typeof dest.coordinates.lng === 'number') {
+      mapCenter = [dest.coordinates.lat, dest.coordinates.lng]
+      mapZoom = 11 // Zoom in more for single destination
+    } else {
+      // Fallback to hardcoded coordinates
+      const destName = (dest.name || dest.title || '').toLowerCase()
+      const coords = destinationCoordinates[dest.slug.toLowerCase()] || 
+                    destinationCoordinates[destName]
+      if (coords) {
+        mapCenter = coords
+        mapZoom = 11
+      }
+    }
+  }
 
   // Get destination info with translations
   const getDestinationInfo = (destination: Destination) => {
@@ -202,9 +221,20 @@ function LeafletMap({
 
       {/* Render markers for each destination */}
       {displayDestinations.map((destination) => {
-        const destinationName = (destination.name || destination.title || '').toLowerCase()
-        const coords = destinationCoordinates[destination.slug.toLowerCase()] || 
-                      destinationCoordinates[destinationName]
+        // First check if coordinates are provided in the destination object
+        let coords: [number, number] | null = null
+        
+        if (destination.coordinates && typeof destination.coordinates.lat === 'number' && typeof destination.coordinates.lng === 'number') {
+          coords = [destination.coordinates.lat, destination.coordinates.lng]
+        } else {
+          // Fallback to hardcoded coordinates
+          const destinationName = (destination.name || destination.title || '').toLowerCase()
+          const hardcodedCoords = destinationCoordinates[destination.slug.toLowerCase()] || 
+                                  destinationCoordinates[destinationName]
+          if (hardcodedCoords) {
+            coords = hardcodedCoords
+          }
+        }
         
         if (!coords) {
           console.warn(`No coordinates found for destination: ${destination.name || destination.title || destination.slug}`)
@@ -252,9 +282,21 @@ function LeafletMap({
           d => d.slug === highlightedDestination || d.id === highlightedDestination
         )
         if (dest) {
-          const destName = (dest.name || dest.title || '').toLowerCase()
-          const coords = destinationCoordinates[dest.slug.toLowerCase()] || 
-                        destinationCoordinates[destName]
+          // First check if coordinates are provided in the destination object
+          let coords: [number, number] | null = null
+          
+          if (dest.coordinates && typeof dest.coordinates.lat === 'number' && typeof dest.coordinates.lng === 'number') {
+            coords = [dest.coordinates.lat, dest.coordinates.lng]
+          } else {
+            // Fallback to hardcoded coordinates
+            const destName = (dest.name || dest.title || '').toLowerCase()
+            const hardcodedCoords = destinationCoordinates[dest.slug.toLowerCase()] || 
+                                    destinationCoordinates[destName]
+            if (hardcodedCoords) {
+              coords = hardcodedCoords
+            }
+          }
+          
           if (coords) {
             return <MapUpdater center={coords} zoom={10} />
           }

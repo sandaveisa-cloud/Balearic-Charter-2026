@@ -1,6 +1,7 @@
 'use client'
 
-import { Sun, Cloud, CloudRain, CloudDrizzle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Sun, Cloud, CloudRain, CloudDrizzle, Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 interface WeatherDay {
@@ -14,10 +15,15 @@ interface WeatherDay {
 
 interface WeatherForecastProps {
   forecast?: WeatherDay[]
+  latitude?: number | null
+  longitude?: number | null
 }
 
-export default function WeatherForecast({ forecast }: WeatherForecastProps) {
+export default function WeatherForecast({ forecast, latitude, longitude }: WeatherForecastProps) {
   const t = useTranslations('destinations')
+  const [weatherData, setWeatherData] = useState<WeatherDay[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   // Mock data if no forecast provided
   const defaultForecast: WeatherDay[] = [
@@ -30,7 +36,46 @@ export default function WeatherForecast({ forecast }: WeatherForecastProps) {
     { day: 'Sun', date: '26', icon: 'sun', high: 25, low: 19, condition: 'Sunny' },
   ]
 
-  const weatherData = forecast || defaultForecast
+  // Fetch weather data if coordinates are provided
+  useEffect(() => {
+    if (forecast) {
+      // Use provided forecast
+      setWeatherData(forecast)
+      return
+    }
+
+    if (latitude && longitude) {
+      // Fetch real weather data
+      setLoading(true)
+      setError(null)
+      
+      fetch(`/api/weather?lat=${latitude}&lng=${longitude}`)
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Failed to fetch weather data')
+          }
+          return res.json()
+        })
+        .then((data) => {
+          if (data.success && data.forecast) {
+            setWeatherData(data.forecast)
+          } else {
+            throw new Error(data.error || 'Invalid weather data')
+          }
+        })
+        .catch((err) => {
+          console.error('[WeatherForecast] Error fetching weather:', err)
+          setError('Failed to load weather forecast')
+          setWeatherData(defaultForecast) // Fallback to mock data
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    } else {
+      // No coordinates, use default mock data
+      setWeatherData(defaultForecast)
+    }
+  }, [latitude, longitude, forecast])
 
   const getIcon = (iconType: string) => {
     switch (iconType) {
@@ -49,29 +94,47 @@ export default function WeatherForecast({ forecast }: WeatherForecastProps) {
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-      <h3 className="font-serif text-xl font-bold text-luxury-blue mb-4">
-        {t('weatherForecast') || '7-Day Weather Forecast'}
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-serif text-xl font-bold text-luxury-blue">
+          {t('weatherForecast') || '7-Day Weather Forecast'}
+        </h3>
+        {loading && (
+          <Loader2 className="w-5 h-5 text-luxury-blue animate-spin" />
+        )}
+      </div>
+
+      {error && (
+        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm">
+          {error}
+        </div>
+      )}
 
       {/* Weather Strip - Horizontal Scroll on Mobile */}
       <div className="overflow-x-auto -mx-6 px-6">
-        <div className="flex gap-4 min-w-max md:min-w-0 md:grid md:grid-cols-7">
-          {weatherData.map((day, index) => (
-            <div
-              key={index}
-              className="flex-shrink-0 w-20 md:w-auto text-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <div className="text-xs text-gray-500 mb-1">{day.day}</div>
-              <div className="text-sm font-semibold text-gray-700 mb-2">{day.date}</div>
-              <div className="flex justify-center mb-2">{getIcon(day.icon)}</div>
-              <div className="text-xs text-gray-600 mb-1">{day.condition}</div>
-              <div className="flex items-center justify-center gap-1">
-                <span className="text-sm font-bold text-luxury-blue">{day.high}°</span>
-                <span className="text-xs text-gray-400">/{day.low}°</span>
+        {loading && weatherData.length === 0 ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-8 h-8 text-luxury-blue animate-spin" />
+            <span className="ml-3 text-gray-600">Loading weather forecast...</span>
+          </div>
+        ) : (
+          <div className="flex gap-4 min-w-max md:min-w-0 md:grid md:grid-cols-7">
+            {weatherData.map((day, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0 w-20 md:w-auto text-center p-3 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="text-xs text-gray-500 mb-1">{day.day}</div>
+                <div className="text-sm font-semibold text-gray-700 mb-2">{day.date}</div>
+                <div className="flex justify-center mb-2">{getIcon(day.icon)}</div>
+                <div className="text-xs text-gray-600 mb-1">{day.condition}</div>
+                <div className="flex items-center justify-center gap-1">
+                  <span className="text-sm font-bold text-luxury-blue">{day.high}°</span>
+                  <span className="text-xs text-gray-400">/{day.low}°</span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <p className="text-xs text-gray-400 mt-4 text-center">

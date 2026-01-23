@@ -255,7 +255,10 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
             )}
 
             {/* Weather Forecast */}
-            <WeatherForecast />
+            <WeatherForecast 
+              latitude={coordinates?.lat}
+              longitude={coordinates?.lng}
+            />
 
             {/* Video Section */}
             {youtubeVideoId && (
@@ -340,7 +343,10 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
           <aside className="lg:col-span-1">
             <div className="sticky top-8 space-y-6">
               {/* Tide & Moon Info */}
-              <TideMoonInfo />
+              <TideMoonInfo 
+                latitude={coordinates?.lat}
+                longitude={coordinates?.lng}
+              />
 
               {/* Interactive Map */}
               <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
@@ -353,6 +359,7 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
                       name: destinationName,
                       slug: destinationSlug,
                       description: description,
+                      coordinates: coordinates,
                     }]}
                     highlightedDestination={destinationSlug}
                     onMarkerClick={() => {}}

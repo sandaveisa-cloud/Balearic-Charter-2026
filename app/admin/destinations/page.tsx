@@ -39,11 +39,13 @@ export default function DestinationsAdminPage() {
   }
 
   const handleAddNew = () => {
+    console.log('[DestinationsAdmin] Opening modal for new destination')
     setEditingDestination(null)
     setIsModalOpen(true)
   }
 
   const handleEdit = (destination: Destination) => {
+    console.log('[DestinationsAdmin] Opening modal to edit destination:', destination.id, destination.name)
     setEditingDestination(destination)
     setIsModalOpen(true)
   }
@@ -251,16 +253,22 @@ export default function DestinationsAdminPage() {
         )}
       </div>
 
-      {/* Edit Modal */}
-      <DestinationEditor
-        destination={editingDestination}
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setEditingDestination(null)
-        }}
-        onSave={handleSave}
-      />
+      {/* Edit Modal - DestinationEditor with Tabs */}
+      {isModalOpen && (
+        <DestinationEditor
+          destination={editingDestination}
+          isOpen={isModalOpen}
+          onClose={() => {
+            console.log('[DestinationsAdmin] Closing modal')
+            setIsModalOpen(false)
+            setEditingDestination(null)
+          }}
+          onSave={() => {
+            console.log('[DestinationsAdmin] Save callback triggered')
+            handleSave()
+          }}
+        />
+      )}
     </div>
   )
 }

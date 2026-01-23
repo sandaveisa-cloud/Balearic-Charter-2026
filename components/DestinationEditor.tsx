@@ -19,8 +19,8 @@ interface Highlight {
   image_url?: string | null
   category?: 'landmark' | 'beach' | 'marina' | 'viewpoint' | 'restaurant' | 'other'
   coordinates?: {
-    lat: number
-    lng: number
+    lat?: number
+    lng?: number
   } | null
 }
 
@@ -128,13 +128,12 @@ export default function DestinationEditor({
         ? (destination as any).highlights_data.map((h: any, idx: number) => ({
             ...h,
             id: h.id || `highlight-${idx}`,
-            coordinates: h.coordinates ? {
-              lat: h.coordinates.lat,
-              lng: h.coordinates.lng,
-            } : {
-              lat: undefined,
-              lng: undefined,
-            },
+            coordinates: h.coordinates && typeof h.coordinates.lat === 'number' && typeof h.coordinates.lng === 'number'
+              ? {
+                  lat: h.coordinates.lat,
+                  lng: h.coordinates.lng,
+                }
+              : null,
           }))
         : []
 
@@ -292,18 +291,38 @@ export default function DestinationEditor({
       description: '',
       image_url: null,
       category: 'other',
-      coordinates: {
-        lat: undefined,
-        lng: undefined,
-      },
+      coordinates: null,
     })
   }
+
+  // Debug logging
+  useEffect(() => {
+    if (isOpen) {
+      console.log('[DestinationEditor] ✅ Modal opened', { 
+        destination: destination?.id || 'new',
+        destinationName: destination?.name || destination?.title || 'New Destination',
+        isOpen,
+        activeTab
+      })
+    }
+  }, [isOpen, destination, activeTab])
 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-y-auto m-4 my-8">
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-y-auto p-4"
+      onClick={(e) => {
+        // Close on backdrop click
+        if (e.target === e.currentTarget && !saving) {
+          onClose()
+        }
+      }}
+    >
+      <div 
+        className="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-y-auto m-4 my-8 relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="sticky top-0 bg-gradient-to-r from-luxury-blue to-luxury-gold p-6 flex items-center justify-between z-10">
           <h2 className="text-2xl font-bold text-white">
@@ -690,9 +709,23 @@ export default function DestinationEditor({
                           <input
                             type="number"
                             step="any"
-                            {...register(`highlights.${index}.coordinates.lat`, {
-                              setValueAs: (v) => v === '' ? undefined : parseFloat(v),
-                            })}
+                            value={watch(`highlights.${index}.coordinates`)?.lat ?? ''}
+                            onChange={(e) => {
+                              const value = e.target.value
+                              const currentHighlights = watch('highlights')
+                              const updated = [...currentHighlights]
+                              const currentCoords = updated[index].coordinates
+                              const latValue = value === '' ? undefined : parseFloat(value)
+                              const lngValue = currentCoords?.lng
+                              
+                              updated[index] = {
+                                ...updated[index],
+                                coordinates: (latValue !== undefined || lngValue !== undefined)
+                                  ? { lat: latValue, lng: lngValue }
+                                  : null,
+                              }
+                              setValue('highlights', updated)
+                            }}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
                             placeholder="e.g., 38.9067"
                           />
@@ -705,9 +738,23 @@ export default function DestinationEditor({
                           <input
                             type="number"
                             step="any"
-                            {...register(`highlights.${index}.coordinates.lng`, {
-                              setValueAs: (v) => v === '' ? undefined : parseFloat(v),
-                            })}
+                            value={watch(`highlights.${index}.coordinates`)?.lng ?? ''}
+                            onChange={(e) => {
+                              const value = e.target.value
+                              const currentHighlights = watch('highlights')
+                              const updated = [...currentHighlights]
+                              const currentCoords = updated[index].coordinates
+                              const latValue = currentCoords?.lat
+                              const lngValue = value === '' ? undefined : parseFloat(value)
+                              
+                              updated[index] = {
+                                ...updated[index],
+                                coordinates: (latValue !== undefined || lngValue !== undefined)
+                                  ? { lat: latValue, lng: lngValue }
+                                  : null,
+                              }
+                              setValue('highlights', updated)
+                            }}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
                             placeholder="e.g., 1.4206"
                           />
