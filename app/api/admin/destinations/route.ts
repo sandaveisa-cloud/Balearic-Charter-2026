@@ -114,21 +114,32 @@ export async function POST(request: NextRequest) {
     console.log('[Admin API] ✅ Created destination:', (data as any)?.id)
     
     // Revalidate pages that display destinations
-    const slug = (data as any)?.slug
+    const destinationSlug = (data as any)?.slug || slug
+    
+    // Revalidate all locale paths
     revalidatePath('/', 'layout')
     revalidatePath('/destinations', 'page')
-    if (slug) {
-      revalidatePath(`/destinations/${slug}`, 'page')
+    
+    // Revalidate locale-specific home pages (where DestinationsSection is displayed)
+    revalidatePath('/en', 'page')
+    revalidatePath('/es', 'page')
+    revalidatePath('/de', 'page')
+    
+    if (destinationSlug) {
+      revalidatePath(`/destinations/${destinationSlug}`, 'page')
       // Revalidate for all locales
       revalidatePath('/en/destinations', 'page')
       revalidatePath('/es/destinations', 'page')
       revalidatePath('/de/destinations', 'page')
-      revalidatePath(`/en/destinations/${slug}`, 'page')
-      revalidatePath(`/es/destinations/${slug}`, 'page')
-      revalidatePath(`/de/destinations/${slug}`, 'page')
+      revalidatePath(`/en/destinations/${destinationSlug}`, 'page')
+      revalidatePath(`/es/destinations/${destinationSlug}`, 'page')
+      revalidatePath(`/de/destinations/${destinationSlug}`, 'page')
     }
+    
+    // Invalidate cache tags to force fresh data fetch
     revalidateTag('destinations')
     revalidateTag('destinations-list')
+    revalidateTag('site-content') // This is the main cache tag used in getSiteContent
 
     console.log('[Admin API] ✅ Revalidated cache after creating destination')
     return NextResponse.json({ destination: data as any }, { status: 201 })
@@ -249,21 +260,32 @@ export async function PUT(request: NextRequest) {
     console.log('[Admin API] ✅ Updated destination:', (data as any)?.id)
     
     // Revalidate pages that display destinations
-    const slug = (data as any)?.slug || body.slug
+    const destinationSlug = (data as any)?.slug || slug
+    
+    // Revalidate all locale paths
     revalidatePath('/', 'layout')
     revalidatePath('/destinations', 'page')
-    if (slug) {
-      revalidatePath(`/destinations/${slug}`, 'page')
+    
+    // Revalidate locale-specific home pages (where DestinationsSection is displayed)
+    revalidatePath('/en', 'page')
+    revalidatePath('/es', 'page')
+    revalidatePath('/de', 'page')
+    
+    if (destinationSlug) {
+      revalidatePath(`/destinations/${destinationSlug}`, 'page')
       // Revalidate for all locales
       revalidatePath('/en/destinations', 'page')
       revalidatePath('/es/destinations', 'page')
       revalidatePath('/de/destinations', 'page')
-      revalidatePath(`/en/destinations/${slug}`, 'page')
-      revalidatePath(`/es/destinations/${slug}`, 'page')
-      revalidatePath(`/de/destinations/${slug}`, 'page')
+      revalidatePath(`/en/destinations/${destinationSlug}`, 'page')
+      revalidatePath(`/es/destinations/${destinationSlug}`, 'page')
+      revalidatePath(`/de/destinations/${destinationSlug}`, 'page')
     }
+    
+    // Invalidate cache tags to force fresh data fetch
     revalidateTag('destinations')
     revalidateTag('destinations-list')
+    revalidateTag('site-content') // This is the main cache tag used in getSiteContent
 
     console.log('[Admin API] ✅ Revalidated cache after updating destination')
     return NextResponse.json({ destination: data as any })

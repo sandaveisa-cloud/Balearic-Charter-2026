@@ -128,7 +128,11 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
   // Get image URL from image_urls array (first image)
   const getDestinationImage = (destination: Destination): string | null => {
     if (destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0) {
-      return destination.image_urls[0]
+      const imageUrl = destination.image_urls[0]
+      // Validate that URL is not empty and is a valid string
+      if (imageUrl && typeof imageUrl === 'string' && imageUrl.trim().length > 0) {
+        return imageUrl.trim()
+      }
     }
     return null
   }

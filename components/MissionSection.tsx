@@ -24,17 +24,17 @@ export default async function MissionSection() {
   ]
 
   return (
-    <section className="py-12 bg-[#F9FAFB] border-t border-b border-[#E2E8F0]">
+    <section className="py-8 bg-[#F9FAFB] border-t border-b border-[#E2E8F0]">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center mb-8">
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#0F172A] mb-2">
+        <div className="text-center mb-4">
+          <h2 className="font-serif text-xl md:text-2xl font-bold text-[#0F172A] mb-1">
             Our Mission
           </h2>
         </div>
 
         {/* Mission Cards Grid - 3 columns on desktop, 1 on mobile */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
           {missionCards.map((card, index) => {
             const IconComponent = card.icon
             return (
@@ -43,17 +43,17 @@ export default async function MissionSection() {
                 className="text-center"
               >
                 {/* Small Elegant Icon - Centered above heading */}
-                <div className="mb-4 flex items-center justify-center">
-                  <IconComponent size={32} className="text-[#C5A059]" strokeWidth={1.5} />
+                <div className="mb-2 flex items-center justify-center">
+                  <IconComponent size={24} className="text-[#C5A059]" strokeWidth={1.5} />
                 </div>
 
                 {/* Heading */}
-                <h3 className="text-xl font-bold text-[#0F172A] mb-2">
+                <h3 className="text-lg md:text-xl font-bold text-[#0F172A] mb-1.5">
                   {card.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-sm md:text-base text-[#475569] leading-relaxed">
+                <p className="text-xs md:text-sm text-[#475569] leading-snug">
                   {card.description}
                 </p>
               </div>

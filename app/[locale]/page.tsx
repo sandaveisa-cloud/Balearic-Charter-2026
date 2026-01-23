@@ -14,8 +14,8 @@ import StructuredData from '@/components/StructuredData'
 import FloatingCTA from '@/components/FloatingCTA'
 import EarlyBirdBanner from '@/components/EarlyBirdBanner'
 
-// Cache data for 1 hour (3600 seconds)
-export const revalidate = 3600
+// No cache - always fetch fresh data (especially for destinations)
+export const revalidate = 0
 
 type Props = {
   params: Promise<{ locale: string }>

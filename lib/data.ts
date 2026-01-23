@@ -203,7 +203,7 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
   return result
 }
 
-// Cached version - cache for 1 hour (3600 seconds)
+// Cached version - shorter cache for destinations (60 seconds) to allow faster updates
 // Wrap in try-catch to prevent cache errors from crashing the page
 export async function getSiteContent(): Promise<SiteContent> {
   try {
@@ -212,7 +212,7 @@ export async function getSiteContent(): Promise<SiteContent> {
       fetchSiteContentInternal,
       ['site-content'],
       {
-        revalidate: 3600, // 1 hour cache
+        revalidate: 60, // 60 seconds cache (reduced from 1 hour for faster updates)
         tags: ['site-content', 'fleet', 'destinations', 'settings']
       }
     )

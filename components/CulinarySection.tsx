@@ -5,15 +5,204 @@ import OptimizedImage from './OptimizedImage'
 import { useTranslations } from 'next-intl'
 import type { CulinaryExperience } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
-import { ChefHat } from 'lucide-react'
+import { ChefHat, X, ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface CulinarySectionProps {
   experiences: CulinaryExperience[]
 }
 
+// Image Gallery Modal Component
+function ImageGalleryModal({
+  images,
+  initialIndex,
+  title,
+  isOpen,
+  onClose,
+}: {
+  images: string[]
+  initialIndex: number
+  title: string
+  isOpen: boolean
+  onClose: () => void
+}) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex)
+
+  // Reset to initial index when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentIndex(initialIndex)
+    }
+  }, [isOpen, initialIndex])
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+      } else if (e.key === 'ArrowLeft') {
+        goToPrevious()
+      } else if (e.key === 'ArrowRight') {
+        goToNext()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, currentIndex, images.length])
+
+  const goToPrevious = () => {
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
+  }
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
+  }
+
+  if (!isOpen || images.length === 0) return null
+
+  const currentImage = images[currentIndex]
+  const optimizedImageUrl = currentImage
+    ? getOptimizedImageUrl(currentImage, {
+        width: 1920,
+        quality: 90,
+        format: 'webp',
+      })
+    : null
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      {/* Close Button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-10 text-white hover:text-gray-300 transition-colors p-2 bg-black/50 rounded-full hover:bg-black/70"
+        aria-label="Close gallery"
+      >
+        <X className="w-6 h-6" />
+      </button>
+
+      {/* Previous Button */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            goToPrevious()
+          }}
+          className="absolute left-4 z-10 text-white hover:text-gray-300 transition-colors p-3 bg-black/50 rounded-full hover:bg-black/70"
+          aria-label="Previous image"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* Next Button */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            goToNext()
+          }}
+          className="absolute right-4 z-10 text-white hover:text-gray-300 transition-colors p-3 bg-black/50 rounded-full hover:bg-black/70"
+          aria-label="Next image"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* Image Container */}
+      <div
+        className="relative w-full h-full flex items-center justify-center p-4 md:p-8"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {optimizedImageUrl ? (
+          <div className="relative max-w-7xl max-h-full w-full h-full flex items-center justify-center">
+            <OptimizedImage
+              src={optimizedImageUrl}
+              alt={`${title} - Image ${currentIndex + 1} of ${images.length}`}
+              fill
+              sizes="100vw"
+              objectFit="contain"
+              quality={90}
+              className="cursor-default"
+            />
+          </div>
+        ) : (
+          <div className="text-white text-center">
+            <p>Image unavailable</p>
+          </div>
+        )}
+
+        {/* Image Counter */}
+        {images.length > 1 && (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-full text-sm">
+            {currentIndex + 1} / {images.length}
+          </div>
+        )}
+
+        {/* Thumbnail Strip (for multiple images) */}
+        {images.length > 1 && (
+          <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex gap-2 max-w-full overflow-x-auto px-4 py-2 bg-black/30 rounded-lg backdrop-blur-sm">
+            {images.map((img, idx) => {
+              const thumbUrl = img
+                ? getOptimizedImageUrl(img, {
+                    width: 100,
+                    quality: 75,
+                    format: 'webp',
+                  })
+                : null
+              return (
+                <button
+                  key={idx}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setCurrentIndex(idx)
+                  }}
+                  className={`relative w-16 h-16 rounded overflow-hidden border-2 transition-all flex-shrink-0 ${
+                    currentIndex === idx
+                      ? 'border-white scale-110'
+                      : 'border-transparent opacity-60 hover:opacity-100'
+                  }`}
+                >
+                  {thumbUrl ? (
+                    <OptimizedImage
+                      src={thumbUrl}
+                      alt={`Thumbnail ${idx + 1}`}
+                      fill
+                      sizes="64px"
+                      objectFit="cover"
+                      quality={75}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-600" />
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function CulinarySection({ experiences }: CulinarySectionProps) {
   const t = useTranslations('culinary')
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
+  const [galleryState, setGalleryState] = useState<{
+    isOpen: boolean
+    images: string[]
+    initialIndex: number
+    title: string
+  }>({
+    isOpen: false,
+    images: [],
+    initialIndex: 0,
+    title: '',
+  })
   
   // Debug logging
   useEffect(() => {
@@ -136,8 +325,22 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
                 key={`culinary-${experience.id}-${index}`}
                 className="group relative overflow-hidden rounded-lg bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-[#E2E8F0]"
               >
-                {/* Image Container */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-[#C5A059]/10 via-[#0F172A]/5 to-[#C5A059]/10">
+                {/* Image Container - Clickable */}
+                <div 
+                  className={`relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-[#C5A059]/10 via-[#0F172A]/5 to-[#C5A059]/10 ${
+                    showImage && allImages.length > 0 ? 'cursor-pointer' : ''
+                  }`}
+                  onClick={() => {
+                    if (allImages.length > 0) {
+                      setGalleryState({
+                        isOpen: true,
+                        images: allImages,
+                        initialIndex: 0,
+                        title: experience.title || 'Culinary Experience',
+                      })
+                    }
+                  }}
+                >
                   {showImage ? (
                     <>
                       <OptimizedImage
@@ -156,11 +359,19 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
                       />
                       {/* Gallery indicator badge (if multiple images) */}
                       {hasMultipleImages && (
-                        <div className="absolute top-2 right-2 bg-[#0F172A]/80 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+                        <div className="absolute top-2 right-2 bg-[#0F172A]/80 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 pointer-events-none">
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                           {allImages.length}
+                        </div>
+                      )}
+                      {/* Hover overlay hint */}
+                      {allImages.length > 0 && (
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center">
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white bg-black/50 px-4 py-2 rounded-lg text-sm font-medium">
+                            {allImages.length > 1 ? `View ${allImages.length} images` : 'View image'}
+                          </div>
                         </div>
                       )}
                     </>
@@ -190,6 +401,15 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
           })}
         </div>
       </div>
+
+      {/* Image Gallery Modal */}
+      <ImageGalleryModal
+        images={galleryState.images}
+        initialIndex={galleryState.initialIndex}
+        title={galleryState.title}
+        isOpen={galleryState.isOpen}
+        onClose={() => setGalleryState({ isOpen: false, images: [], initialIndex: 0, title: '' })}
+      />
     </section>
   )
 }
