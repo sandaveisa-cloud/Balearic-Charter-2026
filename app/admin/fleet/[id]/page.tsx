@@ -46,17 +46,37 @@ export default function FleetEditPage() {
   const fetchFleet = async () => {
     try {
       setLoading(true)
+      setError(null) // Clear previous errors
+      
       const response = await fetch('/api/admin/fleet')
       
       if (!response.ok) {
-        throw new Error('Failed to fetch fleet')
+        // Check if it's a server error (500) - likely Supabase connection issue
+        if (response.status === 500) {
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(
+            errorData.error || 
+            'Server error: Unable to connect to database. Please check environment variables (SUPABASE_SERVICE_ROLE_KEY).'
+          )
+        }
+        throw new Error(`Failed to fetch fleet: ${response.status} ${response.statusText}`)
       }
 
-      const { fleet: fleetList } = await response.json()
+      const data = await response.json()
+      const fleetList = data?.fleet || []
+      
+      // Check if fleet list is empty or null (could indicate connection issue)
+      if (!Array.isArray(fleetList) || fleetList.length === 0) {
+        throw new Error('No fleet data available. Please check database connection and environment variables.')
+      }
+
       const yacht = fleetList.find((y: Fleet) => y.id === id)
       
       if (!yacht) {
-        throw new Error('Yacht not found')
+        // Don't throw error - just set fleet to null and show message
+        setFleet(null)
+        setError(`Yacht with ID "${id}" not found in the database.`)
+        return
       }
 
       setFleet(yacht)
@@ -81,7 +101,13 @@ export default function FleetEditPage() {
       })
     } catch (error) {
       console.error('[FleetEdit] Error fetching:', error)
-      setError(error instanceof Error ? error.message : 'Failed to load yacht')
+      // Set error message but don't set fleet to null - keep page accessible
+      setError(
+        error instanceof Error 
+          ? error.message 
+          : 'Failed to load yacht. Please check your connection and try again.'
+      )
+      // Don't set fleet to null here - let user see the error message
     } finally {
       setLoading(false)
     }
@@ -149,9 +175,11 @@ export default function FleetEditPage() {
     )
   }
 
-  if (!fleet) {
+  // Show error state if yacht not found or connection failed
+  // But still render the page (don't return 404)
+  if (!fleet && !loading && error) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.push('/admin/fleet')}
@@ -159,7 +187,41 @@ export default function FleetEditPage() {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Yacht not found</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Edit Yacht</h1>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+          <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+            <AlertCircle className="w-5 h-5" />
+            <div className="flex-1">
+              <p className="font-semibold">Unable to load yacht data</p>
+              <p className="text-sm mt-1">{error}</p>
+            </div>
+          </div>
+          
+          <div className="mt-4 space-y-2 text-sm text-gray-600">
+            <p><strong>Possible causes:</strong></p>
+            <ul className="list-disc list-inside space-y-1 ml-2">
+              <li>Yacht ID "{id}" does not exist in the database</li>
+              <li>Database connection issue (check SUPABASE_SERVICE_ROLE_KEY environment variable)</li>
+              <li>Network connectivity problem</li>
+            </ul>
+          </div>
+
+          <div className="mt-6 flex gap-4">
+            <button
+              onClick={() => router.push('/admin/fleet')}
+              className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Back to Fleet List
+            </button>
+            <button
+              onClick={fetchFleet}
+              className="px-6 py-2 bg-luxury-blue text-white rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-colors"
+            >
+              Retry
+            </button>
+          </div>
         </div>
       </div>
     )
