@@ -22,7 +22,16 @@ export default function GalleryImageManager({
 
   const handleAddImage = (url: string) => {
     if (url && !images.includes(url)) {
-      onImagesChange([...images, url])
+      const newImages = [...images, url]
+      onImagesChange(newImages)
+      // Force a small delay to ensure state update is visible
+      setTimeout(() => {
+        // Scroll to the new image if possible
+        const galleryElement = document.querySelector('[data-gallery-images]')
+        if (galleryElement) {
+          galleryElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        }
+      }, 100)
     }
   }
 
@@ -70,7 +79,7 @@ export default function GalleryImageManager({
 
       {/* Gallery Grid with Drag & Drop */}
       {images.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" data-gallery-images>
           {images.map((imageUrl, index) => (
             <div
               key={index}

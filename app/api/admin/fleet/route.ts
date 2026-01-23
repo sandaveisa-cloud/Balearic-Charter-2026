@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { createSupabaseAdminClient } from '@/lib/supabase-admin'
 
 /**
@@ -73,6 +74,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Revalidate pages that display fleet data
+    const slug = (data as any)?.slug
+    revalidatePath('/', 'layout')
+    revalidatePath('/fleet', 'page')
+    if (slug) {
+      revalidatePath(`/fleet/${slug}`, 'page')
+      // Revalidate for all locales
+      revalidatePath('/en/fleet', 'page')
+      revalidatePath('/es/fleet', 'page')
+      revalidatePath('/de/fleet', 'page')
+      revalidatePath(`/en/fleet/${slug}`, 'page')
+      revalidatePath(`/es/fleet/${slug}`, 'page')
+      revalidatePath(`/de/fleet/${slug}`, 'page')
+    }
+    revalidateTag('fleet')
+    revalidateTag('fleet-list')
+
+    console.log('[Admin API] ✅ Created fleet and revalidated cache')
     return NextResponse.json({ fleet: data as any }, { status: 201 })
   } catch (error) {
     console.error('[Admin API] Unexpected error:', error)
@@ -125,6 +144,24 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    // Revalidate pages that display fleet data
+    const slug = (data as any)?.slug || body.slug
+    revalidatePath('/', 'layout')
+    revalidatePath('/fleet', 'page')
+    if (slug) {
+      revalidatePath(`/fleet/${slug}`, 'page')
+      // Revalidate for all locales
+      revalidatePath('/en/fleet', 'page')
+      revalidatePath('/es/fleet', 'page')
+      revalidatePath('/de/fleet', 'page')
+      revalidatePath(`/en/fleet/${slug}`, 'page')
+      revalidatePath(`/es/fleet/${slug}`, 'page')
+      revalidatePath(`/de/fleet/${slug}`, 'page')
+    }
+    revalidateTag('fleet')
+    revalidateTag('fleet-list')
+
+    console.log('[Admin API] ✅ Updated fleet and revalidated cache')
     return NextResponse.json({ fleet: data as any })
   } catch (error) {
     console.error('[Admin API] Unexpected error:', error)

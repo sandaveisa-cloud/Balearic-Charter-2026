@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { createSupabaseAdminClient } from '@/lib/supabase-admin'
 
 /**
@@ -111,6 +112,25 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[Admin API] ✅ Created destination:', (data as any)?.id)
+    
+    // Revalidate pages that display destinations
+    const slug = (data as any)?.slug
+    revalidatePath('/', 'layout')
+    revalidatePath('/destinations', 'page')
+    if (slug) {
+      revalidatePath(`/destinations/${slug}`, 'page')
+      // Revalidate for all locales
+      revalidatePath('/en/destinations', 'page')
+      revalidatePath('/es/destinations', 'page')
+      revalidatePath('/de/destinations', 'page')
+      revalidatePath(`/en/destinations/${slug}`, 'page')
+      revalidatePath(`/es/destinations/${slug}`, 'page')
+      revalidatePath(`/de/destinations/${slug}`, 'page')
+    }
+    revalidateTag('destinations')
+    revalidateTag('destinations-list')
+
+    console.log('[Admin API] ✅ Revalidated cache after creating destination')
     return NextResponse.json({ destination: data as any }, { status: 201 })
   } catch (error) {
     console.error('[Admin API] Unexpected error:', error)
@@ -227,6 +247,25 @@ export async function PUT(request: NextRequest) {
     }
 
     console.log('[Admin API] ✅ Updated destination:', (data as any)?.id)
+    
+    // Revalidate pages that display destinations
+    const slug = (data as any)?.slug || body.slug
+    revalidatePath('/', 'layout')
+    revalidatePath('/destinations', 'page')
+    if (slug) {
+      revalidatePath(`/destinations/${slug}`, 'page')
+      // Revalidate for all locales
+      revalidatePath('/en/destinations', 'page')
+      revalidatePath('/es/destinations', 'page')
+      revalidatePath('/de/destinations', 'page')
+      revalidatePath(`/en/destinations/${slug}`, 'page')
+      revalidatePath(`/es/destinations/${slug}`, 'page')
+      revalidatePath(`/de/destinations/${slug}`, 'page')
+    }
+    revalidateTag('destinations')
+    revalidateTag('destinations-list')
+
+    console.log('[Admin API] ✅ Revalidated cache after updating destination')
     return NextResponse.json({ destination: data as any })
   } catch (error) {
     console.error('[Admin API] Unexpected error:', error)

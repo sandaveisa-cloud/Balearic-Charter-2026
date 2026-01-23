@@ -76,7 +76,15 @@ export default function ImageUpload({
 
       // Update preview
       setPreview(publicUrl)
+      
+      // Call the callback to notify parent component
       onImageUploaded(publicUrl)
+      
+      // Small delay to ensure UI updates
+      setTimeout(() => {
+        // Force a re-render by triggering a custom event
+        window.dispatchEvent(new CustomEvent('imageUploaded', { detail: { url: publicUrl } }))
+      }, 50)
 
       // Reset file input
       if (fileInputRef.current) {
