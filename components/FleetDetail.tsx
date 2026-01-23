@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { format } from 'date-fns'
@@ -339,6 +339,9 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
             {/* Navigation Arrows - Only show in grid view */}
             {galleryView === 'grid' && allImages.length > 1 && (
               <>
+                {/* Navigation arrows would go here if needed */}
+              </>
+            )}
 
             {/* Image Indicators - Only show in grid view */}
             {galleryView === 'grid' && allImages.length > 1 && (
@@ -375,12 +378,12 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                             src={thumbnailUrl}
                             alt={`Thumbnail ${index + 1}`}
                             fill
-                        sizes="80px"
-                        objectFit="cover"
-                        aspectRatio="5/4"
-                        loading="lazy"
-                        quality={70}
-                        onClick={() => setCurrentImageIndex(index)}
+                            sizes="80px"
+                            objectFit="cover"
+                            aspectRatio="5/4"
+                            loading="lazy"
+                            quality={70}
+                            onClick={() => setCurrentImageIndex(index)}
                           />
                         )}
                       </button>
