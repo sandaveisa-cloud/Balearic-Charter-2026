@@ -37,11 +37,16 @@ export default function FleetEditPage() {
     is_featured: false,
   })
 
+  const isNew = id === 'new'
+
   useEffect(() => {
-    if (id) {
+    if (id && !isNew) {
       fetchFleet()
+    } else if (isNew) {
+      // For new yacht, just set loading to false
+      setLoading(false)
     }
-  }, [id])
+  }, [id, isNew])
 
   const fetchFleet = async () => {
     try {
@@ -120,8 +125,7 @@ export default function FleetEditPage() {
     setSuccess(false)
 
     try {
-      const payload = {
-        id,
+      const payload: any = {
         name: formData.name,
         slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-'),
         year: formData.year,
@@ -142,8 +146,13 @@ export default function FleetEditPage() {
         is_featured: formData.is_featured,
       }
 
+      // For existing yacht, add ID and use PUT
+      if (!isNew) {
+        payload.id = id
+      }
+
       const response = await fetch('/api/admin/fleet', {
-        method: 'PUT',
+        method: isNew ? 'POST' : 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -152,16 +161,17 @@ export default function FleetEditPage() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to save yacht')
+        throw new Error(errorData.error || `Failed to ${isNew ? 'create' : 'save'} yacht`)
       }
 
       setSuccess(true)
+      const successMsg = isNew ? 'Yacht created successfully! Redirecting...' : 'Yacht saved successfully! Redirecting...'
       setTimeout(() => {
         router.push('/admin/fleet')
       }, 1500)
     } catch (err) {
       console.error('[FleetEdit] Error saving:', err)
-      setError(err instanceof Error ? err.message : 'Failed to save yacht')
+      setError(err instanceof Error ? err.message : `Failed to ${isNew ? 'create' : 'save'} yacht`)
     } finally {
       setSaving(false)
     }
@@ -175,9 +185,9 @@ export default function FleetEditPage() {
     )
   }
 
-  // Show error state if yacht not found or connection failed
+  // Show error state if yacht not found or connection failed (only for edit, not for new)
   // But still render the page (don't return 404)
-  if (!fleet && !loading && error) {
+  if (!isNew && !fleet && !loading && error) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
@@ -238,8 +248,12 @@ export default function FleetEditPage() {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-3xl font-bold text-luxury-blue">Edit Yacht</h1>
-          <p className="text-gray-600 mt-1">{fleet.name}</p>
+          <h1 className="text-3xl font-bold text-luxury-blue">
+            {isNew ? 'Add New Yacht' : 'Edit Yacht'}
+          </h1>
+          {!isNew && fleet && (
+            <p className="text-gray-600 mt-1">{fleet.name}</p>
+          )}
         </div>
       </div>
 
@@ -247,7 +261,7 @@ export default function FleetEditPage() {
       {success && (
         <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
           <CheckCircle2 className="w-5 h-5" />
-          <span>Yacht saved successfully! Redirecting...</span>
+          <span>{isNew ? 'Yacht created successfully! Redirecting...' : 'Yacht saved successfully! Redirecting...'}</span>
         </div>
       )}
 
