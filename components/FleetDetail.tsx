@@ -828,7 +828,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
           const upsellPrice = upsellPriceInfo?.discountedPrice || upsellBasePrice
           const showUpsellEarlyBird = upsellPriceInfo?.isEligible || false
           
-          // Simona page: Show "Upgrade to Premium" for Wide Dream
+          // Simona page: Show "Experience Upgrade" for Wide Dream
           if (isSimona && upsellYacht.name?.toLowerCase().includes('wide dream')) {
             return (
               <div className="mt-20 mb-12 bg-gradient-to-br from-luxury-gold/10 via-yellow-400/5 to-luxury-gold/10 rounded-2xl p-8 md:p-12 border-2 border-luxury-gold/30 shadow-xl">
@@ -836,7 +836,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                   <div className="flex items-center gap-3 mb-6">
                     <TrendingUp className="w-8 h-8 text-luxury-gold" />
                     <h2 className="font-serif text-3xl md:text-4xl font-bold text-luxury-blue">
-                      Looking for more comfort? Upgrade to our Flagship: {upsellYacht.name}
+                      Want to elevate your journey?
                     </h2>
                   </div>
                   
@@ -855,67 +855,70 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                           <div className="w-10 h-10 rounded-lg bg-luxury-gold/20 flex items-center justify-center">
                             <Snowflake className="w-5 h-5 text-luxury-gold" />
                           </div>
-                          <span className="text-gray-700 font-medium">Air Conditioning</span>
+                          <span className="text-gray-700 font-medium">Full Air Conditioning</span>
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-luxury-gold/20 flex items-center justify-center">
                             <Zap className="w-5 h-5 text-luxury-gold" />
                           </div>
-                          <span className="text-gray-700 font-medium">Onboard Generator</span>
+                          <span className="text-gray-700 font-medium">Onboard Generator for 24/7 Power</span>
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-lg bg-luxury-gold/20 flex items-center justify-center">
                             <BedDouble className="w-5 h-5 text-luxury-gold" />
                           </div>
-                          <span className="text-gray-700 font-medium">Extra Large Cabins</span>
+                          <span className="text-gray-700 font-medium">Extra Large Luxury Cabins</span>
                         </div>
                       </div>
                     </div>
                     
-                    {/* Price & CTA */}
+                    {/* Price & CTA Card */}
                     <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-                      {upsellPrice && (
-                        <div className="mb-4">
-                          {showUpsellEarlyBird && upsellPriceInfo ? (
-                            <div className="space-y-2">
-                              <div className="flex items-baseline gap-2">
-                                <span className="text-lg line-through text-gray-400">
-                                  {new Intl.NumberFormat('en-US', {
-                                    style: 'currency',
-                                    currency: upsellYacht.currency || 'EUR',
-                                    minimumFractionDigits: 0,
-                                  }).format(upsellPriceInfo.originalPrice)}
-                                </span>
-                                <span className="text-2xl font-bold text-luxury-blue">
-                                  {new Intl.NumberFormat('en-US', {
-                                    style: 'currency',
-                                    currency: upsellYacht.currency || 'EUR',
-                                    minimumFractionDigits: 0,
-                                  }).format(upsellPrice)}
-                                </span>
-                                <span className="text-sm text-gray-600">/day</span>
+                      <div className="mb-4">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-3">{upsellYacht.name}</h3>
+                        {upsellPrice && (
+                          <div className="mb-4">
+                            {showUpsellEarlyBird && upsellPriceInfo ? (
+                              <div className="space-y-2">
+                                <div className="flex items-baseline gap-2">
+                                  <span className="text-lg line-through text-gray-400">
+                                    {new Intl.NumberFormat('en-US', {
+                                      style: 'currency',
+                                      currency: upsellYacht.currency || 'EUR',
+                                      minimumFractionDigits: 0,
+                                    }).format(upsellPriceInfo.originalPrice)}
+                                  </span>
+                                  <span className="text-2xl font-bold text-luxury-blue">
+                                    {new Intl.NumberFormat('en-US', {
+                                      style: 'currency',
+                                      currency: upsellYacht.currency || 'EUR',
+                                      minimumFractionDigits: 0,
+                                    }).format(upsellPrice)}
+                                  </span>
+                                  <span className="text-sm text-gray-600">/day</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="px-2 py-0.5 bg-gradient-to-r from-luxury-gold to-yellow-400 text-white text-xs font-bold rounded-full">
+                                    Early Bird: -10%
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    until {formatEarlyBirdDeadline(locale)}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <span className="px-2 py-0.5 bg-gradient-to-r from-luxury-gold to-yellow-400 text-white text-xs font-bold rounded-full">
-                                  Early Bird: -10%
-                                </span>
-                                <span className="text-xs text-gray-500">
-                                  until {formatEarlyBirdDeadline(locale)}
-                                </span>
+                            ) : (
+                              <div className="text-2xl font-bold text-luxury-blue">
+                                {new Intl.NumberFormat('en-US', {
+                                  style: 'currency',
+                                  currency: upsellYacht.currency || 'EUR',
+                                  minimumFractionDigits: 0,
+                                }).format(upsellPrice)}
+                                <span className="text-sm text-gray-600 font-normal">/day</span>
                               </div>
-                            </div>
-                          ) : (
-                            <div className="text-2xl font-bold text-luxury-blue">
-                              {new Intl.NumberFormat('en-US', {
-                                style: 'currency',
-                                currency: upsellYacht.currency || 'EUR',
-                                minimumFractionDigits: 0,
-                              }).format(upsellPrice)}
-                              <span className="text-sm text-gray-600 font-normal">/day</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                            )}
+                          </div>
+                        )}
+                      </div>
                       <Link
                         href={`/${locale}/fleet/${upsellYacht.slug}`}
                         className="inline-flex items-center justify-center gap-2 w-full bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue font-bold px-6 py-3 rounded-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
@@ -930,13 +933,13 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
             )
           }
           
-          // Wide Dream page: Show "Value Alternative" for Simona
+          // Wide Dream page: Show "Alternative Choice" for Simona
           if (isWideDream && upsellYacht.name?.toLowerCase().includes('simona')) {
             return (
               <div className="mt-20 mb-12 bg-gradient-to-br from-luxury-blue/5 via-gray-50 to-luxury-blue/5 rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg">
                 <div className="max-w-3xl mx-auto text-center">
                   <h2 className="font-serif text-2xl md:text-3xl font-bold text-luxury-blue mb-4">
-                    Looking for a classic experience? View Yacht {upsellYacht.name}
+                    Looking for a classic sailing experience? Discover Yacht {upsellYacht.name}
                   </h2>
                   <p className="text-gray-600 mb-6">
                     Experience the charm of our classic yacht with excellent value for money.
@@ -987,7 +990,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                     href={`/${locale}/fleet/${upsellYacht.slug}`}
                     className="inline-flex items-center justify-center gap-2 bg-luxury-blue text-white font-semibold px-6 py-3 rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 shadow-lg hover:shadow-xl"
                   >
-                    <span>View {upsellYacht.name}</span>
+                    <span>Discover {upsellYacht.name}</span>
                     <ArrowRight className="w-5 h-5" />
                   </Link>
                 </div>
