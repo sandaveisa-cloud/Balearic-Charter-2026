@@ -76,24 +76,29 @@ export async function POST(request: NextRequest) {
     // Create admin client (bypasses RLS)
     const supabase = createSupabaseAdminClient()
 
+    // Build insert data - use title as primary field (required in schema)
+    const insertData: any = {
+      title: name, // title is required in schema
+      order_index: order_index || 0,
+      is_active: true,
+    }
+
+    // Add optional fields if provided
+    if (name) insertData.name = name
+    if (slug) insertData.slug = slug
+    if (region) insertData.region = region
+    if (description) insertData.description = description
+    if (description_en) insertData.description_en = description_en
+    if (description_es) insertData.description_es = description_es
+    if (description_de) insertData.description_de = description_de
+    if (image_urls) insertData.image_urls = Array.isArray(image_urls) ? image_urls : []
+    if (youtube_video_url) insertData.youtube_video_url = youtube_video_url
+
     // Insert new destination
     // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
     const { data, error } = await (supabase
       .from('destinations' as any) as any)
-      .insert({
-        name,
-        title: name, // Also set title for backward compatibility
-        region: region || null,
-        slug,
-        description,
-        description_en,
-        description_es,
-        description_de,
-        image_urls,
-        youtube_video_url,
-        order_index,
-        is_active: true,
-      } as any)
+      .insert(insertData as any)
       .select()
       .single()
 
@@ -154,15 +159,21 @@ export async function PUT(request: NextRequest) {
     // Create admin client (bypasses RLS)
     const supabase = createSupabaseAdminClient()
 
-    // Build update data object, only including fields that are provided
+    // Build update data object, only including fields that exist in the database
+    // First, try to get the current destination to see what columns exist
     const updateData: any = {
-      name: name.trim(),
-      title: name.trim(), // Also update title for backward compatibility
-      slug: slug.trim(),
+      // Always update these core fields
+      title: name.trim(), // title is the primary field in schema
       order_index: order_index || 0,
       is_active: is_active !== false,
     }
 
+    // Add name if column exists (will be ignored if it doesn't)
+    if (name) updateData.name = name.trim()
+    
+    // Add slug if provided
+    if (slug) updateData.slug = slug.trim()
+    
     // Add optional fields only if they are provided
     if (region !== undefined) updateData.region = region?.trim() || null
     if (description !== undefined) updateData.description = description?.trim() || null
@@ -171,9 +182,6 @@ export async function PUT(request: NextRequest) {
     if (description_de !== undefined) updateData.description_de = description_de?.trim() || null
     if (image_urls !== undefined) updateData.image_urls = Array.isArray(image_urls) ? image_urls : []
     if (youtube_video_url !== undefined) updateData.youtube_video_url = youtube_video_url?.trim() || null
-    
-    // Don't manually set updated_at if it's auto-managed by Supabase
-    // updateData.updated_at = new Date().toISOString()
 
     console.log('[Admin API] 🔄 Updating destination with data:', updateData)
 
