@@ -431,5 +431,19 @@
     "discoverMore": "Descubre Más Sobre Nuestra Misión y Destinos",
     "discoverMoreDescription": "Explora nuestra gama completa de servicios, conoce nuestra misión y descubre todos los destinos exclusivos que ofrecemos.",
     "backToHome": "Volver a la Página Principal"
+  },
+  "about": {
+    "title": "Sobre Nosotros",
+    "subtitle": "Descubre el equipo detrás de tu experiencia de navegación de lujo en el Mediterráneo",
+    "metaTitle": "Sobre Nosotros | Balearic & Costa Blanca Charters",
+    "metaDescription": "Conoce a Fabula Marítima SL - tu socio de confianza para alquileres de yates de lujo en las Islas Baleares y Costa Blanca.",
+    "companyTitle": "Fabula Marítima SL",
+    "companyDescription": "Somos una empresa profesional de alquiler de yates especializada en experiencias de catamarán de lujo en las Islas Baleares y Costa Blanca. Nuestra misión es combinar la navegación premium con una logística precisa, garantizando que cada viaje sea seguro, cómodo e inolvidable.",
+    "areasTitle": "Nuestras Áreas de Operación",
+    "areasDescription": "Ofrecemos alquileres de yates exclusivos en los destinos más hermosos del Mediterráneo occidental.",
+    "ctaTitle": "¿Listo para Comenzar tu Aventura?",
+    "ctaDescription": "Contáctanos hoy para planificar tu experiencia de alquiler de lujo perfecta.",
+    "viewFleet": "Ver Nuestra Flota",
+    "backToHome": "Volver al Inicio"
   }
 }

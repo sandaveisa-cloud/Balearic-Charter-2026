@@ -431,5 +431,19 @@
       }
     },
     "backToHome": "Back to Home"
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Discover the team behind your luxury Mediterranean sailing experience",
+    "metaTitle": "About Us | Balearic & Costa Blanca Charters",
+    "metaDescription": "Learn about Fabula Marítima SL - your trusted partner for luxury yacht charters in the Balearic Islands and Costa Blanca.",
+    "companyTitle": "Fabula Marítima SL",
+    "companyDescription": "We are a professional yacht charter company specializing in luxury catamaran experiences across the Balearic Islands and Costa Blanca. Our mission is to combine premium sailing with precise logistics, ensuring every voyage is safe, comfortable, and unforgettable.",
+    "areasTitle": "Our Operating Areas",
+    "areasDescription": "We offer exclusive yacht charters across the most beautiful destinations in the Western Mediterranean.",
+    "ctaTitle": "Ready to Start Your Adventure?",
+    "ctaDescription": "Contact us today to plan your perfect luxury charter experience.",
+    "viewFleet": "View Our Fleet",
+    "backToHome": "Back to Home"
   }
 }

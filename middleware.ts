@@ -115,14 +115,36 @@ export default async function middleware(request: NextRequest) {
   }
 
   // ============================================================================
-  // STEP 3: Handle root path - redirect to default locale
+  // STEP 3: Handle localized page redirects (legacy URLs or SEO-friendly paths)
+  // ============================================================================
+  // Redirect localized "About Us" URLs to the canonical /about path
+  const aboutRedirects: Record<string, string> = {
+    '/es/sobre-nosotros': '/es/about',
+    '/de/ueber-uns': '/de/about',
+    '/en/about-us': '/en/about',
+  }
+  
+  // Check for About page redirects (with or without hash/query)
+  const pathWithoutHash = pathname.split('#')[0]
+  if (aboutRedirects[pathWithoutHash]) {
+    const targetPath = aboutRedirects[pathWithoutHash]
+    const hash = request.nextUrl.hash || ''
+    const search = request.nextUrl.search || ''
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Middleware] 🔄 Redirecting legacy About URL:', pathname, '→', targetPath)
+    }
+    return NextResponse.redirect(new URL(`${targetPath}${search}${hash}`, request.url))
+  }
+
+  // ============================================================================
+  // STEP 4: Handle root path - redirect to default locale
   // ============================================================================
   if (pathname === '/') {
     return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url))
   }
 
   // ============================================================================
-  // STEP 4: Check if path already has a valid locale prefix
+  // STEP 5: Check if path already has a valid locale prefix
   // ============================================================================
   const hasLocalePrefix = localeRegex.test(pathname)
   
@@ -133,7 +155,7 @@ export default async function middleware(request: NextRequest) {
   }
 
   // ============================================================================
-  // STEP 5: Apply i18n middleware for all locale-prefixed routes
+  // STEP 6: Apply i18n middleware for all locale-prefixed routes
   // ============================================================================
   return intlMiddleware(request)
 }

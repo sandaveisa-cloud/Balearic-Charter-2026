@@ -9,10 +9,8 @@ export const revalidate = 60
 
 // Reserved slugs that should NOT be treated as yacht slugs
 // These are static pages or common URL patterns that might be mistakenly routed here
+// Note: 'about', 'sobre-nosotros', 'ueber-uns' are now handled by /[locale]/about page
 const RESERVED_SLUGS = [
-  'sobre-nosotros',    // Spanish "About Us"
-  'about',             // English "About"
-  'ueber-uns',         // German "About"
   'contact',           // Contact page
   'contacto',          // Spanish Contact
   'kontakt',           // German Contact
