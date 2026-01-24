@@ -442,6 +442,12 @@ export async function POST(request: NextRequest) {
     }
     revalidateTag('fleet')
     revalidateTag('fleet-list')
+    revalidateTag('site-content') // Main cache tag used in getSiteContent()
+    
+    // Revalidate home pages for all locales
+    revalidatePath('/en', 'page')
+    revalidatePath('/es', 'page')
+    revalidatePath('/de', 'page')
 
     console.log('[Admin API] ✅ Created fleet and revalidated cache:', { id: data?.id, slug })
     
@@ -556,6 +562,12 @@ export async function PUT(request: NextRequest) {
     }
     revalidateTag('fleet')
     revalidateTag('fleet-list')
+    revalidateTag('site-content') // Main cache tag used in getSiteContent()
+    
+    // Revalidate home pages for all locales
+    revalidatePath('/en', 'page')
+    revalidatePath('/es', 'page')
+    revalidatePath('/de', 'page')
 
     console.log('[Admin API] ✅ Updated fleet and revalidated cache:', { id: data?.id, slug })
     
@@ -612,6 +624,21 @@ export async function DELETE(request: NextRequest) {
         { status: 500 }
       )
     }
+
+    // Revalidate all fleet pages after deletion
+    revalidatePath('/', 'layout')
+    revalidatePath('/fleet', 'page')
+    revalidatePath('/en', 'page')
+    revalidatePath('/es', 'page')
+    revalidatePath('/de', 'page')
+    revalidatePath('/en/fleet', 'page')
+    revalidatePath('/es/fleet', 'page')
+    revalidatePath('/de/fleet', 'page')
+    revalidateTag('fleet')
+    revalidateTag('fleet-list')
+    revalidateTag('site-content')
+
+    console.log('[Admin API] ✅ Deleted fleet and revalidated cache:', { id })
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -6,7 +6,7 @@ import FleetSection from '@/components/FleetSection'
 import { ArrowLeft, Ship } from 'lucide-react'
 import { locales } from '@/i18n/routing'
 
-export const revalidate = 3600
+export const revalidate = 60 // Revalidate every 60 seconds for quick updates from Admin
 
 type Props = {
   params: Promise<{ locale: string }>

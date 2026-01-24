@@ -2,7 +2,8 @@
   "common": {
     "exploreFleet": "Explore Our Fleet",
     "learnMore": "Learn More",
-    "bookNow": "Book Now",
+    "getQuote": "Get a Quote",
+    "bookNow": "Get a Quote",
     "contactUs": "Contact Us"
   },
   "hero": {
@@ -16,7 +17,9 @@
   "fleet": {
     "title": "Our Luxury Fleet",
     "subtitle": "Discover our collection of world-class yachts",
-    "viewDetails": "View Details & Book",
+    "viewDetails": "View Details",
+    "getQuote": "Get a Quote",
+    "quoteFormDescription": "Fill out the form below and we'll get back to you with a personalized quote.",
     "from": "From",
     "perDay": "/ day",
     "guests": "Guests",

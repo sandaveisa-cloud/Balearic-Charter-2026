@@ -2,7 +2,8 @@
   "common": {
     "exploreFleet": "Unsere Flotte Erkunden",
     "learnMore": "Mehr Erfahren",
-    "bookNow": "Jetzt Buchen",
+    "getQuote": "Angebot Anfordern",
+    "bookNow": "Angebot Anfordern",
     "contactUs": "Kontaktieren Sie Uns"
   },
   "hero": {
@@ -16,7 +17,9 @@
   "fleet": {
     "title": "Unsere Luxusflotte",
     "subtitle": "Entdecken Sie unsere Sammlung erstklassiger Yachten",
-    "viewDetails": "Details Anzeigen & Buchen",
+    "viewDetails": "Details Anzeigen",
+    "getQuote": "Angebot Anfordern",
+    "quoteFormDescription": "Füllen Sie das Formular aus und wir senden Ihnen ein persönliches Angebot.",
     "from": "Ab",
     "perDay": "/ Tag",
     "guests": "Gäste",

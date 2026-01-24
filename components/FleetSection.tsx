@@ -343,7 +343,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                               }
                             }}
                           >
-                            Reserve Now
+                            {t('getQuote') || 'Get a Quote'}
                           </Link>
                           <Link
                             href={`/${locale}/fleet/${yacht.slug}`}

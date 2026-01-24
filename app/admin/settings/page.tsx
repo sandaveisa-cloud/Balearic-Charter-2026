@@ -447,7 +447,7 @@ export default function SettingsAdminPage() {
                       className="px-6 py-2 rounded-lg font-semibold text-white transition-colors"
                       style={{ backgroundColor: settings.theme_primary_color || defaultThemeColors.theme_primary_color }}
                     >
-                      Book Now
+                      Get a Quote
                     </button>
                     <button
                       className="px-6 py-2 rounded-lg font-semibold transition-colors"

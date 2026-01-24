@@ -859,11 +859,11 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                 />
               )}
 
-              {/* Booking Form */}
+              {/* Quote Request Form */}
               <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-                <h3 className="font-serif text-xl font-bold text-luxury-blue mb-4">Send Booking Inquiry</h3>
+                <h3 className="font-serif text-xl font-bold text-luxury-blue mb-4">{t('getQuote') || 'Get a Quote'}</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Fill out the form below and we'll get back to you with a confirmed quote.
+                  {t('quoteFormDescription') || 'Fill out the form below and we\'ll get back to you with a personalized quote.'}
                 </p>
                 <BookingForm
                   yachtId={yacht.id}

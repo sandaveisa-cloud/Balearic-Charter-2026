@@ -4,6 +4,9 @@ import FleetDetail from '@/components/FleetDetail'
 import StructuredData from '@/components/StructuredData'
 import { locales } from '@/i18n/routing'
 
+// Revalidate every 60 seconds for quick updates from Admin
+export const revalidate = 60
+
 type Props = {
   params: Promise<{ slug: string; locale: string }>
 }

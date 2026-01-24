@@ -8,7 +8,7 @@ import { getLocalizedText } from '@/lib/i18nUtils'
 import { locales } from '@/i18n/routing'
 
 // Revalidate every hour for performance (cache static pages)
-export const revalidate = 3600
+export const revalidate = 60 // Revalidate every 60 seconds for quick updates from Admin
 
 type Props = {
   params: Promise<{ id: string; locale: string }>

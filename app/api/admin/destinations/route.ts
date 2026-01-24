@@ -364,6 +364,22 @@ export async function DELETE(request: NextRequest) {
     }
 
     console.log('[Admin API] ✅ Deleted destination:', id)
+    
+    // Revalidate all destination pages after deletion
+    revalidatePath('/', 'layout')
+    revalidatePath('/destinations', 'page')
+    revalidatePath('/en', 'page')
+    revalidatePath('/es', 'page')
+    revalidatePath('/de', 'page')
+    revalidatePath('/en/destinations', 'page')
+    revalidatePath('/es/destinations', 'page')
+    revalidatePath('/de/destinations', 'page')
+    revalidateTag('destinations')
+    revalidateTag('destinations-list')
+    revalidateTag('site-content')
+
+    console.log('[Admin API] ✅ Revalidated cache after deleting destination')
+    
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('[Admin API] Unexpected error:', error)

@@ -2,7 +2,8 @@
   "common": {
     "exploreFleet": "Explorar Nuestra Flota",
     "learnMore": "Saber Más",
-    "bookNow": "Reservar Ahora",
+    "getQuote": "Solicitar Presupuesto",
+    "bookNow": "Solicitar Presupuesto",
     "contactUs": "Contáctanos"
   },
   "hero": {
@@ -16,7 +17,9 @@
   "fleet": {
     "title": "Nuestra Flota de Lujo",
     "subtitle": "Descubre nuestra colección de yates de clase mundial",
-    "viewDetails": "Ver Detalles y Reservar",
+    "viewDetails": "Ver Detalles",
+    "getQuote": "Solicitar Presupuesto",
+    "quoteFormDescription": "Complete el formulario a continuación y le enviaremos un presupuesto personalizado.",
     "from": "Desde",
     "perDay": "/ día",
     "guests": "Huéspedes",
