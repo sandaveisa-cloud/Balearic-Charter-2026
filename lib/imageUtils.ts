@@ -1,19 +1,25 @@
 import { supabase } from './supabase'
 
 /**
- * Converts an image URL or filename to a full Supabase Storage public URL
- * If the input is already a full URL (starts with http:// or https://), it returns it as-is
- * If it's a filename or path, it constructs the full URL for the 'yacht-images' bucket
+ * Converts an image URL or filename to a full URL
+ * Handles:
+ * - Full URLs (http:// or https://) - returns as-is
+ * - Local paths (/images/...) - returns as-is for Next.js public folder serving
+ * - Supabase storage paths - constructs full URL for the 'yacht-images' bucket
  */
 export function getImageUrl(imageUrlOrFilename: string | null | undefined): string | null {
   if (!imageUrlOrFilename) {
-    console.log('[ImageUtils] No image URL or filename provided')
     return null
   }
 
   // If it's already a full URL, return as-is
   if (imageUrlOrFilename.startsWith('http://') || imageUrlOrFilename.startsWith('https://')) {
-    console.log('[ImageUtils] Image is already a full URL:', imageUrlOrFilename)
+    return imageUrlOrFilename
+  }
+
+  // If it's a local path starting with /images/, return as-is
+  // Next.js will serve these from the public folder
+  if (imageUrlOrFilename.startsWith('/images/') || imageUrlOrFilename.startsWith('/')) {
     return imageUrlOrFilename
   }
 
@@ -23,29 +29,23 @@ export function getImageUrl(imageUrlOrFilename: string | null | undefined): stri
       .from('yacht-images')
       .getPublicUrl(imageUrlOrFilename)
 
-    const fullUrl = data.publicUrl
-    console.log('[ImageUtils] Constructed Supabase Storage URL:', {
-      input: imageUrlOrFilename,
-      output: fullUrl,
-    })
-
-    return fullUrl
+    return data.publicUrl
   } catch (error) {
-    console.error('[ImageUtils] Error constructing image URL:', {
-      input: imageUrlOrFilename,
-      error,
-    })
+    console.error('[ImageUtils] Error constructing image URL:', error)
     return null
   }
 }
 
 /**
- * Gets optimized image URL from Supabase Storage with transformations
- * Uses Supabase Storage's built-in image transformation features
+ * Gets optimized image URL
+ * Handles:
+ * - Local paths (/images/...) - returns as-is, Next.js Image will handle optimization
+ * - Supabase Storage URLs - adds transformation query parameters
+ * - External URLs - returns as-is, Next.js Image will handle optimization
  * 
  * @param imageUrlOrFilename - The image URL or filename
- * @param options - Transformation options
- * @returns Optimized image URL with transformations
+ * @param options - Transformation options (used for Supabase URLs)
+ * @returns Optimized image URL
  */
 export function getOptimizedImageUrl(
   imageUrlOrFilename: string | null | undefined,
@@ -69,20 +69,30 @@ export function getOptimizedImageUrl(
     resize = 'cover',
   } = options
 
-  // If it's already a full URL, try to add transformations
+  // If it's a local path starting with /, return as-is
+  // Next.js Image component will handle optimization
+  if (imageUrlOrFilename.startsWith('/')) {
+    return imageUrlOrFilename
+  }
+
+  // If it's already a full URL
   if (imageUrlOrFilename.startsWith('http://') || imageUrlOrFilename.startsWith('https://')) {
     // Check if it's a Supabase Storage URL
     if (imageUrlOrFilename.includes('.supabase.co/storage/v1/object/public/')) {
       // Add transformation query parameters
-      const url = new URL(imageUrlOrFilename)
-      url.searchParams.set('width', width.toString())
-      if (options.height) {
-        url.searchParams.set('height', options.height.toString())
+      try {
+        const url = new URL(imageUrlOrFilename)
+        url.searchParams.set('width', width.toString())
+        if (options.height) {
+          url.searchParams.set('height', options.height.toString())
+        }
+        url.searchParams.set('quality', quality.toString())
+        url.searchParams.set('format', format)
+        url.searchParams.set('resize', resize)
+        return url.toString()
+      } catch {
+        return imageUrlOrFilename
       }
-      url.searchParams.set('quality', quality.toString())
-      url.searchParams.set('format', format)
-      url.searchParams.set('resize', resize)
-      return url.toString()
     }
     // For non-Supabase URLs, return as-is (Next.js Image will handle optimization)
     return imageUrlOrFilename
@@ -104,10 +114,6 @@ export function getOptimizedImageUrl(
 
     return data.publicUrl
   } catch (error) {
-    console.error('[ImageUtils] Error constructing optimized image URL:', {
-      input: imageUrlOrFilename,
-      error,
-    })
     // Fallback to regular URL
     return getImageUrl(imageUrlOrFilename)
   }
@@ -135,16 +141,12 @@ export function getThumbnailUrl(imageUrlOrFilename: string | null | undefined): 
  */
 export function convertYouTubeUrlToEmbed(url: string | null | undefined): string | null {
   if (!url) {
-    console.log('[YouTube] No video URL provided')
     return null
   }
-
-  console.log('[YouTube] Processing URL:', url)
 
   try {
     // If already an embed URL, return as-is
     if (url.includes('youtube.com/embed/')) {
-      console.log('[YouTube] URL is already in embed format')
       return url
     }
 
@@ -154,29 +156,20 @@ export function convertYouTubeUrlToEmbed(url: string | null | undefined): string
     if (url.includes('youtube.com/watch')) {
       const urlObj = new URL(url)
       videoId = urlObj.searchParams.get('v')
-      console.log('[YouTube] Extracted video ID from watch URL:', videoId)
     }
     // Handle short YouTube URL: https://youtu.be/VIDEO_ID
     else if (url.includes('youtu.be/')) {
       const match = url.match(/youtu\.be\/([^?&#]+)/)
       videoId = match ? match[1] : null
-      console.log('[YouTube] Extracted video ID from short URL:', videoId)
     }
 
     if (!videoId) {
-      console.error('[YouTube] Could not extract video ID from URL:', url)
       return url // Return original URL if we can't convert it
     }
 
     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=0&playlist=${videoId}`
-    console.log('[YouTube] Converted to embed URL:', embedUrl)
-
     return embedUrl
   } catch (error) {
-    console.error('[YouTube] Error converting URL:', {
-      url,
-      error,
-    })
     return url // Return original URL on error
   }
 }
@@ -195,7 +188,6 @@ export function getEmbedUrl(url: string | null | undefined): {
   isValid: boolean
 } {
   if (!url || typeof url !== 'string' || url.trim() === '') {
-    console.log('[getEmbedUrl] No valid URL provided')
     return {
       embedUrl: null,
       isYouTube: false,
@@ -204,7 +196,6 @@ export function getEmbedUrl(url: string | null | undefined): {
   }
 
   const trimmedUrl = url.trim()
-  console.log('[getEmbedUrl] Processing URL:', trimmedUrl)
 
   // Check if it's a YouTube URL
   const isYouTube = trimmedUrl.includes('youtube.com') || trimmedUrl.includes('youtu.be')
@@ -214,14 +205,12 @@ export function getEmbedUrl(url: string | null | undefined): {
     // Validate it's a proper URL
     try {
       new URL(trimmedUrl)
-      console.log('[getEmbedUrl] Direct video URL detected:', trimmedUrl)
       return {
         embedUrl: trimmedUrl,
         isYouTube: false,
         isValid: true,
       }
-    } catch (error) {
-      console.error('[getEmbedUrl] Invalid URL format:', trimmedUrl)
+    } catch {
       return {
         embedUrl: null,
         isYouTube: false,
@@ -255,7 +244,6 @@ export function getEmbedUrl(url: string | null | undefined): {
       }
       
       embedUrl = urlObj.toString()
-      console.log('[getEmbedUrl] YouTube embed URL (enhanced):', embedUrl)
       
       return {
         embedUrl,
@@ -270,17 +258,14 @@ export function getEmbedUrl(url: string | null | undefined): {
     if (trimmedUrl.includes('youtube.com/watch')) {
       const urlObj = new URL(trimmedUrl)
       videoId = urlObj.searchParams.get('v')
-      console.log('[getEmbedUrl] Extracted video ID from watch URL:', videoId)
     }
     // Handle short YouTube URL: https://youtu.be/VIDEO_ID
     else if (trimmedUrl.includes('youtu.be/')) {
       const match = trimmedUrl.match(/youtu\.be\/([^?&#]+)/)
       videoId = match ? match[1] : null
-      console.log('[getEmbedUrl] Extracted video ID from short URL:', videoId)
     }
 
     if (!videoId) {
-      console.error('[getEmbedUrl] Could not extract video ID from YouTube URL:', trimmedUrl)
       return {
         embedUrl: null,
         isYouTube: true,
@@ -290,18 +275,13 @@ export function getEmbedUrl(url: string | null | undefined): {
 
     // Build embed URL with all necessary parameters for background video
     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&mute=1&controls=0&playsinline=1&rel=0&modestbranding=1&playlist=${videoId}`
-    console.log('[getEmbedUrl] Converted YouTube URL to embed:', embedUrl)
 
     return {
       embedUrl,
       isYouTube: true,
       isValid: true,
     }
-  } catch (error) {
-    console.error('[getEmbedUrl] Error processing YouTube URL:', {
-      url: trimmedUrl,
-      error,
-    })
+  } catch {
     return {
       embedUrl: null,
       isYouTube: true,
