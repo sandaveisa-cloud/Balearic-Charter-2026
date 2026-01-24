@@ -193,16 +193,13 @@ export default function DestinationEditor({
         highlights: [],
         gallery_images: [],
         youtube_video_url: '',
-      })
-    }
-  }, [destination, reset, isOpen])
         order_index: 0,
         is_active: true,
       })
     }
     setSuccess(false)
     setError(null)
-  }, [destination, isOpen, reset])
+  }, [destination, reset, isOpen])
 
   const onSubmit = async (data: DestinationFormData) => {
     console.log('[DestinationEditor] 🚀 Starting save process...')
