@@ -19,6 +19,10 @@
     "subtitle": "Entdecken Sie unsere Sammlung erstklassiger Yachten",
     "viewDetails": "Details Anzeigen",
     "getQuote": "Angebot Anfordern",
+    "backToHome": "Zurück zur Startseite",
+    "ctaTitle": "Bereit, Ihre Traumcharter zu Buchen?",
+    "ctaDescription": "Entdecken Sie unsere Luxusyachten und beginnen Sie, Ihr perfektes Mittelmeer-Abenteuer zu planen.",
+    "exploreDestinations": "Reiseziele Erkunden",
     "quoteFormDescription": "Füllen Sie das Formular aus und wir senden Ihnen ein persönliches Angebot.",
     "from": "Ab",
     "perDay": "/ Tag",
@@ -124,7 +128,11 @@
     "costaBlanca": {
       "title": "Costa Blanca",
       "description": "Die sonnenverwöhnte Costa Blanca bietet goldene Strände, lebendige Yachthäfen und charmante Küstenstädte entlang der spanischen Ostküste."
-    }
+    },
+    "backToHome": "Zurück zur Startseite",
+    "allDestinations": "Alle Reiseziele",
+    "allDestinationsSubtitle": "Erkunden Sie alle unsere atemberaubenden Mittelmeer-Reiseziele",
+    "ctaDescription": "Erleben Sie die Magie des Mittelmeers an Bord einer unserer Luxusyachten."
   },
   "mission": {
     "title": "Unsere Mission",

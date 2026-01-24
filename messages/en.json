@@ -19,6 +19,10 @@
     "subtitle": "Discover our collection of world-class yachts",
     "viewDetails": "View Details",
     "getQuote": "Get a Quote",
+    "backToHome": "Back to Home",
+    "ctaTitle": "Ready to Book Your Dream Charter?",
+    "ctaDescription": "Discover our luxury yachts and start planning your perfect Mediterranean adventure.",
+    "exploreDestinations": "Explore Destinations",
     "quoteFormDescription": "Fill out the form below and we'll get back to you with a personalized quote.",
     "from": "From",
     "perDay": "/ day",
@@ -123,7 +127,11 @@
     "costaBlanca": {
       "title": "Costa Blanca",
       "description": "The sun-drenched Costa Blanca offers golden beaches, vibrant marinas, and charming coastal towns along Spain's eastern coast."
-    }
+    },
+    "backToHome": "Back to Home",
+    "allDestinations": "All Destinations",
+    "allDestinationsSubtitle": "Explore all our stunning Mediterranean destinations",
+    "ctaDescription": "Experience the magic of the Mediterranean aboard one of our luxury yachts."
   },
   "culinary": {
     "title": "Culinary Excellence",

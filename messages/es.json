@@ -19,6 +19,10 @@
     "subtitle": "Descubre nuestra colección de yates de clase mundial",
     "viewDetails": "Ver Detalles",
     "getQuote": "Solicitar Presupuesto",
+    "backToHome": "Volver al Inicio",
+    "ctaTitle": "¿Listo para Reservar tu Charter de Ensueño?",
+    "ctaDescription": "Descubre nuestros yates de lujo y comienza a planificar tu aventura mediterránea perfecta.",
+    "exploreDestinations": "Explorar Destinos",
     "quoteFormDescription": "Complete el formulario a continuación y le enviaremos un presupuesto personalizado.",
     "from": "Desde",
     "perDay": "/ día",
@@ -123,7 +127,11 @@
     "costaBlanca": {
       "title": "Costa Blanca",
       "description": "La soleada Costa Blanca ofrece playas doradas, puertos deportivos vibrantes y encantadores pueblos costeros a lo largo de la costa este de España."
-    }
+    },
+    "backToHome": "Volver al Inicio",
+    "allDestinations": "Todos los Destinos",
+    "allDestinationsSubtitle": "Explora todos nuestros impresionantes destinos del Mediterráneo",
+    "ctaDescription": "Experimenta la magia del Mediterráneo a bordo de uno de nuestros yates de lujo."
   },
   "culinary": {
     "title": "Excelencia Culinaria",

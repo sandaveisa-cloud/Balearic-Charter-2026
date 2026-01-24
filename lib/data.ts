@@ -74,41 +74,59 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
 
   try {
     console.log('[Data] Fetching destinations...')
-    destinationsResult = await supabase
-      .from('destinations')
-      .select('id, title, name, description, description_en, description_es, description_de, image_urls, youtube_video_url, slug, region, order_index, is_active, seasonal_data, highlights_data, gallery_images, coordinates, created_at, updated_at')
-      .eq('is_active', true)
-      .order('order_index', { ascending: true })
+    // Try with order_index first
+    try {
+      destinationsResult = await supabase
+        .from('destinations')
+        .select('id, title, name, description, description_en, description_es, description_de, image_urls, youtube_video_url, slug, region, order_index, is_active, seasonal_data, highlights_data, gallery_images, coordinates, created_at, updated_at')
+        .eq('is_active', true)
+        .order('order_index', { ascending: true, nullsFirst: false })
+      
+      if (destinationsResult.error) {
+        // If order_index column doesn't exist, try without ordering
+        if (destinationsResult.error.message?.includes('order_index') || destinationsResult.error.code === '42703') {
+          console.warn('[Data] order_index column not found in destinations, fetching without ordering...')
+          destinationsResult = await supabase
+            .from('destinations')
+            .select('id, title, name, description, description_en, description_es, description_de, image_urls, youtube_video_url, slug, region, is_active, seasonal_data, highlights_data, gallery_images, coordinates, created_at, updated_at')
+            .eq('is_active', true)
+        } else if (destinationsResult.error.message?.includes('youtube_video_url') || 
+                   destinationsResult.error.message?.includes('gallery_images')) {
+          // Try without optional columns
+          console.warn('[Data] Some columns missing in destinations, trying simpler query...')
+          destinationsResult = await supabase
+            .from('destinations')
+            .select('id, title, name, description, description_en, description_es, description_de, image_urls, slug, region, is_active, created_at, updated_at')
+            .eq('is_active', true)
+        }
+      }
+    } catch (orderError) {
+      console.warn('[Data] Destinations order query failed, trying simple query:', orderError)
+      destinationsResult = await supabase
+        .from('destinations')
+        .select('*')
+        .eq('is_active', true)
+    }
+    
     if (destinationsResult.error) {
       console.error('[Data] ❌ Error fetching destinations:', destinationsResult.error)
       console.error('[Data] Error code:', destinationsResult.error.code)
       console.error('[Data] Error message:', destinationsResult.error.message)
-      console.error('[Data] Error hint:', destinationsResult.error.hint)
-      // Check if error is due to missing column
-      if (destinationsResult.error.message?.includes('youtube_video_url') || 
-          destinationsResult.error.message?.includes('column') ||
-          destinationsResult.error.code === '42703') {
-        console.error('[Data] 🚨 CRITICAL: youtube_video_url column may not exist in database!')
-        console.error('[Data] Please run: ALTER TABLE destinations ADD COLUMN IF NOT EXISTS youtube_video_url TEXT;')
-      }
       destinationsResult = { data: [], error: null }
     } else {
       console.log('[Data] ✅ destinations fetched:', destinationsResult.data?.length || 0, 'items')
-      // Log sample data to verify youtube_video_url is being fetched
       if (destinationsResult.data && destinationsResult.data.length > 0) {
         const sample = destinationsResult.data[0] as any
         console.log('[Data] Sample destination:', {
           id: sample.id,
           title: sample.title,
           has_youtube_video_url: !!sample.youtube_video_url,
-          youtube_video_url: sample.youtube_video_url || '(null)',
+          has_gallery_images: !!sample.gallery_images,
         })
       }
     }
   } catch (error) {
     console.error('[Data] ❌ Exception fetching destinations:', error)
-    console.error('[Data] Error type:', error instanceof Error ? error.constructor.name : typeof error)
-    console.error('[Data] Error message:', error instanceof Error ? error.message : String(error))
     destinationsResult = { data: [], error: null }
   }
 
@@ -287,9 +305,15 @@ export async function getSiteContent(): Promise<SiteContent> {
 }
 
 export async function getFleetBySlug(slug: string): Promise<Fleet | null> {
-  if (!slug) return null
+  if (!slug) {
+    console.warn('[Data] getFleetBySlug called with empty slug')
+    return null
+  }
+  
+  console.log('[Data] Fetching fleet by slug:', slug)
   
   try {
+    // First try with exact slug match
     const { data, error } = await supabase
       .from('fleet')
       .select('*')
@@ -297,12 +321,52 @@ export async function getFleetBySlug(slug: string): Promise<Fleet | null> {
       .eq('is_active', true)
       .single()
 
-    if (error || !data) {
-      console.error('[Data] Error fetching fleet by slug:', error)
+    if (error) {
+      console.error('[Data] Error fetching fleet by slug:', slug, error.code, error.message)
+      
+      // If PGRST116 (no rows), try case-insensitive or fallback to name match
+      if (error.code === 'PGRST116') {
+        console.log('[Data] No exact match for slug, trying case-insensitive match...')
+        const { data: fallbackList, error: fallbackError } = await supabase
+          .from('fleet')
+          .select('*')
+          .ilike('slug', slug)
+          .eq('is_active', true)
+          .limit(1)
+        
+        if (!fallbackError && fallbackList && fallbackList.length > 0) {
+          const fallbackData = fallbackList[0] as Fleet
+          console.log('[Data] Found yacht via case-insensitive match:', fallbackData.name)
+          return fallbackData
+        }
+        
+        // Try matching by name as last resort
+        console.log('[Data] Trying name match as fallback...')
+        const { data: nameList, error: nameError } = await supabase
+          .from('fleet')
+          .select('*')
+          .ilike('name', slug.replace(/-/g, ' '))
+          .eq('is_active', true)
+          .limit(1)
+        
+        if (!nameError && nameList && nameList.length > 0) {
+          const nameData = nameList[0] as Fleet
+          console.log('[Data] Found yacht via name match:', nameData.name)
+          return nameData
+        }
+      }
+      
       return null
     }
 
-    return data as Fleet
+    if (!data) {
+      console.warn('[Data] No data returned for slug:', slug)
+      return null
+    }
+
+    const fleetData = data as Fleet
+    console.log('[Data] Found yacht:', fleetData.name, 'slug:', fleetData.slug)
+    return fleetData
   } catch (error) {
     console.error('[Data] Exception fetching fleet by slug:', error)
     return null
