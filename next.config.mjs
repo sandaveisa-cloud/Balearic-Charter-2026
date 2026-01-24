@@ -11,6 +11,67 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
   // Ensure date-fns is properly transpiled
   transpilePackages: ['date-fns'],
+  
+  // Redirects for legacy and locale-specific paths accessed without locale prefix
+  async redirects() {
+    return [
+      // Spanish paths without locale prefix -> redirect to /es/
+      {
+        source: '/sobre-nosotros',
+        destination: '/es/sobre-nosotros',
+        permanent: true,
+      },
+      {
+        source: '/contacto',
+        destination: '/es/contacto',
+        permanent: true,
+      },
+      // German paths without locale prefix -> redirect to /de/
+      {
+        source: '/ueber-uns',
+        destination: '/de/ueber-uns',
+        permanent: true,
+      },
+      {
+        source: '/kontakt',
+        destination: '/de/kontakt',
+        permanent: true,
+      },
+      // English paths without locale prefix -> redirect to /en/
+      {
+        source: '/about',
+        destination: '/en/about',
+        permanent: true,
+      },
+      {
+        source: '/contact',
+        destination: '/en/contact',
+        permanent: true,
+      },
+      {
+        source: '/fleet',
+        destination: '/en/fleet',
+        permanent: true,
+      },
+      {
+        source: '/destinations',
+        destination: '/en/destinations',
+        permanent: true,
+      },
+      // Hash-based legacy anchors (for old bookmarks)
+      {
+        source: '/:locale/sobre-nosotros#booking',
+        destination: '/:locale/contacto',
+        permanent: true,
+      },
+      {
+        source: '/:locale/about#booking',
+        destination: '/:locale/contact',
+        permanent: true,
+      },
+    ]
+  },
+  
   webpack: (config, { isServer, dev }) => {
     // Fix for date-fns vendor chunk issue
     if (!isServer) {

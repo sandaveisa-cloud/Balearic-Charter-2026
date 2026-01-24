@@ -1,15 +1,37 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from '@/i18n/navigation'
 import { useLocale } from 'next-intl'
 import { useState, useRef, useEffect } from 'react'
-import { locales } from '@/i18n'
+import { useRouter } from '@/i18n/navigation'
+import { locales, pathnames } from '@/i18n/routing'
 
 const languages = [
   { code: 'en', name: 'English', flag: '🇬🇧' },
   { code: 'es', name: 'Español', flag: '🇪🇸' },
   { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
 ]
+
+// Reverse lookup: find internal path from localized path
+function getInternalPath(localizedPath: string, currentLocale: string): string {
+  // Check each pathname definition
+  for (const [internalPath, localized] of Object.entries(pathnames)) {
+    if (typeof localized === 'string') {
+      // Simple path without localization
+      if (localizedPath === localized || localizedPath.startsWith(localized + '/')) {
+        return localizedPath
+      }
+    } else if (typeof localized === 'object') {
+      // Localized path - check if current localized path matches
+      const localizedForLocale = localized[currentLocale as keyof typeof localized]
+      if (localizedPath === localizedForLocale) {
+        return internalPath
+      }
+    }
+  }
+  // Return as-is if no match found
+  return localizedPath
+}
 
 export default function LanguageSwitcher() {
   const locale = useLocale()
@@ -40,16 +62,9 @@ export default function LanguageSwitcher() {
   const switchLanguage = (newLocale: string) => {
     setIsOpen(false)
     
-    // Remove current locale from pathname
-    let pathWithoutLocale = (pathname || '').replace(`/${locale}`, '') || '/'
-    
-    // Ensure path starts with /
-    if (!pathWithoutLocale.startsWith('/')) {
-      pathWithoutLocale = '/' + pathWithoutLocale
-    }
-    
-    // Navigate to new locale (router.push handles the refresh automatically)
-    router.push(`/${newLocale}${pathWithoutLocale}`)
+    // Use next-intl's router which handles localized pathnames automatically
+    // The pathname from usePathname() is already the internal path (e.g., '/about' not '/sobre-nosotros')
+    router.replace(pathname as any, { locale: newLocale as 'en' | 'es' | 'de' })
   }
 
   return (
