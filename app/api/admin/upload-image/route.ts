@@ -7,21 +7,37 @@ import { createSupabaseAdminClient } from '@/lib/supabase-admin'
  * This ensures admin users can upload images even if storage RLS is restrictive
  */
 export async function POST(request: NextRequest) {
+  console.log('[Admin API] 📤 Image upload request received')
+  
   try {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     if (!serviceRoleKey) {
+      console.error('[Admin API] ❌ SUPABASE_SERVICE_ROLE_KEY is not set')
       return NextResponse.json(
-        { error: 'Server configuration error: Admin access not configured' },
+        { error: 'Server configuration error: Admin access not configured. SUPABASE_SERVICE_ROLE_KEY missing.' },
         { status: 500 }
       )
     }
 
-    const formData = await request.formData()
+    let formData: FormData
+    try {
+      formData = await request.formData()
+    } catch (parseError) {
+      console.error('[Admin API] ❌ Failed to parse form data:', parseError)
+      return NextResponse.json(
+        { error: 'Failed to parse form data', details: parseError instanceof Error ? parseError.message : String(parseError) },
+        { status: 400 }
+      )
+    }
+
     const file = formData.get('file') as File
     const folder = formData.get('folder') as string || 'destinations'
     const bucket = formData.get('bucket') as string || 'fleet-images'
 
+    console.log('[Admin API] 📁 Upload params:', { folder, bucket, fileName: file?.name, fileSize: file?.size })
+
     if (!file) {
+      console.error('[Admin API] ❌ No file in form data')
       return NextResponse.json(
         { error: 'No file provided' },
         { status: 400 }
@@ -30,33 +46,63 @@ export async function POST(request: NextRequest) {
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
+      console.error('[Admin API] ❌ Invalid file type:', file.type)
       return NextResponse.json(
-        { error: 'File must be an image' },
+        { error: 'File must be an image', details: `Received type: ${file.type}` },
         { status: 400 }
       )
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
+      console.error('[Admin API] ❌ File too large:', file.size)
       return NextResponse.json(
-        { error: 'Image size must be less than 5MB' },
+        { error: 'Image size must be less than 5MB', details: `File size: ${(file.size / 1024 / 1024).toFixed(2)}MB` },
         { status: 400 }
       )
     }
 
     // Create admin client (bypasses RLS)
-    const supabase = createSupabaseAdminClient()
+    let supabase
+    try {
+      supabase = createSupabaseAdminClient()
+    } catch (clientError) {
+      console.error('[Admin API] ❌ Failed to create Supabase admin client:', clientError)
+      return NextResponse.json(
+        { error: 'Failed to initialize storage client', details: clientError instanceof Error ? clientError.message : String(clientError) },
+        { status: 500 }
+      )
+    }
 
     // Generate unique filename
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+    const sanitizedName = file.name
+      .replace(/\.[^/.]+$/, '')
+      .replace(/[^a-zA-Z0-9-_]/g, '-')
+      .toLowerCase()
+      .substring(0, 30)
+    const timestamp = Date.now()
+    const randomStr = Math.random().toString(36).substring(2, 8)
+    const fileName = `${folder}/${sanitizedName}-${timestamp}-${randomStr}.${fileExt}`
     const filePath = fileName
 
+    console.log('[Admin API] 📝 Generated file path:', filePath)
+
     // Convert File to ArrayBuffer for Supabase
-    const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
+    let buffer: Buffer
+    try {
+      const arrayBuffer = await file.arrayBuffer()
+      buffer = Buffer.from(arrayBuffer)
+    } catch (bufferError) {
+      console.error('[Admin API] ❌ Failed to convert file to buffer:', bufferError)
+      return NextResponse.json(
+        { error: 'Failed to process file', details: bufferError instanceof Error ? bufferError.message : String(bufferError) },
+        { status: 500 }
+      )
+    }
 
     // Upload file to Supabase storage using admin client
+    console.log('[Admin API] ⬆️ Uploading to Supabase storage...')
     // @ts-ignore - Supabase storage types
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from(bucket)
@@ -67,9 +113,24 @@ export async function POST(request: NextRequest) {
       })
 
     if (uploadError) {
-      console.error('[Admin API] Storage upload error:', uploadError)
+      console.error('[Admin API] ❌ Supabase storage upload error:', {
+        message: uploadError.message,
+        name: uploadError.name,
+        error: uploadError,
+      })
+      
+      // Check for specific error types
+      let errorMessage = 'Failed to upload image'
+      if (uploadError.message?.includes('Bucket not found')) {
+        errorMessage = `Storage bucket "${bucket}" not found. Please create it in Supabase dashboard.`
+      } else if (uploadError.message?.includes('already exists')) {
+        errorMessage = 'A file with this name already exists. Please try again.'
+      } else if (uploadError.message?.includes('RLS') || uploadError.message?.includes('policy')) {
+        errorMessage = 'Storage permission denied. Please check bucket RLS policies.'
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to upload image', details: uploadError.message },
+        { error: errorMessage, details: uploadError.message },
         { status: 500 }
       )
     }
@@ -90,7 +151,8 @@ export async function POST(request: NextRequest) {
       message: 'Image uploaded successfully',
     })
   } catch (error) {
-    console.error('[Admin API] Unexpected error:', error)
+    console.error('[Admin API] ❌ Unexpected error in upload-image:', error)
+    console.error('[Admin API] Error stack:', error instanceof Error ? error.stack : 'No stack')
     return NextResponse.json(
       { error: 'Internal server error', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }

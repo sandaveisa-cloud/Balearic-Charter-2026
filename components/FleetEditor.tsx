@@ -322,18 +322,37 @@ export default function FleetEditor({
         body: JSON.stringify(payload),
       })
 
-      console.log('[FleetEditor] 📥 Response status:', response.status)
+      console.log('[FleetEditor] 📥 Response status:', response.status, response.statusText)
 
       if (!response.ok) {
         let errorData
         try {
-          errorData = await response.json()
+          const responseText = await response.text()
+          console.error('[FleetEditor] ❌ Raw response:', responseText.substring(0, 500))
+          try {
+            errorData = JSON.parse(responseText)
+          } catch {
+            errorData = { error: responseText || `HTTP ${response.status}: ${response.statusText}` }
+          }
         } catch {
           errorData = { error: `HTTP ${response.status}: ${response.statusText}` }
         }
         
         console.error('[FleetEditor] ❌ API Error:', errorData)
-        throw new Error(errorData.error || errorData.details || `Failed to save yacht: ${response.status}`)
+        
+        // Provide helpful error messages
+        let userMessage = errorData.error || errorData.details || `Failed to save yacht: ${response.status}`
+        
+        // Check for common database errors
+        if (errorData.details?.includes('column') || errorData.hint?.includes('column')) {
+          userMessage = `Database schema error: ${errorData.details}. You may need to run the fleet_complete_schema.sql migration.`
+        } else if (errorData.details?.includes('duplicate') || errorData.code === '23505') {
+          userMessage = 'A yacht with this name or slug already exists. Please use a different name.'
+        } else if (errorData.details?.includes('violates')) {
+          userMessage = `Database constraint error: ${errorData.details}`
+        }
+        
+        throw new Error(userMessage)
       }
 
       const result = await response.json()
