@@ -1,9 +1,8 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { MapPin, Anchor, Camera, Sparkles } from 'lucide-react'
+import { MapPin, Anchor, Camera, Sparkles, Info } from 'lucide-react'
 import OptimizedImage from './OptimizedImage'
-import Link from 'next/link'
 
 interface Highlight {
   id?: string
@@ -26,38 +25,24 @@ interface HighlightsGalleryProps {
   locale: string
 }
 
+/**
+ * HighlightsGallery - Displays destination highlights from Supabase
+ * 
+ * Data Flow:
+ * 1. Highlights are stored in destinations.highlights_data JSONB column
+ * 2. DestinationDetail fetches and passes highlights as prop
+ * 3. Admin can edit highlights via Admin Panel → Destinations → Highlights tab
+ * 
+ * To add highlights:
+ * 1. Go to Admin Panel → Destinations → Select destination → Highlights tab
+ * 2. Or run: supabase/highlights_migration.sql to populate initial data
+ */
 export default function HighlightsGallery({ highlights, destinationName, locale }: HighlightsGalleryProps) {
   const t = useTranslations('destinations')
 
-  // Default highlights if none provided
-  const defaultHighlights: Highlight[] = [
-    {
-      id: '1',
-      name: 'Cathedral La Seu',
-      description: 'Gothic masterpiece overlooking the bay',
-      category: 'landmark',
-    },
-    {
-      id: '2',
-      name: 'Es Trenc Beach',
-      description: 'Pristine white sand beach, boat access only',
-      category: 'beach',
-    },
-    {
-      id: '3',
-      name: 'Port de Sóller',
-      description: 'Charming fishing port with excellent restaurants',
-      category: 'marina',
-    },
-  ]
-
-  // Use provided highlights if available, otherwise use defaults
-  let displayHighlights = highlights && highlights.length > 0 ? highlights : defaultHighlights
-  
-  // If we have gallery images from the destination, merge them with highlights
-  // This allows gallery images to replace placeholder highlights
-  // Note: This would need to be passed as a prop from DestinationDetail
-  // For now, we'll use highlights_data which may contain images
+  // Use provided highlights from Supabase - no hardcoded defaults
+  // Highlights should be managed via Admin Panel
+  const displayHighlights = highlights && highlights.length > 0 ? highlights : []
 
   const getCategoryIcon = (category?: string) => {
     switch (category) {
@@ -85,6 +70,7 @@ export default function HighlightsGallery({ highlights, destinationName, locale 
     }
   }
 
+  // If no highlights, show nothing (data should be added via Admin Panel)
   if (displayHighlights.length === 0) {
     return null
   }

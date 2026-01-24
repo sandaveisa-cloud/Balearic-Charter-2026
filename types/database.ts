@@ -91,6 +91,21 @@ export interface SeasonInfo {
   pros: string[]
 }
 
+export interface DestinationHighlight {
+  id?: string
+  name: string
+  name_en?: string
+  name_es?: string
+  name_de?: string
+  description: string
+  description_en?: string
+  description_es?: string
+  description_de?: string
+  image_url?: string | null
+  coordinates?: { lat: number; lng: number } | null
+  category?: 'landmark' | 'beach' | 'marina' | 'viewpoint' | 'restaurant' | 'other'
+}
+
 export interface Destination {
   id: string
   title: string // Primary field from database
@@ -107,6 +122,9 @@ export interface Destination {
   order_index: number
   is_active: boolean
   seasonal_data?: SeasonalData | null // JSONB field for seasonal sailing information
+  highlights_data?: DestinationHighlight[] | null // JSONB array of highlights/attractions
+  gallery_images?: string[] | null // JSONB array of gallery image URLs
+  coordinates?: { lat: number; lng: number } | null // JSONB object with lat/lng
   created_at: string
   updated_at: string
 }
