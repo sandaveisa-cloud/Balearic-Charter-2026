@@ -1067,11 +1067,8 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
 
         {/* Back to Home Section - Single prominent button before footer */}
         <div className="mt-12 mb-12 flex justify-center">
-          <button
-            onClick={() => {
-              // Use direct window.location to avoid double locale prefix issues
-              window.location.href = `/${locale}`
-            }}
+          <Link
+            href="/"
             className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-luxury-blue via-luxury-gold to-luxury-blue text-white font-bold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
           >
             <span className="relative z-10 flex items-center gap-2">
@@ -1079,7 +1076,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
               <span>{tBreadcrumb('backToHome') || 'Back to Home'}</span>
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-luxury-gold via-luxury-blue to-luxury-gold opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </button>
+          </Link>
         </div>
       </div>
     </div>
