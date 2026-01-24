@@ -115,6 +115,9 @@ CREATE TABLE IF NOT EXISTS fleet (
   description_en TEXT,
   description_es TEXT,
   description_de TEXT,
+  short_description_en TEXT,
+  short_description_es TEXT,
+  short_description_de TEXT,
   description_i18n JSONB DEFAULT '{}'::jsonb,
   short_description_i18n JSONB DEFAULT '{}'::jsonb,
   

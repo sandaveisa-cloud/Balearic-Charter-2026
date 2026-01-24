@@ -23,6 +23,16 @@ npm run db:push:master
 | `001_add_highlights_to_destinations.sql` | Adds highlights/attractions to destinations |
 | `002_fleet_complete_schema.sql` | Ensures all fleet columns exist (including recently_refitted) |
 | `003_add_section_visibility.sql` | Adds section visibility controls to site_settings |
+| `004_add_missing_fleet_columns.sql` | **CRITICAL** - Adds ALL missing fleet columns to fix 500 errors |
+
+## Quick Fix for 500 Errors
+
+If you're getting 500 errors when saving fleet data, run migration `004`:
+
+1. Go to **Supabase Dashboard → SQL Editor**
+2. Copy the contents of `004_add_missing_fleet_columns.sql`
+3. Paste and click **Run**
+4. Go to **Settings → API → Reload Schema Cache**
 
 ## How to Apply Migrations
 

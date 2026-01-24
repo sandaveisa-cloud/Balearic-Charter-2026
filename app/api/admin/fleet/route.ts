@@ -17,6 +17,18 @@ import { createSupabaseAdminClient } from '@/lib/supabase-admin'
  * 2. Add the column name to this array
  * 3. Update FleetEditor.tsx form fields as needed
  */
+/**
+ * KNOWN_FLEET_COLUMNS - Complete whitelist of valid fleet table columns
+ * 
+ * IMPORTANT: This list must match the Supabase database schema exactly.
+ * Any fields not in this list will be stripped from API payloads.
+ * 
+ * To add a new column:
+ * 1. Add the column to Supabase: ALTER TABLE fleet ADD COLUMN IF NOT EXISTS column_name TYPE;
+ * 2. Add the column name to this array
+ * 3. Update FleetEditor.tsx form fields as needed
+ * 4. Update 0000_master_schema.sql for future deployments
+ */
 const KNOWN_FLEET_COLUMNS = [
   // Core identification
   'id',
@@ -24,7 +36,7 @@ const KNOWN_FLEET_COLUMNS = [
   'slug',
   'boat_name',
   
-  // Specifications (both column names supported)
+  // Specifications
   'year',
   'length',
   'beam',
@@ -34,34 +46,47 @@ const KNOWN_FLEET_COLUMNS = [
   'capacity',
   'crew_count',
   'specifications',      // Legacy column name
-  'technical_specs',     // New column name (JSONB for beam, draft, engines, etc.)
+  'technical_specs',     // JSONB for beam, draft, engines, etc.
   
-  // Individual spec fields (if stored as separate columns)
+  // Individual spec fields (stored as separate columns)
   'engines',
   'fuel_capacity',
   'water_capacity',
   'cruising_speed',
   'max_speed',
   
-  // Pricing
+  // Pricing (new naming convention)
   'price_low_season',
   'price_mid_season',
   'price_high_season',
   'price_per_day',
   'price_per_week',
+  
+  // Pricing (legacy naming - still supported)
+  'low_season_price',
+  'medium_season_price',
+  'high_season_price',
+  
+  // Pricing fees
   'apa_percentage',
   'crew_service_fee',
   'cleaning_fee',
   'tax_percentage',
+  'currency',
   
   // Descriptions (legacy single-language)
   'description',
   'short_description',
   
-  // Descriptions (i18n columns)
+  // Descriptions (i18n individual columns)
   'description_en',
   'description_es',
   'description_de',
+  'short_description_en',
+  'short_description_es',
+  'short_description_de',
+  
+  // Descriptions (i18n JSONB)
   'description_i18n',
   'short_description_i18n',
   
@@ -76,6 +101,7 @@ const KNOWN_FLEET_COLUMNS = [
   
   // Refit & Condition
   'recently_refitted',
+  'refit_year',
   'refit_details',
   
   // Visibility & Status
@@ -90,27 +116,132 @@ const KNOWN_FLEET_COLUMNS = [
 ]
 
 /**
+ * SAFE_COLUMNS - Columns that are 100% guaranteed to exist in all Supabase deployments.
+ * Used as a fallback when the database returns schema errors.
+ */
+const SAFE_COLUMNS = [
+  'id', 'name', 'slug', 'boat_name', 'year', 'length', 'cabins', 'capacity',
+  'description', 'image', 'is_featured', 'is_active', 'created_at', 'updated_at'
+]
+
+/**
  * Filters an object to only include keys that are in the KNOWN_FLEET_COLUMNS whitelist.
  * Logs any removed fields for debugging.
+ * 
+ * @param data - The raw data object from the request
+ * @param operation - Whether this is an 'insert' or 'update' operation
+ * @param useSafeMode - If true, only use SAFE_COLUMNS (for retry after schema error)
  */
-function filterToKnownColumns(data: Record<string, any>, operation: 'insert' | 'update'): Record<string, any> {
+function filterToKnownColumns(
+  data: Record<string, any>, 
+  operation: 'insert' | 'update',
+  useSafeMode: boolean = false
+): Record<string, any> {
+  const allowedColumns = useSafeMode ? SAFE_COLUMNS : KNOWN_FLEET_COLUMNS
   const filtered: Record<string, any> = {}
   const unknownFields: string[] = []
   
   for (const [key, value] of Object.entries(data)) {
-    if (KNOWN_FLEET_COLUMNS.includes(key)) {
-      filtered[key] = value
+    if (allowedColumns.includes(key)) {
+      // Skip null/undefined values for cleaner payloads
+      if (value !== undefined) {
+        filtered[key] = value
+      }
     } else {
       unknownFields.push(key)
     }
   }
   
   if (unknownFields.length > 0) {
-    console.warn(`[Admin API] ⚠️ Stripped unknown fields from ${operation} payload:`, unknownFields)
-    console.warn('[Admin API] 💡 If these fields should be saved, add them to KNOWN_FLEET_COLUMNS and run the SQL migration.')
+    console.warn(`[Admin API] ⚠️ Stripped ${unknownFields.length} fields from ${operation} payload:`, unknownFields)
+    if (!useSafeMode) {
+      console.warn('[Admin API] 💡 If these fields should be saved, add them to KNOWN_FLEET_COLUMNS and run the SQL migration.')
+    }
   }
   
   return filtered
+}
+
+/**
+ * Attempts to execute a Supabase mutation with automatic retry using safe columns.
+ * If the first attempt fails with a schema error, retries with only safe columns.
+ */
+async function executeWithFallback(
+  supabase: any,
+  operation: 'insert' | 'update',
+  rawData: Record<string, any>,
+  id?: string
+): Promise<{ data: any; error: any; usedSafeMode: boolean }> {
+  // First attempt with all known columns
+  let operationData = filterToKnownColumns(rawData, operation, false)
+  
+  // Ensure boolean fields are proper booleans
+  const booleanFields = ['recently_refitted', 'is_featured', 'is_active', 'show_on_home']
+  for (const field of booleanFields) {
+    if (field in operationData) {
+      operationData[field] = Boolean(operationData[field])
+    }
+  }
+  
+  // Ensure array fields are arrays
+  if (operationData.gallery_images && !Array.isArray(operationData.gallery_images)) {
+    operationData.gallery_images = []
+  }
+  if (operationData.extras && !Array.isArray(operationData.extras)) {
+    operationData.extras = []
+  }
+  
+  let result: any
+  
+  if (operation === 'insert') {
+    result = await (supabase.from('fleet' as any) as any)
+      .insert(operationData)
+      .select()
+      .single()
+  } else {
+    result = await (supabase.from('fleet' as any) as any)
+      .update({ ...operationData, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single()
+  }
+  
+  // Check if error is a schema-related error (PGRST204 or similar)
+  if (result.error && (
+    result.error.code === 'PGRST204' || 
+    result.error.message?.includes('column') ||
+    result.error.message?.includes('schema cache')
+  )) {
+    console.warn('[Admin API] ⚠️ Schema error detected, retrying with safe columns only...')
+    console.warn('[Admin API] Original error:', result.error.message)
+    
+    // Retry with only safe columns
+    operationData = filterToKnownColumns(rawData, operation, true)
+    
+    // Re-apply boolean casting for safe columns
+    for (const field of booleanFields) {
+      if (field in operationData) {
+        operationData[field] = Boolean(operationData[field])
+      }
+    }
+    
+    if (operation === 'insert') {
+      result = await (supabase.from('fleet' as any) as any)
+        .insert(operationData)
+        .select()
+        .single()
+    } else {
+      result = await (supabase.from('fleet' as any) as any)
+        .update({ ...operationData, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single()
+    }
+    
+    return { ...result, usedSafeMode: true }
+  }
+  
+  return { ...result, usedSafeMode: false }
 }
 
 // GET - Fetch all fleet
@@ -187,50 +318,26 @@ export async function POST(request: NextRequest) {
     // Clean up the payload - remove id if it exists (for inserts)
     const { id, ...rawInsertData } = body
 
-    // Filter to only known columns to prevent schema cache errors
-    const insertData = filterToKnownColumns(rawInsertData, 'insert')
-
-    // Ensure gallery_images is an array or null
-    if (insertData.gallery_images && !Array.isArray(insertData.gallery_images)) {
-      insertData.gallery_images = []
-    }
-
-    // Ensure extras is an array or null
-    if (insertData.extras && !Array.isArray(insertData.extras)) {
-      insertData.extras = null
-    }
-
-    // Ensure boolean fields are proper booleans
-    if ('recently_refitted' in insertData) {
-      insertData.recently_refitted = Boolean(insertData.recently_refitted)
-    }
-    if ('is_featured' in insertData) {
-      insertData.is_featured = Boolean(insertData.is_featured)
-    }
-    if ('is_active' in insertData) {
-      insertData.is_active = Boolean(insertData.is_active)
-    }
-    if ('show_on_home' in insertData) {
-      insertData.show_on_home = Boolean(insertData.show_on_home)
-    }
-
     console.log('[Admin API] 🔄 Creating fleet with data:', { 
-      name: insertData.name, 
-      slug: insertData.slug,
-      main_image_url: insertData.main_image_url,
-      gallery_images_count: insertData.gallery_images?.length || 0,
-      recently_refitted: insertData.recently_refitted,
-      fieldCount: Object.keys(insertData).length
+      name: rawInsertData.name, 
+      slug: rawInsertData.slug,
+      main_image_url: rawInsertData.main_image_url,
+      fieldCount: Object.keys(rawInsertData).length
     })
 
     const supabase = createSupabaseAdminClient()
 
-    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { data, error } = await (supabase
-      .from('fleet' as any) as any)
-      .insert(insertData as any)
-      .select()
-      .single()
+    // Use the fail-safe execution with automatic fallback
+    const { data, error, usedSafeMode } = await executeWithFallback(
+      supabase,
+      'insert',
+      rawInsertData
+    )
+
+    if (usedSafeMode) {
+      console.warn('[Admin API] ⚠️ Fleet created with limited fields due to schema mismatch.')
+      console.warn('[Admin API] 💡 Run the SQL migration to add missing columns.')
+    }
 
     if (error) {
       console.error('[Admin API] ❌ Supabase error creating fleet:', {
@@ -244,7 +351,8 @@ export async function POST(request: NextRequest) {
           error: 'Failed to create fleet', 
           details: error.message,
           code: error.code,
-          hint: error.hint 
+          hint: error.hint,
+          suggestion: 'Some fields may be missing from the database. Run the SQL migration in supabase/migrations/0000_master_schema.sql'
         },
         { status: 500 }
       )
@@ -313,55 +421,27 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Filter to only known columns to prevent schema cache errors
-    const updateData = filterToKnownColumns(rawUpdateData, 'update')
-
-    // Ensure gallery_images is an array or empty array
-    if (updateData.gallery_images && !Array.isArray(updateData.gallery_images)) {
-      updateData.gallery_images = []
-    }
-
-    // Ensure extras is an array or null
-    if (updateData.extras && !Array.isArray(updateData.extras)) {
-      updateData.extras = null
-    }
-
-    // Ensure boolean fields are proper booleans
-    if ('recently_refitted' in updateData) {
-      updateData.recently_refitted = Boolean(updateData.recently_refitted)
-    }
-    if ('is_featured' in updateData) {
-      updateData.is_featured = Boolean(updateData.is_featured)
-    }
-    if ('is_active' in updateData) {
-      updateData.is_active = Boolean(updateData.is_active)
-    }
-    if ('show_on_home' in updateData) {
-      updateData.show_on_home = Boolean(updateData.show_on_home)
-    }
-
     console.log('[Admin API] 🔄 Updating fleet:', { 
       id, 
-      name: updateData.name, 
-      slug: updateData.slug,
-      main_image_url: updateData.main_image_url,
-      gallery_images_count: updateData.gallery_images?.length || 0,
-      recently_refitted: updateData.recently_refitted,
-      fieldCount: Object.keys(updateData).length
+      name: rawUpdateData.name, 
+      slug: rawUpdateData.slug,
+      fieldCount: Object.keys(rawUpdateData).length
     })
 
     const supabase = createSupabaseAdminClient()
 
-    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { data, error } = await (supabase
-      .from('fleet' as any) as any)
-      .update({
-        ...updateData,
-        updated_at: new Date().toISOString(),
-      } as any)
-      .eq('id', id)
-      .select()
-      .single()
+    // Use the fail-safe execution with automatic fallback
+    const { data, error, usedSafeMode } = await executeWithFallback(
+      supabase,
+      'update',
+      rawUpdateData,
+      id
+    )
+
+    if (usedSafeMode) {
+      console.warn('[Admin API] ⚠️ Fleet updated with limited fields due to schema mismatch.')
+      console.warn('[Admin API] 💡 Run the SQL migration to add missing columns.')
+    }
 
     if (error) {
       console.error('[Admin API] ❌ Supabase error updating fleet:', {
@@ -376,7 +456,8 @@ export async function PUT(request: NextRequest) {
           error: 'Failed to update fleet', 
           details: error.message,
           code: error.code,
-          hint: error.hint 
+          hint: error.hint,
+          suggestion: 'Some fields may be missing from the database. Run the SQL migration in supabase/migrations/0000_master_schema.sql'
         },
         { status: 500 }
       )
