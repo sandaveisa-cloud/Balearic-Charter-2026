@@ -344,12 +344,17 @@ export default function FleetEditor({
         let userMessage = errorData.error || errorData.details || `Failed to save yacht: ${response.status}`
         
         // Check for common database errors
-        if (errorData.details?.includes('column') || errorData.hint?.includes('column')) {
-          userMessage = `Database schema error: ${errorData.details}. You may need to run the fleet_complete_schema.sql migration.`
+        if (errorData.details?.includes('column') || errorData.hint?.includes('column') || errorData.code === 'PGRST204') {
+          const skippedInfo = errorData.skippedColumns?.length 
+            ? ` (Missing columns: ${errorData.skippedColumns.join(', ')})` 
+            : ''
+          userMessage = `Database schema mismatch${skippedInfo}. Please run the SQL migration in Supabase: supabase/migrations/004_add_missing_fleet_columns.sql`
         } else if (errorData.details?.includes('duplicate') || errorData.code === '23505') {
           userMessage = 'A yacht with this name or slug already exists. Please use a different name.'
         } else if (errorData.details?.includes('violates')) {
           userMessage = `Database constraint error: ${errorData.details}`
+        } else if (errorData.suggestion) {
+          userMessage = `${userMessage}. ${errorData.suggestion}`
         }
         
         throw new Error(userMessage)
@@ -358,12 +363,19 @@ export default function FleetEditor({
       const result = await response.json()
       console.log('[FleetEditor] ✅ Success! Result:', result)
 
+      // Check if any fields were skipped due to missing columns
+      if (result.warning || result.skippedColumns?.length > 0) {
+        console.warn('[FleetEditor] ⚠️ Some fields were skipped:', result.skippedColumns)
+        // Show warning but still count as success
+        setError(`Saved with warning: ${result.warning || 'Some fields were not saved due to missing database columns.'}`)
+      }
+
       setSuccess(true)
       // Call onSave immediately to trigger toast, then close after delay
       onSave()
       setTimeout(() => {
         onClose()
-      }, 1500)
+      }, result.warning ? 3000 : 1500) // Give more time to read warning
     } catch (err) {
       console.error('[FleetEditor] ❌ Error saving:', err)
       const errorMessage = err instanceof Error 

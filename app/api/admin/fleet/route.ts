@@ -163,67 +163,76 @@ function filterToKnownColumns(
 }
 
 /**
- * Attempts to execute a Supabase mutation with automatic retry using safe columns.
- * If the first attempt fails with a schema error, retries with only safe columns.
+ * Extracts the missing column name from a Supabase error message.
+ * Returns null if not a column error.
+ */
+function extractMissingColumn(error: any): string | null {
+  if (!error?.message) return null
+  
+  // Pattern: "Could not find the 'column_name' column of 'table' in the schema cache"
+  const match = error.message.match(/Could not find the '(\w+)' column/)
+  if (match) return match[1]
+  
+  // Pattern: "column \"column_name\" of relation \"table\" does not exist"
+  const match2 = error.message.match(/column "(\w+)" .* does not exist/)
+  if (match2) return match2[1]
+  
+  return null
+}
+
+/**
+ * Prepares data for database operation with proper type casting.
+ */
+function prepareDataForDb(data: Record<string, any>): Record<string, any> {
+  const prepared = { ...data }
+  
+  // Ensure boolean fields are proper booleans
+  const booleanFields = ['recently_refitted', 'is_featured', 'is_active', 'show_on_home']
+  for (const field of booleanFields) {
+    if (field in prepared) {
+      prepared[field] = Boolean(prepared[field])
+    }
+  }
+  
+  // Ensure array fields are arrays
+  if (prepared.gallery_images && !Array.isArray(prepared.gallery_images)) {
+    prepared.gallery_images = []
+  }
+  if (prepared.extras && !Array.isArray(prepared.extras)) {
+    prepared.extras = []
+  }
+  
+  // Ensure JSONB fields are objects
+  if (prepared.amenities && typeof prepared.amenities !== 'object') {
+    prepared.amenities = {}
+  }
+  if (prepared.technical_specs && typeof prepared.technical_specs !== 'object') {
+    prepared.technical_specs = {}
+  }
+  
+  return prepared
+}
+
+/**
+ * Attempts to execute a Supabase mutation with progressive fallback.
+ * If a column is missing, it removes that column and retries automatically.
+ * This ensures the save operation succeeds even if some columns don't exist.
  */
 async function executeWithFallback(
   supabase: any,
   operation: 'insert' | 'update',
   rawData: Record<string, any>,
   id?: string
-): Promise<{ data: any; error: any; usedSafeMode: boolean }> {
-  // First attempt with all known columns
-  let operationData = filterToKnownColumns(rawData, operation, false)
+): Promise<{ data: any; error: any; usedSafeMode: boolean; skippedColumns: string[] }> {
+  const skippedColumns: string[] = []
+  let operationData = prepareDataForDb(filterToKnownColumns(rawData, operation, false))
+  let attempts = 0
+  const maxAttempts = 10 // Prevent infinite loops
   
-  // Ensure boolean fields are proper booleans
-  const booleanFields = ['recently_refitted', 'is_featured', 'is_active', 'show_on_home']
-  for (const field of booleanFields) {
-    if (field in operationData) {
-      operationData[field] = Boolean(operationData[field])
-    }
-  }
-  
-  // Ensure array fields are arrays
-  if (operationData.gallery_images && !Array.isArray(operationData.gallery_images)) {
-    operationData.gallery_images = []
-  }
-  if (operationData.extras && !Array.isArray(operationData.extras)) {
-    operationData.extras = []
-  }
-  
-  let result: any
-  
-  if (operation === 'insert') {
-    result = await (supabase.from('fleet' as any) as any)
-      .insert(operationData)
-      .select()
-      .single()
-  } else {
-    result = await (supabase.from('fleet' as any) as any)
-      .update({ ...operationData, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single()
-  }
-  
-  // Check if error is a schema-related error (PGRST204 or similar)
-  if (result.error && (
-    result.error.code === 'PGRST204' || 
-    result.error.message?.includes('column') ||
-    result.error.message?.includes('schema cache')
-  )) {
-    console.warn('[Admin API] ⚠️ Schema error detected, retrying with safe columns only...')
-    console.warn('[Admin API] Original error:', result.error.message)
+  while (attempts < maxAttempts) {
+    attempts++
     
-    // Retry with only safe columns
-    operationData = filterToKnownColumns(rawData, operation, true)
-    
-    // Re-apply boolean casting for safe columns
-    for (const field of booleanFields) {
-      if (field in operationData) {
-        operationData[field] = Boolean(operationData[field])
-      }
-    }
+    let result: any
     
     if (operation === 'insert') {
       result = await (supabase.from('fleet' as any) as any)
@@ -238,10 +247,66 @@ async function executeWithFallback(
         .single()
     }
     
-    return { ...result, usedSafeMode: true }
+    // Success!
+    if (!result.error) {
+      if (skippedColumns.length > 0) {
+        console.warn(`[Admin API] ⚠️ Successfully saved but skipped ${skippedColumns.length} missing columns:`, skippedColumns)
+      }
+      return { ...result, usedSafeMode: skippedColumns.length > 0, skippedColumns }
+    }
+    
+    // Check if error is a schema-related error
+    const isSchemaError = 
+      result.error.code === 'PGRST204' || 
+      result.error.message?.includes('column') ||
+      result.error.message?.includes('schema cache') ||
+      result.error.message?.includes('does not exist')
+    
+    if (!isSchemaError) {
+      // Not a schema error, return as-is
+      return { ...result, usedSafeMode: false, skippedColumns }
+    }
+    
+    // Try to extract the specific missing column
+    const missingColumn = extractMissingColumn(result.error)
+    
+    if (missingColumn && operationData[missingColumn] !== undefined) {
+      console.warn(`[Admin API] ⚠️ Column '${missingColumn}' not found in database, removing from payload...`)
+      delete operationData[missingColumn]
+      skippedColumns.push(missingColumn)
+      continue // Retry without this column
+    }
+    
+    // If we can't identify the specific column, fall back to safe mode
+    console.warn('[Admin API] ⚠️ Cannot identify missing column, falling back to safe columns only...')
+    console.warn('[Admin API] Original error:', result.error.message)
+    
+    operationData = prepareDataForDb(filterToKnownColumns(rawData, operation, true))
+    
+    if (operation === 'insert') {
+      result = await (supabase.from('fleet' as any) as any)
+        .insert(operationData)
+        .select()
+        .single()
+    } else {
+      result = await (supabase.from('fleet' as any) as any)
+        .update({ ...operationData, updated_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single()
+    }
+    
+    return { ...result, usedSafeMode: true, skippedColumns }
   }
   
-  return { ...result, usedSafeMode: false }
+  // Max attempts reached
+  console.error('[Admin API] ❌ Max retry attempts reached')
+  return { 
+    data: null, 
+    error: { message: 'Failed after multiple retry attempts due to schema mismatches' }, 
+    usedSafeMode: true,
+    skippedColumns 
+  }
 }
 
 // GET - Fetch all fleet
@@ -328,14 +393,15 @@ export async function POST(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
 
     // Use the fail-safe execution with automatic fallback
-    const { data, error, usedSafeMode } = await executeWithFallback(
+    const { data, error, usedSafeMode, skippedColumns } = await executeWithFallback(
       supabase,
       'insert',
       rawInsertData
     )
 
-    if (usedSafeMode) {
+    if (usedSafeMode || skippedColumns.length > 0) {
       console.warn('[Admin API] ⚠️ Fleet created with limited fields due to schema mismatch.')
+      console.warn('[Admin API] 💡 Skipped columns:', skippedColumns)
       console.warn('[Admin API] 💡 Run the SQL migration to add missing columns.')
     }
 
@@ -352,7 +418,8 @@ export async function POST(request: NextRequest) {
           details: error.message,
           code: error.code,
           hint: error.hint,
-          suggestion: 'Some fields may be missing from the database. Run the SQL migration in supabase/migrations/0000_master_schema.sql'
+          skippedColumns,
+          suggestion: 'Some fields may be missing from the database. Run the SQL migration in supabase/migrations/004_add_missing_fleet_columns.sql'
         },
         { status: 500 }
       )
@@ -376,7 +443,14 @@ export async function POST(request: NextRequest) {
     revalidateTag('fleet-list')
 
     console.log('[Admin API] ✅ Created fleet and revalidated cache:', { id: data?.id, slug })
-    return NextResponse.json({ fleet: data as any }, { status: 201 })
+    
+    // Return success with warning if columns were skipped
+    const response: any = { fleet: data as any }
+    if (skippedColumns.length > 0) {
+      response.warning = `Saved successfully but ${skippedColumns.length} fields were skipped due to missing database columns: ${skippedColumns.join(', ')}`
+      response.skippedColumns = skippedColumns
+    }
+    return NextResponse.json(response, { status: 201 })
   } catch (error) {
     console.error('[Admin API] ❌ Unexpected error in POST /api/admin/fleet:', error)
     console.error('[Admin API] Error stack:', error instanceof Error ? error.stack : 'No stack')
@@ -431,15 +505,16 @@ export async function PUT(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
 
     // Use the fail-safe execution with automatic fallback
-    const { data, error, usedSafeMode } = await executeWithFallback(
+    const { data, error, usedSafeMode, skippedColumns } = await executeWithFallback(
       supabase,
       'update',
       rawUpdateData,
       id
     )
 
-    if (usedSafeMode) {
+    if (usedSafeMode || skippedColumns.length > 0) {
       console.warn('[Admin API] ⚠️ Fleet updated with limited fields due to schema mismatch.')
+      console.warn('[Admin API] 💡 Skipped columns:', skippedColumns)
       console.warn('[Admin API] 💡 Run the SQL migration to add missing columns.')
     }
 
@@ -457,7 +532,8 @@ export async function PUT(request: NextRequest) {
           details: error.message,
           code: error.code,
           hint: error.hint,
-          suggestion: 'Some fields may be missing from the database. Run the SQL migration in supabase/migrations/0000_master_schema.sql'
+          skippedColumns,
+          suggestion: 'Some fields may be missing from the database. Run the SQL migration in supabase/migrations/004_add_missing_fleet_columns.sql'
         },
         { status: 500 }
       )
@@ -481,7 +557,14 @@ export async function PUT(request: NextRequest) {
     revalidateTag('fleet-list')
 
     console.log('[Admin API] ✅ Updated fleet and revalidated cache:', { id: data?.id, slug })
-    return NextResponse.json({ fleet: data as any })
+    
+    // Return success with warning if columns were skipped
+    const response: any = { fleet: data as any }
+    if (skippedColumns.length > 0) {
+      response.warning = `Saved successfully but ${skippedColumns.length} fields were skipped due to missing database columns: ${skippedColumns.join(', ')}`
+      response.skippedColumns = skippedColumns
+    }
+    return NextResponse.json(response)
   } catch (error) {
     console.error('[Admin API] ❌ Unexpected error in PUT /api/admin/fleet:', error)
     console.error('[Admin API] Error stack:', error instanceof Error ? error.stack : 'No stack')
