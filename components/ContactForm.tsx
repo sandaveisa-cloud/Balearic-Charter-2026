@@ -218,14 +218,8 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent transition-all resize-none"
           />
-        </div>
       </div>
-
-      {submitStatus === 'error' && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-600">{errorMessage || t('errorMessage') || 'Failed to send message. Please try again.'}</p>
-        </div>
-      )}
+    </div>
 
       <button
         type="submit"
