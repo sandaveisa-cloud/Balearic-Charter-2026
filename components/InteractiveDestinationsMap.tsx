@@ -263,7 +263,7 @@ function LeafletMap({
                   </p>
                 )}
                 <Link
-                  href={`/destinations/${destination.slug}`}
+                  href={{ pathname: '/destinations/[id]', params: { id: destination.slug } }}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-luxury-blue text-white text-sm font-semibold rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300"
                   onClick={(e) => e.stopPropagation()}
                 >

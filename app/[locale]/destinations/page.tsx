@@ -90,7 +90,7 @@ export default async function DestinationsPage({ params }: Props) {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              href="/#fleet"
+              href="/fleet"
               className="inline-flex items-center gap-2 px-8 py-4 bg-luxury-gold text-luxury-blue font-bold rounded-lg hover:bg-luxury-blue hover:text-white transition-all duration-300 shadow-lg"
             >
               {t('viewFleet') || 'View Our Fleet'}

@@ -1,23 +1,13 @@
 import createMiddleware from 'next-intl/middleware'
-import { locales, defaultLocale } from './i18n'
+import { routing } from './i18n/routing'
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseMiddlewareClient } from './lib/supabase-middleware'
 
 // Build locale pattern dynamically from config
-const localePattern = locales.join('|')
+const localePattern = routing.locales.join('|')
 const localeRegex = new RegExp(`^/(${localePattern})(/|$)`)
 
-const intlMiddleware = createMiddleware({
-  // A list of all locales that are supported
-  locales,
-
-  // Used when no locale matches
-  defaultLocale,
-
-  // Use 'always' to ensure all routes have locale prefix
-  // This prevents redirect loops between / and /en
-  localePrefix: 'always'
-})
+const intlMiddleware = createMiddleware(routing)
 
 export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
@@ -81,7 +71,7 @@ export default async function middleware(request: NextRequest) {
       if (sessionError || !session) {
         console.log('[Middleware] ❌ SECURITY BLOCK: No active session found')
         
-        const loginUrl = new URL(`/${defaultLocale}/login`, request.url)
+        const loginUrl = new URL(`/${routing.defaultLocale}/login`, request.url)
         loginUrl.searchParams.set('redirect', '/admin')
         return NextResponse.redirect(loginUrl)
       }
@@ -93,7 +83,7 @@ export default async function middleware(request: NextRequest) {
       if (userError || !user || !user.id) {
         console.log('[Middleware] ❌ SECURITY BLOCK: User verification failed')
         
-        const loginUrl = new URL(`/${defaultLocale}/login`, request.url)
+        const loginUrl = new URL(`/${routing.defaultLocale}/login`, request.url)
         loginUrl.searchParams.set('redirect', '/admin')
         return NextResponse.redirect(loginUrl)
       }
@@ -108,54 +98,32 @@ export default async function middleware(request: NextRequest) {
     } catch (error) {
       // FAIL SECURE: If ANY error occurs during auth check, block access
       console.error('[Middleware] ⚠️ SECURITY ERROR: Exception during auth check:', error)
-      const loginUrl = new URL(`/${defaultLocale}/login`, request.url)
+      const loginUrl = new URL(`/${routing.defaultLocale}/login`, request.url)
       loginUrl.searchParams.set('redirect', '/admin')
       return NextResponse.redirect(loginUrl)
     }
   }
 
   // ============================================================================
-  // STEP 3: Handle localized page redirects (legacy URLs or SEO-friendly paths)
-  // ============================================================================
-  // Redirect localized "About Us" URLs to the canonical /about path
-  const aboutRedirects: Record<string, string> = {
-    '/es/sobre-nosotros': '/es/about',
-    '/de/ueber-uns': '/de/about',
-    '/en/about-us': '/en/about',
-  }
-  
-  // Check for About page redirects (with or without hash/query)
-  const pathWithoutHash = pathname.split('#')[0]
-  if (aboutRedirects[pathWithoutHash]) {
-    const targetPath = aboutRedirects[pathWithoutHash]
-    const hash = request.nextUrl.hash || ''
-    const search = request.nextUrl.search || ''
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[Middleware] 🔄 Redirecting legacy About URL:', pathname, '→', targetPath)
-    }
-    return NextResponse.redirect(new URL(`${targetPath}${search}${hash}`, request.url))
-  }
-
-  // ============================================================================
-  // STEP 4: Handle root path - redirect to default locale
+  // STEP 3: Handle root path - redirect to default locale
   // ============================================================================
   if (pathname === '/') {
-    return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url))
+    return NextResponse.redirect(new URL(`/${routing.defaultLocale}`, request.url))
   }
 
   // ============================================================================
-  // STEP 5: Check if path already has a valid locale prefix
+  // STEP 4: Check if path already has a valid locale prefix
   // ============================================================================
   const hasLocalePrefix = localeRegex.test(pathname)
   
   // If no locale prefix, redirect to default locale
   if (!hasLocalePrefix) {
-    // Exception: login/signup at root level should also get locale prefix
-    return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}`, request.url))
+    return NextResponse.redirect(new URL(`/${routing.defaultLocale}${pathname}`, request.url))
   }
 
   // ============================================================================
-  // STEP 6: Apply i18n middleware for all locale-prefixed routes
+  // STEP 5: Apply i18n middleware for all locale-prefixed routes
+  // This handles localized pathnames like /es/sobre-nosotros -> /about
   // ============================================================================
   return intlMiddleware(request)
 }

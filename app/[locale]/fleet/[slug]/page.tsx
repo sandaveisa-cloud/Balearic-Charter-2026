@@ -8,12 +8,17 @@ import { locales } from '@/i18n/routing'
 export const revalidate = 60
 
 // Reserved slugs that should NOT be treated as yacht slugs
-// These are static pages or common URL patterns that might be mistakenly routed here
-// Note: 'about', 'sobre-nosotros', 'ueber-uns' are now handled by /[locale]/about page
+// These are static pages or localized URL patterns that might be mistakenly routed here
 const RESERVED_SLUGS = [
-  'contact',           // Contact page
+  // About page (localized)
+  'about',             // English About
+  'sobre-nosotros',    // Spanish About
+  'ueber-uns',         // German About
+  // Contact page (localized)
+  'contact',           // English Contact
   'contacto',          // Spanish Contact
   'kontakt',           // German Contact
+  // Other pages
   'booking',           // Booking page
   'reservar',          // Spanish Booking
   'buchung',           // German Booking

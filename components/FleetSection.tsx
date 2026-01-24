@@ -357,13 +357,13 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                         )}
                         <div className="ml-auto flex gap-2">
                           <Link
-                            href={`/fleet/${yacht.slug}#booking`}
+                            href="/contact"
                             className="rounded-lg bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue px-5 py-2.5 font-bold text-sm transition-all hover:shadow-lg hover:scale-105 whitespace-nowrap"
                           >
                             {t('getQuote') || 'Get a Quote'}
                           </Link>
                           <Link
-                            href={`/fleet/${yacht.slug}`}
+                            href={{ pathname: '/fleet/[slug]', params: { slug: yacht.slug } }}
                             className="rounded-lg bg-luxury-blue px-5 py-2.5 text-white font-semibold text-sm transition-colors hover:bg-luxury-gold hover:text-luxury-blue whitespace-nowrap"
                           >
                             {t('viewDetails')}

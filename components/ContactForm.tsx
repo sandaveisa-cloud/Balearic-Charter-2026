@@ -159,7 +159,7 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl p-8 md:p-10 shadow-lg border border-gray-100 h-full flex flex-col">
+    <form id="contact-form" onSubmit={handleSubmit} className="bg-white rounded-xl p-8 md:p-10 shadow-lg border border-gray-100 h-full flex flex-col">
       <h3 className="font-serif text-2xl font-bold text-luxury-blue mb-6">
         {t('formTitle') || 'Send us a Message'}
       </h3>

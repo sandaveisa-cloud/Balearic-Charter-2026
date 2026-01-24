@@ -184,7 +184,7 @@ export default function LuxuryDestinationsGrid({ destinations = [] }: LuxuryDest
 
                   {/* Explore Routes Button */}
                   <Link
-                    href={`/destinations/${destinationSlug}`}
+                    href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
                     className="inline-flex items-center gap-2 px-6 py-3 bg-luxury-blue text-white font-semibold rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 shadow-md hover:shadow-lg group/button"
                   >
                     <span>{t('exploreRoutes')}</span>

@@ -55,7 +55,7 @@ function DestinationCard({
 
   return (
     <Link
-      href={`/destinations/${destinationSlug}`}
+      href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
       className="group cursor-pointer"
     >
       {/* Image Container */}

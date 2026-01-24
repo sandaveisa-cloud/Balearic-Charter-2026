@@ -383,7 +383,7 @@ export default function YachtDetails({ yachtSlug }: YachtDetailsProps) {
             {locale === 'de' && 'Kontaktieren Sie uns noch heute, um Ihr Luxus-Yachtcharter-Erlebnis zu buchen.'}
           </p>
           <Link
-            href="/#contact"
+            href="/contact"
             className="inline-flex items-center gap-2 px-8 py-4 bg-white text-[#002447] font-bold text-lg rounded-lg hover:bg-gray-100 transition-colors shadow-lg"
           >
             {locale === 'en' && 'Get a Quote'}

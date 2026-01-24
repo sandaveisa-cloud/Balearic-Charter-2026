@@ -35,7 +35,7 @@ export default function FloatingCTA() {
 
   return (
     <Link
-      href="/#contact"
+      href="/contact"
       onClick={handleClick}
       className="fixed bottom-40 right-6 z-40 flex items-center gap-2 bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue px-5 py-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group"
       aria-label={t('getQuote') || 'Get a Quote'}
