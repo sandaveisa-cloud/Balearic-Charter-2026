@@ -1,7 +1,7 @@
 'use client'
 
 import OptimizedImage from './OptimizedImage'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useLocale } from 'next-intl'
 import { useTranslations } from 'next-intl'
 
@@ -55,7 +55,7 @@ function DestinationCard({
 
   return (
     <Link
-      href={`/${locale}/destinations/${destinationSlug}`}
+      href={`/destinations/${destinationSlug}`}
       className="group cursor-pointer"
     >
       {/* Image Container */}

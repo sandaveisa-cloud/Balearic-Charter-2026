@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { getSiteSettingsClient } from '@/lib/data'
 
 export default function Footer() {
@@ -93,28 +93,28 @@ export default function Footer() {
             <p>&copy; {new Date().getFullYear()} {settings.company_name || 'Balearic & Costa Blanca Charters'}. {t('rights')}</p>
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
               <Link 
-                href={`/${locale}/legal`}
+                href="/legal"
                 className="hover:text-luxury-gold transition-colors"
               >
                 {t('legal') || 'Legal Notice'}
               </Link>
               <span className="text-gray-600">|</span>
               <Link 
-                href={`/${locale}/privacy`}
+                href="/privacy"
                 className="hover:text-luxury-gold transition-colors"
               >
                 {t('privacy') || 'Privacy Policy'}
               </Link>
               <span className="text-gray-600">|</span>
               <Link 
-                href={`/${locale}/cookies`}
+                href="/cookies"
                 className="hover:text-luxury-gold transition-colors"
               >
                 {t('cookies') || 'Cookies Policy'}
               </Link>
               <span className="text-gray-600">|</span>
               <Link 
-                href={`/${locale}/terms`}
+                href="/terms"
                 className="hover:text-luxury-gold transition-colors"
               >
                 {t('terms') || 'Terms & Conditions'}

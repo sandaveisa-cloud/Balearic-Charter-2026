@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useEffect, useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { Ruler, Users, BedDouble, Ship, Sparkles, ChevronDown, ChevronUp, Calendar, Maximize2 } from 'lucide-react'
@@ -357,23 +357,13 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                         )}
                         <div className="ml-auto flex gap-2">
                           <Link
-                            href={`/${locale}/fleet/${yacht.slug}#booking`}
+                            href={`/fleet/${yacht.slug}#booking`}
                             className="rounded-lg bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue px-5 py-2.5 font-bold text-sm transition-all hover:shadow-lg hover:scale-105 whitespace-nowrap"
-                            onClick={(e) => {
-                              // If already on the page, scroll to booking section
-                              if (window.location.pathname === `/${locale}/fleet/${yacht.slug}`) {
-                                e.preventDefault()
-                                const bookingSection = document.getElementById('booking')
-                                if (bookingSection) {
-                                  bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                                }
-                              }
-                            }}
                           >
                             {t('getQuote') || 'Get a Quote'}
                           </Link>
                           <Link
-                            href={`/${locale}/fleet/${yacht.slug}`}
+                            href={`/fleet/${yacht.slug}`}
                             className="rounded-lg bg-luxury-blue px-5 py-2.5 text-white font-semibold text-sm transition-colors hover:bg-luxury-gold hover:text-luxury-blue whitespace-nowrap"
                           >
                             {t('viewDetails')}

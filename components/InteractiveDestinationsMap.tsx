@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useLocale } from 'next-intl'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import dynamic from 'next/dynamic'
 import { Anchor } from 'lucide-react'
 
@@ -263,7 +263,7 @@ function LeafletMap({
                   </p>
                 )}
                 <Link
-                  href={`/${locale}/destinations/${destination.slug}`}
+                  href={`/destinations/${destination.slug}`}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-luxury-blue text-white text-sm font-semibold rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300"
                   onClick={(e) => e.stopPropagation()}
                 >
