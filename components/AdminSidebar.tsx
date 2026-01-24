@@ -170,13 +170,22 @@ export default function AdminSidebar() {
             </h3>
             <div className="px-3 space-y-2">
               <a
-                href="/"
+                href="/en"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-gray-400 hover:text-luxury-gold transition-colors"
               >
                 <Globe className="w-4 h-4" />
-                View Website
+                View Website (EN)
+              </a>
+              <a
+                href="/es"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-gray-400 hover:text-luxury-gold transition-colors"
+              >
+                <Globe className="w-4 h-4" />
+                View Website (ES)
               </a>
               <a
                 href="/en/fleet"
