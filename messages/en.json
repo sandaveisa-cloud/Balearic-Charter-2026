@@ -200,7 +200,12 @@
     "sendMessage": "Send Message",
     "sending": "Sending...",
     "successTitle": "Thank You!",
-    "successMessage": "We have received your message and will get back to you shortly.",
+    "successMessage": "Our team will prepare your personalized offer and contact you within the next 24 hours.",
+    "returnToFleet": "Return to Fleet",
+    "errorTitle": "Error Submitting Request",
+    "errorRetryMessage": "There was a problem sending your request. Please try again or contact us directly via WhatsApp.",
+    "tryAgain": "Try Again",
+    "contactWhatsApp": "Contact via WhatsApp",
     "backToHome": "Back to Home",
     "errorMessage": "Failed to send message. Please try again."
   },

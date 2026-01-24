@@ -201,7 +201,12 @@
     "sendMessage": "Nachricht Senden",
     "sending": "Wird Gesendet...",
     "successTitle": "Vielen Dank!",
-    "successMessage": "Wir haben Ihre Nachricht erhalten und werden uns bald bei Ihnen melden.",
+    "successMessage": "Unser Team wird Ihr persönliches Angebot erstellen und Sie innerhalb der nächsten 24 Stunden kontaktieren.",
+    "returnToFleet": "Zurück zur Flotte",
+    "errorTitle": "Fehler beim Senden",
+    "errorRetryMessage": "Beim Senden Ihrer Anfrage ist ein Problem aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns direkt über WhatsApp.",
+    "tryAgain": "Erneut Versuchen",
+    "contactWhatsApp": "Über WhatsApp Kontaktieren",
     "backToHome": "Zurück zur Startseite",
     "errorMessage": "Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut."
   },

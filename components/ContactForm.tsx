@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { useTranslations } from 'next-intl'
-import { Send, CheckCircle2, ArrowLeft } from 'lucide-react'
+import { Send, CheckCircle2, Ship, AlertCircle, RefreshCw, MessageCircle } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
+import { getSiteSettingsClient } from '@/lib/data'
 
 interface ContactFormProps {
   onSubmit?: (data: { name: string; email: string; phone: string; message: string }) => Promise<void>
@@ -20,6 +21,13 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [whatsappLink, setWhatsappLink] = useState<string>('')
+
+  useEffect(() => {
+    getSiteSettingsClient().then((settings) => {
+      setWhatsappLink(settings.whatsapp_link || 'https://wa.me/34680957096')
+    })
+  }, [])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -59,24 +67,93 @@ export default function ContactForm({ onSubmit }: ContactFormProps) {
     }
   }
 
-  // Success state - same dimensions as form
+  const handleRetry = () => {
+    setSubmitStatus('idle')
+    setErrorMessage('')
+  }
+
+  // Success state - professional "Thank You" screen
   if (submitStatus === 'success') {
     return (
-      <div className="bg-white rounded-xl p-8 md:p-10 shadow-lg border border-gray-100 h-full flex flex-col items-center justify-center min-h-[500px]">
-        <CheckCircle2 className="w-16 h-16 text-luxury-gold mb-4" />
-        <h3 className="font-serif text-2xl font-bold text-luxury-blue mb-2 text-center">
+      <div className="bg-white rounded-xl p-8 md:p-12 shadow-lg border border-gray-100 h-full flex flex-col items-center justify-center min-h-[500px] text-center">
+        {/* Animated checkmark with gold ring */}
+        <div className="relative mb-6">
+          <div className="absolute inset-0 bg-luxury-gold/20 rounded-full animate-ping"></div>
+          <div className="relative w-20 h-20 bg-gradient-to-br from-luxury-gold to-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+            <CheckCircle2 className="w-10 h-10 text-white" />
+          </div>
+        </div>
+        
+        <h3 className="font-serif text-3xl font-bold text-luxury-blue mb-4">
           {t('successTitle') || 'Thank You!'}
         </h3>
-        <p className="text-gray-600 text-center mb-6 max-w-md">
-          {t('successMessage') || 'We have received your message and will get back to you shortly.'}
+        
+        <p className="text-gray-600 text-lg leading-relaxed mb-8 max-w-md">
+          {t('successMessage') || 'Our team will prepare your personalized offer and contact you within the next 24 hours.'}
         </p>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-luxury-blue text-white font-semibold rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>{t('backToHome') || 'Back to Home'}</span>
-        </Link>
+        
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link
+            href="/fleet"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-luxury-blue text-white font-semibold rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 shadow-md"
+          >
+            <Ship className="w-5 h-5" />
+            <span>{t('returnToFleet') || 'Return to Fleet'}</span>
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 text-luxury-blue font-semibold rounded-lg hover:bg-gray-200 transition-all duration-300"
+          >
+            <span>{t('backToHome') || 'Back to Home'}</span>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // Error state - professional error screen with retry options
+  if (submitStatus === 'error') {
+    return (
+      <div className="bg-white rounded-xl p-8 md:p-12 shadow-lg border border-red-100 h-full flex flex-col items-center justify-center min-h-[500px] text-center">
+        {/* Error icon */}
+        <div className="relative mb-6">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center">
+            <AlertCircle className="w-10 h-10 text-red-500" />
+          </div>
+        </div>
+        
+        <h3 className="font-serif text-2xl font-bold text-gray-800 mb-4">
+          {t('errorTitle') || 'Error Submitting Request'}
+        </h3>
+        
+        <p className="text-gray-600 text-base leading-relaxed mb-6 max-w-md">
+          {t('errorRetryMessage') || 'There was a problem sending your request. Please try again or contact us directly via WhatsApp.'}
+        </p>
+        
+        {errorMessage && (
+          <p className="text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg mb-6 max-w-md">
+            {errorMessage}
+          </p>
+        )}
+        
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button
+            onClick={handleRetry}
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-luxury-blue text-white font-semibold rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 shadow-md"
+          >
+            <RefreshCw className="w-5 h-5" />
+            <span>{t('tryAgain') || 'Try Again'}</span>
+          </button>
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-all duration-300 shadow-md"
+          >
+            <MessageCircle className="w-5 h-5" />
+            <span>{t('contactWhatsApp') || 'Contact via WhatsApp'}</span>
+          </a>
+        </div>
       </div>
     )
   }

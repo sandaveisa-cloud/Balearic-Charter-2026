@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
-import { submitBookingInquiry } from '@/lib/data'
+import { useTranslations } from 'next-intl'
+import { CheckCircle2, Ship, AlertCircle, RefreshCw, MessageCircle } from 'lucide-react'
+import { Link } from '@/i18n/navigation'
+import { submitBookingInquiry, getSiteSettingsClient } from '@/lib/data'
 import type { PriceBreakdown } from './SeasonalPriceCalculator'
 
 interface BookingFormProps {
@@ -26,6 +29,7 @@ export default function BookingForm({
   taxPercentage = 21,
   apaPercentage = 30,
 }: BookingFormProps) {
+  const t = useTranslations('contact')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -36,6 +40,13 @@ export default function BookingForm({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [whatsappLink, setWhatsappLink] = useState<string>('')
+
+  useEffect(() => {
+    getSiteSettingsClient().then((settings) => {
+      setWhatsappLink(settings.whatsapp_link || 'https://wa.me/34680957096')
+    })
+  }, [])
 
   // Format currency
   const formatCurrency = (amount: number | null) => {
@@ -232,6 +243,97 @@ TOTAL ESTIMATE: ${formatCurrency(priceBreakdown.totalEstimate)}
     }
   }
 
+  const handleRetry = () => {
+    setSubmitStatus('idle')
+    setErrorMessage('')
+  }
+
+  // Success state - professional "Thank You" screen
+  if (submitStatus === 'success') {
+    return (
+      <div className="mt-6 flex flex-col items-center justify-center text-center py-8">
+        {/* Animated checkmark with gold ring */}
+        <div className="relative mb-6">
+          <div className="absolute inset-0 bg-luxury-gold/20 rounded-full animate-ping"></div>
+          <div className="relative w-16 h-16 bg-gradient-to-br from-luxury-gold to-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+            <CheckCircle2 className="w-8 h-8 text-white" />
+          </div>
+        </div>
+        
+        <h3 className="font-serif text-2xl font-bold text-luxury-blue mb-3">
+          {t('successTitle') || 'Thank You!'}
+        </h3>
+        
+        <p className="text-gray-600 text-base leading-relaxed mb-6 max-w-sm">
+          {t('successMessage') || 'Our team will prepare your personalized offer and contact you within the next 24 hours.'}
+        </p>
+        
+        <div className="flex flex-col gap-3 w-full">
+          <Link
+            href="/fleet"
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-luxury-blue text-white font-semibold rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 shadow-md"
+          >
+            <Ship className="w-4 h-4" />
+            <span>{t('returnToFleet') || 'Return to Fleet'}</span>
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-gray-100 text-luxury-blue font-semibold rounded-lg hover:bg-gray-200 transition-all duration-300"
+          >
+            <span>{t('backToHome') || 'Back to Home'}</span>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // Error state - professional error screen with retry options
+  if (submitStatus === 'error') {
+    return (
+      <div className="mt-6 flex flex-col items-center justify-center text-center py-8">
+        {/* Error icon */}
+        <div className="relative mb-6">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-red-500" />
+          </div>
+        </div>
+        
+        <h3 className="font-serif text-xl font-bold text-gray-800 mb-3">
+          {t('errorTitle') || 'Error Submitting Request'}
+        </h3>
+        
+        <p className="text-gray-600 text-sm leading-relaxed mb-4 max-w-sm">
+          {t('errorRetryMessage') || 'There was a problem sending your request. Please try again or contact us directly via WhatsApp.'}
+        </p>
+        
+        {errorMessage && (
+          <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg mb-4 max-w-sm">
+            {errorMessage}
+          </p>
+        )}
+        
+        <div className="flex flex-col gap-3 w-full">
+          <button
+            onClick={handleRetry}
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-luxury-blue text-white font-semibold rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 shadow-md"
+          >
+            <RefreshCw className="w-4 h-4" />
+            <span>{t('tryAgain') || 'Try Again'}</span>
+          </button>
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-all duration-300 shadow-md"
+          >
+            <MessageCircle className="w-4 h-4" />
+            <span>{t('contactWhatsApp') || 'Contact via WhatsApp'}</span>
+          </a>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-4">
       <div>
@@ -311,58 +413,6 @@ TOTAL ESTIMATE: ${formatCurrency(priceBreakdown.totalEstimate)}
           placeholder="Tell us about your charter preferences..."
         />
       </div>
-
-      {submitStatus === 'success' && (
-        <div className="p-4 bg-green-50 border-2 border-green-400 text-green-800 rounded-lg">
-          <div className="flex items-start gap-3">
-            <svg className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div>
-              <p className="font-semibold text-lg mb-1">Success!</p>
-              <p className="text-sm">Your booking inquiry has been submitted successfully.</p>
-              <p className="text-sm mt-2">A detailed PDF offer has been sent to your email address.</p>
-              <p className="text-sm">Our team will contact you shortly to confirm availability.</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {submitStatus === 'error' && (
-        <div className="p-4 bg-red-50 border-2 border-red-400 text-red-800 rounded-lg">
-          <div className="flex items-start gap-3">
-            <svg className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div className="flex-1">
-              <p className="font-semibold text-lg mb-2">Error Submitting Request</p>
-              <p className="text-sm mb-3">{errorMessage || 'There was an error submitting your request. Please try again.'}</p>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(`Error: ${errorMessage || 'Unknown error'}\n\nPlease check:\n1. All required fields are filled\n2. Dates are selected\n3. Price breakdown is calculated\n4. Internet connection is stable`)
-                    alert('Error details copied to clipboard!')
-                  }}
-                  className="text-xs px-3 py-1 bg-red-100 hover:bg-red-200 rounded border border-red-300 transition-colors"
-                >
-                  Copy Error Details
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSubmitStatus('idle')
-                    setErrorMessage('')
-                  }}
-                  className="text-xs px-3 py-1 bg-red-100 hover:bg-red-200 rounded border border-red-300 transition-colors"
-                >
-                  Dismiss
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       <button
         type="submit"

@@ -200,7 +200,12 @@
     "sendMessage": "Enviar Mensaje",
     "sending": "Enviando...",
     "successTitle": "¡Gracias!",
-    "successMessage": "Hemos recibido tu mensaje y te responderemos pronto.",
+    "successMessage": "Nuestro equipo preparará su oferta personalizada y se pondrá en contacto con usted en las próximas 24 horas.",
+    "returnToFleet": "Volver a la Flota",
+    "errorTitle": "Error al Enviar",
+    "errorRetryMessage": "Hubo un problema al enviar su solicitud. Por favor, inténtelo de nuevo o contáctenos directamente por WhatsApp.",
+    "tryAgain": "Intentar de Nuevo",
+    "contactWhatsApp": "Contactar por WhatsApp",
     "backToHome": "Volver al Inicio",
     "errorMessage": "Error al enviar el mensaje. Por favor, inténtalo de nuevo."
   },
