@@ -6,6 +6,17 @@
     "bookNow": "Solicitar Presupuesto",
     "contactUs": "Contáctanos"
   },
+  "navigation": {
+    "home": "Inicio",
+    "fleet": "Flota",
+    "destinations": "Destinos",
+    "contact": "Contacto",
+    "about": "Sobre Nosotros"
+  },
+  "breadcrumb": {
+    "home": "Inicio",
+    "backTo": "Volver a"
+  },
   "hero": {
     "title": "Experimenta el Lujo en el Mar",
     "subtitle": "Alquiler de Yates de Lujo en las Islas Baleares y Costa Blanca",

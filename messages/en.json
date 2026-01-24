@@ -6,6 +6,17 @@
     "bookNow": "Get a Quote",
     "contactUs": "Contact Us"
   },
+  "navigation": {
+    "home": "Home",
+    "fleet": "Fleet",
+    "destinations": "Destinations",
+    "contact": "Contact",
+    "about": "About Us"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "backTo": "Back to"
+  },
   "hero": {
     "title": "Experience Luxury at Sea",
     "subtitle": "Premium Yacht Charters in the Balearic Islands & Costa Blanca",

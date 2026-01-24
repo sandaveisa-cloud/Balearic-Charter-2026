@@ -6,6 +6,17 @@
     "bookNow": "Angebot Anfordern",
     "contactUs": "Kontaktieren Sie Uns"
   },
+  "navigation": {
+    "home": "Startseite",
+    "fleet": "Flotte",
+    "destinations": "Reiseziele",
+    "contact": "Kontakt",
+    "about": "Über Uns"
+  },
+  "breadcrumb": {
+    "home": "Startseite",
+    "backTo": "Zurück zu"
+  },
   "hero": {
     "title": "Luxus auf See Erleben",
     "subtitle": "Premium Yachtcharter auf den Balearen & Costa Blanca",
