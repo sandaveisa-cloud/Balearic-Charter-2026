@@ -3,7 +3,13 @@ import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { getSiteContent } from '@/lib/data'
 import Breadcrumb from '@/components/Breadcrumb'
+import { locales } from '@/i18n/routing'
 import { Anchor, Ship, Users, Utensils, MapPin, Phone, Mail, ArrowRight } from 'lucide-react'
+
+// Generate static params for all locales to ensure /es/sobre-nosotros is pre-rendered
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }))
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params

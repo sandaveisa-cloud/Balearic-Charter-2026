@@ -112,7 +112,27 @@ export default async function middleware(request: NextRequest) {
   }
 
   // ============================================================================
-  // STEP 4: Check if path already has a valid locale prefix
+  // STEP 4: Handle locale-specific paths accessed without locale prefix
+  // If someone visits /sobre-nosotros, redirect to /es/sobre-nosotros (not /en/sobre-nosotros)
+  // ============================================================================
+  const localeSpecificPaths: Record<string, string> = {
+    // Spanish paths
+    '/sobre-nosotros': '/es/sobre-nosotros',
+    '/contacto': '/es/contacto',
+    // German paths  
+    '/ueber-uns': '/de/ueber-uns',
+    '/kontakt': '/de/kontakt',
+  }
+  
+  if (localeSpecificPaths[pathname]) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Middleware] 🔄 Redirecting locale-specific path:', pathname, '→', localeSpecificPaths[pathname])
+    }
+    return NextResponse.redirect(new URL(localeSpecificPaths[pathname], request.url))
+  }
+
+  // ============================================================================
+  // STEP 5: Check if path already has a valid locale prefix
   // ============================================================================
   const hasLocalePrefix = localeRegex.test(pathname)
   
@@ -122,7 +142,7 @@ export default async function middleware(request: NextRequest) {
   }
 
   // ============================================================================
-  // STEP 5: Apply i18n middleware for all locale-prefixed routes
+  // STEP 6: Apply i18n middleware for all locale-prefixed routes
   // This handles localized pathnames like /es/sobre-nosotros -> /about
   // ============================================================================
   return intlMiddleware(request)

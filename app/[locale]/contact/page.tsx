@@ -4,7 +4,13 @@ import ContactForm from '@/components/ContactForm'
 import Breadcrumb from '@/components/Breadcrumb'
 import { getSiteContent } from '@/lib/data'
 import { Link } from '@/i18n/navigation'
+import { locales } from '@/i18n/routing'
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react'
+
+// Generate static params for all locales to ensure /es/contacto is pre-rendered
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }))
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
