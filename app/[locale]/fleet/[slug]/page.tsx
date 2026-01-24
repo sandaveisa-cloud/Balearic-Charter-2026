@@ -7,6 +7,40 @@ import { locales } from '@/i18n/routing'
 // Revalidate every 60 seconds for quick updates from Admin
 export const revalidate = 60
 
+// Reserved slugs that should NOT be treated as yacht slugs
+// These are static pages or common URL patterns that might be mistakenly routed here
+const RESERVED_SLUGS = [
+  'sobre-nosotros',    // Spanish "About Us"
+  'about',             // English "About"
+  'ueber-uns',         // German "About"
+  'contact',           // Contact page
+  'contacto',          // Spanish Contact
+  'kontakt',           // German Contact
+  'booking',           // Booking page
+  'reservar',          // Spanish Booking
+  'buchung',           // German Booking
+  'privacy',           // Privacy policy
+  'legal',             // Legal notice
+  'terms',             // Terms and conditions
+  'cookies',           // Cookies policy
+  'login',             // Login page
+  'admin',             // Admin panel
+  'api',               // API routes
+  'destinations',      // Destinations page
+  'destinos',          // Spanish Destinations
+  'reiseziele',        // German Destinations
+]
+
+// Check if a slug is reserved (not a yacht)
+function isReservedSlug(slug: string): boolean {
+  const normalizedSlug = slug.toLowerCase().trim()
+  return RESERVED_SLUGS.includes(normalizedSlug) || 
+         normalizedSlug.includes('%2f') || // URL-encoded slash (malformed URL)
+         normalizedSlug.includes('/') ||   // Contains slash
+         normalizedSlug.startsWith('_') || // Internal routes
+         normalizedSlug.startsWith('.')    // Hidden files
+}
+
 type Props = {
   params: Promise<{ slug: string; locale: string }>
 }
@@ -50,6 +84,14 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params
+  
+  // Return early for reserved slugs
+  if (isReservedSlug(slug)) {
+    return {
+      title: 'Page Not Found',
+    }
+  }
+  
   const yacht = await getFleetBySlug(slug)
 
   if (!yacht) {
@@ -66,6 +108,13 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function FleetPage({ params }: Props) {
   const { slug, locale } = await params
+  
+  // Immediately return 404 for reserved slugs - don't even try to fetch
+  if (isReservedSlug(slug)) {
+    console.log(`[FleetPage] Reserved slug detected, returning 404: ${slug}`)
+    notFound()
+  }
+  
   const yacht = await getFleetBySlug(slug)
 
   if (!yacht) {
