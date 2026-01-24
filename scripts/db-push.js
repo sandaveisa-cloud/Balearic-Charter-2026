@@ -204,7 +204,7 @@ async function main() {
   }
 
   if (masterOnly) {
-    toRun = migrations.filter(m => m.filename.includes('000_master'));
+    toRun = migrations.filter(m => m.filename.includes('0000_master'));
   }
 
   // Execute or print migrations
@@ -221,7 +221,7 @@ async function main() {
     log('   1. Go to Supabase Dashboard → SQL Editor', 'reset');
     log('   2. Copy each migration SQL above', 'reset');
     log('   3. Paste and click "Run"', 'reset');
-    log('   4. Run migrations in order (000, 001, 002, ...)\n', 'reset');
+    log('   4. Run migrations in order (0000, 001, 002, 003, ...)\n', 'reset');
     
   } else {
     // Note: Direct SQL execution via REST API requires custom RPC function

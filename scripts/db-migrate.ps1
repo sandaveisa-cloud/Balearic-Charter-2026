@@ -10,7 +10,7 @@
     Run a specific migration file (partial match)
 
 .PARAMETER Master
-    Run only the master schema (000_master_schema.sql)
+    Run only the master schema (0000_master_schema.sql)
 
 .PARAMETER All
     Run all migrations in order
@@ -74,7 +74,7 @@ if ($File) {
 }
 
 if ($Master) {
-    $toRun = $migrations | Where-Object { $_.Name -like "*000_master*" }
+    $toRun = $migrations | Where-Object { $_.Name -like "*0000_master*" }
 }
 
 if ($List) {
@@ -101,7 +101,7 @@ Write-Host "💡 How to apply these migrations:" -ForegroundColor Cyan
 Write-Host "   1. Go to Supabase Dashboard → SQL Editor"
 Write-Host "   2. Copy each migration SQL above"
 Write-Host "   3. Paste and click 'Run'"
-Write-Host "   4. Run migrations in order (000, 001, 002, ...)"
+Write-Host "   4. Run migrations in order (0000, 001, 002, 003, ...)"
 Write-Host ""
 
 # Check for Supabase CLI

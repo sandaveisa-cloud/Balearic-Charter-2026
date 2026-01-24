@@ -19,9 +19,10 @@ npm run db:push:master
 
 | File | Description |
 |------|-------------|
-| `000_master_schema.sql` | Complete database schema (use for new databases) |
+| `0000_master_schema.sql` | Complete database schema with fleet, destinations, theme_settings (use for new databases) |
 | `001_add_highlights_to_destinations.sql` | Adds highlights/attractions to destinations |
-| `002_fleet_complete_schema.sql` | Ensures all fleet columns exist |
+| `002_fleet_complete_schema.sql` | Ensures all fleet columns exist (including recently_refitted) |
+| `003_add_section_visibility.sql` | Adds section visibility controls to site_settings |
 
 ## How to Apply Migrations
 
@@ -31,7 +32,7 @@ npm run db:push:master
 2. Copy the SQL from the terminal
 3. Go to **Supabase Dashboard → SQL Editor**
 4. Paste and click **Run**
-5. Run migrations in order (000, 001, 002...)
+5. Run migrations in order (0000, 001, 002, 003...)
 
 ### Option 2: Supabase CLI (Automated)
 
