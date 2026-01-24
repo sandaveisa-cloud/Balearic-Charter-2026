@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import { getSiteContent } from '@/lib/data'
+import Breadcrumb from '@/components/Breadcrumb'
 import { Anchor, Ship, Users, Utensils, MapPin, Phone, Mail, ArrowRight } from 'lucide-react'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -25,7 +26,14 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const settings = siteContent.settings || {}
   
   return (
-    <main className="min-h-screen bg-white pt-24">
+    <main className="min-h-screen bg-white pt-20">
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb 
+        items={[
+          { label: t('title'), href: '/about' }
+        ]} 
+      />
+      
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-luxury-blue via-[#1e3a5f] to-luxury-blue py-20">
         <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>

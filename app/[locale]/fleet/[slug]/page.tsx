@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation'
 import { getFleetBySlug, getSiteContent } from '@/lib/data'
+import { getTranslations } from 'next-intl/server'
 import FleetDetail from '@/components/FleetDetail'
 import StructuredData from '@/components/StructuredData'
+import Breadcrumb from '@/components/Breadcrumb'
 import { locales } from '@/i18n/routing'
 
 // Revalidate every 60 seconds for quick updates from Admin
@@ -127,12 +129,21 @@ export default async function FleetPage({ params }: Props) {
   // Fetch settings for structured data
   const siteContent = await getSiteContent()
   const settings = siteContent.settings || {}
+  const t = await getTranslations({ locale, namespace: 'fleet' })
 
   return (
-    <>
+    <main className="min-h-screen bg-white pt-20">
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb 
+        items={[
+          { label: t('title') || 'Fleet', href: '/fleet' },
+          { label: yacht.name }
+        ]} 
+      />
+      
       {/* Structured Data for SEO */}
       <StructuredData type="BoatTrip" settings={settings} yacht={yacht} locale={locale} />
       <FleetDetail yacht={yacht} />
-    </>
+    </main>
   )
 }

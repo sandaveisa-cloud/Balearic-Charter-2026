@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 import DestinationDetail from '@/components/DestinationDetail'
 import StructuredData from '@/components/StructuredData'
+import Breadcrumb from '@/components/Breadcrumb'
 import { getLocalizedText } from '@/lib/i18nUtils'
 import { locales } from '@/i18n/routing'
 
@@ -186,8 +187,20 @@ export default async function DestinationPage({ params }: Props) {
   const siteContent = await getSiteContent()
   const settings = siteContent.settings || {}
 
+  // Get destination name for breadcrumb
+  const destinationName = destination.name || destination.title || 'Destination'
+  const t = await getTranslations({ locale, namespace: 'destinations' })
+
   return (
-    <>
+    <main className="min-h-screen bg-white pt-20">
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb 
+        items={[
+          { label: t('title') || 'Destinations', href: '/destinations' },
+          { label: destinationName }
+        ]} 
+      />
+      
       {/* Structured Data for SEO */}
       <StructuredData 
         type="Place" 
@@ -196,6 +209,6 @@ export default async function DestinationPage({ params }: Props) {
         locale={locale} 
       />
       <DestinationDetail destination={destination} />
-    </>
+    </main>
   )
 }

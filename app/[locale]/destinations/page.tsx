@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 import type { Metadata } from 'next'
 import DestinationsSection from '@/components/DestinationsSection'
+import Breadcrumb from '@/components/Breadcrumb'
 import { ArrowLeft, Anchor } from 'lucide-react'
 import { locales } from '@/i18n/routing'
 
@@ -50,19 +51,16 @@ export default async function DestinationsPage({ params }: Props) {
 
   return (
     <main className="min-h-screen pt-20">
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb 
+        items={[
+          { label: t('title') || 'Destinations', href: '/destinations' }
+        ]} 
+      />
+      
       {/* Hero Header */}
-      <header className="bg-gradient-to-br from-luxury-blue via-luxury-blue/95 to-luxury-blue/90 py-16 px-4">
+      <header className="bg-gradient-to-br from-luxury-blue via-luxury-blue/95 to-luxury-blue/90 py-12 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex items-center gap-4 mb-6">
-            <Link 
-              href="/"
-              className="inline-flex items-center gap-2 text-white/70 hover:text-luxury-gold transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>{t('backToHome') || 'Back to Home'}</span>
-            </Link>
-          </div>
-          
           <div className="flex items-center gap-4 mb-4">
             <Anchor className="w-10 h-10 text-luxury-gold" />
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-white">

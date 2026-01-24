@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import ContactForm from '@/components/ContactForm'
-import ContactSection from '@/components/ContactSection'
+import Breadcrumb from '@/components/Breadcrumb'
 import { getSiteContent } from '@/lib/data'
 import { Link } from '@/i18n/navigation'
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react'
@@ -26,7 +26,14 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
   const contactPersons = siteContent.contactPersons || []
   
   return (
-    <main className="min-h-screen bg-white pt-24">
+    <main className="min-h-screen bg-white pt-20">
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb 
+        items={[
+          { label: t('title'), href: '/contact' }
+        ]} 
+      />
+      
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-luxury-blue via-[#1e3a5f] to-luxury-blue py-16 md:py-20">
         <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
