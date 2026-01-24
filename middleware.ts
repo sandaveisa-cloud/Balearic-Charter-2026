@@ -3,6 +3,10 @@ import { locales, defaultLocale } from './i18n'
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseMiddlewareClient } from './lib/supabase-middleware'
 
+// Build locale pattern dynamically from config
+const localePattern = locales.join('|')
+const localeRegex = new RegExp(`^/(${localePattern})(/|$)`)
+
 const intlMiddleware = createMiddleware({
   // A list of all locales that are supported
   locales,
@@ -10,40 +14,52 @@ const intlMiddleware = createMiddleware({
   // Used when no locale matches
   defaultLocale,
 
-  // Use 'as-needed' to avoid double prefixes when router.push('/') is called
-  // This allows the router to handle locale prefixes correctly
-  localePrefix: 'as-needed'
+  // Use 'always' to ensure all routes have locale prefix
+  // This prevents redirect loops between / and /en
+  localePrefix: 'always'
 })
 
 export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   
-  // Debug logging
-  console.log('[Middleware] Checking path:', pathname)
+  // Debug logging (reduce noise in production)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Middleware] Checking path:', pathname)
+  }
 
   // ============================================================================
-  // STEP 1: Handle root path explicitly
+  // STEP 1: Skip static files and API routes early
   // ============================================================================
-  if (pathname === '/') {
-    return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url))
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.includes('.') // Static files like .ico, .png, .jpg
+  ) {
+    return NextResponse.next()
   }
 
   // ============================================================================
   // STEP 2: 🛑 CRITICAL - Admin routes: NO i18n logic, ONLY authentication
   // ============================================================================
-  // 1. Definējam, vai šis ir admin pieprasījums
-  const isAdminPage = pathname.startsWith('/admin') || pathname.includes('/admin')
+  // Check if this is an admin route (without locale prefix)
+  const isAdminPage = pathname.startsWith('/admin')
   
-  // 2. Ja tas ir admin, mēs veicam TIKAI autentifikāciju
-  if (isAdminPage) {
-    console.log('[Middleware] 🔒 Admin route detected - bypassing i18n, checking auth only:', pathname)
-    
-    // CRITICAL: Normalize /[locale]/admin to /admin to prevent redirect loops
-    if (/^\/(en|es|de)\/admin/.test(pathname)) {
-      const subPath = pathname.replace(/^\/(en|es|de)\/admin/, '')
-      const targetPath = `/admin${subPath}`
+  // Also check for locale-prefixed admin routes like /en/admin, /es/admin
+  const localePrefixedAdminMatch = pathname.match(new RegExp(`^/(${localePattern})/admin`))
+  
+  if (localePrefixedAdminMatch) {
+    // Redirect /en/admin, /es/admin, etc. to /admin (remove locale prefix)
+    const subPath = pathname.replace(new RegExp(`^/(${localePattern})/admin`), '')
+    const targetPath = `/admin${subPath}`
+    if (process.env.NODE_ENV === 'development') {
       console.log('[Middleware] 🔄 Normalizing locale admin route:', pathname, '→', targetPath)
-      return NextResponse.redirect(new URL(targetPath, request.url))
+    }
+    return NextResponse.redirect(new URL(targetPath, request.url))
+  }
+  
+  if (isAdminPage) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Middleware] 🔒 Admin route detected - bypassing i18n, checking auth only:', pathname)
     }
     
     // Create response object for Supabase client
@@ -64,11 +80,9 @@ export default async function middleware(request: NextRequest) {
       // CRITICAL: IF NO SESSION - BLOCK ACCESS IMMEDIATELY
       if (sessionError || !session) {
         console.log('[Middleware] ❌ SECURITY BLOCK: No active session found')
-        console.log('[Middleware] Error:', sessionError?.message || 'No session')
         
         const loginUrl = new URL(`/${defaultLocale}/login`, request.url)
         loginUrl.searchParams.set('redirect', '/admin')
-        console.log('[Middleware] 🔄 Redirecting to login:', loginUrl.toString())
         return NextResponse.redirect(loginUrl)
       }
 
@@ -78,41 +92,49 @@ export default async function middleware(request: NextRequest) {
       // CRITICAL: IF NO USER OR ERROR - BLOCK ACCESS IMMEDIATELY
       if (userError || !user || !user.id) {
         console.log('[Middleware] ❌ SECURITY BLOCK: User verification failed')
-        console.log('[Middleware] Error:', userError?.message || 'No user')
         
         const loginUrl = new URL(`/${defaultLocale}/login`, request.url)
         loginUrl.searchParams.set('redirect', '/admin')
-        console.log('[Middleware] 🔄 Redirecting to login:', loginUrl.toString())
         return NextResponse.redirect(loginUrl)
       }
 
-      // User is authenticated - log and allow access
-      console.log('[Middleware] ✅ SECURITY PASS: User authenticated:', user.email)
+      // User is authenticated - allow access
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Middleware] ✅ SECURITY PASS: User authenticated:', user.email)
+      }
       
-      // CRITICAL: Return response immediately - DO NOT let i18n middleware process this
-      // This prevents next-intl from trying to add/remove locale prefixes
+      // Return response immediately - DO NOT let i18n middleware process admin routes
       return response
     } catch (error) {
       // FAIL SECURE: If ANY error occurs during auth check, block access
       console.error('[Middleware] ⚠️ SECURITY ERROR: Exception during auth check:', error)
       const loginUrl = new URL(`/${defaultLocale}/login`, request.url)
       loginUrl.searchParams.set('redirect', '/admin')
-      console.log('[Middleware] 🔄 FAIL-SECURE REDIRECT to login:', loginUrl.toString())
       return NextResponse.redirect(loginUrl)
     }
   }
 
   // ============================================================================
-  // STEP 3: Continue with i18n middleware for all NON-admin routes
+  // STEP 3: Handle root path - redirect to default locale
   // ============================================================================
-  // EXCLUDE login/signup routes from admin checks (but still apply i18n)
-  const isLoginRoute = pathname.includes('/login') || pathname.includes('/signup')
-  if (isLoginRoute) {
-    console.log('[Middleware] Login/signup route detected:', pathname)
-    return intlMiddleware(request)
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url))
   }
 
-  // All other routes: apply i18n middleware
+  // ============================================================================
+  // STEP 4: Check if path already has a valid locale prefix
+  // ============================================================================
+  const hasLocalePrefix = localeRegex.test(pathname)
+  
+  // If no locale prefix, redirect to default locale
+  if (!hasLocalePrefix) {
+    // Exception: login/signup at root level should also get locale prefix
+    return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}`, request.url))
+  }
+
+  // ============================================================================
+  // STEP 5: Apply i18n middleware for all locale-prefixed routes
+  // ============================================================================
   return intlMiddleware(request)
 }
 
