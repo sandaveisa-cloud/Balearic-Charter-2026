@@ -1,27 +1,30 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Upload, X, Trash2, GripVertical, Loader2, ImageIcon, CheckCircle2 } from 'lucide-react'
+import { Upload, X, Trash2, GripVertical, Loader2, Cloud, CheckCircle2 } from 'lucide-react'
 
-interface LocalGalleryImageManagerProps {
+interface SupabaseGalleryImageManagerProps {
   images: string[]
   onImagesChange: (images: string[]) => void
   folder?: string
+  bucket?: string
   maxImages?: number
   maxSizeMB?: number
 }
 
 /**
- * LocalGalleryImageManager - Component for managing multiple images in public/images folder
+ * SupabaseGalleryImageManager - Component for managing multiple images in Supabase Storage
  * Supports drag & drop reordering, multiple upload, and delete
+ * Works on Vercel and all serverless platforms
  */
-export default function LocalGalleryImageManager({
+export default function SupabaseGalleryImageManager({
   images,
   onImagesChange,
   folder = 'fleet',
+  bucket = 'fleet-images',
   maxImages = 20,
-  maxSizeMB = 10,
-}: LocalGalleryImageManagerProps) {
+  maxSizeMB = 5,
+}: SupabaseGalleryImageManagerProps) {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<number>(0)
@@ -96,15 +99,17 @@ export default function LocalGalleryImageManager({
         const formData = new FormData()
         formData.append('file', filesToUpload[i])
         formData.append('folder', folder)
+        formData.append('bucket', bucket)
 
-        const response = await fetch('/api/admin/upload-local-image', {
+        // Use Supabase Storage upload endpoint
+        const response = await fetch('/api/admin/upload-image', {
           method: 'POST',
           body: formData,
         })
 
         if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || 'Upload failed')
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.error || errorData.details || 'Upload failed')
         }
 
         const data = await response.json()
@@ -112,7 +117,7 @@ export default function LocalGalleryImageManager({
         
         setUploadProgress(Math.round(((i + 1) / filesToUpload.length) * 100))
       } catch (err) {
-        console.error('[LocalGalleryImageManager] Upload error:', err)
+        console.error('[SupabaseGalleryImageManager] Upload error:', err)
       }
     }
 
@@ -193,7 +198,7 @@ export default function LocalGalleryImageManager({
         {uploading ? (
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 text-luxury-blue animate-spin" />
-            <span className="text-sm text-gray-600">Uploading... {uploadProgress}%</span>
+            <span className="text-sm text-gray-600">Uploading to Supabase... {uploadProgress}%</span>
             <div className="w-full max-w-xs bg-gray-200 rounded-full h-2">
               <div 
                 className="bg-luxury-blue h-2 rounded-full transition-all duration-300"
@@ -215,7 +220,7 @@ export default function LocalGalleryImageManager({
               </>
             ) : (
               <>
-                <ImageIcon className="w-8 h-8 text-gray-400" />
+                <Cloud className="w-8 h-8 text-gray-400" />
                 <span className="text-sm text-gray-600">Upload Gallery Images</span>
                 <span className="text-xs text-gray-400">
                   Drag & drop or click to browse (Max {maxSizeMB}MB each)
@@ -284,8 +289,9 @@ export default function LocalGalleryImageManager({
               </div>
 
               {/* Storage Type Badge */}
-              <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                {imageUrl.startsWith('/images/') ? 'Local' : 'URL'}
+              <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                <Cloud className="w-3 h-3" />
+                {imageUrl.includes('supabase.co') ? 'Supabase' : 'URL'}
               </div>
             </div>
           ))}
@@ -298,11 +304,13 @@ export default function LocalGalleryImageManager({
         </div>
       )}
 
-      <p className="text-xs text-gray-500">
-        Drag images to reorder. First image will be used as the main image.
-        <br />
-        Images saved to: <code className="bg-gray-100 px-1 rounded">public/images/{folder}/</code>
+      <p className="text-xs text-gray-500 flex items-center gap-1">
+        <Cloud className="w-3 h-3" />
+        Drag images to reorder. Stored in Supabase: <code className="bg-gray-100 px-1 rounded">{bucket}/{folder}/</code>
       </p>
     </div>
   )
 }
+
+// Export with original name for backward compatibility
+export { SupabaseGalleryImageManager as LocalGalleryImageManager }

@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Upload, X, Loader2, ImageIcon, CheckCircle2 } from 'lucide-react'
+import { Upload, X, Loader2, ImageIcon, CheckCircle2, Cloud } from 'lucide-react'
 
-interface LocalImageUploadProps {
+interface SupabaseImageUploadProps {
   currentImageUrl?: string | null
   onImageUploaded: (url: string) => void
   onImageRemoved?: () => void
   folder?: string
+  bucket?: string
   label?: string
   accept?: string
   maxSizeMB?: number
@@ -15,19 +16,21 @@ interface LocalImageUploadProps {
 }
 
 /**
- * LocalImageUpload - Component for uploading images to local public/images folder
- * Images are stored locally and served statically by Next.js
+ * SupabaseImageUpload - Component for uploading images to Supabase Storage
+ * Images are stored in Supabase and served via CDN
+ * Works on Vercel and all serverless platforms
  */
-export default function LocalImageUpload({
+export default function SupabaseImageUpload({
   currentImageUrl,
   onImageUploaded,
   onImageRemoved,
-  folder = 'general',
+  folder = 'fleet',
+  bucket = 'fleet-images',
   label = 'Upload Image',
   accept = 'image/*',
-  maxSizeMB = 10,
+  maxSizeMB = 5,
   className = '',
-}: LocalImageUploadProps) {
+}: SupabaseImageUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -83,15 +86,17 @@ export default function LocalImageUpload({
       const formData = new FormData()
       formData.append('file', file)
       formData.append('folder', folder)
+      formData.append('bucket', bucket)
 
-      const response = await fetch('/api/admin/upload-local-image', {
+      // Use Supabase Storage upload endpoint
+      const response = await fetch('/api/admin/upload-image', {
         method: 'POST',
         body: formData,
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Upload failed')
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || errorData.details || 'Upload failed')
       }
 
       const data = await response.json()
@@ -100,7 +105,7 @@ export default function LocalImageUpload({
       setSuccess(true)
       setTimeout(() => setSuccess(false), 2000)
     } catch (err) {
-      console.error('[LocalImageUpload] Error:', err)
+      console.error('[SupabaseImageUpload] Error:', err)
       setError(err instanceof Error ? err.message : 'Failed to upload image')
     } finally {
       setUploading(false)
@@ -119,6 +124,14 @@ export default function LocalImageUpload({
 
   const openFilePicker = () => {
     fileInputRef.current?.click()
+  }
+
+  // Determine storage type from URL
+  const getStorageLabel = (url: string | null | undefined) => {
+    if (!url) return ''
+    if (url.includes('supabase.co')) return 'Supabase Storage'
+    if (url.startsWith('http')) return 'External URL'
+    return 'Local'
   }
 
   return (
@@ -143,8 +156,9 @@ export default function LocalImageUpload({
           >
             <X className="w-4 h-4" />
           </button>
-          <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded">
-            {currentImageUrl.startsWith('/images/') ? 'Local Storage' : 'External URL'}
+          <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded flex items-center gap-1">
+            <Cloud className="w-3 h-3" />
+            {getStorageLabel(currentImageUrl)}
           </div>
         </div>
       )}
@@ -174,7 +188,7 @@ export default function LocalImageUpload({
         {uploading ? (
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="w-8 h-8 text-luxury-blue animate-spin" />
-            <span className="text-sm text-gray-600">Uploading...</span>
+            <span className="text-sm text-gray-600">Uploading to Supabase...</span>
           </div>
         ) : success ? (
           <div className="flex flex-col items-center gap-2">
@@ -190,13 +204,13 @@ export default function LocalImageUpload({
               </>
             ) : (
               <>
-                <ImageIcon className="w-8 h-8 text-gray-400" />
+                <Cloud className="w-8 h-8 text-gray-400" />
                 <span className="text-sm text-gray-600">{label}</span>
                 <span className="text-xs text-gray-400">
                   Drag & drop or click to browse
                 </span>
                 <span className="text-xs text-gray-400">
-                  Max size: {maxSizeMB}MB
+                  Max size: {maxSizeMB}MB • Stored in Supabase
                 </span>
               </>
             )}
@@ -212,10 +226,14 @@ export default function LocalImageUpload({
         </div>
       )}
 
-      {/* Folder Info */}
-      <p className="text-xs text-gray-500">
-        Images saved to: <code className="bg-gray-100 px-1 rounded">public/images/{folder}/</code>
+      {/* Storage Info */}
+      <p className="text-xs text-gray-500 flex items-center gap-1">
+        <Cloud className="w-3 h-3" />
+        Images stored in Supabase bucket: <code className="bg-gray-100 px-1 rounded">{bucket}/{folder}/</code>
       </p>
     </div>
   )
 }
+
+// Export with original name for backward compatibility
+export { SupabaseImageUpload as LocalImageUpload }
