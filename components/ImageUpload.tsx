@@ -247,10 +247,28 @@ export default function ImageUpload({
                   setError(null) // Clear error if image loads successfully
                 }}
               />
+              {/* Remove button overlay */}
+              <button
+                type="button"
+                onClick={handleRemove}
+                className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors shadow-lg"
+                title="Remove image"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
             <p className="text-xs text-gray-500 mt-1">
               Current: <code className="bg-gray-100 px-1 rounded text-xs">{preview}</code>
             </p>
+            {/* Clear Remove Image Button */}
+            <button
+              type="button"
+              onClick={handleRemove}
+              className="mt-2 w-full px-4 py-2 bg-red-50 border border-red-200 text-red-700 rounded-lg hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+            >
+              <X className="w-4 h-4" />
+              Remove Image
+            </button>
           </div>
         </div>
       )}

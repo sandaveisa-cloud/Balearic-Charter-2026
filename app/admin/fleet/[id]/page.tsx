@@ -184,6 +184,20 @@ export default function FleetEditPage() {
     setSuccess(false)
 
     try {
+      // Warn about missing images but allow save
+      const hasMainImage = formData.main_image_url && formData.main_image_url.trim() !== ''
+      const hasGalleryImages = formData.gallery_images && formData.gallery_images.length > 0
+      
+      if (!hasMainImage && !hasGalleryImages) {
+        const proceed = window.confirm(
+          'This yacht has no images. It will display without a photo on the website. Do you want to continue saving?'
+        )
+        if (!proceed) {
+          setSaving(false)
+          return
+        }
+      }
+
       const payload: any = {
         name: formData.name,
         slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-'),

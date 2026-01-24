@@ -254,6 +254,21 @@ export default function FleetEditor({
         throw new Error('Yacht name is required')
       }
 
+      // Warn about missing images but allow save
+      const hasMainImage = data.main_image_url && data.main_image_url.trim() !== ''
+      const hasGalleryImages = data.gallery_images && data.gallery_images.length > 0
+      
+      if (!hasMainImage && !hasGalleryImages) {
+        // Show confirmation dialog
+        const proceed = window.confirm(
+          'This yacht has no images. It will display without a photo on the website. Do you want to continue saving?'
+        )
+        if (!proceed) {
+          setSaving(false)
+          return
+        }
+      }
+
       const slug = data.slug || data.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
       
       if (!slug || !slug.trim()) {
