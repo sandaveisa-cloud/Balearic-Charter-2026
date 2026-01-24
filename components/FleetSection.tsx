@@ -43,9 +43,36 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
     return true
   })
 
-  // Safety check: Return null if no yachts to display
+  // Safety check: Show fallback message if no yachts to display
   if (!fleet || fleet.length === 0 || visibleYachts.length === 0) {
-    return null
+    console.warn('[FleetSection] No yachts to display:', {
+      fleetProvided: !!fleet,
+      fleetLength: fleet?.length || 0,
+      visibleYachtsLength: visibleYachts.length,
+    })
+    return (
+      <section id="fleet" className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4">
+              {t('title')}
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              {t('subtitle')}
+            </p>
+          </div>
+          <div className="text-center py-12 bg-gray-50 rounded-xl">
+            <Ship className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+            <p className="text-gray-500 text-lg">
+              Our luxury fleet is being updated. Please check back soon.
+            </p>
+            <p className="text-gray-400 text-sm mt-2">
+              Contact us directly for availability.
+            </p>
+          </div>
+        </div>
+      </section>
+    )
   }
 
   return (

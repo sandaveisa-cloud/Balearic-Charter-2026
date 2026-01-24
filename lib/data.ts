@@ -20,23 +20,56 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
   try {
     console.log('[Data] Fetching fleet...')
     // Select all columns including extras, specs, show_on_home, and all description columns
-    // Order by order_index first (for manual ordering), then by is_featured
-    fleetResult = await supabase
-      .from('fleet')
-      .select('*')
-      .eq('is_active', true)
-      .order('order_index', { ascending: true, nullsFirst: false })
-      .order('is_featured', { ascending: false })
+    // Try with order_index first, fallback to simpler query if column doesn't exist
+    try {
+      fleetResult = await supabase
+        .from('fleet')
+        .select('*')
+        .eq('is_active', true)
+        .order('order_index', { ascending: true, nullsFirst: false })
+        .order('is_featured', { ascending: false })
+      
+      if (fleetResult.error) {
+        // If order_index column doesn't exist, try without it
+        if (fleetResult.error.message?.includes('order_index') || fleetResult.error.code === '42703') {
+          console.warn('[Data] order_index column not found, fetching without ordering by it...')
+          fleetResult = await supabase
+            .from('fleet')
+            .select('*')
+            .eq('is_active', true)
+            .order('is_featured', { ascending: false })
+            .order('name', { ascending: true })
+        } else {
+          console.error('[Data] Error fetching fleet:', fleetResult.error)
+        }
+      }
+    } catch (orderError) {
+      console.warn('[Data] Fleet order query failed, trying simple query:', orderError)
+      fleetResult = await supabase
+        .from('fleet')
+        .select('*')
+        .eq('is_active', true)
+        .order('is_featured', { ascending: false })
+    }
     
     if (fleetResult.error) {
       console.error('[Data] Error fetching fleet:', fleetResult.error)
-      fleetResult = { data: [], error: null }
-    } else {
-      console.log('[Data] fleet fetched:', fleetResult.data?.length || 0, 'items')
+      // Don't set to empty - try one more simple query
+      const simpleResult = await supabase.from('fleet').select('*').eq('is_active', true)
+      fleetResult = simpleResult.error ? { data: [], error: null } : simpleResult
     }
+    
+    console.log('[Data] fleet fetched:', fleetResult.data?.length || 0, 'items')
   } catch (error) {
     console.error('[Data] Exception fetching fleet:', error)
-    fleetResult = { data: [], error: null }
+    // Last resort: try simplest possible query
+    try {
+      const lastResort = await supabase.from('fleet').select('*')
+      fleetResult = lastResort.error ? { data: [], error: null } : lastResort
+      console.log('[Data] fleet (last resort):', fleetResult.data?.length || 0, 'items')
+    } catch (e) {
+      fleetResult = { data: [], error: null }
+    }
   }
 
   try {

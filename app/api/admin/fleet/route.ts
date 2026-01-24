@@ -322,23 +322,40 @@ export async function GET(request: NextRequest) {
 
     const supabase = createSupabaseAdminClient()
 
+    // Try fetching with order_index, fallback if column doesn't exist
+    let fleet: any[] = []
+    let fetchError: any = null
+
     // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { data: fleet, error } = await (supabase
+    let result = await (supabase
       .from('fleet' as any) as any)
       .select('*')
       .order('order_index', { ascending: true, nullsFirst: false })
       .order('is_featured', { ascending: false })
       .order('name', { ascending: true })
 
-    if (error) {
-      console.error('[Admin API] ❌ Error fetching fleet:', error)
+    if (result.error) {
+      // If order_index column doesn't exist, try without it
+      if (result.error.message?.includes('order_index') || result.error.code === '42703') {
+        console.warn('[Admin API] order_index column not found, fetching without it...')
+        result = await (supabase
+          .from('fleet' as any) as any)
+          .select('*')
+          .order('is_featured', { ascending: false })
+          .order('name', { ascending: true })
+      }
+    }
+
+    if (result.error) {
+      console.error('[Admin API] ❌ Error fetching fleet:', result.error)
       return NextResponse.json(
-        { error: 'Failed to fetch fleet', details: error.message },
+        { error: 'Failed to fetch fleet', details: result.error.message },
         { status: 500 }
       )
     }
 
-    return NextResponse.json({ fleet: fleet || [] })
+    fleet = result.data || []
+    return NextResponse.json({ fleet })
   } catch (error) {
     console.error('[Admin API] Unexpected error:', error)
     return NextResponse.json(
