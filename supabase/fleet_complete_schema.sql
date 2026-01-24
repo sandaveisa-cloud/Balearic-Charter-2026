@@ -23,6 +23,10 @@ ADD COLUMN IF NOT EXISTS amenities JSONB DEFAULT '{}'::jsonb;
 ALTER TABLE fleet 
 ADD COLUMN IF NOT EXISTS extras JSONB DEFAULT '[]'::jsonb;
 
+-- Ensure technical_specs JSONB column exists (for beam, draft, engines, etc.)
+ALTER TABLE fleet 
+ADD COLUMN IF NOT EXISTS technical_specs JSONB DEFAULT '{}'::jsonb;
+
 -- ============================================================================
 -- PART 2: Pricing Columns
 -- ============================================================================
@@ -71,6 +75,7 @@ COMMENT ON COLUMN fleet.cabins IS 'Number of cabins on the yacht';
 COMMENT ON COLUMN fleet.toilets IS 'Number of toilets/bathrooms on the yacht';
 COMMENT ON COLUMN fleet.amenities IS 'JSONB object with boolean flags for amenities';
 COMMENT ON COLUMN fleet.extras IS 'JSONB array of extra features/services';
+COMMENT ON COLUMN fleet.technical_specs IS 'JSONB object with technical specifications: beam, draft, engines, fuel_capacity, water_capacity, cruising_speed, max_speed';
 COMMENT ON COLUMN fleet.apa_percentage IS 'Advance Provisioning Allowance percentage';
 COMMENT ON COLUMN fleet.crew_service_fee IS 'Fixed crew service fee in currency';
 COMMENT ON COLUMN fleet.cleaning_fee IS 'Fixed cleaning fee in currency';
@@ -91,6 +96,7 @@ COMMENT ON COLUMN fleet.show_on_home IS 'Whether to show this yacht on the homep
 
 CREATE INDEX IF NOT EXISTS idx_fleet_extras ON fleet USING GIN (extras);
 CREATE INDEX IF NOT EXISTS idx_fleet_amenities ON fleet USING GIN (amenities);
+CREATE INDEX IF NOT EXISTS idx_fleet_technical_specs ON fleet USING GIN (technical_specs);
 CREATE INDEX IF NOT EXISTS idx_fleet_show_on_home ON fleet (show_on_home) WHERE show_on_home = true;
 CREATE INDEX IF NOT EXISTS idx_fleet_recently_refitted ON fleet (recently_refitted) WHERE recently_refitted = true;
 

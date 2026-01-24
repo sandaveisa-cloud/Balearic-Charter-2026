@@ -7,6 +7,112 @@ import { createSupabaseAdminClient } from '@/lib/supabase-admin'
  * Uses service role key to bypass RLS
  */
 
+/**
+ * KNOWN_FLEET_COLUMNS - Whitelist of valid fleet table columns
+ * Any fields not in this list will be stripped from the payload to prevent
+ * PGRST204 "column not found in schema cache" errors.
+ * 
+ * To add a new column:
+ * 1. Add migration in Supabase SQL Editor: ALTER TABLE fleet ADD COLUMN IF NOT EXISTS column_name TYPE;
+ * 2. Add the column name to this array
+ * 3. Update FleetEditor.tsx form fields as needed
+ */
+const KNOWN_FLEET_COLUMNS = [
+  // Core identification
+  'id',
+  'name',
+  'slug',
+  'boat_name',
+  
+  // Specifications (both column names supported)
+  'year',
+  'length',
+  'beam',
+  'draft',
+  'cabins',
+  'toilets',
+  'capacity',
+  'crew_count',
+  'specifications',      // Legacy column name
+  'technical_specs',     // New column name (JSONB for beam, draft, engines, etc.)
+  
+  // Individual spec fields (if stored as separate columns)
+  'engines',
+  'fuel_capacity',
+  'water_capacity',
+  'cruising_speed',
+  'max_speed',
+  
+  // Pricing
+  'price_low_season',
+  'price_mid_season',
+  'price_high_season',
+  'price_per_day',
+  'price_per_week',
+  'apa_percentage',
+  'crew_service_fee',
+  'cleaning_fee',
+  'tax_percentage',
+  
+  // Descriptions (legacy single-language)
+  'description',
+  'short_description',
+  
+  // Descriptions (i18n columns)
+  'description_en',
+  'description_es',
+  'description_de',
+  'description_i18n',
+  'short_description_i18n',
+  
+  // Images
+  'image',
+  'main_image_url',
+  'gallery_images',
+  
+  // Features & Amenities
+  'amenities',
+  'extras',
+  
+  // Refit & Condition
+  'recently_refitted',
+  'refit_details',
+  
+  // Visibility & Status
+  'is_featured',
+  'is_active',
+  'show_on_home',
+  'order_index',
+  
+  // Timestamps
+  'created_at',
+  'updated_at',
+]
+
+/**
+ * Filters an object to only include keys that are in the KNOWN_FLEET_COLUMNS whitelist.
+ * Logs any removed fields for debugging.
+ */
+function filterToKnownColumns(data: Record<string, any>, operation: 'insert' | 'update'): Record<string, any> {
+  const filtered: Record<string, any> = {}
+  const unknownFields: string[] = []
+  
+  for (const [key, value] of Object.entries(data)) {
+    if (KNOWN_FLEET_COLUMNS.includes(key)) {
+      filtered[key] = value
+    } else {
+      unknownFields.push(key)
+    }
+  }
+  
+  if (unknownFields.length > 0) {
+    console.warn(`[Admin API] ⚠️ Stripped unknown fields from ${operation} payload:`, unknownFields)
+    console.warn('[Admin API] 💡 If these fields should be saved, add them to KNOWN_FLEET_COLUMNS and run the SQL migration.')
+  }
+  
+  return filtered
+}
+
 // GET - Fetch all fleet
 export async function GET(request: NextRequest) {
   try {
@@ -79,7 +185,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Clean up the payload - remove id if it exists (for inserts)
-    const { id, ...insertData } = body
+    const { id, ...rawInsertData } = body
+
+    // Filter to only known columns to prevent schema cache errors
+    const insertData = filterToKnownColumns(rawInsertData, 'insert')
 
     // Ensure gallery_images is an array or null
     if (insertData.gallery_images && !Array.isArray(insertData.gallery_images)) {
@@ -91,11 +200,27 @@ export async function POST(request: NextRequest) {
       insertData.extras = null
     }
 
+    // Ensure boolean fields are proper booleans
+    if ('recently_refitted' in insertData) {
+      insertData.recently_refitted = Boolean(insertData.recently_refitted)
+    }
+    if ('is_featured' in insertData) {
+      insertData.is_featured = Boolean(insertData.is_featured)
+    }
+    if ('is_active' in insertData) {
+      insertData.is_active = Boolean(insertData.is_active)
+    }
+    if ('show_on_home' in insertData) {
+      insertData.show_on_home = Boolean(insertData.show_on_home)
+    }
+
     console.log('[Admin API] 🔄 Creating fleet with data:', { 
       name: insertData.name, 
       slug: insertData.slug,
       main_image_url: insertData.main_image_url,
-      gallery_images_count: insertData.gallery_images?.length || 0
+      gallery_images_count: insertData.gallery_images?.length || 0,
+      recently_refitted: insertData.recently_refitted,
+      fieldCount: Object.keys(insertData).length
     })
 
     const supabase = createSupabaseAdminClient()
@@ -178,7 +303,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const { id, ...updateData } = body
+    const { id, ...rawUpdateData } = body
 
     if (!id) {
       console.error('[Admin API] ❌ Missing fleet ID in update request')
@@ -187,6 +312,9 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    // Filter to only known columns to prevent schema cache errors
+    const updateData = filterToKnownColumns(rawUpdateData, 'update')
 
     // Ensure gallery_images is an array or empty array
     if (updateData.gallery_images && !Array.isArray(updateData.gallery_images)) {
@@ -198,12 +326,28 @@ export async function PUT(request: NextRequest) {
       updateData.extras = null
     }
 
+    // Ensure boolean fields are proper booleans
+    if ('recently_refitted' in updateData) {
+      updateData.recently_refitted = Boolean(updateData.recently_refitted)
+    }
+    if ('is_featured' in updateData) {
+      updateData.is_featured = Boolean(updateData.is_featured)
+    }
+    if ('is_active' in updateData) {
+      updateData.is_active = Boolean(updateData.is_active)
+    }
+    if ('show_on_home' in updateData) {
+      updateData.show_on_home = Boolean(updateData.show_on_home)
+    }
+
     console.log('[Admin API] 🔄 Updating fleet:', { 
       id, 
       name: updateData.name, 
       slug: updateData.slug,
       main_image_url: updateData.main_image_url,
-      gallery_images_count: updateData.gallery_images?.length || 0
+      gallery_images_count: updateData.gallery_images?.length || 0,
+      recently_refitted: updateData.recently_refitted,
+      fieldCount: Object.keys(updateData).length
     })
 
     const supabase = createSupabaseAdminClient()
