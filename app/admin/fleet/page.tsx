@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
+import { Plus, Edit, Trash2, Loader2, CheckCircle2, AlertCircle, ChevronUp, ChevronDown } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import FleetEditor from '@/components/FleetEditor'
 import Toast from '@/components/Toast'
@@ -14,6 +14,7 @@ export default function FleetAdminPage() {
   const [selectedBoat, setSelectedBoat] = useState<Fleet | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
+  const [reordering, setReordering] = useState(false)
 
   useEffect(() => {
     fetchFleet()
@@ -61,6 +62,78 @@ export default function FleetAdminPage() {
       console.error('[FleetAdmin] Error deleting:', error)
       setErrorMessage(error instanceof Error ? error.message : 'Failed to delete yacht')
       setTimeout(() => setErrorMessage(null), 3000)
+    }
+  }
+
+  // Move yacht up in order
+  const handleMoveUp = async (index: number) => {
+    if (index === 0) return
+    
+    const newFleet = [...fleet]
+    const temp = newFleet[index]
+    newFleet[index] = newFleet[index - 1]
+    newFleet[index - 1] = temp
+    
+    // Update local state immediately for responsiveness
+    setFleet(newFleet)
+    
+    // Save new order to database
+    await saveOrder(newFleet)
+  }
+
+  // Move yacht down in order
+  const handleMoveDown = async (index: number) => {
+    if (index === fleet.length - 1) return
+    
+    const newFleet = [...fleet]
+    const temp = newFleet[index]
+    newFleet[index] = newFleet[index + 1]
+    newFleet[index + 1] = temp
+    
+    // Update local state immediately for responsiveness
+    setFleet(newFleet)
+    
+    // Save new order to database
+    await saveOrder(newFleet)
+  }
+
+  // Save order to database
+  const saveOrder = async (orderedFleet: Fleet[]) => {
+    try {
+      setReordering(true)
+      
+      // Create array of {id, order_index} for the API
+      const items = orderedFleet.map((yacht, index) => ({
+        id: yacht.id,
+        order_index: index
+      }))
+
+      const response = await fetch('/api/admin/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          table: 'fleet',
+          items
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to save order')
+      }
+
+      setSuccessMessage('Order updated successfully')
+      setToast({ message: 'Fleet order updated', type: 'success' })
+      setTimeout(() => setSuccessMessage(null), 2000)
+    } catch (error) {
+      console.error('[FleetAdmin] Error saving order:', error)
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to save order')
+      setToast({ message: 'Failed to save order', type: 'error' })
+      setTimeout(() => setErrorMessage(null), 3000)
+      // Refresh from server on error
+      fetchFleet()
+    } finally {
+      setReordering(false)
     }
   }
 
@@ -118,33 +191,58 @@ export default function FleetAdminPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Name</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Year</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Length</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Capacity</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Prices</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
+                  <th className="px-3 py-4 text-center text-sm font-semibold text-gray-700 w-20">Order</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Name</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Year</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Length</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Capacity</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Prices</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                  <th className="px-4 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {fleet.map((yacht) => (
+                {fleet.map((yacht, index) => (
                   <tr key={yacht.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4">
+                    {/* Order Column with Up/Down Buttons */}
+                    <td className="px-3 py-4">
+                      <div className="flex flex-col items-center gap-1">
+                        <button
+                          onClick={() => handleMoveUp(index)}
+                          disabled={index === 0 || reordering}
+                          className="p-1 text-gray-500 hover:text-luxury-blue hover:bg-luxury-blue/10 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                          title="Move up"
+                        >
+                          <ChevronUp className="w-4 h-4" />
+                        </button>
+                        <span className="text-xs font-medium text-gray-500 w-6 text-center">
+                          {index + 1}
+                        </span>
+                        <button
+                          onClick={() => handleMoveDown(index)}
+                          disabled={index === fleet.length - 1 || reordering}
+                          className="p-1 text-gray-500 hover:text-luxury-blue hover:bg-luxury-blue/10 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                          title="Move down"
+                        >
+                          <ChevronDown className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
                       <div className="font-semibold text-gray-800">{yacht.name}</div>
                       <div className="text-sm text-gray-500">{yacht.slug}</div>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">{yacht.year || '-'}</td>
-                    <td className="px-6 py-4 text-gray-600">{yacht.length ? `${yacht.length}m` : '-'}</td>
-                    <td className="px-6 py-4 text-gray-600">{yacht.capacity || '-'}</td>
-                    <td className="px-6 py-4 text-gray-600">
+                    <td className="px-4 py-4 text-gray-600">{yacht.year || '-'}</td>
+                    <td className="px-4 py-4 text-gray-600">{yacht.length ? `${yacht.length}m` : '-'}</td>
+                    <td className="px-4 py-4 text-gray-600">{yacht.capacity || '-'}</td>
+                    <td className="px-4 py-4 text-gray-600">
                       <div className="text-xs">
                         {yacht.low_season_price && <div>Low: €{yacht.low_season_price}</div>}
                         {yacht.medium_season_price && <div>Med: €{yacht.medium_season_price}</div>}
                         {yacht.high_season_price && <div>High: €{yacht.high_season_price}</div>}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           yacht.is_active
@@ -155,7 +253,7 @@ export default function FleetAdminPage() {
                         {yacht.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => {

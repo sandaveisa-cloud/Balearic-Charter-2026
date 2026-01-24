@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
+import { Plus, Edit, Trash2, Loader2, CheckCircle2, AlertCircle, ChevronUp, ChevronDown, GripVertical } from 'lucide-react'
 import DestinationEditor from '@/components/DestinationEditor'
 import type { Destination } from '@/types/database'
 
@@ -13,6 +13,7 @@ export default function DestinationsAdminPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [reordering, setReordering] = useState(false)
 
   useEffect(() => {
     fetchDestinations()
@@ -85,6 +86,76 @@ export default function DestinationsAdminPage() {
     setTimeout(() => setSuccessMessage(null), 3000)
   }
 
+  // Move destination up in order
+  const handleMoveUp = async (index: number) => {
+    if (index === 0) return
+    
+    const newDestinations = [...destinations]
+    const temp = newDestinations[index]
+    newDestinations[index] = newDestinations[index - 1]
+    newDestinations[index - 1] = temp
+    
+    // Update local state immediately for responsiveness
+    setDestinations(newDestinations)
+    
+    // Save new order to database
+    await saveOrder(newDestinations)
+  }
+
+  // Move destination down in order
+  const handleMoveDown = async (index: number) => {
+    if (index === destinations.length - 1) return
+    
+    const newDestinations = [...destinations]
+    const temp = newDestinations[index]
+    newDestinations[index] = newDestinations[index + 1]
+    newDestinations[index + 1] = temp
+    
+    // Update local state immediately for responsiveness
+    setDestinations(newDestinations)
+    
+    // Save new order to database
+    await saveOrder(newDestinations)
+  }
+
+  // Save order to database
+  const saveOrder = async (orderedDestinations: Destination[]) => {
+    try {
+      setReordering(true)
+      
+      // Create array of {id, order_index} for the API
+      const items = orderedDestinations.map((dest, index) => ({
+        id: dest.id,
+        order_index: index
+      }))
+
+      const response = await fetch('/api/admin/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          table: 'destinations',
+          items
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to save order')
+      }
+
+      setSuccessMessage('Order updated successfully')
+      setTimeout(() => setSuccessMessage(null), 2000)
+    } catch (error) {
+      console.error('[DestinationsAdmin] Error saving order:', error)
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to save order')
+      setTimeout(() => setErrorMessage(null), 3000)
+      // Refresh from server on error
+      fetchDestinations()
+    } finally {
+      setReordering(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -136,18 +207,18 @@ export default function DestinationsAdminPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Image</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Name</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Region</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Slug</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Order</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Media</th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
+                  <th className="px-3 py-4 text-center text-sm font-semibold text-gray-700 w-20">Order</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Image</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Name</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Region</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Slug</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                  <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700">Media</th>
+                  <th className="px-4 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {destinations.map((destination) => {
+                {destinations.map((destination, index) => {
                   // Handle both Supabase URLs and local paths
                   const imageUrl = destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0
                     ? destination.image_urls[0]
@@ -162,9 +233,33 @@ export default function DestinationsAdminPage() {
 
                   return (
                     <tr key={destination.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4">
+                      {/* Order Column with Up/Down Buttons */}
+                      <td className="px-3 py-4">
+                        <div className="flex flex-col items-center gap-1">
+                          <button
+                            onClick={() => handleMoveUp(index)}
+                            disabled={index === 0 || reordering}
+                            className="p-1 text-gray-500 hover:text-luxury-blue hover:bg-luxury-blue/10 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            title="Move up"
+                          >
+                            <ChevronUp className="w-4 h-4" />
+                          </button>
+                          <span className="text-xs font-medium text-gray-500 w-6 text-center">
+                            {index + 1}
+                          </span>
+                          <button
+                            onClick={() => handleMoveDown(index)}
+                            disabled={index === destinations.length - 1 || reordering}
+                            className="p-1 text-gray-500 hover:text-luxury-blue hover:bg-luxury-blue/10 rounded disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            title="Move down"
+                          >
+                            <ChevronDown className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
                         {normalizedImageUrl ? (
-                          <div className="w-16 h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
+                          <div className="w-14 h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
                             <img
                               src={normalizedImageUrl}
                               alt={destination.name || destination.title || 'Destination'}
@@ -177,12 +272,12 @@ export default function DestinationsAdminPage() {
                             />
                           </div>
                         ) : (
-                          <div className="w-16 h-16 rounded-lg border border-gray-200 bg-gray-100 flex items-center justify-center">
+                          <div className="w-14 h-14 rounded-lg border border-gray-200 bg-gray-100 flex items-center justify-center">
                             <span className="text-xs text-gray-400">No image</span>
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-4">
                         <div className="font-semibold text-gray-800">{destination.name || destination.title}</div>
                         {destination.description && (
                           <div className="text-sm text-gray-500 mt-1 line-clamp-1">
@@ -190,14 +285,13 @@ export default function DestinationsAdminPage() {
                           </div>
                         )}
                       </td>
-                    <td className="px-6 py-4 text-gray-600">{destination.region || '-'}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4 text-gray-600">{destination.region || '-'}</td>
+                    <td className="px-4 py-4">
                       <code className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-700">
                         {destination.slug || '-'}
                       </code>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">{destination.order_index}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           destination.is_active
@@ -208,7 +302,7 @@ export default function DestinationsAdminPage() {
                         {destination.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
                       <div className="flex items-center gap-2 text-xs text-gray-600">
                         {destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0 && (
                           <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded">Image</span>
@@ -221,7 +315,7 @@ export default function DestinationsAdminPage() {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-4">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleEdit(destination)}

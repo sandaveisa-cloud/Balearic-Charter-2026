@@ -326,6 +326,7 @@ export async function GET(request: NextRequest) {
     const { data: fleet, error } = await (supabase
       .from('fleet' as any) as any)
       .select('*')
+      .order('order_index', { ascending: true, nullsFirst: false })
       .order('is_featured', { ascending: false })
       .order('name', { ascending: true })
 

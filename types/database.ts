@@ -71,6 +71,8 @@ export interface Fleet {
   is_active: boolean
   recently_refitted?: boolean | null
   refit_details?: string | null
+  order_index?: number | null  // Display order for sorting
+  show_on_home?: boolean | null  // Whether to show on homepage
   created_at: string
   updated_at: string
 }

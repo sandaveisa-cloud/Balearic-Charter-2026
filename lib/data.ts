@@ -20,10 +20,12 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
   try {
     console.log('[Data] Fetching fleet...')
     // Select all columns including extras, specs, show_on_home, and all description columns
+    // Order by order_index first (for manual ordering), then by is_featured
     fleetResult = await supabase
       .from('fleet')
       .select('*')
       .eq('is_active', true)
+      .order('order_index', { ascending: true, nullsFirst: false })
       .order('is_featured', { ascending: false })
     
     if (fleetResult.error) {
