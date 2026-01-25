@@ -21,7 +21,6 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
   const [loading, setLoading] = useState(false)
   const [expandedExtras, setExpandedExtras] = useState<Record<string, boolean>>({})
 
-  // Debug logging
   useEffect(() => {
     console.log('[FleetSection] Fleet data received:', {
       count: fleet?.length || 0,
@@ -37,7 +36,6 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
   })
 
   if (!fleet || fleet.length === 0 || visibleYachts.length === 0) {
-    /* SAMAZINĀTS pt-20 uz pt-10 */
     return (
       <section id="fleet" className="pt-10 pb-20 bg-white">
         <div className="container mx-auto px-4">
@@ -61,7 +59,6 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
   }
 
   return (
-    /* SAMAZINĀTS pt-20 uz pt-10, lai noņemtu balto tukšumu */
     <section id="fleet" className="pt-10 pb-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
@@ -124,3 +121,60 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
 
                     <div className="w-full lg:w-3/5 flex flex-col p-5 lg:p-6">
                       <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <h3 className="font-serif text-2xl lg:text-3xl font-bold text-luxury-blue mb-1">
+                            {yacht.name}
+                          </h3>
+                          {startingPrice && (
+                            <div className="flex flex-col gap-1">
+                              {showEarlyBird ? (
+                                <div className="flex items-baseline gap-2">
+                                  <span className="text-lg line-through text-gray-400">
+                                    €{baseStartingPrice}
+                                  </span>
+                                  <span className="text-xl lg:text-2xl font-bold text-luxury-blue">
+                                    €{startingPrice}
+                                  </span>
+                                  <span className="text-gray-600 text-xs">/{t('perDay')}</span>
+                                </div>
+                              ) : (
+                                <div className="flex items-baseline gap-1">
+                                  <span className="text-xl lg:text-2xl font-bold text-luxury-blue">
+                                    €{startingPrice}
+                                  </span>
+                                  <span className="text-gray-600 text-xs">/{t('perDay')}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mb-3"><TrustBar variant="compact" /></div>
+                      {localizedDescription && <p className="text-gray-600 mb-4 line-clamp-2 text-sm">{localizedDescription}</p>}
+
+                      <div className="flex items-center justify-between gap-4 mb-4 pb-4 border-b border-gray-100">
+                        {yacht.year && <div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-slate-400" /><span className="text-xs text-gray-600">{yacht.year}</span></div>}
+                        {yacht.cabins && <div className="flex items-center gap-2"><BedDouble className="w-4 h-4 text-slate-400" /><span className="text-xs text-gray-600">{yacht.cabins} Cabins</span></div>}
+                        {yacht.length && <div className="flex items-center gap-2"><Maximize2 className="w-4 h-4 text-slate-400" /><span className="text-xs text-gray-600">{yacht.length}m</span></div>}
+                      </div>
+
+                      <div className="mt-auto flex gap-2">
+                        <Link href="/contact" className="flex-1 text-center rounded-lg bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue py-2.5 font-bold text-sm hover:shadow-md transition-all">
+                          {t('getQuote')}
+                        </Link>
+                        <Link href={{ pathname: '/fleet/[slug]', params: { slug: yacht.slug } }} className="flex-1 text-center rounded-lg bg-luxury-blue text-white py-2.5 font-semibold text-sm hover:bg-luxury-gold transition-colors">
+                          {t('viewDetails')}
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            } catch (error) { return null }
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
