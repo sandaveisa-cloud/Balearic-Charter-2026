@@ -89,7 +89,6 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
   const youtubeVideoId = destination.youtube_video_url ? extractYouTubeId(destination.youtube_video_url) : null
   const destinationSlug = destination.slug || destination.id
   const coordinates = getDestinationCoordinates(destination)
-  
   const displayHighlights = (destination as any).highlights_data || generatedContent?.highlights || null
   const galleryImages = (destination as any).gallery_images || null
 
@@ -147,4 +146,14 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
             {galleryImages && (
               <section className="space-y-6">
                 <h2 className="font-serif text-3xl font-bold text-luxury-blue">{t('happyGuests')}</h2>
-                <HappyGuestsGallery images={gallery
+                <HappyGuestsGallery images={galleryImages} destinationName={destinationName} locale={locale} />
+              </section>
+            )}
+          </div>
+
+          <aside className="space-y-8">
+            <TideMoonInfo latitude={coordinates?.lat} longitude={coordinates?.lng} />
+            <div className="bg-white rounded-2xl p-2 shadow-xl border border-slate-100">
+              <div className="h-[450px] w-full rounded-xl overflow-hidden">
+                <InteractiveDestinationsMap
+                  destinations={[{ id: destination.id, title: destinationName, name: destinationName, slug: destination
