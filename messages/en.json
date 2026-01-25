@@ -1,6 +1,18 @@
 {
-  "common": { ... },
-  "navigation": { ... },
+  "common": {
+    "exploreFleet": "Explore Our Fleet",
+    "learnMore": "Learn More",
+    "getQuote": "Get a Quote",
+    "bookNow": "Get a Quote",
+    "contactUs": "Contact Us"
+  },
+  "navigation": {
+    "home": "Home",
+    "fleet": "Fleet",
+    "destinations": "Destinations",
+    "contact": "Contact",
+    "about": "About Us"
+  },
   "breadcrumb": {
     "home": "Home",
     "fleet": "Fleet",
@@ -9,5 +21,37 @@
     "discoverMore": "Discover More About Our Mission and Destinations",
     "discoverMoreDescription": "Explore our complete range of services, learn about our mission, and discover all the exclusive destinations we offer."
   },
-  "hero": { ... }
+  "hero": {
+    "title": "Experience Luxury at Sea",
+    "subtitle": "Premium Yacht Charters in the Balearic Islands & Costa Blanca",
+    "cta": "Explore Our Fleet"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch with our team for your luxury charter experience",
+    "whatsapp": "WhatsApp",
+    "availability": "Available 24/7 for your charter inquiries",
+    "locations": "Ibiza, Palma & Torrevieja, Spain",
+    "phone": "+34 680 957 096",
+    "email": "peter.sutter@gmail.com",
+    "phoneLabel": "Call Us",
+    "emailLabel": "Email Us",
+    "locationLabel": "Our Locations",
+    "formTitle": "Send us a Message",
+    "formName": "Full Name",
+    "formEmail": "Email",
+    "formPhone": "Phone",
+    "formMessage": "Message",
+    "sendMessage": "Send Message",
+    "sending": "Sending...",
+    "successTitle": "Thank You!",
+    "successMessage": "Our team will prepare your personalized offer and contact you within the next 24 hours.",
+    "returnToFleet": "Return to Fleet",
+    "errorTitle": "Error Submitting Request",
+    "errorRetryMessage": "There was a problem sending your request. Please try again or contact us directly via WhatsApp.",
+    "tryAgain": "Try Again",
+    "contactWhatsApp": "Contact via WhatsApp",
+    "backToHome": "Back to Home",
+    "errorMessage": "Failed to send message. Please try again."
+  }
 }
