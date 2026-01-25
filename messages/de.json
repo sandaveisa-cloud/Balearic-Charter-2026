@@ -1,52 +1,32 @@
-"destinations": {
-  "title": "Exklusive Reiseziele",
-  "subtitle": "Entdecken Sie die schönsten Orte im Mittelmeer",
-  "viewFleet": "Flotte ansehen",
-  "getQuote": "Angebot anfordern",
-  "viewDetails": "Details anzeigen",
-  "readyToExplore": "Bereit für die Entdeckung?",
-  "readyToExploreDescription": "Buchen Sie noch heute Ihren Traum-Yachtcharter und entdecken Sie die verborgenen Schätze der Balearen.",
-  "weatherForecast": "Wettervorhersage",
-  "weatherNote": "Lokale Vorhersage für die nächsten 7 Tage",
-  "tideMoonInfo": "Gezeiten & Mondphase",
-  "moonPhase": "Mondphase",
-  "nextHighTide": "Nächste Flut",
-  "height": "Höhe",
-  "tideNote": "Gezeitenstände basieren auf lokalen maritimen Daten.",
-  "guestExperience": "Gästeerlebnis",
-  "backToHome": "Zurück zur Startseite",
-  "sailingTips": "Experten-Segeltipps",
-  "localInsights": "Lokale Einblicke",
-  "quickInfo": "Schnellinfo",
-  "location": "Standort",
-  "happyGuests": "Zufriedene Gäste",
-  "happyGuestsDescription": "Echte Momente von unseren Luxus-Chartern.",
-  "joinOurGuests": "Werden Sie Teil unserer Gemeinschaft von Meeresliebhabern",
-  "seasons": {
-    "spring": "Frühling",
-    "summer": "Sommer",
-    "earlyAutumn": "Frühherbst",
-    "lateAutumn": "Spätherbst",
-    "winter": "Winter"
-  },
-  "ibiza": {
-    "title": "Ibiza",
-    "description": "Erleben Sie weltberühmte Beachclubs und kristallklares Wasser."
-  },
-  "mallorca": {
-    "title": "Mallorca",
-    "description": "Die größte Baleareninsel mit atemberaubenden Bergen und blauen Buchten."
-  },
-  "menorca": {
-    "title": "Menorca",
-    "description": "Ein friedliches Paradies mit unberührten Stränden unberührter Natur."
-  },
-  "formentera": {
-    "title": "Formentera",
-    "description": "Das Karibik-Feeling des Mittelmeers, berühmt für weißen Sand."
-  },
-  "costa-blanca": {
-    "title": "Costa Blanca",
-    "description": "Die sonnenverwöhnte Küste mit goldenen Stränden und lebhaften Häfen."
+{
+  "destinations": {
+    "title": "Exklusive Reiseziele",
+    "subtitle": "Entdecken Sie die schönsten Orte im Mittelmeer",
+    "viewFleet": "Flotte ansehen",
+    "getQuote": "Angebot anfordern",
+    "viewDetails": "Details anzeigen",
+    "readyToExplore": "Bereit für die Entdeckung?",
+    "readyToExploreDescription": "Buchen Sie noch heute Ihren Traum-Yachtcharter und entdecken Sie die verborgenen Schätze der Balearen.",
+    "weatherForecast": "Wettervorhersage",
+    "weatherNote": "Lokale Vorhersage für die nächsten 7 Tage",
+    "tideMoonInfo": "Gezeiten & Mondphase",
+    "moonPhase": "Mondphase",
+    "nextHighTide": "Nächste Flut",
+    "height": "Höhe",
+    "tideNote": "Gezeitenstände basieren auf lokalen maritimen Daten.",
+    "guestExperience": "Gästeerlebnis",
+    "backToHome": "Zurück zur Startseite",
+    "quickInfo": "Schnellinfo",
+    "location": "Standort",
+    "happyGuests": "Zufriedene Gäste",
+    "happyGuestsDescription": "Echte Momente von unseren Luxus-Chartern.",
+    "joinOurGuests": "Werden Sie Teil unserer Gemeinschaft von Meeresliebhabern",
+    "seasons": {
+      "spring": "Frühling",
+      "summer": "Sommer",
+      "earlyAutumn": "Frühherbst",
+      "lateAutumn": "Spätherbst",
+      "winter": "Winter"
+    }
   }
 }
