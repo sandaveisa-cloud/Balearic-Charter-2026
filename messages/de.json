@@ -1,4 +1,14 @@
 {
+  "hero": {
+    "cta": "Unsere Flotte erkunden"
+  },
+  "fleet": {
+    "title": "Unsere Luxusflotte",
+    "subtitle": "Entdecken Sie unsere Kollektion erstklassiger Yachten",
+    "perDay": "/ Tag",
+    "viewDetails": "Details anzeigen",
+    "getQuote": "Angebot anfordern"
+  },
   "destinations": {
     "title": "Exklusive Reiseziele",
     "subtitle": "Entdecken Sie die schönsten Orte im Mittelmeer",
@@ -7,19 +17,19 @@
     "viewDetails": "Details anzeigen",
     "readyToExplore": "Bereit für die Entdeckung?",
     "readyToExploreDescription": "Buchen Sie noch heute Ihren Traum-Yachtcharter und entdecken Sie die verborgenen Schätze der Balearen.",
-    "weatherForecast": "Wettervorhersage",
-    "weatherNote": "Lokale Vorhersage für die nächsten 7 Tage",
+    "weatherForecast": "Lokale Wettervorhersage",
+    "weatherNote": "Wettervorhersage für die nächsten 7 Tage",
     "tideMoonInfo": "Gezeiten & Mondphase",
     "moonPhase": "Mondphase",
     "nextHighTide": "Nächste Flut",
     "height": "Höhe",
-    "tideNote": "Gezeitenstände basieren auf lokalen maritimen Daten.",
+    "tideNote": "Die Gezeiten basieren auf lokalen maritimen Daten.",
     "guestExperience": "Gästeerlebnis",
     "backToHome": "Zurück zur Startseite",
-    "quickInfo": "Schnellinfo",
     "location": "Standort",
+    "quickInfo": "Schnellinfo",
     "happyGuests": "Zufriedene Gäste",
-    "happyGuestsDescription": "Echte Momente von unseren Luxus-Chartern.",
+    "happyGuestsDescription": "Schließen Sie sich hunderten zufriedenen Reisenden an.",
     "joinOurGuests": "Werden Sie Teil unserer Gemeinschaft von Meeresliebhabern",
     "seasons": {
       "spring": "Frühling",
@@ -28,5 +38,20 @@
       "lateAutumn": "Spätherbst",
       "winter": "Winter"
     }
+  },
+  "stats": {
+    "title": "Unsere Reise in Zahlen"
+  },
+  "reviews": {
+    "title": "Was unsere Gäste sagen",
+    "subtitle": "Hören Sie von denen, die den Luxus unserer Charter erlebt haben"
+  },
+  "footer": {
+    "tagline": "Ihre erste Adresse für Luxusyacht-Charter im Mittelmeer.",
+    "followUs": "Folgen Sie uns",
+    "legal": "Impressum",
+    "privacy": "Datenschutz",
+    "cookies": "Cookie-Richtlinie",
+    "terms": "AGB"
   }
 }

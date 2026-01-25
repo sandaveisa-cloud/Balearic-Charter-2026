@@ -1,4 +1,14 @@
 {
+  "hero": {
+    "cta": "Explora Nuestra Flota"
+  },
+  "fleet": {
+    "title": "Nuestra Flota de Lujo",
+    "subtitle": "Descubra nuestra colección de yates de clase mundial",
+    "perDay": "/ día",
+    "viewDetails": "Ver Detalles",
+    "getQuote": "Solicitar Presupuesto"
+  },
   "destinations": {
     "title": "Destinos Exclusivos",
     "subtitle": "Explore los mejores lugares del Mediterráneo",
@@ -6,20 +16,20 @@
     "getQuote": "Solicitar Presupuesto",
     "viewDetails": "Ver Detalles",
     "readyToExplore": "¿Listo para Explorar?",
-    "readyToExploreDescription": "Reserve hoy mismo su chárter de yates de lujo y descubra las joyas ocultas.",
-    "weatherForecast": "Pronóstico del Tiempo",
-    "weatherNote": "Pronóstico marítimo de 7 días",
+    "readyToExploreDescription": "Reserve hoy mismo su chárter de yates de lujo y descubra las joyas ocultas de las Islas Baleares.",
+    "weatherForecast": "Pronóstico del Tiempo Local",
+    "weatherNote": "Pronóstico marítimo para los próximos 7 días",
     "tideMoonInfo": "Mareas y Fase Lunar",
     "moonPhase": "Fase Lunar",
     "nextHighTide": "Siguiente Marea Alta",
     "height": "Altura",
-    "tideNote": "Datos basados en estaciones marítimas locales.",
+    "tideNote": "Los niveles de marea se basan en datos marítimos locales.",
     "guestExperience": "Experiencia del Huésped",
     "backToHome": "Volver al Inicio",
-    "quickInfo": "Información Rápida",
     "location": "Ubicación",
+    "quickInfo": "Información Rápida",
     "happyGuests": "Huéspedes Felices",
-    "happyGuestsDescription": "Momentos reales de nuestros chárteres de lujo.",
+    "happyGuestsDescription": "Únase a cientos de viajeros satisfechos que han explorado la costa con nosotros.",
     "joinOurGuests": "Únete a nuestra comunidad de amantes del mar",
     "seasons": {
       "spring": "Primavera",
@@ -28,5 +38,20 @@
       "lateAutumn": "Otoño Tardío",
       "winter": "Invierno"
     }
+  },
+  "stats": {
+    "title": "Nuestro Viaje en Números"
+  },
+  "reviews": {
+    "title": "Lo que dicen nuestros huéspedes",
+    "subtitle": "Escuche a quienes han experimentado el lujo de nuestros chárteres"
+  },
+  "footer": {
+    "tagline": "Su destino principal para alquiler de yates de lujo en el Mediterráneo.",
+    "followUs": "Síguenos",
+    "legal": "Aviso Legal",
+    "privacy": "Política de Privacidad",
+    "cookies": "Política de Cookies",
+    "terms": "Términos y Condiciones"
   }
 }
