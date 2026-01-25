@@ -1,4 +1,7 @@
-"breadcrumb": {
+{
+  "common": { ... },
+  "navigation": { ... },
+  "breadcrumb": {
     "home": "Home",
     "fleet": "Fleet",
     "backTo": "Back to",
@@ -6,3 +9,5 @@
     "discoverMore": "Discover More About Our Mission and Destinations",
     "discoverMoreDescription": "Explore our complete range of services, learn about our mission, and discover all the exclusive destinations we offer."
   },
+  "hero": { ... }
+}
