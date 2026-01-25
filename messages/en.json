@@ -77,5 +77,12 @@
     "privacy": "Privacy Policy",
     "cookies": "Cookies Policy",
     "terms": "Terms & Conditions"
+  },
+  "chat": {
+    "assistantTitle": "Wide Dream Assistant",
+    "welcomeMessage": "I can assist with fleet details, pricing, or bookings. What would you like to know?",
+    "pricingInfo": "Our pricing depends on the season: \n• Simona (2014) starts from €750/day\n• Wide Dream (2019) starts from €950/day\nNote: Prices exclude APA (30%) and IVA (21%).",
+    "availabilityPrompt": "Please select your preferred dates in the calendar to check real-time availability.",
+    "whatsappAction": "Chat on WhatsApp"
   }
 }
