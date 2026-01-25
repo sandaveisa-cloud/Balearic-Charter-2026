@@ -13,6 +13,12 @@
     "contact": "Contact",
     "about": "About Us"
   },
+  "breadcrumb": {
+    "home": "Home",
+    "fleet": "Fleet",
+    "backTo": "Back to",
+    "backToHome": "Back to Home Page"
+  },
   "hero": {
     "title": "Experience Luxury at Sea",
     "subtitle": "Premium Yacht Charters in the Balearic Islands & Costa Blanca",
@@ -45,6 +51,15 @@
         "tagline": "A masterpiece of nautical design, perfect for family getaways or sunset cruises."
       }
     }
+  },
+  "destinations": {
+    "title": "Exclusive Destinations",
+    "subtitle": "Explore the most beautiful locations in the Mediterranean",
+    "readyToExplore": "Ready to Explore?",
+    "readyToExploreDescription": "Book your dream yacht charter today and discover the hidden gems of the Balearic Islands and Costa Blanca."
+  },
+  "stats": {
+    "title": "Our Journey in Numbers"
   },
   "reviews": {
     "title": "What Our Guests Say",

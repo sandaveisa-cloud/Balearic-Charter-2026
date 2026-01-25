@@ -13,6 +13,12 @@
     "contact": "Kontakt",
     "about": "Über uns"
   },
+  "breadcrumb": {
+    "home": "Startseite",
+    "fleet": "Flotte",
+    "backTo": "Zurück zu",
+    "backToHome": "Zurück zur Startseite"
+  },
   "hero": {
     "title": "Erleben Sie Luxus auf See",
     "subtitle": "Premium-Yachtcharter auf den Balearen & an der Costa Blanca",
@@ -45,6 +51,15 @@
         "tagline": "Ein Meisterwerk des nautischen Designs, perfekt für Familienausflüge oder Kreuzfahrten zum Sonnenuntergang."
       }
     }
+  },
+  "destinations": {
+    "title": "Exklusive Reiseziele",
+    "subtitle": "Entdecken Sie die schönsten Orte im Mittelmeer",
+    "readyToExplore": "Bereit für die Entdeckung?",
+    "readyToExploreDescription": "Buchen Sie noch heute Ihren Traum-Yachtcharter und entdecken Sie die verborgenen Schätze der Balearen und der Costa Blanca."
+  },
+  "stats": {
+    "title": "Unsere Reise in Zahlen"
   },
   "reviews": {
     "title": "Was unsere Gäste sagen",

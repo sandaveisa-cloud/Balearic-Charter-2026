@@ -13,6 +13,12 @@
     "contact": "Contacto",
     "about": "Sobre Nosotros"
   },
+  "breadcrumb": {
+    "home": "Inicio",
+    "fleet": "Flota",
+    "backTo": "Volver a",
+    "backToHome": "Volver a la Página de Inicio"
+  },
   "hero": {
     "title": "Experimente el Lujo en el Mar",
     "subtitle": "Alquiler de Yates Premium en las Islas Baleares y Costa Blanca",
@@ -45,6 +51,15 @@
         "tagline": "Una obra maestra del diseño náutico, perfecta para escapadas familiares o cruceros al atardecer."
       }
     }
+  },
+  "destinations": {
+    "title": "Destinos Exclusivos",
+    "subtitle": "Explore los lugares más bellos del Mediterráneo",
+    "readyToExplore": "¿Listo para Explorar?",
+    "readyToExploreDescription": "Reserve hoy mismo el chárter de sus sueños y descubra las joyas ocultas de las Islas Baleares y la Costa Blanca."
+  },
+  "stats": {
+    "title": "Nuestra Trayectoria en Cifras"
   },
   "reviews": {
     "title": "Lo Que Dicen Nuestros Huéspedes",
