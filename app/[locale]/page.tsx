@@ -26,58 +26,23 @@ export default async function Home({ params }: Props) {
   
   try {
     const { locale } = await params
-    console.log('[Home] Locale from params:', locale)
-    console.log('[Home] Available locales:', locales)
     
     // Validate locale parameter before using it
-    if (!locale) {
-      console.error('[Home] Locale is missing/undefined')
+    if (!locale || !locales.includes(locale as any)) {
+      console.error('[Home] Invalid or missing locale:', locale)
       notFound()
-      return // TypeScript guard
+      return
     }
-    
-    if (!locales.includes(locale as any)) {
-      console.error('[Home] Invalid locale:', locale, 'not in', locales)
-      notFound()
-      return // TypeScript guard
-    }
-    
-    console.log('[Home] Locale validated successfully:', locale)
     
     // Fetch content with error handling
     let content
     try {
-      console.log('[Home] Fetching site content...')
       content = await getSiteContent()
-      console.log('[Home] Site content fetched successfully')
-      console.log('[Home] Content summary:', {
-        hasSettings: !!content?.settings,
-        settingsKeys: content?.settings ? Object.keys(content.settings).length : 0,
-        fleetCount: content?.fleet?.length || 0,
-        destinationsCount: content?.destinations?.length || 0,
-        reviewsCount: content?.reviews?.length || 0,
-        statsCount: content?.stats?.length || 0,
-        culinaryCount: content?.culinaryExperiences?.length || 0,
-        crewCount: content?.crew?.length || 0,
-        contactCount: content?.contactPersons?.length || 0,
-        hasSectionVisibility: !!content?.sectionVisibility,
-      })
     } catch (dataError) {
       console.error('[Home] Error fetching site content:', dataError)
-      console.error('[Home] Error details:', {
-        message: dataError instanceof Error ? dataError.message : 'Unknown error',
-        stack: dataError instanceof Error ? dataError.stack : 'No stack',
-      })
-      // Return safe defaults if data fetching fails - NEVER call notFound() for empty data
       content = {
         settings: {},
-        sectionVisibility: {
-          journey: true,
-          mission: true,
-          crew: true,
-          culinary: true,
-          contact: true,
-        },
+        sectionVisibility: { journey: true, mission: true, crew: true, culinary: true, contact: true },
         fleet: [],
         destinations: [],
         reviews: [],
@@ -86,40 +51,21 @@ export default async function Home({ params }: Props) {
         crew: [],
         contactPersons: [],
       }
-      console.log('[Home] Using fallback empty content')
     }
 
-    // Ensure content and settings exist before accessing properties
-    // NEVER call notFound() for empty data - always render with fallbacks
     const safeContent = content || {
       settings: {},
-      sectionVisibility: {
-        journey: true,
-        mission: true,
-        crew: true,
-        culinary: true,
-        contact: true,
-      },
+      sectionVisibility: { journey: true, mission: true, crew: true, culinary: true, contact: true },
       fleet: [],
       destinations: [],
       reviews: [],
-        stats: [],
-        culinaryExperiences: [],
-        crew: [],
-        contactPersons: [],
-      }
+      stats: [],
+      culinaryExperiences: [],
+      crew: [],
+      contactPersons: [],
+    }
     
-    console.log('[Home] Using safeContent with:', {
-      hasSettings: !!safeContent.settings,
-      fleetLength: safeContent.fleet?.length || 0,
-      hasSectionVisibility: !!safeContent.sectionVisibility,
-    })
-    
-    // Ensure settings object exists and has safe defaults
     const safeSettings = safeContent.settings || {}
-    console.log('[Home] Safe settings keys:', Object.keys(safeSettings).length)
-    
-    // Get section visibility settings (default to true if not set)
     const visibility = safeContent.sectionVisibility || {
       journey: true,
       mission: true,
@@ -127,45 +73,42 @@ export default async function Home({ params }: Props) {
       culinary: true,
       contact: true,
     }
-    
-    console.log('[Home] Section visibility:', visibility)
-    console.log('[Home] Rendering page with components...')
 
-    // Wrap each component in error boundary to prevent one failure from crashing entire page
     try {
       return (
         <>
           {/* Structured Data for SEO */}
           <StructuredData type="TravelAgency" settings={safeSettings} locale={locale} />
           
-          <main className="min-h-screen pt-16">
+          {/* SAMAZINĀTS pt-16 uz pt-0, lai noņemtu balto caurumu */}
+          <main className="min-h-screen pt-0">
             {/* Early Bird Discount Banner */}
             <EarlyBirdBanner />
             
             {/* Hero Section - Always at the top */}
             <Hero settings={safeSettings} />
             
-            {/* Fleet Section - Immediately after Hero for conversion focus */}
+            {/* Fleet Section - Immediately after Hero */}
             <FleetSection fleet={safeContent.fleet || []} />
             
             {/* Supporting Content Sections */}
             <DestinationsSection destinations={safeContent.destinations || []} />
             
-            {/* Always render CulinarySection if visibility is enabled, even if experiences array is empty */}
+            {/* Culinary Section */}
             {visibility.culinary && (
               <CulinarySection experiences={safeContent.culinaryExperiences || []} />
             )}
             
-            {/* Stats & Mission Sections - After Culinary to build trust */}
+            {/* Stats & Mission Sections */}
             {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
             {visibility.mission && <MissionSection />}
             
-            {/* Only show CrewSection if visibility is enabled AND there are active crew members */}
+            {/* Crew Section */}
             {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (
               <CrewSection crew={safeContent.crew} />
             )}
             
-            {/* Consolidated Reviews Section - Single high-impact section */}
+            {/* Consolidated Reviews Section */}
             <ReviewsSection reviews={safeContent.reviews || []} />
           </main>
           
@@ -175,7 +118,6 @@ export default async function Home({ params }: Props) {
       )
     } catch (renderError) {
       console.error('[Home] Error during component rendering:', renderError)
-      // Return minimal fallback UI instead of crashing
       return (
         <main className="min-h-screen pt-16 flex items-center justify-center">
           <div className="text-center p-8">
@@ -188,17 +130,11 @@ export default async function Home({ params }: Props) {
     }
   } catch (error) {
     console.error('[Home] Error rendering page:', error)
-    // Return error UI instead of throwing to prevent 500
     return (
       <main className="min-h-screen pt-16 flex items-center justify-center">
         <div className="text-center p-8">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Page</h1>
-          <p className="text-gray-600 mb-4">
-            {error instanceof Error ? error.message : 'An unexpected error occurred'}
-          </p>
-          <p className="text-sm text-gray-500">
-            Please check the server console for more details.
-          </p>
+          <p className="text-gray-600 mb-4">Something went wrong.</p>
         </div>
       </main>
     )
