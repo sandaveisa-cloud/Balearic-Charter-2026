@@ -1,103 +1,52 @@
-{
-  "common": {
-    "exploreFleet": "Unsere Flotte erkunden",
-    "learnMore": "Mehr erfahren",
-    "getQuote": "Angebot anfordern",
-    "bookNow": "Angebot anfordern",
-    "contactUs": "Kontaktieren Sie uns"
+"destinations": {
+  "title": "Exklusive Reiseziele",
+  "subtitle": "Entdecken Sie die schönsten Orte im Mittelmeer",
+  "viewFleet": "Flotte ansehen",
+  "getQuote": "Angebot anfordern",
+  "viewDetails": "Details anzeigen",
+  "readyToExplore": "Bereit für die Entdeckung?",
+  "readyToExploreDescription": "Buchen Sie noch heute Ihren Traum-Yachtcharter und entdecken Sie die verborgenen Schätze der Balearen.",
+  "weatherForecast": "Wettervorhersage",
+  "weatherNote": "Lokale Vorhersage für die nächsten 7 Tage",
+  "tideMoonInfo": "Gezeiten & Mondphase",
+  "moonPhase": "Mondphase",
+  "nextHighTide": "Nächste Flut",
+  "height": "Höhe",
+  "tideNote": "Gezeitenstände basieren auf lokalen maritimen Daten.",
+  "guestExperience": "Gästeerlebnis",
+  "backToHome": "Zurück zur Startseite",
+  "sailingTips": "Experten-Segeltipps",
+  "localInsights": "Lokale Einblicke",
+  "quickInfo": "Schnellinfo",
+  "location": "Standort",
+  "happyGuests": "Zufriedene Gäste",
+  "happyGuestsDescription": "Echte Momente von unseren Luxus-Chartern.",
+  "joinOurGuests": "Werden Sie Teil unserer Gemeinschaft von Meeresliebhabern",
+  "seasons": {
+    "spring": "Frühling",
+    "summer": "Sommer",
+    "earlyAutumn": "Frühherbst",
+    "lateAutumn": "Spätherbst",
+    "winter": "Winter"
   },
-  "navigation": {
-    "home": "Startseite",
-    "fleet": "Flotte",
-    "destinations": "Ziele",
-    "contact": "Kontakt",
-    "about": "Über uns"
+  "ibiza": {
+    "title": "Ibiza",
+    "description": "Erleben Sie weltberühmte Beachclubs und kristallklares Wasser."
   },
-  "breadcrumb": {
-    "home": "Startseite",
-    "fleet": "Flotte",
-    "backTo": "Zurück zu",
-    "backToHome": "Zurück zur Startseite"
+  "mallorca": {
+    "title": "Mallorca",
+    "description": "Die größte Baleareninsel mit atemberaubenden Bergen und blauen Buchten."
   },
-  "hero": {
-    "title": "Erleben Sie Luxus auf See",
-    "subtitle": "Premium-Yachtcharter auf den Balearen & an der Costa Blanca",
-    "cta": "Unsere Flotte erkunden"
+  "menorca": {
+    "title": "Menorca",
+    "description": "Ein friedliches Paradies mit unberührten Stränden unberührter Natur."
   },
-  "trust": {
-    "verified": "Verifizierter Charter",
-    "insured": "Voll versichert",
-    "crew": "Professionelle Crew",
-    "experts": "Lokale Experten",
-    "bookings": "Sichere Buchung",
-    "rating": "Top bewertet",
-    "secret_bays": "Zugang zu geheimen Buchten"
+  "formentera": {
+    "title": "Formentera",
+    "description": "Das Karibik-Feeling des Mittelmeers, berühmt für weißen Sand."
   },
-  "fleet": {
-    "title": "Unsere Luxusflotte",
-    "subtitle": "Entdecken Sie unsere Kollektion an erstklassigen Yachten",
-    "perDay": "/ Tag",
-    "viewDetails": "Details anzeigen",
-    "getQuote": "Angebot anfordern",
-    "selectDates": "Daten auswählen",
-    "technicalSpecs": "Technische Daten",
-    "quoteFormDescription": "Teilen Sie uns Ihre Wünsche für den Charter mit, und wir werden uns in Kürze bei Ihnen melden.",
-    "ctaTitle": "Bereit zum Setzen der Segel?",
-    "ctaDescription": "Kontaktieren Sie uns noch heute, um Ihr Luxusyacht-Erlebnis zu buchen oder Fragen zu unseren Dienstleistungen zu stellen.",
-    "exploreDestinations": "Ziele erkunden",
-    "backToHome": "Zurück zur Startseite",
-    "extras": {
-      "snorkel": "Schnorchelausrüstung"
-    },
-    "ships": {
-      "simona": {
-        "headline": "Segeln in Eleganz mit der Simona",
-        "description": "Erleben Sie die perfekte Mischung aus Luxus und Leistung an Bord der Lagoon 400 S2. Sie wurde für Komfort und Stabilität konzipiert und bietet großzügige Wohnbereiche sowie einen außergewöhnlichen Blick auf das Mittelmeer.",
-        "tagline": "Ein Meisterwerk des nautischen Designs, perfekt für Familienausflüge oder Kreuzfahrten zum Sonnenuntergang."
-      }
-    }
-  },
-  "destinations": {
-    "title": "Exklusive Reiseziele",
-    "subtitle": "Entdecken Sie die schönsten Orte im Mittelmeer",
-    "viewFleet": "Flotte ansehen",
-    "getQuote": "Angebot anfordern",
-    "readyToExplore": "Bereit für die Entdeckung?",
-    "readyToExploreDescription": "Buchen Sie noch heute Ihren Traum-Yachtcharter und entdecken Sie die verborgenen Schätze der Balearen und der Costa Blanca.",
-    "weatherForecast": "Wettervorhersage",
-    "weatherNote": "Lokale Vorhersage für die nächsten 6 Tage",
-    "tideMoonInfo": "Gezeiten & Mondphasen",
-    "happyGuests": "Zufriedene Gäste",
-    "happyGuestsDescription": "Schließen Sie sich hunderten zufriedenen Reisenden an, die mit uns die Küste erkundet haben.",
-    "joinOurGuests": "Werden Sie Teil unserer Gemeinschaft von Meeresliebhabern",
-    "location": "Standort",
-    "quickInfo": "Schnellinfo"
-  },
-  "stats": {
-    "title": "Unsere Reise in Zahlen"
-  },
-  "reviews": {
-    "title": "Was unsere Gäste sagen",
-    "subtitle": "Stimmen von denjenigen, die den Luxus unserer Charter erlebt haben"
-  },
-  "mission": {
-    "title": "Unsere Mission",
-    "backToTop": "Zurück nach oben"
-  },
-  "footer": {
-    "tagline": "Ihr erstklassiges Ziel für Luxus-Yachtcharter im Mittelmeer.",
-    "followUs": "Folgen Sie uns",
-    "rights": "Alle Rechte vorbehalten",
-    "legal": "Impressum",
-    "privacy": "Datenschutz",
-    "cookies": "Cookie-Richtlinie",
-    "terms": "AGB"
-  },
-  "chat": {
-    "assistantTitle": "Wide Dream Assistent",
-    "welcomeMessage": "Ich kann Ihnen bei Details zur Flotte, Preisen oder Buchungen helfen. Was möchten Sie wissen?",
-    "pricingInfo": "Unsere Preise sind saisonabhängig: \n• Simona (2014) ab 750 €/Tag\n• Wide Dream (2019) ab 950 €/Tag\nHinweis: Die Preise enthalten nicht APA (30%) und MwSt. (21%).",
-    "availabilityPrompt": "Bitte wählen Sie Ihre bevorzugten Daten im Kalender aus, um die Verfügbarkeit in Echtzeit zu prüfen.",
-    "whatsappAction": "Per WhatsApp chatten"
+  "costa-blanca": {
+    "title": "Costa Blanca",
+    "description": "Die sonnenverwöhnte Küste mit goldenen Stränden und lebhaften Häfen."
   }
 }

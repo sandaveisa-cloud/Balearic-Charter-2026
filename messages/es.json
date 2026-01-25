@@ -1,103 +1,30 @@
-{
-  "common": {
-    "exploreFleet": "Explorar Nuestra Flota",
-    "learnMore": "Saber Más",
-    "getQuote": "Solicitar Presupuesto",
-    "bookNow": "Solicitar Presupuesto",
-    "contactUs": "Contáctenos"
-  },
-  "navigation": {
-    "home": "Inicio",
-    "fleet": "Flota",
-    "destinations": "Destinos",
-    "contact": "Contacto",
-    "about": "Sobre Nosotros"
-  },
-  "breadcrumb": {
-    "home": "Inicio",
-    "fleet": "Flota",
-    "backTo": "Volver a",
-    "backToHome": "Volver a la Página de Inicio"
-  },
-  "hero": {
-    "title": "Experimente el Lujo en el Mar",
-    "subtitle": "Alquiler de Yates Premium en las Islas Baleares y Costa Blanca",
-    "cta": "Explorar Nuestra Flota"
-  },
-  "trust": {
-    "verified": "Chárter Verificado",
-    "insured": "Totalmente Asegurado",
-    "crew": "Tripulación Profesional",
-    "experts": "Expertos Locales",
-    "bookings": "Reservas Seguras",
-    "rating": "Mejor Valorado",
-    "secret_bays": "Acceso a Calas Secretas"
-  },
-  "fleet": {
-    "title": "Nuestra Flota de Lujo",
-    "subtitle": "Descubra nuestra colección de yates de clase mundial",
-    "perDay": "/ día",
-    "viewDetails": "Ver Detalles",
-    "getQuote": "Solicitar Presupuesto",
-    "selectDates": "Selecciona Tus Fechas",
-    "technicalSpecs": "Especificaciones Técnicas",
-    "quoteFormDescription": "Cuéntanos tus preferencias para el chárter y nos pondremos en contacto contigo pronto.",
-    "ctaTitle": "¿Listo para Zarpar?",
-    "ctaDescription": "Contáctenos hoy para reservar su experiencia en un yate de lujo o para realizar cualquier pregunta sobre nuestros servicios.",
-    "exploreDestinations": "Explorar Destinos",
-    "backToHome": "Volver a la Página de Inicio",
-    "extras": {
-      "snorkel": "Equipo de Snorkel"
-    },
-    "ships": {
-      "simona": {
-        "headline": "Navega con Elegancia en el Simona",
-        "description": "Experimente la combinación perfecta de lujo y rendimiento a bordo del Lagoon 400 S2. Diseñado para ofrecer comodidad y estabilidad, ofrece amplias zonas de estar y vistas excepcionales al Mediterráneo.",
-        "tagline": "Una obra maestra del diseño náutico, perfecta para escapadas familiares o cruceros al atardecer."
-      }
-    }
-  },
-  "destinations": {
-    "title": "Destinos Exclusivos",
-    "subtitle": "Explore los lugares más bellos del Mediterráneo",
-    "viewFleet": "Ver Flota",
-    "getQuote": "Solicitar Presupuesto",
-    "readyToExplore": "¿Listo para Explorar?",
-    "readyToExploreDescription": "Reserve hoy mismo el chárter de sus sueños y descubra las joyas ocultas de las Islas Baleares y la Costa Blanca.",
-    "weatherForecast": "Pronóstico del Tiempo",
-    "weatherNote": "Pronóstico local para los próximos 6 días",
-    "tideMoonInfo": "Mareas y Fase Lunar",
-    "happyGuests": "Huéspedes Felices",
-    "happyGuestsDescription": "Únase a cientos de viajeros satisfechos que han explorado la costa con nosotros.",
-    "joinOurGuests": "Únete a nuestra comunidad de amantes del mar",
-    "location": "Ubicación",
-    "quickInfo": "Información Rápida"
-  },
-  "stats": {
-    "title": "Nuestra Trayectoria en Cifras"
-  },
-  "reviews": {
-    "title": "Lo Que Dicen Nuestros Huéspedes",
-    "subtitle": "Escuche a quienes han experimentado el lujo de nuestros chárteres"
-  },
-  "mission": {
-    "title": "Nuestra Misión",
-    "backToTop": "Volver Arriba"
-  },
-  "footer": {
-    "tagline": "Su destino principal para el alquiler de yates de lujo en el Mediterráneo.",
-    "followUs": "Síguenos",
-    "rights": "Todos los derechos reservados",
-    "legal": "Aviso Legal",
-    "privacy": "Política de Privacidad",
-    "cookies": "Política de Cookies",
-    "terms": "Términos y Condiciones"
-  },
-  "chat": {
-    "assistantTitle": "Asistente Wide Dream",
-    "welcomeMessage": "Puedo ayudarle con detalles de la flota, precios o reservas. ¿Qué le gustaría saber?",
-    "pricingInfo": "Nuestros precios dependen de la temporada: \n• Simona (2014) desde 750 €/día\n• Wide Dream (2019) desde 950 €/día\nNota: Los precios no incluyen APA (30%) e IVA (21%).",
-    "availabilityPrompt": "Por favor, seleccione sus fechas preferidas en el calendario para consultar la disponibilidad en tiempo real.",
-    "whatsappAction": "Chatear por WhatsApp"
+"destinations": {
+  "title": "Destinos Exclusivos",
+  "subtitle": "Explore los mejores lugares del Mediterráneo",
+  "viewFleet": "Ver Nuestra Flota",
+  "getQuote": "Solicitar Presupuesto",
+  "viewDetails": "Ver Detalles",
+  "readyToExplore": "¿Listo para Explorar?",
+  "readyToExploreDescription": "Reserve hoy mismo su chárter de yates de lujo y descubra las joyas ocultas.",
+  "weatherForecast": "Pronóstico del Tiempo",
+  "weatherNote": "Pronóstico marítimo de 7 días",
+  "tideMoonInfo": "Mareas y Fase Lunar",
+  "moonPhase": "Fase Lunar",
+  "nextHighTide": "Siguiente Marea Alta",
+  "height": "Altura",
+  "tideNote": "Datos basados en estaciones marítimas locales.",
+  "guestExperience": "Experiencia del Huésped",
+  "backToHome": "Volver al Inicio",
+  "quickInfo": "Información Rápida",
+  "location": "Ubicación",
+  "happyGuests": "Huéspedes Felices",
+  "happyGuestsDescription": "Momentos reales de nuestros chárteres de lujo.",
+  "joinOurGuests": "Únete a nuestra comunidad de amantes del mar",
+  "seasons": {
+    "spring": "Primavera",
+    "summer": "Verano",
+    "earlyAutumn": "Otoño Temprano",
+    "lateAutumn": "Otoño Tardío",
+    "winter": "Invierno"
   }
 }

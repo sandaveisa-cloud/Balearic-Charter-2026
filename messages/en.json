@@ -1,103 +1,30 @@
-{
-  "common": {
-    "exploreFleet": "Explore Our Fleet",
-    "learnMore": "Learn More",
-    "getQuote": "Get a Quote",
-    "bookNow": "Get a Quote",
-    "contactUs": "Contact Us"
-  },
-  "navigation": {
-    "home": "Home",
-    "fleet": "Fleet",
-    "destinations": "Destinations",
-    "contact": "Contact",
-    "about": "About Us"
-  },
-  "breadcrumb": {
-    "home": "Home",
-    "fleet": "Fleet",
-    "backTo": "Back to",
-    "backToHome": "Back to Home Page"
-  },
-  "hero": {
-    "title": "Experience Luxury at Sea",
-    "subtitle": "Premium Yacht Charters in the Balearic Islands & Costa Blanca",
-    "cta": "Explore Our Fleet"
-  },
-  "trust": {
-    "verified": "Verified Charter",
-    "insured": "Fully Insured",
-    "crew": "Professional Crew",
-    "experts": "Local Experts",
-    "bookings": "Secure Bookings",
-    "rating": "Top Rated",
-    "secret_bays": "Hidden Gems Access"
-  },
-  "fleet": {
-    "title": "Our Luxury Fleet",
-    "subtitle": "Discover our collection of world-class yachts",
-    "perDay": "/ day",
-    "viewDetails": "View Details",
-    "getQuote": "Get a Quote",
-    "selectDates": "Select Your Dates",
-    "technicalSpecs": "Technical Specifications",
-    "quoteFormDescription": "Tell us about your charter preferences and we will get back to you shortly.",
-    "ctaTitle": "Ready to Set Sail?",
-    "ctaDescription": "Contact us today to book your luxury yacht experience or to ask any questions about our services.",
-    "exploreDestinations": "Explore Destinations",
-    "backToHome": "Back to Home Page",
-    "extras": {
-      "snorkel": "Snorkeling Gear"
-    },
-    "ships": {
-      "simona": {
-        "headline": "Sail in Elegance with Simona",
-        "description": "Experience the perfect blend of luxury and performance aboard the Lagoon 400 S2. Designed for comfort and stability, it offers spacious living areas and exceptional views of the Mediterranean.",
-        "tagline": "A masterpiece of nautical design, perfect for family getaways or sunset cruises."
-      }
-    }
-  },
-  "destinations": {
-    "title": "Exclusive Destinations",
-    "subtitle": "Explore the most beautiful locations in the Mediterranean",
-    "viewFleet": "View Fleet",
-    "getQuote": "Get a Quote",
-    "readyToExplore": "Ready to Explore?",
-    "readyToExploreDescription": "Book your dream yacht charter today and discover the hidden gems of the Balearic Islands and Costa Blanca.",
-    "weatherForecast": "Weather Forecast",
-    "weatherNote": "Local forecast for the next 6 days",
-    "tideMoonInfo": "Tides & Moon Phase",
-    "happyGuests": "Happy Guests",
-    "happyGuestsDescription": "Join hundreds of satisfied travelers who have explored the coast with us.",
-    "joinOurGuests": "Join our community of sea lovers",
-    "location": "Location",
-    "quickInfo": "Quick Info"
-  },
-  "stats": {
-    "title": "Our Journey in Numbers"
-  },
-  "reviews": {
-    "title": "What Our Guests Say",
-    "subtitle": "Hear from those who have experienced the luxury of our charters"
-  },
-  "mission": {
-    "title": "Our Mission",
-    "backToTop": "Back to Top"
-  },
-  "footer": {
-    "tagline": "Your premier destination for luxury yacht charters in the Mediterranean.",
-    "followUs": "Follow Us",
-    "rights": "All rights reserved",
-    "legal": "Legal Notice",
-    "privacy": "Privacy Policy",
-    "cookies": "Cookies Policy",
-    "terms": "Terms & Conditions"
-  },
-  "chat": {
-    "assistantTitle": "Wide Dream Assistant",
-    "welcomeMessage": "I can assist with fleet details, pricing, or bookings. What would you like to know?",
-    "pricingInfo": "Our pricing depends on the season: \n• Simona (2014) starts from €750/day\n• Wide Dream (2019) starts from €950/day\nNote: Prices exclude APA (30%) and IVA (21%).",
-    "availabilityPrompt": "Please select your preferred dates in the calendar to check real-time availability.",
-    "whatsappAction": "Chat on WhatsApp"
+"destinations": {
+  "title": "Exclusive Destinations",
+  "subtitle": "Explore the Mediterranean's finest locations",
+  "viewFleet": "View Our Fleet",
+  "getQuote": "Get a Quote",
+  "viewDetails": "View Details",
+  "readyToExplore": "Ready to Explore?",
+  "readyToExploreDescription": "Book your dream yacht charter today and discover the hidden gems of the Balearic Islands.",
+  "weatherForecast": "Local Weather Forecast",
+  "weatherNote": "7-day maritime forecast",
+  "tideMoonInfo": "Tides & Moon Phase",
+  "moonPhase": "Moon Phase",
+  "nextHighTide": "Next High Tide",
+  "height": "Height",
+  "tideNote": "Data based on local maritime stations.",
+  "guestExperience": "Guest Experience",
+  "backToHome": "Back to Home",
+  "quickInfo": "Quick Info",
+  "location": "Location",
+  "happyGuests": "Happy Guests",
+  "happyGuestsDescription": "Real moments from our luxury charters.",
+  "joinOurGuests": "Join our community of sea lovers",
+  "seasons": {
+    "spring": "Spring",
+    "summer": "Summer",
+    "earlyAutumn": "Early Autumn",
+    "lateAutumn": "Late Autumn",
+    "winter": "Winter"
   }
 }
