@@ -36,6 +36,7 @@
   "fleet": {
     "title": "Unsere Luxusflotte",
     "subtitle": "Entdecken Sie unsere Kollektion an erstklassigen Yachten",
+    "perDay": "/ Tag",
     "viewDetails": "Details anzeigen",
     "getQuote": "Angebot anfordern",
     "selectDates": "Daten auswählen",
@@ -55,6 +56,8 @@
   "destinations": {
     "title": "Exklusive Reiseziele",
     "subtitle": "Entdecken Sie die schönsten Orte im Mittelmeer",
+    "viewFleet": "Flotte ansehen",
+    "getQuote": "Angebot anfordern",
     "readyToExplore": "Bereit für die Entdeckung?",
     "readyToExploreDescription": "Buchen Sie noch heute Ihren Traum-Yachtcharter und entdecken Sie die verborgenen Schätze der Balearen und der Costa Blanca."
   },

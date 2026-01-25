@@ -36,6 +36,7 @@
   "fleet": {
     "title": "Nuestra Flota de Lujo",
     "subtitle": "Descubra nuestra colección de yates de clase mundial",
+    "perDay": "/ día",
     "viewDetails": "Ver Detalles",
     "getQuote": "Solicitar Presupuesto",
     "selectDates": "Selecciona Tus Fechas",
@@ -55,6 +56,8 @@
   "destinations": {
     "title": "Destinos Exclusivos",
     "subtitle": "Explore los lugares más bellos del Mediterráneo",
+    "viewFleet": "Ver Flota",
+    "getQuote": "Solicitar Presupuesto",
     "readyToExplore": "¿Listo para Explorar?",
     "readyToExploreDescription": "Reserve hoy mismo el chárter de sus sueños y descubra las joyas ocultas de las Islas Baleares y la Costa Blanca."
   },

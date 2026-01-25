@@ -36,6 +36,7 @@
   "fleet": {
     "title": "Our Luxury Fleet",
     "subtitle": "Discover our collection of world-class yachts",
+    "perDay": "/ day",
     "viewDetails": "View Details",
     "getQuote": "Get a Quote",
     "selectDates": "Select Your Dates",
@@ -55,6 +56,8 @@
   "destinations": {
     "title": "Exclusive Destinations",
     "subtitle": "Explore the most beautiful locations in the Mediterranean",
+    "viewFleet": "View Fleet",
+    "getQuote": "Get a Quote",
     "readyToExplore": "Ready to Explore?",
     "readyToExploreDescription": "Book your dream yacht charter today and discover the hidden gems of the Balearic Islands and Costa Blanca."
   },
