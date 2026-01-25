@@ -63,7 +63,15 @@
     "viewFleet": "Flotte ansehen",
     "getQuote": "Angebot anfordern",
     "readyToExplore": "Bereit für die Entdeckung?",
-    "readyToExploreDescription": "Buchen Sie noch heute Ihren Traum-Yachtcharter und entdecken Sie die verborgenen Schätze der Balearen und der Costa Blanca."
+    "readyToExploreDescription": "Buchen Sie noch heute Ihren Traum-Yachtcharter und entdecken Sie die verborgenen Schätze der Balearen und der Costa Blanca.",
+    "weatherForecast": "Wettervorhersage",
+    "weatherNote": "Lokale Vorhersage für die nächsten 6 Tage",
+    "tideMoonInfo": "Gezeiten & Mondphasen",
+    "happyGuests": "Zufriedene Gäste",
+    "happyGuestsDescription": "Schließen Sie sich hunderten zufriedenen Reisenden an, die mit uns die Küste erkundet haben.",
+    "joinOurGuests": "Werden Sie Teil unserer Gemeinschaft von Meeresliebhabern",
+    "location": "Standort",
+    "quickInfo": "Schnellinfo"
   },
   "stats": {
     "title": "Unsere Reise in Zahlen"

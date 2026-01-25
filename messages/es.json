@@ -63,7 +63,15 @@
     "viewFleet": "Ver Flota",
     "getQuote": "Solicitar Presupuesto",
     "readyToExplore": "¿Listo para Explorar?",
-    "readyToExploreDescription": "Reserve hoy mismo el chárter de sus sueños y descubra las joyas ocultas de las Islas Baleares y la Costa Blanca."
+    "readyToExploreDescription": "Reserve hoy mismo el chárter de sus sueños y descubra las joyas ocultas de las Islas Baleares y la Costa Blanca.",
+    "weatherForecast": "Pronóstico del Tiempo",
+    "weatherNote": "Pronóstico local para los próximos 6 días",
+    "tideMoonInfo": "Mareas y Fase Lunar",
+    "happyGuests": "Huéspedes Felices",
+    "happyGuestsDescription": "Únase a cientos de viajeros satisfechos que han explorado la costa con nosotros.",
+    "joinOurGuests": "Únete a nuestra comunidad de amantes del mar",
+    "location": "Ubicación",
+    "quickInfo": "Información Rápida"
   },
   "stats": {
     "title": "Nuestra Trayectoria en Cifras"

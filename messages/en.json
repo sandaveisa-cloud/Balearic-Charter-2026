@@ -63,7 +63,15 @@
     "viewFleet": "View Fleet",
     "getQuote": "Get a Quote",
     "readyToExplore": "Ready to Explore?",
-    "readyToExploreDescription": "Book your dream yacht charter today and discover the hidden gems of the Balearic Islands and Costa Blanca."
+    "readyToExploreDescription": "Book your dream yacht charter today and discover the hidden gems of the Balearic Islands and Costa Blanca.",
+    "weatherForecast": "Weather Forecast",
+    "weatherNote": "Local forecast for the next 6 days",
+    "tideMoonInfo": "Tides & Moon Phase",
+    "happyGuests": "Happy Guests",
+    "happyGuestsDescription": "Join hundreds of satisfied travelers who have explored the coast with us.",
+    "joinOurGuests": "Join our community of sea lovers",
+    "location": "Location",
+    "quickInfo": "Quick Info"
   },
   "stats": {
     "title": "Our Journey in Numbers"
