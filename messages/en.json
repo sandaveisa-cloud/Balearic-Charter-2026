@@ -13,37 +13,43 @@
     "contact": "Contact",
     "about": "About Us"
   },
-  "breadcrumb": {
-    "home": "Home",
-    "fleet": "Fleet",
-    "backTo": "Back to",
-    "backToHome": "Back to Home Page",
-    "discoverMore": "Discover More About Our Mission and Destinations",
-    "discoverMoreDescription": "Explore our complete range of services, learn about our mission, and discover all the exclusive destinations we offer."
-  },
   "hero": {
     "title": "Experience Luxury at Sea",
     "subtitle": "Premium Yacht Charters in the Balearic Islands & Costa Blanca",
     "cta": "Explore Our Fleet"
   },
+  "trust": {
+    "verified": "Verified Charter",
+    "insured": "Fully Insured",
+    "crew": "Professional Crew",
+    "experts": "Local Experts",
+    "bookings": "Secure Bookings",
+    "rating": "Top Rated",
+    "secret_bays": "Hidden Gems Access"
+  },
   "fleet": {
     "title": "Our Luxury Fleet",
     "subtitle": "Discover our collection of world-class yachts",
     "viewDetails": "View Details",
-    "getQuote": "Get a Quote"
+    "getQuote": "Get a Quote",
+    "selectDates": "Select Your Dates",
+    "technicalSpecs": "Technical Specifications",
+    "quoteFormDescription": "Tell us about your charter preferences and we will get back to you shortly.",
+    "extras": {
+      "snorkel": "Snorkeling Gear"
+    },
+    "ships": {
+      "simona": {
+        "headline": "Sail in Elegance with Simona",
+        "description": "Experience the perfect blend of luxury and performance aboard the Lagoon 400 S2. Designed for comfort and stability, it offers spacious living areas and exceptional views of the Mediterranean.",
+        "tagline": "A masterpiece of nautical design, perfect for family getaways or sunset cruises."
+      }
+    }
   },
-  "destinations": {
-    "title": "Exclusive Destinations",
-    "subtitle": "Explore the most beautiful locations in the Mediterranean"
-  },
-  "stats": {
-    "title": "Our Journey in Numbers"
-  },
- "reviews": {
-    "title": "“What Our Guests Say”",
+  "reviews": {
+    "title": "What Our Guests Say",
     "subtitle": "Hear from those who have experienced the luxury of our charters"
   },
-  
   "mission": {
     "title": "Our Mission",
     "backToTop": "Back to Top"
@@ -56,14 +62,5 @@
     "privacy": "Privacy Policy",
     "cookies": "Cookies Policy",
     "terms": "Terms & Conditions"
-  },
-  "contact": {
-    "title": "Contact Us",
-    "subtitle": "Get in touch with our team for your luxury charter experience",
-    "formTitle": "Send us a Message",
-    "sendMessage": "Send Message",
-    "sending": "Sending...",
-    "successTitle": "Thank You!",
-    "errorTitle": "Error Submitting Request"
   }
 }

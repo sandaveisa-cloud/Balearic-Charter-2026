@@ -1,461 +1,66 @@
 {
   "common": {
-    "exploreFleet": "Unsere Flotte Erkunden",
-    "learnMore": "Mehr Erfahren",
-    "getQuote": "Angebot Anfordern",
-    "bookNow": "Angebot Anfordern",
-    "contactUs": "Kontaktieren Sie Uns"
+    "exploreFleet": "Unsere Flotte erkunden",
+    "learnMore": "Mehr erfahren",
+    "getQuote": "Angebot anfordern",
+    "bookNow": "Angebot anfordern",
+    "contactUs": "Kontaktieren Sie uns"
   },
   "navigation": {
     "home": "Startseite",
     "fleet": "Flotte",
-    "destinations": "Reiseziele",
+    "destinations": "Ziele",
     "contact": "Kontakt",
-    "about": "Über Uns"
-  },
-  "breadcrumb": {
-    "home": "Startseite",
-    "backTo": "Zurück zu"
+    "about": "Über uns"
   },
   "hero": {
-    "title": "Luxus auf See Erleben",
-    "subtitle": "Premium Yachtcharter auf den Balearen & Costa Blanca",
-    "cta": "Unsere Flotte Erkunden"
-  },
-  "stats": {
-    "title": "Unsere Reise in Zahlen"
-  },
-  "fleet": {
-    "title": "Unsere Luxusflotte",
-    "subtitle": "Entdecken Sie unsere Sammlung erstklassiger Yachten",
-    "viewDetails": "Details Anzeigen",
-    "getQuote": "Angebot Anfordern",
-    "backToHome": "Zurück zur Startseite",
-    "ctaTitle": "Bereit, Ihre Traumcharter zu Buchen?",
-    "ctaDescription": "Entdecken Sie unsere Luxusyachten und beginnen Sie, Ihr perfektes Mittelmeer-Abenteuer zu planen.",
-    "exploreDestinations": "Reiseziele Erkunden",
-    "quoteFormDescription": "Füllen Sie das Formular aus und wir senden Ihnen ein persönliches Angebot.",
-    "from": "Ab",
-    "perDay": "/ Tag",
-    "guests": "Gäste",
-    "cabins": "Kabinen",
-    "toilets": "Toiletten",
-    "technicalSpecs": "Technische Spezifikationen",
-    "amenities": "Ausstattung & Features",
-    "selectDates": "Wählen Sie Ihre Charter-Daten",
-    "trustBadges": {
-      "verified": "Verifizierte Charter",
-      "insured": "Vollständig Versichert",
-      "professionalCrew": "Professionelle Crew"
-    },
-    "socialProof": {
-      "recentBookings": "🔥 3 Buchungen in den letzten 7 Tagen",
-      "rating": "⭐ 4.9/5 Durchschnittsbewertung"
-    },
-    "extras": {
-      "efoil": "Fliteboard eFoil",
-      "snorkel": "Profi-Schnorchelausrüstung",
-      "scooter": "Unterwasser-Scooter",
-      "sup": "Stand Up Paddle Board"
-    },
-    "ships": {
-      "simona": {
-        "headline": "Eleganz, Komfort und ein Hauch von Abenteuer",
-        "description": "SIMONA ist die perfekte Wahl für diejenigen, die ein Gleichgewicht zwischen Segelleistung und häuslichem Komfort auf dem Wasser suchen. Dieses Lagoon 400 S2 Modell ist berühmt für seinen hellen, geräumigen Salon und seine Stabilität, was es sowohl für erfahrene Segler als auch für Familien mit Kindern ideal macht.",
-        "highlights": [
-          "Weitläufigkeit und Licht: Dank großer Fenster und durchdachtem Design ist der Salon mit natürlichem Licht gefüllt und schafft eine gemütliche Atmosphäre.",
-          "Volle Autonomie: Ausgestattet mit einem leistungsstarken Watermaker ermöglicht diese Yacht lange Reisen, ohne häufig Häfen für Wasservorräte anlaufen zu müssen.",
-          "Komfort bei jedem Wetter: Das Klimaanlagensystem (AC) sorgt für eine angenehme Brise während heißer Mittelmeernachmittage.",
-          "Entspannungsbereiche: Das breite Trampolinnetz am Bug ist der Lieblingsplatz zum Sonnenbaden und Delfinbeobachten."
-        ],
-        "tagline": "SIMONA ist mehr als nur ein Schiff – es ist Ihre schwimmende Villa für eine unvergessliche Reise."
-      },
-      "wide-dream": {
-        "headline": "Luxus-Entspannung und Panoramablick",
-        "description": "WIDE DREAM definiert die Bedeutung von Premium-Katamaran-Entspannung. Die Lagoon 450 Flybridge-Version ist für diejenigen gebaut, die keine Kompromisse eingehen. Mit drei Ebenen von Entspannungsbereichen und beeindruckendem Platz gewährleistet diese Yacht Privatsphäre und Luxus auch für größere Gruppen von bis zu 12 Personen.",
-        "highlights": [
-          "Exklusives Flybridge: Die obere Brücke erleichtert nicht nur das Manövrieren, sondern bietet den besten Sonnenplatz mit 360-Grad-Blick auf den Horizont.",
-          "Höchster Komfort: Ausgestattet mit Teak-Deck, einem Generator für kontinuierliche Energie und dedizierter Klimakontrolle in jeder Kabine.",
-          "Gebaut für Unterhaltung: Die geräumigen Cockpit- und Salonbereiche sind perfekt für Sonnenuntergangs-Dinner oder Feiern mit Freunden.",
-          "Premium-Ausstattung: Von einem hochwertigen Galley-Kühlschrank bis hin zu modernen Wassersportoptionen – alles ist für erstklassigen Service eingerichtet."
-        ],
-        "tagline": "Mit WIDE DREAM beginnt jeder Morgen mit einer Traumaussicht und makellosem Komfort."
-      }
-    }
-  },
-  "destinations": {
-    "title": "Exklusive Reiseziele",
-    "subtitle": "Erkunden Sie die schönsten Orte im Mittelmeer",
-    "sailingCalendar": "Segelkalender",
-    "sailingCalendarDescription": "Beste Segelbedingungen das ganze Jahr über",
-    "sailingScore": "Punkte",
-    "bestTime": "Beste Zeit",
-    "recommendation": "Unsere Empfehlung",
-    "bestSeasonText": "{season} bietet die besten Segelbedingungen ({score}% Punkte) für {destination}.",
-    "seasons": {
-      "spring": "Frühling",
-      "summer": "Sommer",
-      "earlyAutumn": "Früher Herbst",
-      "lateAutumn": "Später Herbst",
-      "winter": "Winter"
-    },
-    "weatherForecast": "7-Tage-Wettervorhersage",
-    "weatherNote": "Vorhersagedaten sind ungefähr. Die tatsächlichen Bedingungen können variieren.",
-    "tideMoonInfo": "Gezeiten & Mondphase",
-    "moonPhase": "Mondphase",
-    "nextHighTide": "Nächste Flut",
-    "height": "Höhe",
-    "tideNote": "Gezeiteninformationen sind ungefähr. Überprüfen Sie lokale Karten für die Navigation.",
-    "highlights": "Highlights & Sehenswürdigkeiten",
-    "highlightsDescription": "Entdecken Sie die wichtigsten Orte",
-    "readyToExplore": "Bereit zu Erkunden?",
-    "viewFleet": "Unsere Flotte Ansehen",
-    "getQuote": "Angebot Anfordern",
-    "sailingTips": "Segeltipps",
-    "localInsights": "Lokale Einblicke",
-    "readyToExploreDescription": "Entdecken Sie {destination} an Bord einer unserer Luxusyachten. Professionelle Crew, Gourmetküche und unvergessliche Erinnerungen erwarten Sie.",
-    "sailingTipsPlaceholder": "Experten-Segeltipps werden bald verfügbar sein.",
-    "viewDetails": "Details Anzeigen",
-    "discoverMore": "Mehr Entdecken",
-    "viewAll": "Alle Reiseziele Anzeigen",
-    "exploreRoutes": "Routen Erkunden",
-    "boatAccessOnly": "Nur per Boot erreichbar",
-    "ibiza": {
-      "title": "Ibiza",
-      "description": "Erleben Sie das pulsierende Nachtleben und die unberührten Strände von Ibiza. Entdecken Sie versteckte Buchten und genießen Sie die legendären Sonnenuntergänge der Insel."
-    },
-    "formentera": {
-      "title": "Formentera",
-      "description": "Kristallklares Wasser und unberührte Strände erwarten Sie auf Formentera. Ein Paradies für Wassersport-Enthusiasten und Entspannungssuchende."
-    },
-    "mallorca": {
-      "title": "Mallorca",
-      "description": "Erkunden Sie die atemberaubende Küste von Mallorca, von dramatischen Klippen bis zu abgelegenen Buchten. Reiche Kultur trifft auf natürliche Schönheit."
-    },
-    "menorca": {
-      "title": "Menorca",
-      "description": "Entdecken Sie Menorcas UNESCO-Biosphärenreservat, unberührte Strände und charmante Fischerdörfer."
-    },
-    "costaBlanca": {
-      "title": "Costa Blanca",
-      "description": "Die sonnenverwöhnte Costa Blanca bietet goldene Strände, lebendige Yachthäfen und charmante Küstenstädte entlang der spanischen Ostküste."
-    },
-    "backToHome": "Zurück zur Startseite",
-    "allDestinations": "Alle Reiseziele",
-    "allDestinationsSubtitle": "Erkunden Sie alle unsere atemberaubenden Mittelmeer-Reiseziele",
-    "ctaDescription": "Erleben Sie die Magie des Mittelmeers an Bord einer unserer Luxusyachten."
-  },
-  "mission": {
-    "title": "Unsere Mission",
-    "text": "Luxus-Charter mit präziser Logistik zu verbinden. Wir garantieren ein erstklassiges Umfeld mit professioneller Crew und Gourmetküche.",
-    "cards": {
-      "logistics": {
-        "title": "Präzise Logistik",
-        "description": "Wir verbinden Luxus-Charter mit präziser Logistik, um nahtlose Erlebnisse zu gewährleisten."
-      },
-      "crew": {
-        "title": "Professionelle Crew",
-        "description": "Wir gewährleisten eine sichere, erstklassige Umgebung mit unserer erfahrenen und engagierten professionellen Crew."
-      },
-      "gourmet": {
-        "title": "Gourmet-Exzellenz",
-        "description": "Genießen Sie Gourmet-Küche, die von unseren erfahrenen Köchen kreiert wurde und Ihr Charter-Erlebnis aufwertet."
-      }
-    }
-  },
-  "culinary": {
-    "title": "Kulinarische Exzellenz",
-    "subtitle": "Genießen Sie erstklassige kulinarische Erlebnisse"
-  },
-  "crew": {
-    "title": "Erfahrene Crew",
-    "subtitle": "Lernen Sie unser professionelles Team kennen, das sich Ihrer Komfort widmet"
-  },
-  "reviews": {
-    "title": "Was Unsere Gäste Sagen",
-    "subtitle": "Hören Sie von denen, die den Luxus unserer Charter erlebt haben"
-  },
-  "footer": {
-    "about": "Über Uns",
-    "fleet": "Flotte",
-    "destinations": "Reiseziele",
-    "contact": "Kontakt",
-    "rights": "Alle Rechte vorbehalten",
-    "tagline": "Ihr erstklassiges Ziel für Luxus-Yachtcharter im Mittelmeer.",
-    "followUs": "Folgen Sie Uns",
-    "legal": "Impressum",
-    "privacy": "Datenschutzerklärung",
-    "cookies": "Cookie-Richtlinie",
-    "terms": "Allgemeine Geschäftsbedingungen"
-  },
-  "metadata": {
-    "title": "Luxus Yachtcharter Mallorca & Costa Blanca | Wide Dream",
-    "description": "Yacht mieten auf Mallorca, Ibiza oder in Torrevieja. Entdecken Sie die Balearen auf einer exklusiven Privatyacht. Jetzt Ihren Traumurlaub auf See buchen!"
+    "title": "Erleben Sie Luxus auf See",
+    "subtitle": "Premium-Yachtcharter auf den Balearen & an der Costa Blanca",
+    "cta": "Unsere Flotte erkunden"
   },
   "trust": {
     "verified": "Verifizierter Charter",
-    "insured": "Vollkasko",
-    "crew": "Profi-Crew",
+    "insured": "Voll versichert",
+    "crew": "Professionelle Crew",
     "experts": "Lokale Experten",
-    "bookings": "5 Buchungen diese Woche",
-    "rating": "4.9/5 Bewertung",
-    "secret_bays": "Geheime Buchten"
+    "bookings": "Sichere Buchung",
+    "rating": "Top bewertet",
+    "secret_bays": "Zugang zu geheimen Buchten"
   },
-  "contact": {
-    "title": "Kontaktieren Sie Uns",
-    "subtitle": "Kontaktieren Sie unser Team für Ihr Luxus-Charter-Erlebnis",
-    "whatsapp": "WhatsApp",
-    "availability": "24/7 verfügbar für Ihre Charter-Anfragen",
-    "locations": "Ibiza, Palma & Torrevieja, Spanien",
-    "phone": "+34 680 957 096",
-    "email": "peter.sutter@gmail.com",
-    "phoneLabel": "Rufen Sie Uns An",
-    "emailLabel": "Schreiben Sie Uns",
-    "locationLabel": "Unsere Standorte",
-    "formTitle": "Senden Sie Uns Eine Nachricht",
-    "formName": "Vollständiger Name",
-    "formEmail": "E-Mail",
-    "formPhone": "Telefon",
-    "formMessage": "Nachricht",
-    "sendMessage": "Nachricht Senden",
-    "sending": "Wird Gesendet...",
-    "successTitle": "Vielen Dank!",
-    "successMessage": "Unser Team wird Ihr persönliches Angebot erstellen und Sie innerhalb der nächsten 24 Stunden kontaktieren.",
-    "returnToFleet": "Zurück zur Flotte",
-    "errorTitle": "Fehler beim Senden",
-    "errorRetryMessage": "Beim Senden Ihrer Anfrage ist ein Problem aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns direkt über WhatsApp.",
-    "tryAgain": "Erneut Versuchen",
-    "contactWhatsApp": "Über WhatsApp Kontaktieren",
-    "backToHome": "Zurück zur Startseite",
-    "errorMessage": "Nachricht konnte nicht gesendet werden. Bitte versuchen Sie es erneut."
-  },
-  "legal": {
-    "title": "Impressum",
-    "lastUpdated": "Zuletzt aktualisiert:",
-    "metaDescription": "Rechtliche Informationen und Compliance-Details für die Yachtcharter-Dienstleistungen von Fabula Marítima SL.",
-    "companyInfo": {
-      "title": "Firmeninformationen",
-      "entity": "Unternehmen",
-      "cif": "CIF",
-      "form": "Rechtsform",
-      "formValue": "Sociedad Limitada (Spanien)",
-      "contact": "Kontaktinformationen",
-      "operatingAreas": "Betriebsgebiete",
-      "operatingAreasValue": "Balearen (Ibiza, Formentera, Palma de Mallorca) und Costa Blanca (Torrevieja)"
+  "fleet": {
+    "title": "Unsere Luxusflotte",
+    "subtitle": "Entdecken Sie unsere Kollektion an erstklassigen Yachten",
+    "viewDetails": "Details anzeigen",
+    "getQuote": "Angebot anfordern",
+    "selectDates": "Daten auswählen",
+    "technicalSpecs": "Technische Daten",
+    "quoteFormDescription": "Teilen Sie uns Ihre Wünsche für den Charter mit, und wir werden uns in Kürze bei Ihnen melden.",
+    "extras": {
+      "snorkel": "Schnorchelausrüstung"
     },
-    "maritime": {
-      "title": "Seefahrtslizenzen und Compliance",
-      "compliance": "Fabula Marítima SL entspricht den spanischen Seefahrtsvorschriften (Lista 6ª) und hält alle erforderlichen Lizenzen für gewerbliche Charterbetriebe aufrecht.",
-      "requirements": "Für die Saison 2025/2026 arbeiten wir in vollem Einklang mit den Anforderungen für die Verwendung der Internationalen 'H'-Flagge (Hotel) und führen umfassende Passagierbücher, wie von den spanischen Seefahrtsbehörden vorgeschrieben.",
-      "standards": "Alle Schiffe in unserer Flotte erfüllen und übertreffen die Sicherheitsstandards der Dirección General de la Marina Mercante (DGMM)."
-    },
-    "business": {
-      "title": "Geschäftstätigkeit",
-      "role": "Fabula Marítima SL agiert als Charterdienstleister und bietet Katamaran-Charter, Tagesausflüge und Firmenveranstaltungen auf den Balearen und in der Region Costa Blanca an.",
-      "responsibility": "Wir sind verantwortlich für die Wartung der Schiffe, die Verwaltung der professionellen Crew, umfassende Versicherungsdeckung und alle Aspekte der Buchungsverwaltung und des Kundenservice."
-    },
-    "insurance": {
-      "title": "Versicherung und Haftung",
-      "coverage": "Unsere umfassende Versicherungsdeckung umfasst:",
-      "liability": "Haftpflichtversicherung für Dritte",
-      "passenger": "Deckung für Passagierverletzungen und Unfälle",
-      "vessel": "Schutz vor Schiffsbeschädigung und -verlust",
-      "indemnity": "Berufshaftpflichtversicherung",
-      "claims": "Alle Ansprüche werden gemäß spanischem Seerecht und EU-Vorschriften bearbeitet. Für detaillierte Informationen zu Deckung und Schadensverfahren kontaktieren Sie uns bitte direkt."
-    },
-    "ip": {
-      "title": "Geistiges Eigentum",
-      "content": "Alle Inhalte dieser Website, einschließlich, aber nicht beschränkt auf Design, Fotos, Text, Logos und Marken, sind ausschließliches Eigentum von Fabula Marítima SL. Unbefugte Verwendung, Vervielfältigung oder Verbreitung von Inhalten ist strengstens untersagt und kann zu rechtlichen Schritten führen."
-    },
-    "footer": {
-      "title": "Schnellkontakt"
-    },
-    "backToHome": "Zurück zur Startseite"
-  },
-  "privacy": {
-    "title": "Datenschutzerklärung",
-    "lastUpdated": "Zuletzt aktualisiert:",
-    "metaDescription": "Datenschutzerklärung und Informationen zum Datenschutz für die Yachtcharter-Dienstleistungen von Fabula Marítima SL.",
-    "dataController": {
-      "title": "Verantwortlicher",
-      "entity": "Unternehmen",
-      "cif": "CIF",
-      "email": "E-Mail"
-    },
-    "dataCollection": {
-      "title": "Datenerhebung",
-      "description": "Wir erheben Informationen, die über Buchungsformulare und Kontaktanfragen bereitgestellt werden:",
-      "name": "Name",
-      "email": "E-Mail-Adresse",
-      "phone": "Telefonnummer",
-      "identification": "Ausweisdokumente (für Charterverträge)"
-    },
-    "purpose": {
-      "title": "Zweck der Datenverarbeitung",
-      "description": "Ihre persönlichen Daten werden für folgende Zwecke verarbeitet:",
-      "bookings": "Verwaltung von Yachtcharter-Buchungen und Reservierungen",
-      "payments": "Abwicklung von Zahlungen und Rechnungsstellung",
-      "support": "Kundensupport und Beantwortung von Anfragen"
-    },
-    "retention": {
-      "title": "Datenspeicherung",
-      "description": "Daten werden so lange gespeichert, wie es für die Dienstleistungserbringung und zur Erfüllung gesetzlicher steuerlicher Verpflichtungen in Spanien erforderlich ist. Nach diesem Zeitraum werden die Daten sicher gelöscht."
-    },
-    "rights": {
-      "title": "Ihre Rechte",
-      "description": "Unter der Datenschutz-Grundverordnung (DSGVO) haben Sie folgende Rechte:",
-      "access": "Recht auf Auskunft: Informationen über Ihre persönlichen Daten anfordern",
-      "rectification": "Recht auf Berichtigung: Unrichtige oder unvollständige Daten korrigieren",
-      "erasure": "Recht auf Löschung: Löschung Ihrer Daten anfordern",
-      "portability": "Recht auf Datenübertragbarkeit: Ihre Daten in strukturiertem Format erhalten",
-      "contact": "Um diese Rechte auszuüben, kontaktieren Sie uns bitte unter:"
-    },
-    "security": {
-      "title": "Datensicherheit",
-      "description": "Wir implementieren SSL-Verschlüsselung und sichere Hosting-Lösungen (Vercel), um Ihre Daten zu schützen. Alle Datenübertragungen sind verschlüsselt, und wir befolgen branchenübliche Best Practices, um die Sicherheit Ihrer persönlichen Informationen zu gewährleisten."
-    },
-    "backToHome": "Zurück zur Startseite"
-  },
-  "cookies": {
-    "title": "Cookie-Richtlinie",
-    "lastUpdated": "Zuletzt aktualisiert:",
-    "metaDescription": "Informationen über Cookies und Tracking-Technologien, die auf der Website von Fabula Marítima SL verwendet werden.",
-    "whatAre": {
-      "title": "Was sind Cookies?",
-      "description": "Cookies sind kleine Textdateien, die auf Ihrem Gerät (Computer, Tablet oder Mobilgerät) gespeichert werden, wenn Sie unsere Website besuchen. Sie verbessern Ihre Benutzererfahrung, indem sie Ihre Präferenzen speichern und bestimmte Website-Funktionen ermöglichen."
-    },
-    "types": {
-      "title": "Arten von Cookies, die wir verwenden",
-      "essential": {
-        "title": "Essenzielle/Technische Cookies",
-        "description": "Diese Cookies sind für die Website-Navigation und Sicherheit erforderlich. Sie ermöglichen grundlegende Funktionen wie Seitennavigation und Zugriff auf sichere Bereiche der Website. Die Website kann ohne diese Cookies nicht ordnungsgemäß funktionieren."
-      },
-      "analytical": {
-        "title": "Analytische Cookies",
-        "description": "Wir verwenden analytische Cookies (z. B. Google Analytics), um den Website-Traffic zu messen und zu verstehen, wie Besucher mit unserer Website interagieren. Dies hilft uns, unsere Charter-Dienstleistungen und die Benutzererfahrung zu verbessern. Diese Cookies sammeln anonyme, aggregierte Daten."
+    "ships": {
+      "simona": {
+        "headline": "Segeln in Eleganz mit der Simona",
+        "description": "Erleben Sie die perfekte Mischung aus Luxus und Leistung an Bord der Lagoon 400 S2. Sie wurde für Komfort und Stabilität konzipiert und bietet großzügige Wohnbereiche sowie einen außergewöhnlichen Blick auf das Mittelmeer.",
+        "tagline": "Ein Meisterwerk des nautischen Designs, perfekt für Familienausflüge oder Kreuzfahrten zum Sonnenuntergang."
       }
-    },
-    "managing": {
-      "title": "Cookies verwalten",
-      "description": "Sie können Cookies über Ihre Browser-Einstellungen blockieren oder löschen. So verwalten Sie Cookies in gängigen Browsern:",
-      "chrome": "Google Chrome: Einstellungen > Datenschutz und Sicherheit > Cookies und andere Websitedaten",
-      "safari": "Safari: Einstellungen > Datenschutz > Cookies und Websitedaten",
-      "firefox": "Mozilla Firefox: Einstellungen > Datenschutz & Sicherheit > Cookies und Websitedaten"
-    },
-    "consent": {
-      "title": "Einverständnis",
-      "description": "Durch das weitere Surfen auf unserer Website akzeptieren Sie die Verwendung von essenziellen Cookies, die für die Funktionalität der Website erforderlich sind. Für analytische Cookies werden wir Ihre ausdrückliche Zustimmung anfordern, wenn dies gesetzlich vorgeschrieben ist."
-    },
-    "backToHome": "Zurück zur Startseite"
+    }
   },
-  "breadcrumb": {
-    "home": "Startseite",
-    "fleet": "Flotte",
-    "discoverMore": "Entdecken Sie Mehr Über Unsere Mission und Reiseziele",
-    "discoverMoreDescription": "Erkunden Sie unser vollständiges Serviceangebot, erfahren Sie mehr über unsere Mission und entdecken Sie alle exklusiven Reiseziele, die wir anbieten.",
-    "backToHome": "Zurück zur Startseite"
+  "reviews": {
+    "title": "Was unsere Gäste sagen",
+    "subtitle": "Stimmen von denjenigen, die den Luxus unserer Charter erlebt haben"
   },
-  "terms": {
-    "title": "Allgemeine Geschäftsbedingungen",
-    "lastUpdated": "Zuletzt aktualisiert:",
-    "metaDescription": "Allgemeine Geschäftsbedingungen für Yachtcharter-Dienstleistungen von Fabula Marítima SL. Buchungs-, Zahlungs-, Stornierungs- und Sicherheitsrichtlinien.",
-    "provider": {
-      "title": "Charter-Anbieter Informationen",
-      "entity": "Unternehmen",
-      "cif": "CIF",
-      "form": "Rechtsform",
-      "formValue": "Sociedad Limitada (Spanien)",
-      "description": "Fabula Marítima SL agiert als professioneller Yachtcharter-Dienstleister auf den Balearen (Ibiza, Formentera, Palma de Mallorca) und in der Region Costa Blanca (Torrevieja). Wir spezialisieren uns auf Luxus-Katamaran-Charter, Tagesausflüge und Firmenveranstaltungen."
-    },
-    "compliance": {
-      "title": "Regulatorische Compliance 2026",
-      "flag": {
-        "title": "Internationale 'H'-Flagge (Hotel-Flagge)",
-        "description": "Seit August 2025 müssen alle gewerblichen Charter-Schiffe, die in spanischen Gewässern operieren, die Internationale 'H'-Flagge führen. Diese Flagge zeigt an, dass das Schiff als gewerblicher Charter-Service operiert und den spanischen Seefahrtsvorschriften (Lista 6ª) entspricht.",
-        "note": "Alle Schiffe in unserer Flotte erfüllen vollständig diese regulatorische Anforderung von 2026."
-      },
-      "manifest": {
-        "title": "Passagierliste & Offizielles Logbuch",
-        "description": "Gemäß den spanischen Seefahrtsvorschriften von 2026 führen wir ein offizielles Passagierlogbuch (Manifiesto de pasajeros) für alle Charter. Die folgenden Informationen werden von jedem Passagier benötigt:",
-        "id": "Gültiges Ausweisdokument (Personalausweis oder Reisepass)",
-        "nationality": "Nationalität",
-        "emergency": "Notfallkontaktinformationen",
-        "note": "Diese Informationen sind für Sicherheit und regulatorische Compliance obligatorisch. Alle Daten werden gemäß unserer Datenschutzerklärung behandelt."
-      }
-    },
-    "booking": {
-      "title": "Buchungs- & Zahlungsbedingungen",
-      "description": "Um Ihre Charter-Buchung zu sichern, gilt der folgende Zahlungsplan:",
-      "deposit": {
-        "title": "Anzahlung (50%)",
-        "description": "Eine nicht erstattungsfähige Anzahlung von 50% der gesamten Charter-Gebühr ist erforderlich, um Ihre Buchung zu bestätigen.",
-        "note": "Diese Anzahlung sichert Ihre ausgewählten Daten und das Schiff."
-      },
-      "final": {
-        "title": "Endgültige Zahlung (30 Tage vor Abfahrt)",
-        "description": "Der verbleibende Saldo von 50% muss spätestens 30 Tage vor Ihrem geplanten Abfahrtsdatum gezahlt werden.",
-        "note": "Wenn die Zahlung bis zu diesem Termin nicht abgeschlossen wird, kann dies zur Stornierung Ihrer Buchung führen."
-      },
-      "paymentMethods": {
-        "title": "Akzeptierte Zahlungsmethoden",
-        "bank": "Banküberweisung (IBAN wird nach Buchungsbestätigung bereitgestellt)",
-        "card": "Kredit-/Debitkarte (Visa, Mastercard)",
-        "transfer": "Überweisung (internationale Überweisungen werden akzeptiert)"
-      }
-    },
-    "cancellation": {
-      "title": "Stornierungsrichtlinie",
-      "description": "Die Stornierungsbedingungen variieren je nach Kündigungsfrist vor Ihrer geplanten Abfahrt:",
-      "table": {
-        "period": "Stornierungszeitraum",
-        "refund": "Erstattungsbetrag",
-        "more30": "Mehr als 30 Tage vor Abfahrt",
-        "full": "100% Erstattung (abzüglich Anzahlung)",
-        "15to30": "15-30 Tage vor Abfahrt",
-        "half": "50% Erstattung",
-        "less15": "Weniger als 15 Tage vor Abfahrt",
-        "none": "Keine Erstattung"
-      },
-      "weather": {
-        "title": "Wetterbedingte Stornierungen",
-        "description": "Bei schweren Wetterbedingungen, die das Segeln unsicher machen, hat der Kapitän die Befugnis, die Charter zu stornieren oder umzuplanen. In solchen Fällen erhalten Sie eine vollständige Erstattung oder die Option, auf alternative Termine umzuplanen (vorbehaltlich Verfügbarkeit)."
-      }
-    },
-    "safety": {
-      "title": "Sicherheit & Haftung",
-      "description": "Die Sicherheit unserer Passagiere und Crew hat höchste Priorität. Alle Schiffe in unserer Flotte erfüllen und übertreffen die spanischen Seesicherheitsstandards (DGMM-Compliance).",
-      "responsibilities": {
-        "title": "Unsere Verantwortlichkeiten",
-        "vessel": "Wartung der Schiffe in ausgezeichnetem Zustand mit allen erforderlichen Sicherheitsausrüstungen",
-        "crew": "Bereitstellung qualifizierter, erfahrener professioneller Crew-Mitglieder",
-        "insurance": "Umfassende Versicherungsdeckung (Haftpflicht für Dritte, Passagierverletzungen, Schiffsbeschädigung)",
-        "safety": "Einhaltung aller spanischen Seefahrtsvorschriften und Sicherheitsprotokolle"
-      },
-      "passenger": {
-        "title": "Passagier-Verantwortlichkeiten",
-        "follow": "Befolgen Sie alle Sicherheitsanweisungen der Crew",
-        "inform": "Informieren Sie die Crew über medizinische Bedingungen oder besondere Anforderungen",
-        "respect": "Respektieren Sie das Schiff, die Ausrüstung und andere Passagiere"
-      },
-      "liability": {
-        "title": "Haftungsbeschränkung",
-        "description": "Fabula Marítima SL haftet nicht für Personenschäden oder Sachschäden, die durch Fahrlässigkeit des Passagiers, Nichteinhaltung der Crew-Anweisungen oder Teilnahme an Wassersportaktivitäten entstehen. Alle Passagiere nehmen an Wasseraktivitäten auf eigenes Risiko teil."
-      }
-    },
-    "backToHome": "Zurück zur Startseite"
+  "mission": {
+    "title": "Unsere Mission",
+    "backToTop": "Zurück nach oben"
   },
-  "about": {
-    "title": "Über Uns",
-    "subtitle": "Entdecken Sie das Team hinter Ihrem luxuriösen Mittelmeer-Segelerlebnis",
-    "metaTitle": "Über Uns | Balearic & Costa Blanca Charters",
-    "metaDescription": "Erfahren Sie mehr über Fabula Marítima SL - Ihr vertrauenswürdiger Partner für Luxus-Yachtcharter auf den Balearen und der Costa Blanca.",
-    "companyTitle": "Fabula Marítima SL",
-    "companyDescription": "Wir sind ein professionelles Yachtcharter-Unternehmen, das sich auf luxuriöse Katamaran-Erlebnisse auf den Balearen und der Costa Blanca spezialisiert hat. Unsere Mission ist es, Premium-Segeln mit präziser Logistik zu verbinden und sicherzustellen, dass jede Reise sicher, komfortabel und unvergesslich ist.",
-    "areasTitle": "Unsere Betriebsgebiete",
-    "areasDescription": "Wir bieten exklusive Yachtcharter in den schönsten Reisezielen des westlichen Mittelmeers.",
-    "ctaTitle": "Bereit, Ihr Abenteuer zu Starten?",
-    "ctaDescription": "Kontaktieren Sie uns noch heute, um Ihr perfektes Luxus-Charter-Erlebnis zu planen.",
-    "viewFleet": "Unsere Flotte Ansehen",
-    "backToHome": "Zurück zur Startseite"
+  "footer": {
+    "tagline": "Ihr erstklassiges Ziel für Luxus-Yachtcharter im Mittelmeer.",
+    "followUs": "Folgen Sie uns",
+    "rights": "Alle Rechte vorbehalten",
+    "legal": "Impressum",
+    "privacy": "Datenschutz",
+    "cookies": "Cookie-Richtlinie",
+    "terms": "AGB"
   }
 }

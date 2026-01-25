@@ -4,7 +4,7 @@
     "learnMore": "Saber Más",
     "getQuote": "Solicitar Presupuesto",
     "bookNow": "Solicitar Presupuesto",
-    "contactUs": "Contáctanos"
+    "contactUs": "Contáctenos"
   },
   "navigation": {
     "home": "Inicio",
@@ -13,448 +13,54 @@
     "contact": "Contacto",
     "about": "Sobre Nosotros"
   },
-  "breadcrumb": {
-    "home": "Inicio",
-    "backTo": "Volver a"
-  },
   "hero": {
-    "title": "Experimenta el Lujo en el Mar",
-    "subtitle": "Alquiler de Yates de Lujo en las Islas Baleares y Costa Blanca",
+    "title": "Experimente el Lujo en el Mar",
+    "subtitle": "Alquiler de Yates Premium en las Islas Baleares y Costa Blanca",
     "cta": "Explorar Nuestra Flota"
   },
-  "stats": {
-    "title": "Nuestro Viaje en Números"
+  "trust": {
+    "verified": "Chárter Verificado",
+    "insured": "Totalmente Asegurado",
+    "crew": "Tripulación Profesional",
+    "experts": "Expertos Locales",
+    "bookings": "Reservas Seguras",
+    "rating": "Mejor Valorado",
+    "secret_bays": "Acceso a Calas Secretas"
   },
   "fleet": {
     "title": "Nuestra Flota de Lujo",
-    "subtitle": "Descubre nuestra colección de yates de clase mundial",
+    "subtitle": "Descubra nuestra colección de yates de clase mundial",
     "viewDetails": "Ver Detalles",
     "getQuote": "Solicitar Presupuesto",
-    "backToHome": "Volver al Inicio",
-    "ctaTitle": "¿Listo para Reservar tu Charter de Ensueño?",
-    "ctaDescription": "Descubre nuestros yates de lujo y comienza a planificar tu aventura mediterránea perfecta.",
-    "exploreDestinations": "Explorar Destinos",
-    "quoteFormDescription": "Complete el formulario a continuación y le enviaremos un presupuesto personalizado.",
-    "from": "Desde",
-    "perDay": "/ día",
-    "guests": "Huéspedes",
-    "cabins": "Camarotes",
-    "toilets": "Baños",
+    "selectDates": "Selecciona Tus Fechas",
     "technicalSpecs": "Especificaciones Técnicas",
-    "selectDates": "Selecciona las Fechas de tu Alquiler",
-    "trustBadges": {
-      "verified": "Chárter Verificado",
-      "insured": "Totalmente Asegurado",
-      "professionalCrew": "Tripulación Profesional"
-    },
-    "socialProof": {
-      "recentBookings": "🔥 3 reservas en los últimos 7 días",
-      "rating": "⭐ 4.9/5 calificación promedio"
-    },
+    "quoteFormDescription": "Cuéntanos tus preferencias para el chárter y nos pondremos en contacto contigo pronto.",
     "extras": {
-      "efoil": "Fliteboard eFoil",
-      "snorkel": "Equipo de Snorkel Pro",
-      "scooter": "Scooter Subacuático",
-      "sup": "Tabla de Paddle Surf"
+      "snorkel": "Equipo de Snorkel"
     },
     "ships": {
       "simona": {
-        "headline": "Elegancia, Comodidad y un Toque de Aventura",
-        "description": "SIMONA es la elección perfecta para aquellos que buscan un equilibrio entre el rendimiento de navegación y la comodidad del hogar en el agua. Este modelo Lagoon 400 S2 es famoso por su salón luminoso y espacioso y su estabilidad, lo que lo hace ideal tanto para navegantes experimentados como para familias con niños.",
-        "highlights": [
-          "Espaciosidad y Luz: Gracias a las grandes ventanas y al diseño cuidadoso, el salón está lleno de luz natural, creando una atmósfera acogedora.",
-          "Autonomía Completa: Equipado con un potente Watermaker, este yate le permite disfrutar de viajes largos sin necesidad de visitar frecuentemente los puertos para suministros de agua.",
-          "Comodidad en Cualquier Clima: El sistema de Aire Acondicionado (AC) asegura una brisa agradable durante las calurosas tardes mediterráneas.",
-          "Áreas de Relajación: La amplia red de trampolín en la proa es el lugar favorito para tomar el sol y observar delfines."
-        ],
-        "tagline": "SIMONA es más que un barco: es tu villa flotante para un viaje inolvidable."
-      },
-      "wide-dream": {
-        "headline": "Relajación de Lujo y Vistas Panorámicas",
-        "description": "WIDE DREAM define el significado de la relajación premium en catamarán. La versión Lagoon 450 Flybridge está construida para aquellos que se niegan a comprometerse. Con tres niveles de áreas de relajación e impresionante espacio, este yate garantiza privacidad y lujo incluso para grupos más grandes de hasta 12 personas.",
-        "highlights": [
-          "Flybridge Exclusivo: El puente de nivel superior no solo facilita las maniobras, sino que ofrece el mejor lugar para tomar el sol con una vista de 360 grados del horizonte.",
-          "Máximo Nivel de Comodidad: Cuenta con cubierta de teca, un generador para energía continua y control climático dedicado en cada cabina.",
-          "Construido para el Entretenimiento: Las amplias áreas de cockpit y salón son perfectas para cenas al atardecer o celebraciones con amigos.",
-          "Equipamiento Premium: Desde un refrigerador de cocina de alta calidad hasta opciones modernas de entretenimiento acuático: todo está configurado para un servicio de alta gama."
-        ],
-        "tagline": "Con WIDE DREAM, cada mañana comienza con una vista de ensueño y una comodidad impecable."
+        "headline": "Navega con Elegancia en el Simona",
+        "description": "Experimente la combinación perfecta de lujo y rendimiento a bordo del Lagoon 400 S2. Diseñado para ofrecer comodidad y estabilidad, ofrece amplias zonas de estar y vistas excepcionales al Mediterráneo.",
+        "tagline": "Una obra maestra del diseño náutico, perfecta para escapadas familiares o cruceros al atardecer."
       }
     }
-  },
-  "destinations": {
-    "title": "Destinos Exclusivos",
-    "subtitle": "Explora los lugares más hermosos del Mediterráneo",
-    "sailingCalendar": "Calendario de Navegación",
-    "sailingCalendarDescription": "Mejores condiciones de navegación durante todo el año",
-    "sailingScore": "Puntuación",
-    "bestTime": "Mejor Época",
-    "recommendation": "Nuestra Recomendación",
-    "bestSeasonText": "{season} ofrece las mejores condiciones de navegación (puntuación {score}%) para {destination}.",
-    "seasons": {
-      "spring": "Primavera",
-      "summer": "Verano",
-      "earlyAutumn": "Principios de Otoño",
-      "lateAutumn": "Finales de Otoño",
-      "winter": "Invierno"
-    },
-    "weatherForecast": "Pronóstico del Tiempo 7 Días",
-    "weatherNote": "Los datos del pronóstico son aproximados. Las condiciones reales pueden variar.",
-    "tideMoonInfo": "Mareas y Fase Lunar",
-    "moonPhase": "Fase Lunar",
-    "nextHighTide": "Próxima Marea Alta",
-    "height": "Altura",
-    "tideNote": "La información de mareas es aproximada. Consulte las cartas náuticas locales para la navegación.",
-    "highlights": "Destacados y Atracciones",
-    "highlightsDescription": "Descubre los lugares imprescindibles",
-    "readyToExplore": "¿Listo para Explorar?",
-    "viewFleet": "Ver Nuestra Flota",
-    "getQuote": "Solicitar Presupuesto",
-    "sailingTips": "Consejos de Navegación",
-    "localInsights": "Conocimiento Local",
-    "readyToExploreDescription": "Descubra {destination} a bordo de uno de nuestros yates de lujo. Tripulación profesional, cocina gourmet y recuerdos inolvidables le esperan.",
-    "sailingTipsPlaceholder": "Consejos expertos de navegación estarán disponibles pronto.",
-    "viewDetails": "Ver Detalles",
-    "discoverMore": "Descubrir Más",
-    "viewAll": "Ver Todos los Destinos",
-    "exploreRoutes": "Explorar Rutas",
-    "boatAccessOnly": "Solo Acceso en Barco",
-    "ibiza": {
-      "title": "Ibiza",
-      "description": "Experimenta la vibrante vida nocturna y las playas pristinas de Ibiza. Descubre calas ocultas y disfruta de las legendarias puestas de sol de la isla."
-    },
-    "formentera": {
-      "title": "Formentera",
-      "description": "Aguas cristalinas y playas vírgenes te esperan en Formentera. Un paraíso para los entusiastas de los deportes acuáticos y los buscadores de relajación."
-    },
-    "mallorca": {
-      "title": "Mallorca",
-      "description": "Explora la impresionante costa de Mallorca, desde acantilados dramáticos hasta bahías apartadas. La rica cultura se encuentra con la belleza natural."
-    },
-    "menorca": {
-      "title": "Menorca",
-      "description": "Descubre la Reserva de la Biosfera UNESCO de Menorca, playas pristinas y encantadores pueblos pesqueros."
-    },
-    "costaBlanca": {
-      "title": "Costa Blanca",
-      "description": "La soleada Costa Blanca ofrece playas doradas, puertos deportivos vibrantes y encantadores pueblos costeros a lo largo de la costa este de España."
-    },
-    "backToHome": "Volver al Inicio",
-    "allDestinations": "Todos los Destinos",
-    "allDestinationsSubtitle": "Explora todos nuestros impresionantes destinos del Mediterráneo",
-    "ctaDescription": "Experimenta la magia del Mediterráneo a bordo de uno de nuestros yates de lujo."
-  },
-  "culinary": {
-    "title": "Excelencia Culinaria",
-    "subtitle": "Disfruta de experiencias gastronómicas de clase mundial"
-  },
-  "crew": {
-    "title": "Tripulación Experta",
-    "subtitle": "Conoce a nuestro equipo profesional dedicado a tu comodidad"
   },
   "reviews": {
     "title": "Lo Que Dicen Nuestros Huéspedes",
-    "subtitle": "Escucha a quienes han experimentado el lujo de nuestros alquileres"
+    "subtitle": "Escuche a quienes han experimentado el lujo de nuestros chárteres"
   },
   "mission": {
     "title": "Nuestra Misión",
-    "text": "Combinar el chárter de lujo con una logística precisa. Garantizamos un entorno de alta gama con tripulación profesional y cocina gourmet.",
-    "cards": {
-      "logistics": {
-        "title": "Logística Precisa",
-        "description": "Combinamos el chárter de lujo con una logística precisa para garantizar experiencias sin problemas."
-      },
-      "crew": {
-        "title": "Tripulación Profesional",
-        "description": "Garantizamos un entorno seguro y de alta gama con nuestra tripulación profesional experimentada y dedicada."
-      },
-      "gourmet": {
-        "title": "Excelencia Gourmet",
-        "description": "Disfrute de la cocina gourmet elaborada por nuestros chefs expertos, elevando su experiencia de alquiler."
-      }
-    }
+    "backToTop": "Volver Arriba"
   },
   "footer": {
-    "about": "Acerca de",
-    "fleet": "Flota",
-    "destinations": "Destinos",
-    "contact": "Contacto",
-    "rights": "Todos los derechos reservados",
-    "tagline": "Su destino principal para alquileres de yates de lujo en el Mediterráneo.",
+    "tagline": "Su destino principal para el alquiler de yates de lujo en el Mediterráneo.",
     "followUs": "Síguenos",
+    "rights": "Todos los derechos reservados",
     "legal": "Aviso Legal",
     "privacy": "Política de Privacidad",
     "cookies": "Política de Cookies",
     "terms": "Términos y Condiciones"
-  },
-  "metadata": {
-    "title": "Alquiler de Yates de Lujo en Mallorca y Costa Blanca | Wide Dream",
-    "description": "Descubra las Islas Baleares a bordo de un yate privado. Alquiler de barcos en Mallorca e Ibiza con tripulación profesional. ¡Reserve su aventura hoy!"
-  },
-  "trust": {
-    "verified": "Chárter Verificado",
-    "insured": "Seguro a Todo Riesgo",
-    "crew": "Tripulación Profesional",
-    "experts": "Expertos Locales",
-    "bookings": "5 reservas esta semana",
-    "rating": "4.9/5 Valoración",
-    "secret_bays": "Acceso a Calas Exclusivas"
-  },
-  "contact": {
-    "title": "Contáctanos",
-    "subtitle": "Ponte en contacto con nuestro equipo para tu experiencia de alquiler de lujo",
-    "whatsapp": "WhatsApp",
-    "availability": "Disponible 24/7 para tus consultas de alquiler",
-    "locations": "Ibiza, Palma y Torrevieja, España",
-    "phone": "+34 680 957 096",
-    "email": "peter.sutter@gmail.com",
-    "phoneLabel": "Llámanos",
-    "emailLabel": "Escríbenos",
-    "locationLabel": "Nuestras Ubicaciones",
-    "formTitle": "Envíanos un Mensaje",
-    "formName": "Nombre Completo",
-    "formEmail": "Correo Electrónico",
-    "formPhone": "Teléfono",
-    "formMessage": "Mensaje",
-    "sendMessage": "Enviar Mensaje",
-    "sending": "Enviando...",
-    "successTitle": "¡Gracias!",
-    "successMessage": "Nuestro equipo preparará su oferta personalizada y se pondrá en contacto con usted en las próximas 24 horas.",
-    "returnToFleet": "Volver a la Flota",
-    "errorTitle": "Error al Enviar",
-    "errorRetryMessage": "Hubo un problema al enviar su solicitud. Por favor, inténtelo de nuevo o contáctenos directamente por WhatsApp.",
-    "tryAgain": "Intentar de Nuevo",
-    "contactWhatsApp": "Contactar por WhatsApp",
-    "backToHome": "Volver al Inicio",
-    "errorMessage": "Error al enviar el mensaje. Por favor, inténtalo de nuevo."
-  },
-  "legal": {
-    "title": "Aviso Legal",
-    "lastUpdated": "Última actualización:",
-    "metaDescription": "Información legal y detalles de cumplimiento para los servicios de alquiler de yates de Fabula Marítima SL.",
-    "companyInfo": {
-      "title": "Información de la Empresa",
-      "entity": "Entidad",
-      "cif": "CIF",
-      "form": "Forma Legal",
-      "formValue": "Sociedad Limitada (España)",
-      "contact": "Información de Contacto",
-      "operatingAreas": "Áreas de Operación",
-      "operatingAreasValue": "Islas Baleares (Ibiza, Formentera, Palma de Mallorca) y Costa Blanca (Torrevieja)"
-    },
-    "maritime": {
-      "title": "Licencias Marítimas y Cumplimiento",
-      "compliance": "Fabula Marítima SL cumple con las Regulaciones Marítimas Españolas (Lista 6ª) y mantiene todas las licencias requeridas para operaciones de alquiler comercial.",
-      "requirements": "Para la temporada 2025/2026, operamos en pleno cumplimiento con los requisitos de uso de la Bandera Internacional 'H' (Hotel) y mantenemos registros completos de pasajeros según lo exigido por las autoridades marítimas españolas.",
-      "standards": "Todas las embarcaciones de nuestra flota cumplen y superan los estándares de seguridad establecidos por la Dirección General de la Marina Mercante (DGMM)."
-    },
-    "business": {
-      "title": "Actividad Comercial",
-      "role": "Fabula Marítima SL opera como proveedor de servicios de alquiler, ofreciendo alquileres de catamaranes, excursiones de día y eventos corporativos en las Islas Baleares y la región de Costa Blanca.",
-      "responsibility": "Somos responsables del mantenimiento de las embarcaciones, gestión de tripulación profesional, cobertura de seguros integral y todos los aspectos de gestión de reservas y atención al cliente."
-    },
-    "insurance": {
-      "title": "Seguros y Responsabilidad",
-      "coverage": "Nuestra cobertura de seguros integral incluye:",
-      "liability": "Seguro de responsabilidad civil a terceros",
-      "passenger": "Cobertura de lesiones y accidentes de pasajeros",
-      "vessel": "Protección por daños y pérdida de embarcación",
-      "indemnity": "Seguro de responsabilidad civil profesional",
-      "claims": "Todas las reclamaciones se gestionan de acuerdo con la ley marítima española y las regulaciones de la UE. Para información detallada sobre cobertura y procedimientos de reclamación, contáctenos directamente."
-    },
-    "ip": {
-      "title": "Propiedad Intelectual",
-      "content": "Todo el contenido de este sitio web, incluyendo pero no limitado a diseño, fotografías, texto, logotipos y marca, es propiedad exclusiva de Fabula Marítima SL. El uso, reproducción o distribución no autorizada de cualquier contenido está estrictamente prohibido y puede resultar en acciones legales."
-    },
-    "footer": {
-      "title": "Contacto Rápido"
-    },
-    "backToHome": "Volver al Inicio"
-  },
-  "privacy": {
-    "title": "Política de Privacidad",
-    "lastUpdated": "Última actualización:",
-    "metaDescription": "Política de privacidad e información sobre protección de datos para los servicios de alquiler de yates de Fabula Marítima SL.",
-    "dataController": {
-      "title": "Responsable del Tratamiento",
-      "entity": "Entidad",
-      "cif": "CIF",
-      "email": "Correo Electrónico"
-    },
-    "dataCollection": {
-      "title": "Recopilación de Datos",
-      "description": "Recopilamos información proporcionada a través de formularios de reserva y solicitudes de contacto:",
-      "name": "Nombre",
-      "email": "Dirección de correo electrónico",
-      "phone": "Número de teléfono",
-      "identification": "Documentos de identificación (para contratos de alquiler)"
-    },
-    "purpose": {
-      "title": "Finalidad del Tratamiento de Datos",
-      "description": "Sus datos personales se procesan para las siguientes finalidades:",
-      "bookings": "Gestionar reservas y alquileres de embarcaciones",
-      "payments": "Procesar pagos y facturación",
-      "support": "Prestar atención al cliente y responder a consultas"
-    },
-    "retention": {
-      "title": "Conservación de Datos",
-      "description": "Los datos se conservan durante el tiempo necesario para la prestación del servicio y para cumplir con las obligaciones fiscales legales en España. Después de este período, los datos se eliminarán de forma segura."
-    },
-    "rights": {
-      "title": "Sus Derechos",
-      "description": "Bajo el Reglamento General de Protección de Datos (RGPD), usted tiene los siguientes derechos:",
-      "access": "Derecho de acceso: Solicitar información sobre sus datos personales",
-      "rectification": "Derecho de rectificación: Corregir datos inexactos o incompletos",
-      "erasure": "Derecho de supresión: Solicitar la eliminación de sus datos",
-      "portability": "Derecho de portabilidad: Recibir sus datos en un formato estructurado",
-      "contact": "Para ejercer estos derechos, contáctenos en:"
-    },
-    "security": {
-      "title": "Seguridad de los Datos",
-      "description": "Implementamos cifrado SSL y alojamiento seguro (Vercel) para proteger sus datos. Toda la transmisión de datos está cifrada, y seguimos las mejores prácticas de la industria para garantizar la seguridad de su información personal."
-    },
-    "backToHome": "Volver al Inicio"
-  },
-  "cookies": {
-    "title": "Política de Cookies",
-    "lastUpdated": "Última actualización:",
-    "metaDescription": "Información sobre cookies y tecnologías de seguimiento utilizadas en el sitio web de Fabula Marítima SL.",
-    "whatAre": {
-      "title": "¿Qué son las Cookies?",
-      "description": "Las cookies son pequeños archivos de texto almacenados en su dispositivo (ordenador, tableta o móvil) cuando visita nuestro sitio web. Ayudan a mejorar su experiencia de usuario recordando sus preferencias y permitiendo ciertas funciones del sitio web."
-    },
-    "types": {
-      "title": "Tipos de Cookies que Utilizamos",
-      "essential": {
-        "title": "Cookies Esenciales/Técnicas",
-        "description": "Estas cookies son necesarias para la navegación y seguridad del sitio web. Permiten funciones básicas como la navegación por páginas y el acceso a áreas seguras del sitio web. El sitio web no puede funcionar correctamente sin estas cookies."
-      },
-      "analytical": {
-        "title": "Cookies Analíticas",
-        "description": "Utilizamos cookies analíticas (por ejemplo, Google Analytics) para medir el tráfico del sitio web y comprender cómo los visitantes interactúan con nuestro sitio. Esto nos ayuda a mejorar nuestros servicios de alquiler y la experiencia del usuario. Estas cookies recopilan datos anónimos y agregados."
-      }
-    },
-    "managing": {
-      "title": "Gestión de Cookies",
-      "description": "Puede bloquear o eliminar cookies a través de la configuración de su navegador. Aquí le mostramos cómo gestionar las cookies en navegadores populares:",
-      "chrome": "Google Chrome: Configuración > Privacidad y seguridad > Cookies y otros datos de sitios",
-      "safari": "Safari: Preferencias > Privacidad > Cookies y datos de sitios web",
-      "firefox": "Mozilla Firefox: Opciones > Privacidad y Seguridad > Cookies y Datos del Sitio"
-    },
-    "consent": {
-      "title": "Consentimiento",
-      "description": "Al continuar navegando por nuestro sitio web, acepta el uso de cookies esenciales necesarias para el funcionamiento del sitio web. Para las cookies analíticas, solicitaremos su consentimiento explícito cuando lo requiera la ley."
-    },
-    "backToHome": "Volver al Inicio"
-  },
-  "terms": {
-    "title": "Términos y Condiciones",
-    "lastUpdated": "Última actualización:",
-    "metaDescription": "Términos y condiciones para los servicios de alquiler de yates proporcionados por Fabula Marítima SL. Políticas de reserva, pago, cancelación y seguridad.",
-    "provider": {
-      "title": "Información del Proveedor de Charter",
-      "entity": "Entidad",
-      "cif": "CIF",
-      "form": "Forma Legal",
-      "formValue": "Sociedad Limitada (España)",
-      "description": "Fabula Marítima SL opera como proveedor profesional de servicios de alquiler de yates en las Islas Baleares (Ibiza, Formentera, Palma de Mallorca) y la región de Costa Blanca (Torrevieja). Nos especializamos en alquileres de catamaranes de lujo, excursiones de día y eventos corporativos."
-    },
-    "compliance": {
-      "title": "Cumplimiento Regulatorio 2026",
-      "flag": {
-        "title": "Bandera Internacional 'H' (Bandera Hotel)",
-        "description": "Desde agosto de 2025, todas las embarcaciones de alquiler comercial que operan en aguas españolas deben mostrar la Bandera Internacional 'H'. Esta bandera indica que la embarcación opera como servicio de alquiler comercial y cumple con las Regulaciones Marítimas Españolas (Lista 6ª).",
-        "note": "Todas las embarcaciones de nuestra flota cumplen plenamente con este requisito regulatorio de 2026."
-      },
-      "manifest": {
-        "title": "Manifiesto de Pasajeros y Libro de Registro Oficial",
-        "description": "De acuerdo con las regulaciones marítimas españolas de 2026, mantenemos un libro de registro oficial de pasajeros (Manifiesto de pasajeros) para todos los alquileres. Se requiere la siguiente información de cada pasajero:",
-        "id": "Documento de identificación válido (DNI o pasaporte)",
-        "nationality": "Nacionalidad",
-        "emergency": "Información de contacto de emergencia",
-        "note": "Esta información es obligatoria para la seguridad y el cumplimiento regulatorio. Todos los datos se manejan de acuerdo con nuestra Política de Privacidad."
-      }
-    },
-    "booking": {
-      "title": "Términos de Reserva y Pago",
-      "description": "Para asegurar su reserva de alquiler, se aplica el siguiente calendario de pagos:",
-      "deposit": {
-        "title": "Depósito Inicial (50%)",
-        "description": "Se requiere un depósito no reembolsable del 50% del costo total del alquiler para confirmar su reserva.",
-        "note": "Este depósito asegura sus fechas y embarcación seleccionadas."
-      },
-      "final": {
-        "title": "Pago Final (30 días antes de la salida)",
-        "description": "El saldo restante del 50% debe pagarse a más tardar 30 días antes de su fecha de salida programada.",
-        "note": "El incumplimiento del pago antes de esta fecha límite puede resultar en la cancelación de su reserva."
-      },
-      "paymentMethods": {
-        "title": "Métodos de Pago Aceptados",
-        "bank": "Transferencia bancaria (IBAN proporcionado tras la confirmación de la reserva)",
-        "card": "Tarjeta de crédito/débito (Visa, Mastercard)",
-        "transfer": "Transferencia bancaria (se aceptan transferencias internacionales)"
-      }
-    },
-    "cancellation": {
-      "title": "Política de Cancelación",
-      "description": "Los términos de cancelación varían según el período de aviso antes de su salida programada:",
-      "table": {
-        "period": "Período de Cancelación",
-        "refund": "Importe del Reembolso",
-        "more30": "Más de 30 días antes de la salida",
-        "full": "100% de reembolso (menos el depósito)",
-        "15to30": "15-30 días antes de la salida",
-        "half": "50% de reembolso",
-        "less15": "Menos de 15 días antes de la salida",
-        "none": "Sin reembolso"
-      },
-      "weather": {
-        "title": "Cancelaciones por Condiciones Meteorológicas",
-        "description": "En caso de condiciones meteorológicas severas que hagan insegura la navegación, el Capitán tiene la autoridad para cancelar o reprogramar el alquiler. En tales casos, se le ofrecerá un reembolso completo o la opción de reprogramar a fechas alternativas (sujeto a disponibilidad)."
-      }
-    },
-    "safety": {
-      "title": "Seguridad y Responsabilidad",
-      "description": "La seguridad de nuestros pasajeros y tripulación es nuestra máxima prioridad. Todas las embarcaciones de nuestra flota cumplen y superan los estándares de seguridad marítima españoles (cumplimiento DGMM).",
-      "responsibilities": {
-        "title": "Nuestras Responsabilidades",
-        "vessel": "Mantener las embarcaciones en excelente condición con todo el equipo de seguridad requerido",
-        "crew": "Proporcionar miembros de tripulación profesionales calificados y experimentados",
-        "insurance": "Cobertura de seguros integral (responsabilidad civil a terceros, lesiones de pasajeros, daños a la embarcación)",
-        "safety": "Cumplimiento de todas las regulaciones marítimas españolas y protocolos de seguridad"
-      },
-      "passenger": {
-        "title": "Responsabilidades del Pasajero",
-        "follow": "Seguir todas las instrucciones de seguridad proporcionadas por la tripulación",
-        "inform": "Informar a la tripulación sobre cualquier condición médica o requisitos especiales",
-        "respect": "Respetar la embarcación, el equipo y otros pasajeros"
-      },
-      "liability": {
-        "title": "Limitación de Responsabilidad",
-        "description": "Fabula Marítima SL no es responsable de lesiones personales o daños a la propiedad resultantes de negligencia del pasajero, incumplimiento de las instrucciones de la tripulación, o participación en actividades acuáticas. Todos los pasajeros participan en actividades acuáticas bajo su propio riesgo."
-      }
-    },
-    "backToHome": "Volver al Inicio"
-  },
-  "breadcrumb": {
-    "home": "Inicio",
-    "fleet": "Flota",
-    "discoverMore": "Descubre Más Sobre Nuestra Misión y Destinos",
-    "discoverMoreDescription": "Explora nuestra gama completa de servicios, conoce nuestra misión y descubre todos los destinos exclusivos que ofrecemos.",
-    "backToHome": "Volver a la Página Principal"
-  },
-  "about": {
-    "title": "Sobre Nosotros",
-    "subtitle": "Descubre el equipo detrás de tu experiencia de navegación de lujo en el Mediterráneo",
-    "metaTitle": "Sobre Nosotros | Balearic & Costa Blanca Charters",
-    "metaDescription": "Conoce a Fabula Marítima SL - tu socio de confianza para alquileres de yates de lujo en las Islas Baleares y Costa Blanca.",
-    "companyTitle": "Fabula Marítima SL",
-    "companyDescription": "Somos una empresa profesional de alquiler de yates especializada en experiencias de catamarán de lujo en las Islas Baleares y Costa Blanca. Nuestra misión es combinar la navegación premium con una logística precisa, garantizando que cada viaje sea seguro, cómodo e inolvidable.",
-    "areasTitle": "Nuestras Áreas de Operación",
-    "areasDescription": "Ofrecemos alquileres de yates exclusivos en los destinos más hermosos del Mediterráneo occidental.",
-    "ctaTitle": "¿Listo para Comenzar tu Aventura?",
-    "ctaDescription": "Contáctanos hoy para planificar tu experiencia de alquiler de lujo perfecta.",
-    "viewFleet": "Ver Nuestra Flota",
-    "backToHome": "Volver al Inicio"
   }
 }
