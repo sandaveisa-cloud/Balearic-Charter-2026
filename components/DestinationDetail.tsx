@@ -48,4 +48,103 @@ export default function DestinationDetail({ destination }: DestinationDetailProp
 
   useEffect(() => {
     const generateContentIfNeeded = async () => {
-      if (!destination.seasonal_
+      if (!destination.seasonal_data || Object.keys(destination.seasonal_data).length === 0) {
+        setIsGenerating(true)
+        try {
+          const response = await fetch('/api/generate-destination-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              destinationName: destination.name || destination.title,
+              locale,
+              region: destination.region,
+            }),
+          })
+          if (response.ok) {
+            const data = await response.json()
+            if (data.success) setGeneratedContent(data.content)
+          }
+        } catch (error) {
+          console.error('Error generating content:', error)
+        } finally {
+          setIsGenerating(false)
+        }
+      }
+    }
+    generateContentIfNeeded()
+  }, [destination, locale])
+
+  const getLocalizedDescription = (dest: Destination): string => {
+    switch (locale) {
+      case 'es': return dest.description_es || dest.description || ''
+      case 'de': return dest.description_de || dest.description || ''
+      default: return dest.description_en || dest.description || ''
+    }
+  }
+
+  const destinationName = destination.name || destination.title || 'Destination'
+  const description = getLocalizedDescription(destination)
+  const imageUrl = (destination.image_urls && destination.image_urls[0]) || null
+  const optimizedImageUrl = imageUrl ? getOptimizedImageUrl(imageUrl, { width: 1920, quality: 85 }) : null
+  const youtubeVideoId = destination.youtube_video_url ? extractYouTubeId(destination.youtube_video_url) : null
+  const destinationSlug = destination.slug || destination.id
+  const coordinates = getDestinationCoordinates(destination)
+  
+  const displayHighlights = (destination as any).highlights_data || generatedContent?.highlights || null
+  const galleryImages = (destination as any).gallery_images || null
+
+  return (
+    <article className="min-h-screen bg-white">
+      <header className="relative h-[50vh] md:h-[65vh] w-full overflow-hidden bg-luxury-blue">
+        {optimizedImageUrl ? (
+          <OptimizedImage src={optimizedImageUrl} alt={destinationName} fill priority className="object-cover" />
+        ) : (
+          <div className="absolute inset-0 bg-slate-200 flex items-center justify-center">
+            <MapPin className="w-20 h-20 text-slate-400" />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+        <div className="absolute top-6 left-6 z-20">
+          <Link href="/" className="inline-flex items-center gap-2 px-5 py-2 bg-white/10 backdrop-blur-md text-white rounded-full border border-white/20 hover:bg-white/20 transition-all">
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-medium">Back</span>
+          </Link>
+        </div>
+        <div className="absolute inset-x-0 bottom-0 pb-12">
+          <div className="container mx-auto px-4">
+            <h1 className="font-serif text-5xl md:text-7xl font-bold text-white mb-4">{destinationName}</h1>
+            <div className="flex gap-4">
+              <Link href="/" className="px-8 py-3 bg-luxury-gold text-luxury-blue font-bold rounded-lg shadow-lg">
+                {t('viewFleet')}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-2 space-y-16">
+            <section className="prose prose-lg max-w-none">
+              <h2 className="font-serif text-3xl text-luxury-blue">About {destinationName}</h2>
+              <p className="text-slate-700 whitespace-pre-line leading-relaxed">{description}</p>
+            </section>
+
+            {destination.seasonal_data && (
+              <SailingCalendarWidget seasonalData={destination.seasonal_data} destinationName={destinationName} />
+            )}
+            
+            <WeatherForecast latitude={coordinates?.lat} longitude={coordinates?.lng} />
+
+            {youtubeVideoId && (
+              <div className="aspect-video rounded-2xl overflow-hidden shadow-xl bg-slate-900">
+                <iframe src={buildYouTubeEmbedUrl(youtubeVideoId, { autoplay: false })} className="w-full h-full border-0" allowFullScreen />
+              </div>
+            )}
+
+            <HighlightsGallery highlights={displayHighlights} destinationName={destinationName} locale={locale} />
+
+            {galleryImages && (
+              <section className="space-y-6">
+                <h2 className="font-serif text-3xl font-bold text-luxury-blue">{t('happyGuests')}</h2>
+                <HappyGuestsGallery images={gallery
