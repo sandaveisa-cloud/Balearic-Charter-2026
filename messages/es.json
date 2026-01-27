@@ -147,10 +147,34 @@
   "about": {
     "title": "Sobre Nosotros",
     "subtitle": "Pasión por el mar",
-    "mission": "Nuestra misión es proporcionar experiencias inolvidables."
+    "mission": "Nuestra misión es proporcionar experiencias inolvidables.",
+    "companyTitle": "Nuestra Empresa",
+    "companyDescription": "Wide Dream se dedica a proporcionar la mejor experiencia de alquiler de yates de lujo en las Islas Baleares.",
+    "areasTitle": "Áreas de Navegación",
+    "areasDescription": "Operamos principalmente en las impresionantes aguas de Mallorca, Ibiza y Formentera.",
+    "ctaTitle": "¿Listo para una Aventura?",
+    "ctaDescription": "Únete a nosotros a bordo para las vacaciones de tu vida.",
+    "viewFleet": "Ver Nuestra Flota",
+    "backToHome": "Volver al Inicio",
+    "metaTitle": "Sobre Nosotros - Wide Dream",
+    "metaDescription": "Conozca Wide Dream, nuestra misión y nuestros servicios de chárter de yates de lujo."
   },
   "mission": {
-     "title": "Nuestra Misión"
+    "title": "Nuestra Misión",
+    "cards": {
+      "logistics": {
+        "title": "Logística Experta",
+        "description": "Nos encargamos de cada detalle de su viaje, desde la planificación del itinerario hasta el aprovisionamiento."
+      },
+      "crew": {
+        "title": "Tripulación Profesional",
+        "description": "Nuestros capitanes y azafatas tienen mucha experiencia y están dedicados a su seguridad."
+      },
+      "gourmet": {
+        "title": "Experiencia Gourmet",
+        "description": "Disfrute de una deliciosa cocina local preparada a bordo, adaptada a sus preferencias."
+      }
+    }
   },
   "legal": {
     "title": "Aviso Legal",
@@ -212,7 +236,7 @@
       "name": "Nombre Completo",
       "email": "Correo Electrónico",
       "phone": "Número de Teléfono",
-      "identification": "Pasaporte/DNI (para contratos de chárter)"
+      "identification": "Pasaporte/DNI"
     },
     "purpose": {
       "title": "Finalidad del Tratamiento",

@@ -147,10 +147,34 @@
   "about": {
     "title": "Über Uns",
     "subtitle": "Leidenschaft für das Meer",
-    "mission": "Unsere Mission ist es, unvergessliche Erlebnisse zu bieten."
+    "mission": "Unsere Mission ist es, unvergessliche Erlebnisse zu bieten.",
+    "companyTitle": "Unser Unternehmen",
+    "companyDescription": "Wide Dream widmet sich dem ultimativen Luxus-Yachtcharter-Erlebnis auf den Balearen.",
+    "areasTitle": "Segelreviere",
+    "areasDescription": "Wir operieren hauptsächlich in den atemberaubenden Gewässern von Mallorca, Ibiza und Formentera.",
+    "ctaTitle": "Bereit für ein Abenteuer?",
+    "ctaDescription": "Kommen Sie an Bord für den Urlaub Ihres Lebens.",
+    "viewFleet": "Flotte ansehen",
+    "backToHome": "Zurück zur Startseite",
+    "metaTitle": "Über Uns - Wide Dream",
+    "metaDescription": "Erfahren Sie mehr über Wide Dream, unsere Mission und unsere Luxus-Yachtcharter-Dienste."
   },
   "mission": {
-     "title": "Unsere Mission"
+    "title": "Unsere Mission",
+    "cards": {
+      "logistics": {
+        "title": "Experten-Logistik",
+        "description": "Wir kümmern uns um jedes Detail Ihrer Reise, von der Routenplanung bis zur Verpflegung."
+      },
+      "crew": {
+        "title": "Profi-Crew",
+        "description": "Unsere Kapitäne und Hostessen sind sehr erfahren und sorgen für Ihre Sicherheit."
+      },
+      "gourmet": {
+        "title": "Gourmet-Erlebnis",
+        "description": "Genießen Sie köstliche lokale Küche an Bord, angepasst an Ihre Wünsche."
+      }
+    }
   },
   "legal": {
     "title": "Impressum",
@@ -212,7 +236,7 @@
       "name": "Vollständiger Name",
       "email": "E-Mail-Adresse",
       "phone": "Telefonnummer",
-      "identification": "Reisepass/Ausweis (für Charterverträge)"
+      "identification": "Reisepass/Ausweis"
     },
     "purpose": {
       "title": "Zweck der Verarbeitung",

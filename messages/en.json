@@ -147,10 +147,34 @@
   "about": {
     "title": "About Us",
     "subtitle": "Passion for the sea",
-    "mission": "Our mission is to provide unforgettable experiences."
+    "mission": "Our mission is to provide unforgettable experiences.",
+    "companyTitle": "Our Company",
+    "companyDescription": "Wide Dream is dedicated to providing the ultimate luxury yacht charter experience in the Balearic Islands. Our fleet is meticulously maintained and our crew is handpicked to ensure your safety and comfort.",
+    "areasTitle": "Sailing Areas",
+    "areasDescription": "We operate primarily in the stunning waters of Mallorca, Ibiza, and Formentera, offering you access to hidden coves and pristine beaches.",
+    "ctaTitle": "Ready for an Adventure?",
+    "ctaDescription": "Join us on board for the holiday of a lifetime.",
+    "viewFleet": "View Our Fleet",
+    "backToHome": "Back to Home",
+    "metaTitle": "About Us - Wide Dream",
+    "metaDescription": "Learn about Wide Dream, our mission, and our luxury yacht charter services in Spain."
   },
   "mission": {
-     "title": "Our Mission"
+    "title": "Our Mission",
+    "cards": {
+      "logistics": {
+        "title": "Expert Logistics",
+        "description": "We handle every detail of your journey, from itinerary planning to provisioning, ensuring a stress-free experience."
+      },
+      "crew": {
+        "title": "Professional Crew",
+        "description": "Our captains and hostesses are highly experienced, multilingual, and dedicated to your safety and enjoyment."
+      },
+      "gourmet": {
+        "title": "Gourmet Experience",
+        "description": "Indulge in delicious local cuisine prepared onboard, tailored to your dietary preferences."
+      }
+    }
   },
   "legal": {
     "title": "Legal Notice",
