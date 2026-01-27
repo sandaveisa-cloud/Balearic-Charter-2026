@@ -1,4 +1,35 @@
 {
+  "breadcrumb": {
+    "home": "Home",
+    "fleet": "Our Fleet",
+    "backTo": "Back to",
+    "backToHome": "Back to Home"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch to plan your perfect journey.",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "whatsapp": "WhatsApp",
+    "availability": "Available 24/7",
+    "formTitle": "Send us a Message",
+    "formName": "Full Name",
+    "formEmail": "Email Address",
+    "formPhone": "Phone Number",
+    "formMessage": "Your Message",
+    "sendMessage": "Send Message",
+    "locationLabel": "Our Locations",
+    "backToHome": "Back to Home"
+  },
+  "trust": {
+    "verified": "Verified Yacht",
+    "insured": "Fully Insured",
+    "crew": "Professional Crew",
+    "experts": "Local Experts",
+    "bookings": "Secure Booking",
+    "rating": "Top Rated",
+    "secret_bays": "Secret Bays Access"
+  },
   "hero": {
     "cta": "Explore Our Fleet"
   },
@@ -7,7 +38,14 @@
     "subtitle": "Discover our collection of world-class yachts",
     "perDay": "/ day",
     "viewDetails": "View Details",
-    "getQuote": "Get a Quote"
+    "getQuote": "Get a Quote",
+    "technicalSpecs": "Technical Specifications",
+    "selectDates": "Select Dates",
+    "quoteFormDescription": "Fill out the form below to receive a personalized offer.",
+    "extras": {
+      "sup": "Paddle Board",
+      "snorkel": "Snorkeling Gear"
+    }
   },
   "destinations": {
     "title": "Exclusive Destinations",
@@ -52,6 +90,7 @@
     "legal": "Legal Notice",
     "privacy": "Privacy Policy",
     "cookies": "Cookies Policy",
-    "terms": "Terms & Conditions"
+    "terms": "Terms & Conditions",
+    "rights": "All rights reserved."
   }
 }

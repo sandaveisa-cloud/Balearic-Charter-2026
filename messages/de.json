@@ -1,4 +1,35 @@
 {
+  "breadcrumb": {
+    "home": "Startseite",
+    "fleet": "Unsere Flotte",
+    "backTo": "Zurück zu",
+    "backToHome": "Zurück zur Startseite"
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "subtitle": "Kontaktieren Sie uns für Ihr perfektes Yachterlebnis.",
+    "phoneLabel": "Telefon",
+    "emailLabel": "E-Mail",
+    "whatsapp": "WhatsApp",
+    "availability": "24/7 Verfügbar",
+    "formTitle": "Nachricht Senden",
+    "formName": "Vollständiger Name",
+    "formEmail": "E-Mail-Adresse",
+    "formPhone": "Telefonnummer",
+    "formMessage": "Ihre Nachricht",
+    "sendMessage": "Absenden",
+    "locationLabel": "Unsere Standorte",
+    "backToHome": "Zurück zur Startseite"
+  },
+  "trust": {
+    "verified": "Verifizierte Yacht",
+    "insured": "Voll Versichert",
+    "crew": "Profi-Crew",
+    "experts": "Lokale Experten",
+    "bookings": "Sichere Buchung",
+    "rating": "Bestbewertet",
+    "secret_bays": "Geheime Buchten"
+  },
   "hero": {
     "cta": "Unsere Flotte erkunden"
   },
@@ -7,7 +38,14 @@
     "subtitle": "Entdecken Sie unsere Kollektion erstklassiger Yachten",
     "perDay": "/ Tag",
     "viewDetails": "Details anzeigen",
-    "getQuote": "Angebot anfordern"
+    "getQuote": "Angebot anfordern",
+    "technicalSpecs": "Technische Daten",
+    "selectDates": "Daten Auswählen",
+    "quoteFormDescription": "Füllen Sie das Formular aus, um ein Angebot zu erhalten.",
+    "extras": {
+      "sup": "Stand Up Paddle",
+      "snorkel": "Schnorchelausrüstung"
+    }
   },
   "destinations": {
     "title": "Exklusive Reiseziele",
@@ -29,7 +67,7 @@
     "location": "Standort",
     "quickInfo": "Schnellinfo",
     "happyGuests": "Zufriedene Gäste",
-    "happyGuestsDescription": "Schließen Sie sich hunderten zufriedenen Reisenden an.",
+    "happyGuestsDescription": "Echte Momente von unseren Luxus-Chartern.",
     "joinOurGuests": "Werden Sie Teil unserer Gemeinschaft von Meeresliebhabern",
     "seasons": {
       "spring": "Frühling",
@@ -52,6 +90,7 @@
     "legal": "Impressum",
     "privacy": "Datenschutz",
     "cookies": "Cookie-Richtlinie",
-    "terms": "AGB"
+    "terms": "AGB",
+    "rights": "Alle Rechte vorbehalten."
   }
 }

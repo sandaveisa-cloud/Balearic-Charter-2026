@@ -1,0 +1,57 @@
+# Project Structure & Context Map for AI
+
+## 📂 Core Directories
+* **src/app/[locale]/**: Main application routes (Next.js App Router). Handles i18n.
+* **components/**: Reusable UI components (Client & Server components).
+* **lib/**: Utility functions, data fetching, and hooks.
+* **supabase/**: Database migrations and SQL snippets.
+* **messages/**: Translation JSON files (en, es, de).
+* **public/**: Static assets (images, icons).
+
+## 🗺️ Key File Locations (Based on recent updates)
+
+### 1. Fleet & Yacht Logic (Booking System)
+* `src/app/[locale]/fleet/[slug]/page.tsx`: Yacht detail page (Server Component).
+* `components/FleetDetail.tsx`: Main yacht UI wrapper.
+* `components/AddOnSelector.tsx`: Booking extras (Skipper, Chef, etc.).
+* `components/BoatComparisonTable.tsx`: Compares Lagoon 400 S vs 450 F.
+* `components/SeasonalPriceCalculator.tsx`: Pricing logic based on dates.
+
+### 2. Destinations & Maps
+* `src/app/[locale]/destinations/[id]/page.tsx`: Dynamic destination routes.
+* `components/DestinationDetail.tsx`: Destination UI with weather/sailing info.
+* `components/InteractiveDestinationsMap.tsx` (or similar): Leaflet map integration.
+* `components/SailingCalendarWidget.tsx`: Best time to visit logic.
+
+### 3. Admin & CMS Features
+* `src/app/[locale]/admin/page.tsx`: Admin dashboard entry.
+* `components/SortableImageGallery.tsx`: Drag-and-drop image reordering.
+* `components/DragDropImageUpload.tsx`: Image upload with optimization.
+* `app/api/generate-destination-content/route.ts`: Gemini AI content generation.
+* `app/api/admin/upload-image/route.ts`: RLS-bypassed image upload.
+
+### 4. Legal & Static Pages
+* `app/[locale]/legal/page.tsx`: Legal Notice.
+* `app/[locale]/privacy/page.tsx`: Privacy Policy.
+* `app/[locale]/cookies/page.tsx`: Cookies Policy.
+
+### 5. Configuration & Styling
+* `tailwind.config.js`: Theme colors and responsive breakpoints.
+* `app/globals.css`: CSS variables for the dynamic theme system.
+* `messages/en.json`: English translations (verified contact info).
+* `middleware.ts`: Internationalization routing logic.
+
+## 🛠️ Key Utilities
+* `lib/data.ts`: Functions like `getFleetBySlugs` and `getDestinationByIdOrSlug`.
+* `lib/imageUtils.ts`: Image URL optimization logic.
+* `lib/imageCompression.ts`: Client-side image compression.
+* `lib/hooks.ts`: Custom React hooks.
+
+## 💡 AI Interaction Guidelines (Cursor)
+1.  **Indexing**: If a file isn't found, check this `PROJECT_CONTEXT.md` first.
+2.  **@Codebase Usage**: When referencing specific features, use the paths defined above.
+    * *Example*: "Using logic from @components/FleetDetail.tsx..."
+3.  **Critical Paths**:
+    * **Server Components**: `src/app/[locale]/...`
+    * **UI Logic**: `components/...`
+    * **Data/Supabase**: `lib/data.ts` and `supabase/...`

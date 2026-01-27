@@ -1,14 +1,12 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
-import { format } from 'date-fns'
 import { useTranslations, useLocale } from 'next-intl'
-import { Ruler, Users, BedDouble, Bath, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles, Home, ChevronRight, Wind, ArrowLeft, TrendingUp, Sparkles as SparklesIcon, AirVent, Battery, ArrowRight } from 'lucide-react'
+import { Users, BedDouble, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles, Home, ChevronRight, Wind, ArrowLeft, TrendingUp, ArrowRight } from 'lucide-react'
 import type { Fleet } from '@/types/database'
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils'
-import { getFleetBySlugs, getFleetBySlug } from '@/lib/data'
+import { getFleetBySlugs } from '@/lib/data'
 import { getDescriptionForLocaleWithTextColumns } from '@/lib/i18nUtils'
 import BookingCalendar from './BookingCalendar'
 import BookingForm from './BookingForm'
@@ -16,10 +14,8 @@ import SeasonalPriceCalculator, { type PriceBreakdown } from './SeasonalPriceCal
 import AddOnSelector from './AddOnSelector'
 import BoatComparisonTable from './BoatComparisonTable'
 import OptimizedImage from './OptimizedImage'
-import StructuredData from './StructuredData'
 import SocialProof from './SocialProof'
-import TrustBar from './TrustBar'
-import { calculateEarlyBirdPrice, formatEarlyBirdDeadline, isEarlyBirdEligible } from '@/lib/earlyBirdDiscount'
+import { calculateEarlyBirdPrice, formatEarlyBirdDeadline } from '@/lib/earlyBirdDiscount'
 
 interface FleetDetailProps {
   yacht: Fleet
@@ -121,6 +117,7 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [priceBreakdown, setPriceBreakdown] = useState<PriceBreakdown | null>(null)
   const [addOnsTotal, setAddOnsTotal] = useState(0)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
   const [comparisonBoats, setComparisonBoats] = useState<Fleet[]>([])
   const [upsellYacht, setUpsellYacht] = useState<Fleet | null>(null)
@@ -339,13 +336,6 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
               </div>
             )}
 
-            {/* Navigation Arrows - Only show in grid view */}
-            {galleryView === 'grid' && allImages.length > 1 && (
-              <>
-                {/* Navigation arrows would go here if needed */}
-              </>
-            )}
-
             {/* Image Indicators - Only show in grid view */}
             {galleryView === 'grid' && allImages.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
@@ -537,15 +527,12 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Trust Bar - Full version for detail page */}
-            <TrustBar variant="full" />
-            
-            {/* Social Proof & Trust Block */}
+            {/* Social Proof & Trust Block (Remains as the single source of truth for trust badges) */}
             <SocialProof />
             
             {/* Description */}
             <section className="space-y-4">
-              <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-4">About {yacht.name}</h2>
+              <h2 className="font-serif text-3xl font-bold text-luxury-blue">About {yacht.name}</h2>
               
               {/* Ship-specific content from translations */}
               {shipTranslations ? (

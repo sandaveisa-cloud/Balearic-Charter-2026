@@ -1,4 +1,35 @@
 {
+  "breadcrumb": {
+    "home": "Inicio",
+    "fleet": "Nuestra Flota",
+    "backTo": "Volver a",
+    "backToHome": "Volver al Inicio"
+  },
+  "contact": {
+    "title": "Contáctanos",
+    "subtitle": "Ponte en contacto para planificar tu experiencia perfecta.",
+    "phoneLabel": "Teléfono",
+    "emailLabel": "Correo",
+    "whatsapp": "WhatsApp",
+    "availability": "Disponible 24/7",
+    "formTitle": "Envíanos un mensaje",
+    "formName": "Nombre Completo",
+    "formEmail": "Correo Electrónico",
+    "formPhone": "Número de Teléfono",
+    "formMessage": "Tu Mensaje",
+    "sendMessage": "Enviar Mensaje",
+    "locationLabel": "Nuestras Ubicaciones",
+    "backToHome": "Volver al Inicio"
+  },
+  "trust": {
+    "verified": "Verificado",
+    "insured": "Asegurado",
+    "crew": "Tripulación Pro",
+    "experts": "Expertos Locales",
+    "bookings": "Reserva Segura",
+    "rating": "Mejor Valorado",
+    "secret_bays": "Calas Secretas"
+  },
   "hero": {
     "cta": "Explora Nuestra Flota"
   },
@@ -7,7 +38,14 @@
     "subtitle": "Descubra nuestra colección de yates de clase mundial",
     "perDay": "/ día",
     "viewDetails": "Ver Detalles",
-    "getQuote": "Solicitar Presupuesto"
+    "getQuote": "Solicitar Presupuesto",
+    "technicalSpecs": "Especificaciones Técnicas",
+    "selectDates": "Seleccionar Fechas",
+    "quoteFormDescription": "Rellena el formulario para recibir una oferta personalizada.",
+    "extras": {
+      "sup": "Paddle Surf",
+      "snorkel": "Equipo de Snorkel"
+    }
   },
   "destinations": {
     "title": "Destinos Exclusivos",
@@ -52,6 +90,7 @@
     "legal": "Aviso Legal",
     "privacy": "Política de Privacidad",
     "cookies": "Política de Cookies",
-    "terms": "Términos y Condiciones"
+    "terms": "Términos y Condiciones",
+    "rights": "Todos los derechos reservados."
   }
 }
