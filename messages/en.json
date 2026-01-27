@@ -4,6 +4,11 @@
     "back": "Back",
     "loading": "Loading..."
   },
+  "metadata": {
+    "title": "Wide Dream - Luxury Yacht Charter",
+    "description": "Experience the ultimate luxury yacht charter in the Balearic Islands.",
+    "keywords": "yacht, charter, mallorca, ibiza, luxury"
+  },
   "navigation": {
     "home": "Home",
     "fleet": "The Fleet",
@@ -56,6 +61,10 @@
     "technicalSpecs": "Technical Specifications",
     "selectDates": "Select Dates",
     "quoteFormDescription": "Fill out the form below to receive a personalized offer.",
+    "ctaTitle": "Ready to book your dream vacation?",
+    "ctaDescription": "Contact us today to secure your dates.",
+    "exploreDestinations": "Explore Destinations",
+    "backToHome": "Back to Home",
     "extras": {
       "sup": "Paddle Board",
       "snorkel": "Snorkeling Gear",
@@ -92,6 +101,9 @@
   "destinations": {
     "title": "Exclusive Destinations",
     "subtitle": "Explore the Mediterranean's finest locations",
+    "allDestinations": "All Destinations",
+    "allDestinationsSubtitle": "Discover our sailing areas",
+    "ctaDescription": "Choose your next adventure.",
     "viewFleet": "View Our Fleet",
     "getQuote": "Get a Quote",
     "viewDetails": "View Details",
@@ -131,8 +143,17 @@
     "title": "What Our Guests Say",
     "subtitle": "Hear from those who have experienced the luxury of our charters"
   },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Passion for the sea",
+    "mission": "Our mission is to provide unforgettable experiences."
+  },
+  "mission": {
+     "title": "Our Mission"
+  },
   "legal": {
     "title": "Legal Notice",
+    "metaDescription": "Legal notice and company information for Wide Dream S.L.",
     "lastUpdated": "Last updated: January 2026",
     "backToHome": "Back to Home",
     "companyInfo": {
@@ -175,6 +196,7 @@
   },
   "privacy": {
     "title": "Privacy Policy",
+    "metaDescription": "Read our privacy policy to understand how we handle your data.",
     "lastUpdated": "Last updated: January 2026",
     "backToHome": "Back to Home",
     "dataController": {
@@ -219,6 +241,7 @@
   },
   "cookies": {
     "title": "Cookies Policy",
+    "metaDescription": "Information about how we use cookies on our website.",
     "lastUpdated": "Last updated: January 2026",
     "backToHome": "Back to Home",
     "intro": "We use cookies to improve your experience.",
@@ -251,9 +274,13 @@
   },
   "terms": {
     "title": "Terms & Conditions",
+    "metaDescription": "Terms and conditions for booking and chartering with Wide Dream.",
     "lastUpdated": "Last updated: January 2026",
     "backToHome": "Back to Home",
     "provider": {
+        "title": "Service Provider",
+        "entity": "Wide Dream S.L.",
+        "cif": "B-12345678",
         "form": "Legal Form",
         "formValue": "Sociedad Limitada",
         "description": "Service provider information."
