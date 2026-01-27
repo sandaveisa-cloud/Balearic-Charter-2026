@@ -130,6 +130,26 @@
       "earlyAutumn": "Frühherbst",
       "lateAutumn": "Spätherbst",
       "winter": "Winter"
+    },
+    "ibiza": {
+      "title": "Ibiza",
+      "description": "Erleben Sie weltberühmte Strandclubs und kristallklares türkisfarbenes Wasser."
+    },
+    "formentera": {
+      "title": "Formentera",
+      "description": "Entdecken Sie die Karibik des Mittelmeers mit unberührten weißen Sandstränden."
+    },
+    "mallorca": {
+      "title": "Mallorca",
+      "description": "Entdecken Sie versteckte Buchten, dramatische Berge und die lebendige Kultur von Palma."
+    },
+    "menorca": {
+      "title": "Menorca",
+      "description": "Genießen Sie die friedliche Atmosphäre und die unberührte Natur dieses Biosphärenreservats."
+    },
+    "costa-blanca": {
+      "title": "Costa Blanca",
+      "description": "Segeln Sie entlang der wunderschönen weißen Küste mit ihren atemberaubenden Klippen und klarem Wasser."
     }
   },
   "culinary": {
@@ -236,7 +256,7 @@
       "name": "Vollständiger Name",
       "email": "E-Mail-Adresse",
       "phone": "Telefonnummer",
-      "identification": "Reisepass/Ausweis"
+      "identification": "Reisepass/Ausweis (für Charterverträge)"
     },
     "purpose": {
       "title": "Zweck der Verarbeitung",

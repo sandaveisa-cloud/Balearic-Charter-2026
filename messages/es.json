@@ -130,6 +130,26 @@
       "earlyAutumn": "Otoño Temprano",
       "lateAutumn": "Otoño Tardío",
       "winter": "Invierno"
+    },
+    "ibiza": {
+      "title": "Ibiza",
+      "description": "Experimente los clubes de playa de fama mundial y las aguas turquesas cristalinas."
+    },
+    "formentera": {
+      "title": "Formentera",
+      "description": "Descubra el Caribe del Mediterráneo con playas vírgenes de arena blanca."
+    },
+    "mallorca": {
+      "title": "Mallorca",
+      "description": "Explore calas escondidas, montañas dramáticas y la vibrante cultura de Palma."
+    },
+    "menorca": {
+      "title": "Menorca",
+      "description": "Disfrute de la atmósfera tranquila y la belleza natural intacta de esta Reserva de la Biosfera."
+    },
+    "costa-blanca": {
+      "title": "Costa Blanca",
+      "description": "Navegue por la hermosa costa blanca con sus impresionantes acantilados y aguas claras."
     }
   },
   "culinary": {
