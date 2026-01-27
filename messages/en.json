@@ -126,6 +126,22 @@
     "title": "What Our Guests Say",
     "subtitle": "Hear from those who have experienced the luxury of our charters"
   },
+  "legal": {
+    "title": "Legal Notice",
+    "content": "Legal information goes here."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "content": "Privacy policy details go here."
+  },
+  "cookies": {
+    "title": "Cookies Policy",
+    "content": "Cookie usage details go here."
+  },
+  "terms": {
+    "title": "Terms & Conditions",
+    "content": "Terms and conditions go here."
+  },
   "footer": {
     "tagline": "Your premier destination for luxury yacht charters in the Mediterranean.",
     "followUs": "Follow Us",

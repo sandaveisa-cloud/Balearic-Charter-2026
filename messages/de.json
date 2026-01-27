@@ -126,6 +126,22 @@
     "title": "Was unsere Gäste sagen",
     "subtitle": "Hören Sie von denen, die den Luxus unserer Charter erlebt haben"
   },
+  "legal": {
+    "title": "Impressum",
+    "content": "Rechtliche Informationen hier."
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "content": "Datenschutzdetails hier."
+  },
+  "cookies": {
+    "title": "Cookie-Richtlinie",
+    "content": "Cookie-Nutzungsdetails hier."
+  },
+  "terms": {
+    "title": "Allgemeine Geschäftsbedingungen",
+    "content": "AGB hier."
+  },
   "footer": {
     "tagline": "Ihre erste Adresse für Luxusyacht-Charter im Mittelmeer.",
     "followUs": "Folgen Sie uns",

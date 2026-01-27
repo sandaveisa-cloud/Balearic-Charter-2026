@@ -126,6 +126,22 @@
     "title": "Lo que dicen nuestros huéspedes",
     "subtitle": "Escuche a quienes han experimentado el lujo de nuestros chárteres"
   },
+  "legal": {
+    "title": "Aviso Legal",
+    "content": "Información legal aquí."
+  },
+  "privacy": {
+    "title": "Política de Privacidad",
+    "content": "Detalles de la política de privacidad aquí."
+  },
+  "cookies": {
+    "title": "Política de Cookies",
+    "content": "Detalles sobre el uso de cookies aquí."
+  },
+  "terms": {
+    "title": "Términos y Condiciones",
+    "content": "Términos y condiciones aquí."
+  },
   "footer": {
     "tagline": "Su destino principal para alquiler de yates de lujo en el Mediterráneo.",
     "followUs": "Síguenos",
