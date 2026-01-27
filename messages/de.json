@@ -128,19 +128,120 @@
   },
   "legal": {
     "title": "Impressum",
-    "content": "Rechtliche Informationen hier."
+    "lastUpdated": "Zuletzt aktualisiert: Januar 2026",
+    "backToHome": "Zurück zur Startseite",
+    "companyInfo": {
+      "title": "Unternehmensinformationen",
+      "entity": "Rechtsträger:",
+      "cif": "Umsatzsteuer-ID:",
+      "form": "Rechtsform:",
+      "formValue": "Sociedad Limitada (S.L.)",
+      "contact": "Kontakt:",
+      "operatingAreas": "Einsatzgebiete:",
+      "operatingAreasValue": "Balearen & Costa Blanca"
+    },
+    "maritime": {
+      "title": "Maritime Compliance",
+      "compliance": "Schiffskonformität",
+      "requirements": "Alle Schiffe erfüllen die spanischen Sicherheitsanforderungen.",
+      "standards": "Sicherheitsausrüstungsprüfungen werden jährlich durchgeführt."
+    },
+    "business": {
+      "title": "Geschäftstätigkeit",
+      "role": "Charterbetreiber",
+      "responsibility": "Wir arbeiten als voll lizenzierte Chartergesellschaft."
+    },
+    "insurance": {
+      "title": "Versicherungsschutz",
+      "coverage": "Vollkaskoversicherung",
+      "liability": "Haftpflichtversicherung",
+      "passenger": "Insassenunfallversicherung",
+      "vessel": "Kasko & Maschinen",
+      "indemnity": "Berufshaftpflicht",
+      "claims": "Das Schadenbearbeitungsverfahren ist auf Anfrage erhältlich."
+    },
+    "ip": {
+      "title": "Geistiges Eigentum",
+      "content": "Alle Inhalte auf dieser Website sind urheberrechtlich geschützt."
+    },
+    "footer": {
+      "title": "Rechtliche Informationen"
+    }
   },
   "privacy": {
     "title": "Datenschutzerklärung",
-    "content": "Datenschutzdetails hier."
+    "lastUpdated": "Zuletzt aktualisiert: Januar 2026",
+    "backToHome": "Zurück zur Startseite",
+    "dataController": {
+      "title": "Datenverantwortlicher",
+      "entity": "Wide Dream S.L.",
+      "cif": "B-12345678",
+      "email": "privacy@widedream.es"
+    },
+    "dataCollection": {
+      "title": "Datenerhebung",
+      "description": "Wir erheben Informationen, die für die Charterdienste notwendig sind.",
+      "name": "Vollständiger Name",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefonnummer",
+      "identification": "Reisepass/Ausweis (für Charterverträge)"
+    },
+    "purpose": {
+      "title": "Zweck der Verarbeitung",
+      "description": "Ihre Daten werden verwendet für:",
+      "bookings": "Verwaltung von Buchungen und Verträgen",
+      "payments": "Zahlungsabwicklung",
+      "support": "Kundensupport-Kommunikation"
+    },
+    "retention": {
+      "title": "Datenspeicherung",
+      "description": "Wir speichern Daten für die gesetzlich vorgeschriebene Dauer."
+    },
+    "rights": {
+      "title": "Ihre Rechte",
+      "description": "Gemäß DSGVO haben Sie das Recht auf:",
+      "access": "Zugriff auf Ihre Daten",
+      "rectification": "Korrektur Ihrer Daten",
+      "erasure": "Löschung beantragen",
+      "portability": "Datenübertragbarkeit",
+      "contact": "Kontaktieren Sie uns zur Ausübung dieser Rechte."
+    },
+    "security": {
+      "title": "Sicherheitsmaßnahmen",
+      "description": "Wir implementieren branchenübliche Sicherheitsprotokolle."
+    }
   },
   "cookies": {
     "title": "Cookie-Richtlinie",
-    "content": "Cookie-Nutzungsdetails hier."
+    "lastUpdated": "Zuletzt aktualisiert: Januar 2026",
+    "backToHome": "Zurück zur Startseite",
+    "intro": "Wir verwenden Cookies, um Ihre Erfahrung zu verbessern.",
+    "types": {
+      "title": "Arten von Cookies",
+      "essential": "Essenzielle Cookies (erforderlich)",
+      "analytics": "Analyse-Cookies (zur Verbesserung der Seite)"
+    },
+    "management": {
+      "title": "Cookie-Verwaltung",
+      "description": "Sie können Ihre Cookie-Einstellungen in Ihrem Browser verwalten."
+    }
   },
   "terms": {
     "title": "Allgemeine Geschäftsbedingungen",
-    "content": "AGB hier."
+    "lastUpdated": "Zuletzt aktualisiert: Januar 2026",
+    "backToHome": "Zurück zur Startseite",
+    "booking": {
+      "title": "Buchungsbedingungen",
+      "content": "Eine Anzahlung ist erforderlich, um Ihre Buchung zu sichern."
+    },
+    "cancellation": {
+      "title": "Stornierungsbedingungen",
+      "content": "Stornierungen müssen schriftlich erfolgen."
+    },
+    "usage": {
+      "title": "Nutzung des Schiffes",
+      "content": "Das Schiff muss auf rechtmäßige Weise genutzt werden."
+    }
   },
   "footer": {
     "tagline": "Ihre erste Adresse für Luxusyacht-Charter im Mittelmeer.",

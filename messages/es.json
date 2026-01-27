@@ -128,19 +128,120 @@
   },
   "legal": {
     "title": "Aviso Legal",
-    "content": "Información legal aquí."
+    "lastUpdated": "Última actualización: Enero 2026",
+    "backToHome": "Volver al Inicio",
+    "companyInfo": {
+      "title": "Información de la Empresa",
+      "entity": "Entidad Legal:",
+      "cif": "NIF/CIF:",
+      "form": "Forma Jurídica:",
+      "formValue": "Sociedad Limitada (S.L.)",
+      "contact": "Contacto:",
+      "operatingAreas": "Áreas de Operación:",
+      "operatingAreasValue": "Islas Baleares y Costa Blanca"
+    },
+    "maritime": {
+      "title": "Cumplimiento Marítimo",
+      "compliance": "Cumplimiento de la Embarcación",
+      "requirements": "Todas las embarcaciones cumplen con los requisitos de seguridad marítima española.",
+      "standards": "Los controles de equipos de seguridad se realizan anualmente."
+    },
+    "business": {
+      "title": "Actividad Empresarial",
+      "role": "Operador de Chárter",
+      "responsibility": "Operamos como una empresa de chárter con licencia completa."
+    },
+    "insurance": {
+      "title": "Cobertura de Seguro",
+      "coverage": "Cobertura Integral Completa",
+      "liability": "Seguro de Responsabilidad Civil",
+      "passenger": "Seguro de Accidentes de Pasajeros",
+      "vessel": "Casco y Maquinaria",
+      "indemnity": "Indemnización Profesional",
+      "claims": "El procedimiento de gestión de reclamaciones está disponible bajo petición."
+    },
+    "ip": {
+      "title": "Propiedad Intelectual",
+      "content": "Todo el contenido de este sitio web está protegido por derechos de autor."
+    },
+    "footer": {
+      "title": "Información Legal"
+    }
   },
   "privacy": {
     "title": "Política de Privacidad",
-    "content": "Detalles de la política de privacidad aquí."
+    "lastUpdated": "Última actualización: Enero 2026",
+    "backToHome": "Volver al Inicio",
+    "dataController": {
+      "title": "Responsable del Tratamiento",
+      "entity": "Wide Dream S.L.",
+      "cif": "B-12345678",
+      "email": "privacy@widedream.es"
+    },
+    "dataCollection": {
+      "title": "Recopilación de Datos",
+      "description": "Recopilamos la información necesaria para prestar servicios de chárter.",
+      "name": "Nombre Completo",
+      "email": "Correo Electrónico",
+      "phone": "Número de Teléfono",
+      "identification": "Pasaporte/DNI (para contratos de chárter)"
+    },
+    "purpose": {
+      "title": "Finalidad del Tratamiento",
+      "description": "Sus datos se utilizan para:",
+      "bookings": "Gestión de reservas y contratos",
+      "payments": "Procesamiento de pagos",
+      "support": "Comunicación de soporte al cliente"
+    },
+    "retention": {
+      "title": "Conservación de Datos",
+      "description": "Conservamos los datos durante el tiempo exigido por la ley española."
+    },
+    "rights": {
+      "title": "Sus Derechos",
+      "description": "Según el RGPD, usted tiene derecho a:",
+      "access": "Acceder a sus datos",
+      "rectification": "Corregir sus datos",
+      "erasure": "Solicitar la eliminación",
+      "portability": "Portabilidad de datos",
+      "contact": "Contáctenos para ejercer estos derechos."
+    },
+    "security": {
+      "title": "Medidas de Seguridad",
+      "description": "Implementamos protocolos de seguridad estándar de la industria."
+    }
   },
   "cookies": {
     "title": "Política de Cookies",
-    "content": "Detalles sobre el uso de cookies aquí."
+    "lastUpdated": "Última actualización: Enero 2026",
+    "backToHome": "Volver al Inicio",
+    "intro": "Utilizamos cookies para mejorar su experiencia.",
+    "types": {
+      "title": "Tipos de Cookies",
+      "essential": "Cookies Esenciales (necesarias para el funcionamiento)",
+      "analytics": "Cookies Analíticas (para mejorar el sitio)"
+    },
+    "management": {
+      "title": "Gestión de Cookies",
+      "description": "Puede gestionar sus preferencias de cookies en la configuración de su navegador."
+    }
   },
   "terms": {
     "title": "Términos y Condiciones",
-    "content": "Términos y condiciones aquí."
+    "lastUpdated": "Última actualización: Enero 2026",
+    "backToHome": "Volver al Inicio",
+    "booking": {
+      "title": "Condiciones de Reserva",
+      "content": "Se requiere un depósito para asegurar su reserva."
+    },
+    "cancellation": {
+      "title": "Política de Cancelación",
+      "content": "Las cancelaciones deben realizarse por escrito."
+    },
+    "usage": {
+      "title": "Uso de la Embarcación",
+      "content": "La embarcación debe utilizarse de manera lícita."
+    }
   },
   "footer": {
     "tagline": "Su destino principal para alquiler de yates de lujo en el Mediterráneo.",

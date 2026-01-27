@@ -128,19 +128,120 @@
   },
   "legal": {
     "title": "Legal Notice",
-    "content": "Legal information goes here."
+    "lastUpdated": "Last updated: January 2026",
+    "backToHome": "Back to Home",
+    "companyInfo": {
+      "title": "Company Information",
+      "entity": "Legal Entity:",
+      "cif": "CIF/VAT ID:",
+      "form": "Legal Form:",
+      "formValue": "Sociedad Limitada (S.L.)",
+      "contact": "Contact:",
+      "operatingAreas": "Operating Areas:",
+      "operatingAreasValue": "Balearic Islands & Costa Blanca"
+    },
+    "maritime": {
+      "title": "Maritime Compliance",
+      "compliance": "Vessel Compliance",
+      "requirements": "All vessels meet Spanish maritime safety requirements.",
+      "standards": "Safety equipment checks are performed annually."
+    },
+    "business": {
+      "title": "Business Activity",
+      "role": "Charter Operator",
+      "responsibility": "We operate as a fully licensed charter company."
+    },
+    "insurance": {
+      "title": "Insurance Coverage",
+      "coverage": "Full Comprehensive Coverage",
+      "liability": "Public Liability Insurance",
+      "passenger": "Passenger Accident Insurance",
+      "vessel": "Vessel Hull & Machinery",
+      "indemnity": "Professional Indemnity",
+      "claims": "Claims handling procedure is available upon request."
+    },
+    "ip": {
+      "title": "Intellectual Property",
+      "content": "All content on this website is protected by copyright."
+    },
+    "footer": {
+      "title": "Legal Information"
+    }
   },
   "privacy": {
     "title": "Privacy Policy",
-    "content": "Privacy policy details go here."
+    "lastUpdated": "Last updated: January 2026",
+    "backToHome": "Back to Home",
+    "dataController": {
+      "title": "Data Controller",
+      "entity": "Wide Dream S.L.",
+      "cif": "B-12345678",
+      "email": "privacy@widedream.es"
+    },
+    "dataCollection": {
+      "title": "Data Collection",
+      "description": "We collect information necessary to provide charter services.",
+      "name": "Full Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "identification": "Passport/ID Documents (for charter contracts)"
+    },
+    "purpose": {
+      "title": "Purpose of Processing",
+      "description": "Your data is used for:",
+      "bookings": "Managing bookings and contracts",
+      "payments": "Processing payments",
+      "support": "Customer support communication"
+    },
+    "retention": {
+      "title": "Data Retention",
+      "description": "We retain data for the duration required by Spanish law."
+    },
+    "rights": {
+      "title": "Your Rights",
+      "description": "Under GDPR, you have the right to:",
+      "access": "Access your data",
+      "rectification": "Correct your data",
+      "erasure": "Request deletion",
+      "portability": "Data portability",
+      "contact": "Contact us to exercise these rights."
+    },
+    "security": {
+      "title": "Security Measures",
+      "description": "We implement industry-standard security protocols."
+    }
   },
   "cookies": {
     "title": "Cookies Policy",
-    "content": "Cookie usage details go here."
+    "lastUpdated": "Last updated: January 2026",
+    "backToHome": "Back to Home",
+    "intro": "We use cookies to improve your experience.",
+    "types": {
+      "title": "Types of Cookies",
+      "essential": "Essential Cookies (required for site function)",
+      "analytics": "Analytics Cookies (for site improvement)"
+    },
+    "management": {
+      "title": "Cookie Management",
+      "description": "You can manage your cookie preferences in your browser settings."
+    }
   },
   "terms": {
     "title": "Terms & Conditions",
-    "content": "Terms and conditions go here."
+    "lastUpdated": "Last updated: January 2026",
+    "backToHome": "Back to Home",
+    "booking": {
+      "title": "Booking Conditions",
+      "content": "A deposit is required to secure your booking."
+    },
+    "cancellation": {
+      "title": "Cancellation Policy",
+      "content": "Cancellations must be made in writing."
+    },
+    "usage": {
+      "title": "Vessel Usage",
+      "content": "The vessel must be used in a lawful manner."
+    }
   },
   "footer": {
     "tagline": "Your premier destination for luxury yacht charters in the Mediterranean.",
