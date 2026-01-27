@@ -1,4 +1,9 @@
 {
+  "common": {
+    "readMore": "Leer más",
+    "back": "Volver",
+    "loading": "Cargando..."
+  },
   "navigation": {
     "home": "Inicio",
     "fleet": "La Flota",
@@ -184,7 +189,7 @@
       "name": "Nombre Completo",
       "email": "Correo Electrónico",
       "phone": "Número de Teléfono",
-      "identification": "Pasaporte/DNI (para contratos de chárter)"
+      "identification": "Pasaporte/DNI"
     },
     "purpose": {
       "title": "Finalidad del Tratamiento",
@@ -209,34 +214,124 @@
     "security": {
       "title": "Medidas de Seguridad",
       "description": "Implementamos protocolos de seguridad estándar de la industria."
-    }
+    },
+    "backToHome": "Volver al Inicio"
   },
   "cookies": {
     "title": "Política de Cookies",
     "lastUpdated": "Última actualización: Enero 2026",
     "backToHome": "Volver al Inicio",
     "intro": "Utilizamos cookies para mejorar su experiencia.",
+    "whatAre": {
+        "title": "¿Qué son las Cookies?",
+        "description": "Pequeños archivos de texto guardados en su dispositivo."
+    },
     "types": {
       "title": "Tipos de Cookies",
-      "essential": "Cookies Esenciales (necesarias para el funcionamiento)",
-      "analytics": "Cookies Analíticas (para mejorar el sitio)"
+      "essential": {
+          "title": "Cookies Esenciales",
+          "description": "Necesarias para el funcionamiento del sitio."
+      },
+      "analytics": {
+          "title": "Cookies Analíticas",
+          "description": "Para analizar el uso del sitio."
+      }
     },
-    "management": {
+    "managing": {
       "title": "Gestión de Cookies",
-      "description": "Puede gestionar sus preferencias de cookies en la configuración de su navegador."
+      "description": "Puede gestionar sus preferencias en el navegador.",
+      "chrome": "Google Chrome",
+      "safari": "Safari",
+      "firefox": "Mozilla Firefox"
+    },
+    "consent": {
+        "title": "Consentimiento",
+        "description": "Al usar nuestro sitio, acepta el uso de cookies."
     }
   },
   "terms": {
     "title": "Términos y Condiciones",
     "lastUpdated": "Última actualización: Enero 2026",
     "backToHome": "Volver al Inicio",
+    "provider": {
+        "form": "Forma Jurídica",
+        "formValue": "S.L.",
+        "description": "Detalles del proveedor."
+    },
+    "compliance": {
+        "title": "Cumplimiento",
+        "flag": {
+            "title": "Bandera",
+            "description": "Pabellón español.",
+            "note": "Cumple normativa marítima."
+        },
+        "manifest": {
+            "title": "Lista de Pasajeros",
+            "description": "Requerido por ley.",
+            "id": "DNI/Pasaporte",
+            "nationality": "Nacionalidad",
+            "emergency": "Contacto Emergencia",
+            "note": "Enviar 48h antes."
+        }
+    },
     "booking": {
       "title": "Condiciones de Reserva",
-      "content": "Se requiere un depósito para asegurar su reserva."
+      "description": "Términos generales.",
+      "deposit": {
+          "title": "Depósito",
+          "description": "50% para reservar.",
+          "note": "No reembolsable."
+      },
+      "final": {
+          "title": "Pago Final",
+          "description": "30 días antes.",
+          "note": "Fondos compensados."
+      },
+      "paymentMethods": {
+          "title": "Métodos de Pago",
+          "bank": "Transferencia",
+          "card": "Tarjeta",
+          "transfer": "Transferencia"
+      }
     },
     "cancellation": {
       "title": "Política de Cancelación",
-      "content": "Las cancelaciones deben realizarse por escrito."
+      "description": "Detalles de cancelación.",
+      "table": {
+          "period": "Aviso",
+          "refund": "Reembolso",
+          "more30": "> 30 Días",
+          "full": "100%",
+          "15to30": "15-30 Días",
+          "half": "50%",
+          "less15": "< 15 Días",
+          "none": "0%"
+      },
+      "weather": {
+          "title": "Clima",
+          "description": "Decisión del capitán."
+      }
+    },
+    "safety": {
+        "title": "Seguridad",
+        "description": "Prioridad absoluta.",
+        "responsibilities": {
+            "title": "Responsabilidades",
+            "vessel": "Equipamiento seguridad",
+            "crew": "Tripulación formada",
+            "insurance": "Seguro incluido",
+            "safety": "Charla seguridad"
+        },
+        "passenger": {
+            "title": "Deberes Pasajero",
+            "follow": "Seguir instrucciones",
+            "inform": "Informar salud",
+            "respect": "Respeto a bordo"
+        },
+        "liability": {
+            "title": "Responsabilidad",
+            "description": "Limitada al seguro."
+        }
     },
     "usage": {
       "title": "Uso de la Embarcación",

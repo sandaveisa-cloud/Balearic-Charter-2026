@@ -1,4 +1,9 @@
 {
+  "common": {
+    "readMore": "Weiterlesen",
+    "back": "Zurück",
+    "loading": "Laden..."
+  },
   "navigation": {
     "home": "Startseite",
     "fleet": "Die Flotte",
@@ -184,14 +189,14 @@
       "name": "Vollständiger Name",
       "email": "E-Mail-Adresse",
       "phone": "Telefonnummer",
-      "identification": "Reisepass/Ausweis (für Charterverträge)"
+      "identification": "Reisepass/Ausweis"
     },
     "purpose": {
       "title": "Zweck der Verarbeitung",
       "description": "Ihre Daten werden verwendet für:",
-      "bookings": "Verwaltung von Buchungen und Verträgen",
+      "bookings": "Buchungsverwaltung",
       "payments": "Zahlungsabwicklung",
-      "support": "Kundensupport-Kommunikation"
+      "support": "Kundensupport"
     },
     "retention": {
       "title": "Datenspeicherung",
@@ -200,43 +205,133 @@
     "rights": {
       "title": "Ihre Rechte",
       "description": "Gemäß DSGVO haben Sie das Recht auf:",
-      "access": "Zugriff auf Ihre Daten",
-      "rectification": "Korrektur Ihrer Daten",
-      "erasure": "Löschung beantragen",
-      "portability": "Datenübertragbarkeit",
-      "contact": "Kontaktieren Sie uns zur Ausübung dieser Rechte."
+      "access": "Zugriff",
+      "rectification": "Korrektur",
+      "erasure": "Löschung",
+      "portability": "Übertragbarkeit",
+      "contact": "Kontaktieren Sie uns."
     },
     "security": {
       "title": "Sicherheitsmaßnahmen",
       "description": "Wir implementieren branchenübliche Sicherheitsprotokolle."
-    }
+    },
+    "backToHome": "Zurück zur Startseite"
   },
   "cookies": {
     "title": "Cookie-Richtlinie",
     "lastUpdated": "Zuletzt aktualisiert: Januar 2026",
     "backToHome": "Zurück zur Startseite",
     "intro": "Wir verwenden Cookies, um Ihre Erfahrung zu verbessern.",
+    "whatAre": {
+        "title": "Was sind Cookies?",
+        "description": "Kleine Textdateien."
+    },
     "types": {
       "title": "Arten von Cookies",
-      "essential": "Essenzielle Cookies (erforderlich)",
-      "analytics": "Analyse-Cookies (zur Verbesserung der Seite)"
+      "essential": {
+          "title": "Essenzielle Cookies",
+          "description": "Erforderlich."
+      },
+      "analytical": {
+          "title": "Analyse-Cookies",
+          "description": "Zur Verbesserung."
+      }
     },
-    "management": {
+    "managing": {
       "title": "Cookie-Verwaltung",
-      "description": "Sie können Ihre Cookie-Einstellungen in Ihrem Browser verwalten."
+      "description": "Verwaltung im Browser.",
+      "chrome": "Google Chrome",
+      "safari": "Safari",
+      "firefox": "Mozilla Firefox"
+    },
+    "consent": {
+        "title": "Einwilligung",
+        "description": "Durch Nutzung stimmen Sie zu."
     }
   },
   "terms": {
     "title": "Allgemeine Geschäftsbedingungen",
     "lastUpdated": "Zuletzt aktualisiert: Januar 2026",
     "backToHome": "Zurück zur Startseite",
+    "provider": {
+        "form": "Rechtsform",
+        "formValue": "S.L.",
+        "description": "Anbieterdetails."
+    },
+    "compliance": {
+        "title": "Konformität",
+        "flag": {
+            "title": "Flagge",
+            "description": "Spanische Flagge.",
+            "note": "Gesetzeskonform."
+        },
+        "manifest": {
+            "title": "Passagierliste",
+            "description": "Erforderlich.",
+            "id": "Ausweis",
+            "nationality": "Nationalität",
+            "emergency": "Notfallkontakt",
+            "note": "48h vorher."
+        }
+    },
     "booking": {
       "title": "Buchungsbedingungen",
-      "content": "Eine Anzahlung ist erforderlich, um Ihre Buchung zu sichern."
+      "description": "Allgemeine Bedingungen.",
+      "deposit": {
+          "title": "Anzahlung",
+          "description": "50% erforderlich.",
+          "note": "Nicht erstattungsfähig."
+      },
+      "final": {
+          "title": "Restzahlung",
+          "description": "30 Tage vorher.",
+          "note": "Zahlungseingang."
+      },
+      "paymentMethods": {
+          "title": "Zahlungsmethoden",
+          "bank": "Überweisung",
+          "card": "Karte",
+          "transfer": "Transfer"
+      }
     },
     "cancellation": {
       "title": "Stornierungsbedingungen",
-      "content": "Stornierungen müssen schriftlich erfolgen."
+      "description": "Unsere Bedingungen:",
+      "table": {
+          "period": "Frist",
+          "refund": "Erstattung",
+          "more30": "> 30 Tage",
+          "full": "100%",
+          "15to30": "15-30 Tage",
+          "half": "50%",
+          "less15": "< 15 Tage",
+          "none": "0%"
+      },
+      "weather": {
+          "title": "Wetter",
+          "description": "Kapitänsentscheidung."
+      }
+    },
+    "safety": {
+        "title": "Sicherheit",
+        "description": "Priorität.",
+        "responsibilities": {
+            "title": "Verantwortung",
+            "vessel": "Ausrüstung",
+            "crew": "Training",
+            "insurance": "Versicherung",
+            "safety": "Einweisung"
+        },
+        "passenger": {
+            "title": "Passagierpflichten",
+            "follow": "Anweisungen folgen",
+            "inform": "Gesundheit melden",
+            "respect": "Respektieren"
+        },
+        "liability": {
+            "title": "Haftung",
+            "description": "Limitiert."
+        }
     },
     "usage": {
       "title": "Nutzung des Schiffes",
