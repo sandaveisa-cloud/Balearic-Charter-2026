@@ -1,4 +1,16 @@
 {
+  "navigation": {
+    "home": "Inicio",
+    "fleet": "La Flota",
+    "destinations": "Destinos",
+    "about": "Nosotros",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "title": "Alquiler de Yates de Lujo",
+    "subtitle": "Experimenta el Mediterráneo como nunca antes",
+    "cta": "Explora Nuestra Flota"
+  },
   "breadcrumb": {
     "home": "Inicio",
     "fleet": "Nuestra Flota",
@@ -30,9 +42,6 @@
     "rating": "Mejor Valorado",
     "secret_bays": "Calas Secretas"
   },
-  "hero": {
-    "cta": "Explora Nuestra Flota"
-  },
   "fleet": {
     "title": "Nuestra Flota de Lujo",
     "subtitle": "Descubra nuestra colección de yates de clase mundial",
@@ -44,7 +53,35 @@
     "quoteFormDescription": "Rellena el formulario para recibir una oferta personalizada.",
     "extras": {
       "sup": "Paddle Surf",
-      "snorkel": "Equipo de Snorkel"
+      "snorkel": "Equipo de Snorkel",
+      "efoil": "E-Foil / Fliteboard",
+      "scooter": "Sea Scooter",
+      "wifi": "Wi-Fi a bordo",
+      "towel": "Toallas de Playa"
+    },
+    "ships": {
+      "simona": {
+        "headline": "La Esencia de la Navegación en Catamarán",
+        "description": "Simona (Lagoon 450F) ofrece una mezcla inigualable de confort y rendimiento. Con su amplio flybridge e interior moderno, es perfecto para familias.",
+        "tagline": "Donde el confort encuentra la aventura.",
+        "highlights": [
+          "Flybridge Espacioso con Solárium",
+          "4 Camarotes de Lujo con Baño",
+          "Opción de Patrón y Azafata",
+          "Aire Acondicionado y Generador"
+        ]
+      },
+      "wide-dream": {
+        "headline": "Confort Clásico y Fiabilidad",
+        "description": "Wide Dream (Lagoon 400 S2) es la elección perfecta para quienes valoran el lujo práctico. Compacto pero increíblemente espacioso.",
+        "tagline": "Tu viaje soñado comienza aquí.",
+        "highlights": [
+          "Salón de Concepto Abierto",
+          "Vistas Panorámicas",
+          "Fácil Acceso al Agua",
+          "Perfecto para Familias"
+        ]
+      }
     }
   },
   "destinations": {
@@ -76,6 +113,11 @@
       "lateAutumn": "Otoño Tardío",
       "winter": "Invierno"
     }
+  },
+  "culinary": {
+    "title": "Cena a Bordo",
+    "subtitle": "Sabores exquisitos en el mar",
+    "description": "Disfrute de comidas preparadas con ingredientes locales frescos."
   },
   "stats": {
     "title": "Nuestro Viaje en Números"

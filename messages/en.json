@@ -1,4 +1,16 @@
 {
+  "navigation": {
+    "home": "Home",
+    "fleet": "The Fleet",
+    "destinations": "Destinations",
+    "about": "About Us",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Luxury Yacht Charter",
+    "subtitle": "Experience the Mediterranean like never before",
+    "cta": "Explore Our Fleet"
+  },
   "breadcrumb": {
     "home": "Home",
     "fleet": "Our Fleet",
@@ -30,9 +42,6 @@
     "rating": "Top Rated",
     "secret_bays": "Secret Bays Access"
   },
-  "hero": {
-    "cta": "Explore Our Fleet"
-  },
   "fleet": {
     "title": "Our Luxury Fleet",
     "subtitle": "Discover our collection of world-class yachts",
@@ -44,7 +53,35 @@
     "quoteFormDescription": "Fill out the form below to receive a personalized offer.",
     "extras": {
       "sup": "Paddle Board",
-      "snorkel": "Snorkeling Gear"
+      "snorkel": "Snorkeling Gear",
+      "efoil": "E-Foil / Fliteboard",
+      "scooter": "Sea Scooter",
+      "wifi": "Wi-Fi Onboard",
+      "towel": "Beach Towels"
+    },
+    "ships": {
+      "simona": {
+        "headline": "The Essence of Luxury Catamaran Sailing",
+        "description": "Simona (Lagoon 450F) offers an unmatched blend of comfort and performance. With its spacious flybridge and modern interior, it is perfect for families and groups looking to explore the Balearics in style.",
+        "tagline": "Where comfort meets adventure.",
+        "highlights": [
+          "Spacious Flybridge with Sunpads",
+          "4 Luxury Cabins with En-suite Bathrooms",
+          "Professional Skipper & Hostess Option",
+          "Full Air Conditioning & Generator"
+        ]
+      },
+      "wide-dream": {
+        "headline": "Classic Comfort & Reliability",
+        "description": "Wide Dream (Lagoon 400 S2) is the perfect choice for those who value practical luxury. Compact yet incredibly spacious, she offers everything needed for a memorable holiday at sea.",
+        "tagline": "Your dream journey starts here.",
+        "highlights": [
+          "Open Concept Saloon",
+          "Panoramic Views",
+          "Easy Water Access",
+          "Perfect for Families"
+        ]
+      }
     }
   },
   "destinations": {
@@ -76,6 +113,11 @@
       "lateAutumn": "Late Autumn",
       "winter": "Winter"
     }
+  },
+  "culinary": {
+    "title": "Onboard Dining",
+    "subtitle": "Exquisite tastes at sea",
+    "description": "Enjoy meals prepared with fresh local ingredients."
   },
   "stats": {
     "title": "Our Journey in Numbers"

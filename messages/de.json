@@ -1,4 +1,16 @@
 {
+  "navigation": {
+    "home": "Startseite",
+    "fleet": "Die Flotte",
+    "destinations": "Reiseziele",
+    "about": "Über Uns",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "title": "Luxusyacht Charter",
+    "subtitle": "Erleben Sie das Mittelmeer wie nie zuvor",
+    "cta": "Unsere Flotte erkunden"
+  },
   "breadcrumb": {
     "home": "Startseite",
     "fleet": "Unsere Flotte",
@@ -30,9 +42,6 @@
     "rating": "Bestbewertet",
     "secret_bays": "Geheime Buchten"
   },
-  "hero": {
-    "cta": "Unsere Flotte erkunden"
-  },
   "fleet": {
     "title": "Unsere Luxusflotte",
     "subtitle": "Entdecken Sie unsere Kollektion erstklassiger Yachten",
@@ -44,7 +53,35 @@
     "quoteFormDescription": "Füllen Sie das Formular aus, um ein Angebot zu erhalten.",
     "extras": {
       "sup": "Stand Up Paddle",
-      "snorkel": "Schnorchelausrüstung"
+      "snorkel": "Schnorchelausrüstung",
+      "efoil": "E-Foil / Fliteboard",
+      "scooter": "Tauchscooter",
+      "wifi": "WLAN an Bord",
+      "towel": "Strandtücher"
+    },
+    "ships": {
+      "simona": {
+        "headline": "Die Essenz des Luxus-Katamaransegelns",
+        "description": "Simona (Lagoon 450F) bietet eine unübertroffene Mischung aus Komfort und Leistung. Perfekt für Familien und Gruppen.",
+        "tagline": "Wo Komfort auf Abenteuer trifft.",
+        "highlights": [
+          "Geräumige Flybridge mit Sonnenliegen",
+          "4 Luxuskabinen mit eigenem Bad",
+          "Option für Skipper & Hostess",
+          "Volle Klimaanlage & Generator"
+        ]
+      },
+      "wide-dream": {
+        "headline": "Klassischer Komfort & Zuverlässigkeit",
+        "description": "Wide Dream (Lagoon 400 S2) ist die perfekte Wahl für alle, die praktischen Luxus schätzen. Kompakt und doch unglaublich geräumig.",
+        "tagline": "Ihre Traumreise beginnt hier.",
+        "highlights": [
+          "Offenes Salon-Konzept",
+          "Panoramablick",
+          "Einfacher Wasserzugang",
+          "Perfekt für Familien"
+        ]
+      }
     }
   },
   "destinations": {
@@ -76,6 +113,11 @@
       "lateAutumn": "Spätherbst",
       "winter": "Winter"
     }
+  },
+  "culinary": {
+    "title": "Kulinarik an Bord",
+    "subtitle": "Exquisite Aromen auf See",
+    "description": "Genießen Sie Mahlzeiten mit frischen lokalen Zutaten."
   },
   "stats": {
     "title": "Unsere Reise in Zahlen"
