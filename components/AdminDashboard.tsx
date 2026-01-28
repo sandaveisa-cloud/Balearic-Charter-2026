@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Users, Ship, Image as ImageIcon, Euro, Clock, Mail, Phone } from 'lucide-react'
 import { format } from 'date-fns'
 import type { BookingInquiry } from '@/types/database'
-import AiAssistant from './AiAssistant' // <--- JAUNAIS IMPORTS
+import AiAssistant from '@/components/admin/AiAssistant' // <--- IZLABOTS: Pareizais ceļš
 
 interface DashboardStats {
   totalInquiries: number
