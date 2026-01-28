@@ -7,20 +7,23 @@ import { MapPin } from 'lucide-react'
 const LOCATIONS = {
   ibiza: {
     name: 'Ibiza',
-    // Google Maps Embed URL priekš Ivisas ostas
-    url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12417.876774614652!2d1.4328574!3d38.9113695!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x129946bc7631777d%3A0x603f9050d2c69f2e!2sPort%20d\'Eivissa!5e0!3m2!1sen!2ses!4v1706437000000!5m2!1sen!2ses'
+    // Marina Ibiza
+    url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3101.405529007624!2d1.4428459!3d38.9133949!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x129946bc77907577%3A0x6fb2d3527711700!2sMarina%20Ibiza!5e0!3m2!1sen!2ses!4v1706440000000!5m2!1sen!2ses'
   },
   formentera: {
     name: 'Formentera',
-    url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12440.54877765104!2d1.4175!3d38.7333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12995b0000000001%3A0x6065561570776b97!2sPuerto%20de%20La%20Savina!5e0!3m2!1sen!2ses!4v1706437000000!5m2!1sen!2ses'
+    // La Savina
+    url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3106.6669968434546!2d1.4137255!3d38.7306263!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12995a9734e565c7%3A0xe5a3c9454178550!2sPuerto%20de%20La%20Savina!5e0!3m2!1sen!2ses!4v1706440000000!5m2!1sen!2ses'
   },
   mallorca: {
     name: 'Palma de Mallorca',
-    url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3075.7663246752046!2d2.6405!3d39.5696!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12979259c61ac76d%3A0x86338b2d18903c73!2sMarina%20Palma%20Cuarentena!5e0!3m2!1sen!2ses!4v1706437000000!5m2!1sen!2ses'
+    // Real Club Náutico de Palma
+    url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3075.474640166649!2d2.6378673!3d39.5716247!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1297924e650c822d%3A0x402af6ed7222710!2sReal%20Club%20N%C3%A1utico%20de%20Palma!5e0!3m2!1sen!2ses!4v1706440000000!5m2!1sen!2ses'
   },
   torrevieja: {
     name: 'Torrevieja',
-    url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3143.149176472404!2d-0.6835!3d37.9698!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd6305a4a4000001%3A0x402a24128912340!2sPuerto%20De%20Torrevieja!5e0!3m2!1sen!2ses!4v1706437000000!5m2!1sen!2ses'
+    // Marina Salinas
+    url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3132.846566789467!2d-0.6865611!3d37.9666672!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd6305a4b706059d%3A0x7d0224a14197930!2sMarina%20Salinas%20Torrevieja!5e0!3m2!1sen!2ses!4v1706440000000!5m2!1sen!2ses'
   }
 }
 
