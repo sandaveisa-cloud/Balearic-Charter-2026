@@ -13,7 +13,6 @@ interface ReviewsSectionProps {
 export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
   const t = useTranslations('reviews')
   
-  // Atlasa labākās 4-6 atsauksmes
   const curatedReviews = useMemo(() => {
     if (!reviews || reviews.length === 0) return []
     
@@ -27,7 +26,6 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
     const scoredReviews = reviews
       .filter((review) => review.is_approved !== false)
       .map((review) => {
-        // LABOJUMS: Izmantojam tikai review_text, jo 'content' nav definēts tipā
         const text = (review.review_text || '').toLowerCase()
         let score = 0
         
@@ -60,7 +58,6 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
     <section className="py-20 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
       <div className="container mx-auto px-4">
         
-        {/* Header Section */}
         <div className="text-center mb-16 max-w-3xl mx-auto">
           <div className="flex justify-center mb-4">
             <Quote className="w-12 h-12 text-luxury-gold/20" />
@@ -72,7 +69,6 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
             {t('subtitle')}
           </p>
           
-          {/* Average Rating Badge */}
           <div className="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full border border-gray-100 shadow-sm">
             <div className="flex items-center gap-1">
               {[...Array(5)].map((_, i) => (
@@ -84,19 +80,16 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
           </div>
         </div>
 
-        {/* Reviews Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
           {curatedReviews.map((review, index) => (
             <div 
               key={review.id || index}
               className="flex flex-col h-full bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 relative group"
             >
-              {/* Dekoratīvs elements */}
               <div className="absolute top-6 right-6 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Quote className="w-10 h-10 text-luxury-blue" />
               </div>
 
-              {/* Verified Badge */}
               <div className="flex items-center gap-2 mb-6">
                  <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-luxury-gold uppercase">
                   <CheckCircle className="w-4 h-4" />
@@ -109,7 +102,6 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
                 )}
               </div>
 
-              {/* Zvaigznes */}
               <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star 
@@ -119,34 +111,31 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
                 ))}
               </div>
 
-              {/* Teksts */}
               <div className="flex-grow mb-8">
-                {/* LABOJUMS: Arī šeit izmantojam tikai review_text */}
                 <p className="text-gray-600 italic leading-relaxed text-lg line-clamp-6">
                   "{review.review_text}"
                 </p>
               </div>
 
-              {/* Autors */}
               <div className="mt-auto pt-6 border-t border-gray-100 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-luxury-blue font-bold text-xl overflow-hidden relative shadow-sm border-2 border-white">
-                  {review.author_image ? (
+                  {review.profile_image_url ? (
                     <Image 
-                      src={review.author_image} 
-                      alt={review.author_name || 'Guest'}
+                      src={review.profile_image_url} 
+                      alt={review.guest_name || 'Guest'}
                       fill
                       className="object-cover"
                     />
                   ) : (
-                    <span>{(review.author_name || 'G').charAt(0)}</span>
+                    <span>{(review.guest_name || 'G').charAt(0)}</span>
                   )}
                 </div>
                 <div>
                   <h4 className="font-bold text-luxury-blue text-sm">
-                    {review.author_name || 'Guest'}
+                    {review.guest_name || 'Guest'}
                   </h4>
                   <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">
-                    {review.location || 'Charter Guest'}
+                    {review.guest_location || 'Charter Guest'}
                   </p>
                 </div>
               </div>

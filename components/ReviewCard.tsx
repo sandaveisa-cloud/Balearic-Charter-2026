@@ -20,9 +20,9 @@ export default function ReviewCard({ review }: ReviewCardProps) {
     }
   }
 
-  // LABOJUMS: Izmantojam pareizo lauku 'author_image'
-  const profileImageUrl = review.author_image
-    ? getOptimizedImageUrl(review.author_image, {
+  // ATPAKAĻ PIE PAREIZAJIEM NOSAUKUMIEM
+  const profileImageUrl = review.profile_image_url
+    ? getOptimizedImageUrl(review.profile_image_url, {
         width: 80,
         height: 80,
         quality: 80,
@@ -61,7 +61,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         ))}
       </div>
 
-      {/* Review Text - izmantojam review_text */}
+      {/* Review Text */}
       <div className="flex-grow mb-4">
         <p className="text-gray-600 text-sm leading-relaxed italic font-light">
           "{review.review_text}"
@@ -74,7 +74,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
           <div className="relative w-10 h-10 rounded-full overflow-hidden border border-luxury-gold/30 flex-shrink-0">
             <OptimizedImage
               src={profileImageUrl}
-              alt={review.author_name || 'Guest'} // LABOJUMS: author_name
+              alt={review.guest_name || 'Guest'}
               fill
               sizes="40px"
               objectFit="cover"
@@ -85,7 +85,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         ) : (
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-luxury-blue to-luxury-gold flex items-center justify-center border border-luxury-gold/30 flex-shrink-0">
             <span className="text-white text-xs font-semibold">
-              {(review.author_name || 'G') // LABOJUMS: author_name
+              {(review.guest_name || 'G')
                 .split(' ')
                 .map((n) => n[0])
                 .join('')
@@ -95,10 +95,10 @@ export default function ReviewCard({ review }: ReviewCardProps) {
         )}
         <div className="flex-grow min-w-0">
           <p className="font-medium text-luxury-blue text-sm truncate">
-            {review.author_name || 'Guest'} {/* LABOJUMS: author_name */}
+            {review.guest_name || 'Guest'}
           </p>
-          {review.location && ( // LABOJUMS: location (nevis guest_location)
-            <p className="text-xs text-gray-500 truncate">{review.location}</p>
+          {review.guest_location && (
+            <p className="text-xs text-gray-500 truncate">{review.guest_location}</p>
           )}
           {review.review_date && (
             <p className="text-xs text-gray-400 mt-0.5">{formatDate(review.review_date)}</p>
