@@ -21,6 +21,7 @@ export default function HappyGuestsGallery({ images, destinationName, locale }: 
   return (
     <section className="py-16 bg-gradient-to-br from-luxury-blue/5 via-white to-luxury-gold/5">
       <div className="container mx-auto px-4">
+        {/* Virsraksts */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Users className="w-8 h-8 text-luxury-gold" />
@@ -33,8 +34,8 @@ export default function HappyGuestsGallery({ images, destinationName, locale }: 
           </p>
         </div>
 
-        {/* Magazine-style Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        {/* LABOJUMS: Vienāds Grid izkārtojums visiem */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {images.map((imageUrl, index) => {
             const optimizedUrl = getOptimizedImageUrl(imageUrl, {
               width: 800,
@@ -42,23 +43,19 @@ export default function HappyGuestsGallery({ images, destinationName, locale }: 
               format: 'webp',
             })
 
-            // Create varied grid layout - some images larger
-            const isLarge = index % 7 === 0 || index % 7 === 3
-            const colSpan = isLarge ? 'md:col-span-2 lg:col-span-2' : ''
-            const rowSpan = isLarge ? 'md:row-span-2' : ''
-
             return (
               <div
                 key={index}
-                className={`group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-[1.02] ${colSpan} ${rowSpan}`}
+                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-[1.02]"
               >
-                <div className={`relative ${isLarge ? 'h-96' : 'h-64'} overflow-hidden bg-gradient-to-br from-luxury-blue/20 to-luxury-gold/20`}>
+                {/* LABOJUMS: Fiksēts augstums (h-80) visām bildēm vienāds */}
+                <div className="relative h-80 w-full overflow-hidden bg-gradient-to-br from-luxury-blue/20 to-luxury-gold/20">
                   {optimizedUrl ? (
                     <OptimizedImage
                       src={optimizedUrl}
                       alt={`Happy guest in ${destinationName} - Photo ${index + 1}`}
                       fill
-                      sizes={isLarge ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       objectFit="cover"
                       className="group-hover:scale-110 transition-transform duration-700"
                     />
