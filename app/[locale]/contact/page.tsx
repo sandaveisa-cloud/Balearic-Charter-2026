@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import ContactForm from '@/components/ContactForm'
 import Breadcrumb from '@/components/Breadcrumb'
+import LocationsMap from '@/components/LocationsMap' // <--- JAUNS IMPORTS
 import { getSiteContent } from '@/lib/data'
 import { Link } from '@/i18n/navigation'
 import { locales } from '@/i18n/routing'
@@ -29,7 +30,6 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
   // Fetch site content for contact info
   const siteContent = await getSiteContent()
   const settings = siteContent.settings || {}
-  const contactPersons = siteContent.contactPersons || []
   
   return (
     <main className="min-h-screen bg-white pt-20">
@@ -42,7 +42,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-luxury-blue via-[#1e3a5f] to-luxury-blue py-16 md:py-20">
-        <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
+        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
@@ -120,20 +120,19 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         </div>
       </section>
 
-      {/* Locations */}
+      {/* Locations Map Section - REPLACED STATIC LIST WITH MAP */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="font-serif text-3xl md:text-4xl font-bold text-luxury-blue text-center mb-12">
-            {t('locationLabel')}
-          </h2>
-          <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
-            {['Ibiza', 'Formentera', 'Palma de Mallorca', 'Torrevieja'].map((location) => (
-              <span key={location} className="inline-flex items-center gap-2 px-6 py-3 bg-white rounded-full shadow-sm text-luxury-blue font-medium">
-                <MapPin className="w-5 h-5 text-luxury-gold" />
-                {location}
-              </span>
-            ))}
+          <div className="text-center mb-10">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold text-luxury-blue mb-4">
+              {t('locationLabel')}
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto mb-8">
+              Explore our prime marina locations across the Mediterranean coast. Click on a location below to view on map.
+            </p>
           </div>
+          
+          <LocationsMap />
         </div>
       </section>
 
