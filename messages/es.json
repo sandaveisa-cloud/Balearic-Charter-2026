@@ -195,7 +195,7 @@
     "cards": {
       "logistics": {
         "title": "Logística Experta",
-        "description": "Nos encargamos de cada detalle de su viaje, desde la planificación del itinerario hasta el aprovisionamiento."
+        "description": "Nos encargamos de cada detail de su viaje, desde la planificación del itinerario hasta el aprovisionamiento."
       },
       "crew": {
         "title": "Tripulación Profesional",
@@ -302,18 +302,18 @@
     "backToHome": "Volver al Inicio",
     "intro": "Utilizamos cookies para mejorar su experiencia.",
     "whatAre": {
-        "title": "¿Qué son las Cookies?",
-        "description": "Pequeños archivos de texto guardados en su dispositivo."
+      "title": "¿Qué son las Cookies?",
+      "description": "Pequeños archivos de texto guardados en su dispositivo."
     },
     "types": {
       "title": "Tipos de Cookies",
       "essential": {
-          "title": "Cookies Esenciales",
-          "description": "Necesarias para el funcionamiento del sitio."
+        "title": "Cookies Esenciales",
+        "description": "Necesarias para el funcionamiento del sitio."
       },
-      "analytics": {
-          "title": "Cookies Analíticas",
-          "description": "Para analizar el uso del sitio."
+      "analytical": {
+        "title": "Cookies Analíticas",
+        "description": "Para analizar el uso del sitio."
       }
     },
     "managing": {
@@ -324,8 +324,8 @@
       "firefox": "Mozilla Firefox"
     },
     "consent": {
-        "title": "Consentimiento",
-        "description": "Al usar nuestro sitio, acepta el uso de cookies."
+      "title": "Consentimiento",
+      "description": "Al usar nuestro sitio, acepta el uso de cookies."
     }
   },
   "terms": {
@@ -334,87 +334,87 @@
     "lastUpdated": "Última actualización: Enero 2026",
     "backToHome": "Volver al Inicio",
     "provider": {
-        "title": "Proveedor de Servicios",
-        "entity": "Wide Dream S.L.",
-        "cif": "B-12345678",
-        "form": "Forma Jurídica",
-        "formValue": "S.L.",
-        "description": "Detalles del proveedor."
+      "title": "Proveedor de Servicios",
+      "entity": "Wide Dream S.L.",
+      "cif": "B-12345678",
+      "form": "Forma Jurídica",
+      "formValue": "S.L.",
+      "description": "Detalles del proveedor."
     },
     "compliance": {
-        "title": "Cumplimiento",
-        "flag": {
-            "title": "Bandera",
-            "description": "Pabellón español.",
-            "note": "Cumple normativa marítima."
-        },
-        "manifest": {
-            "title": "Lista de Pasajeros",
-            "description": "Requerido por ley.",
-            "id": "DNI/Pasaporte",
-            "nationality": "Nacionalidad",
-            "emergency": "Contacto Emergencia",
-            "note": "Enviar 48h antes."
-        }
+      "title": "Cumplimiento",
+      "flag": {
+        "title": "Bandera",
+        "description": "Pabellón español.",
+        "note": "Cumple normativa marítima."
+      },
+      "manifest": {
+        "title": "Lista de Pasajeros",
+        "description": "Requerido por ley.",
+        "id": "DNI/Pasaporte",
+        "nationality": "Nacionalidad",
+        "emergency": "Contacto Emergencia",
+        "note": "Enviar 48h antes."
+      }
     },
     "booking": {
       "title": "Condiciones de Reserva",
       "description": "Términos generales.",
       "deposit": {
-          "title": "Depósito",
-          "description": "50% para reservar.",
-          "note": "No reembolsable."
+        "title": "Depósito",
+        "description": "50% para reservar.",
+        "note": "No reembolsable."
       },
       "final": {
-          "title": "Pago Final",
-          "description": "30 días antes.",
-          "note": "Fondos compensados."
+        "title": "Pago Final",
+        "description": "30 dia antes.",
+        "note": "Fondos compensados."
       },
       "paymentMethods": {
-          "title": "Métodos de Pago",
-          "bank": "Transferencia",
-          "card": "Tarjeta",
-          "transfer": "Transferencia"
+        "title": "Métodos de Pago",
+        "bank": "Transferencia",
+        "card": "Tarjeta",
+        "transfer": "Transferencia"
       }
     },
     "cancellation": {
       "title": "Política de Cancelación",
       "description": "Detalles de cancelación.",
       "table": {
-          "period": "Aviso",
-          "refund": "Reembolso",
-          "more30": "> 30 Días",
-          "full": "100%",
-          "15to30": "15-30 Días",
-          "half": "50%",
-          "less15": "< 15 Días",
-          "none": "0%"
+        "period": "Aviso",
+        "refund": "Reembolso",
+        "more30": "> 30 Días",
+        "full": "100%",
+        "15to30": "15-30 Días",
+        "half": "50%",
+        "less15": "< 15 Días",
+        "none": "0%"
       },
       "weather": {
-          "title": "Clima",
-          "description": "Decisión del capitán."
+        "title": "Clima",
+        "description": "Decisión del capitán."
       }
     },
     "safety": {
-        "title": "Seguridad",
-        "description": "Prioridad absoluta.",
-        "responsibilities": {
-            "title": "Responsabilidades",
-            "vessel": "Equipamiento seguridad",
-            "crew": "Tripulación formada",
-            "insurance": "Seguro incluido",
-            "safety": "Charla seguridad"
-        },
-        "passenger": {
-            "title": "Deberes Pasajero",
-            "follow": "Seguir instrucciones",
-            "inform": "Informar salud",
-            "respect": "Respeto a bordo"
-        },
-        "liability": {
-            "title": "Responsabilidad",
-            "description": "Limitada al seguro."
-        }
+      "title": "Seguridad",
+      "description": "Prioridad absoluta.",
+      "responsibilities": {
+        "title": "Responsabilidades",
+        "vessel": "Equipamiento seguridad",
+        "crew": "Tripulación formada",
+        "insurance": "Seguro incluido",
+        "safety": "Charla seguridad"
+      },
+      "passenger": {
+        "title": "Deberes Pasajero",
+        "follow": "Seguir instrucciones",
+        "inform": "Informar salud",
+        "respect": "Respeto a bordo"
+      },
+      "liability": {
+        "title": "Responsabilidad",
+        "description": "Limitada al seguro."
+      }
     },
     "usage": {
       "title": "Uso de la Embarcación",
