@@ -1,37 +1,53 @@
-/* @import rules MUST appear at the top of the stylesheet, before any other CSS */
+/* 1. VISPIRMS VISI IMPORTI (Pašā faila augšā) */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 @import 'leaflet/dist/leaflet.css';
 
+/* 2. TAILWIND DIREKTĪVAS */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Default theme colors - can be overridden by database values */
-  --luxury-blue: #1B263B;
-  --luxury-gold: #C5A059;
-  --luxury-background: #FFFFFF;
-  
-  /* Theme color aliases for dynamic theming */
-  --primary-color: var(--luxury-blue);
-  --secondary-color: var(--luxury-gold);
-  --background-color: var(--luxury-background);
+/* 3. PAMATA STILI UN MAINĪGIE */
+@layer base {
+  :root {
+    /* Default theme colors - can be overridden by database values */
+    --luxury-blue: #1B263B;
+    --luxury-gold: #C5A059;
+    --luxury-background: #FFFFFF;
+    
+    /* Theme color aliases for dynamic theming */
+    --primary-color: var(--luxury-blue);
+    --secondary-color: var(--luxury-gold);
+    --background-color: var(--luxury-background);
+  }
+
+  body {
+    @apply bg-white text-gray-900;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
-body {
-  @apply bg-white text-gray-900;
-}
-
+/* 4. LAYER UTILITIES UN PAPILDUS KLASES */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
+/* 5. INDIVIDUĀLIE KOMPONENTU UN TREŠO PUŠU STILI */
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
@@ -50,17 +66,7 @@ html {
   @apply bg-luxury-gold;
 }
 
-/* Hide scrollbar but keep functionality */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
-}
-
-/* Fix nextjs-portal element - make it invisible but functional */
+/* Fix nextjs-portal element */
 nextjs-portal {
   position: fixed !important;
   top: 0 !important;
@@ -74,7 +80,6 @@ nextjs-portal {
   overflow: visible !important;
 }
 
-/* Ensure portal content is properly rendered and visible */
 nextjs-portal > * {
   position: fixed !important;
   pointer-events: auto !important;
