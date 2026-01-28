@@ -4,17 +4,15 @@ import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server
 import { notFound } from 'next/navigation'
 import { locales } from '../../i18n'
 import type { Metadata } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+// IZDZĒSTS: Fontu imports (Inter, Playfair) šeit nav vajadzīgs
 import '../globals.css'
 import Footer from '@/components/Footer'
 import StickyHeader from '@/components/StickyHeader'
 import ScrollToTop from '@/components/ScrollToTop'
-import WhatsAppButton from '@/components/WhatsAppButton'
 import ChatBot from '@/components/ChatBot'
 import ThemeProvider from '@/components/ThemeProvider'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
+// IZDZĒSTS: const inter un const playfair definīcijas
 
 type Props = {
   children: React.ReactNode
@@ -28,9 +26,8 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = params instanceof Promise ? await params : params
   const { locale } = resolvedParams
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.widedream.es'
   
-  // Get translated metadata from translation files
   let currentTitle: string
   let currentDescription: string
   
@@ -40,17 +37,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     currentDescription = t('description')
   } catch (error) {
     console.error('[Metadata] Error loading translations, using fallback:', error)
-    // Fallback to English if translation fails
     const fallbackT = await getTranslations({ locale: 'en', namespace: 'metadata' })
     currentTitle = fallbackT('title')
     currentDescription = fallbackT('description')
   }
-
-  // Generate hreflang links for SEO
-  const languages = locales.map((loc) => ({
-    url: `${baseUrl}/${loc}`,
-    hreflang: loc,
-  }))
 
   return {
     title: currentTitle,
@@ -74,73 +64,43 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function LocaleLayout({ children, params }: Props) {
-  console.log('[LocaleLayout] Starting layout render...')
-  
+  // Pārējā loģika paliek nemainīga
   try {
-    // Handle both Promise and direct params (Next.js 14+ uses Promise)
     const resolvedParams = params instanceof Promise ? await params : params
     const { locale } = resolvedParams
     
-    console.log('[LocaleLayout] Locale from params:', locale)
-    console.log('[LocaleLayout] Available locales:', locales)
-    
-    // Validate locale
     if (!locale || !locales.includes(locale as any)) {
-      console.error('[LocaleLayout] Invalid locale:', locale)
       notFound()
-      return // TypeScript guard
+      return
     }
 
-    console.log('[LocaleLayout] Locale validated, setting request locale...')
-    // Enable static rendering for pages using next-intl in Server Components
     setRequestLocale(locale)
 
-    console.log('[LocaleLayout] Loading messages for locale:', locale)
-    // Load messages for the locale
     let messages
     try {
       messages = await getMessages({ locale })
-      console.log('[LocaleLayout] Messages loaded successfully, keys:', Object.keys(messages || {}).length)
     } catch (messagesError) {
-      console.error('[LocaleLayout] Error loading messages:', messagesError)
-      // Fallback to empty messages object instead of crashing
       messages = {}
-      console.warn('[LocaleLayout] Using empty messages object as fallback')
     }
 
     return (
       <NextIntlClientProvider messages={messages}>
-        {/* Theme Provider - Applies dynamic theme colors */}
         <ThemeProvider />
-        
-        {/* Sticky Header with Language Switcher */}
         <StickyHeader />
-        
         <div className="pt-16">
           {children}
         </div>
         <Footer />
-        
-        {/* Floating Action Buttons - Consolidated */}
-        {/* ChatBot includes WhatsApp integration, so we don't need separate WhatsAppButton */}
         <ChatBot />
         <ScrollToTop />
-        {/* FloatingCTA is added per-page (home page only) */}
       </NextIntlClientProvider>
     )
   } catch (error) {
-    console.error('[LocaleLayout] Error:', error)
-    // Return error UI instead of throwing to prevent 404
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center p-8">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Layout</h1>
-          <p className="text-gray-600 mb-4">
-            {error instanceof Error ? error.message : 'An unexpected error occurred'}
-          </p>
-          <p className="text-sm text-gray-500">
-            Please check the server console for more details.
-          </p>
+          <p className="text-gray-600 mb-4">Please check console.</p>
         </div>
       </div>
     )

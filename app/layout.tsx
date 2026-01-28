@@ -3,23 +3,31 @@ import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' })
+// Pievienojam display: 'swap', lai novērstu ielādes brīdinājumus
+const inter = Inter({ 
+  subsets: ['latin'], 
+  variable: '--font-inter',
+  display: 'swap' 
+})
+
+const playfair = Playfair_Display({ 
+  subsets: ['latin'], 
+  variable: '--font-playfair',
+  display: 'swap'
+})
 
 export const metadata: Metadata = {
-  title: 'Balearic & Costa Blanca Charters | Luxury Yacht Charter',
+  title: 'Wide Dream | Luxury Yacht Charter',
   description: 'Premium yacht charters in the Balearic Islands and Costa Blanca.',
 }
 
-// Root layout - required by Next.js
-// Must contain <html> and <body> tags for error boundaries and 404 pages
-// The locale-specific layout in app/[locale]/layout.tsx is nested inside this
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
+    // Šeit tiek definēti fonti priekš visas aplikācijas
     <html lang="en" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased">
         {children}
