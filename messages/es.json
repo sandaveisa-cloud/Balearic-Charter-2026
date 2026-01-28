@@ -44,6 +44,14 @@
     "formYacht": "Yate de Interés (Opcional)",
     "formMessage": "Tu Mensaje / Peticiones Especiales",
     "sendMessage": "Solicitar Presupuesto",
+    "loading": "Enviando...",
+    "successTitle": "¡Gracias!",
+    "successMessage": "Hemos recibido su solicitud y nos pondremos en contacto con usted en breve.",
+    "returnToFleet": "Volver a la Flota",
+    "errorTitle": "Algo salió mal",
+    "errorRetryMessage": "Por favor, inténtelo de nuevo o contáctenos directamente.",
+    "tryAgain": "Intentar de Nuevo",
+    "contactWhatsApp": "Contactar por WhatsApp",
     "locationLabel": "Nuestras Ubicaciones",
     "backToHome": "Volver al Inicio"
   },
@@ -259,7 +267,7 @@
       "name": "Nombre Completo",
       "email": "Correo Electrónico",
       "phone": "Número de Teléfono",
-      "identification": "Pasaporte/DNI"
+      "identification": "Pasaporte/DNI (para contratos de chárter)"
     },
     "purpose": {
       "title": "Finalidad del Tratamiento",
