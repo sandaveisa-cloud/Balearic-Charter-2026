@@ -13,7 +13,7 @@ interface ReviewsSectionProps {
 export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
   const t = useTranslations('reviews')
   
-  // 1. Tavs oriģinālais kods: Atlasa labākās 4-6 atsauksmes
+  // Atlasa labākās 4-6 atsauksmes
   const curatedReviews = useMemo(() => {
     if (!reviews || reviews.length === 0) return []
     
@@ -27,8 +27,8 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
     const scoredReviews = reviews
       .filter((review) => review.is_approved !== false)
       .map((review) => {
-        // Pārbaudām abus variantus: review_text (DB) vai content (legacy)
-        const text = (review.review_text || review.content || '').toLowerCase()
+        // LABOJUMS: Izmantojam tikai review_text, jo 'content' nav definēts tipā
+        const text = (review.review_text || '').toLowerCase()
         let score = 0
         
         score += review.rating || 0
@@ -84,12 +84,11 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
           </div>
         </div>
 
-        {/* 2. Uzlabotais Grid ar vienādu augstumu */}
+        {/* Reviews Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
           {curatedReviews.map((review, index) => (
             <div 
               key={review.id || index}
-              // "h-full" nodrošina, ka visas kartītes rindā ir vienāda augstuma
               className="flex flex-col h-full bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 relative group"
             >
               {/* Dekoratīvs elements */}
@@ -120,14 +119,15 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
                 ))}
               </div>
 
-              {/* Teksts: "flex-grow" aizpilda brīvo vietu, lai apakša būtu līdzenumā */}
+              {/* Teksts */}
               <div className="flex-grow mb-8">
+                {/* LABOJUMS: Arī šeit izmantojam tikai review_text */}
                 <p className="text-gray-600 italic leading-relaxed text-lg line-clamp-6">
-                  "{review.review_text || review.content}"
+                  "{review.review_text}"
                 </p>
               </div>
 
-              {/* Autors: "mt-auto" nobīda šo sadaļu uz pašu apakšu */}
+              {/* Autors */}
               <div className="mt-auto pt-6 border-t border-gray-100 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-luxury-blue font-bold text-xl overflow-hidden relative shadow-sm border-2 border-white">
                   {review.author_image ? (
