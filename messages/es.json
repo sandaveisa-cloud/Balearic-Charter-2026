@@ -267,7 +267,7 @@
       "name": "Nombre Completo",
       "email": "Correo Electrónico",
       "phone": "Número de Teléfono",
-      "identification": "Pasaporte/DNI (para contratos de chárter)"
+      "identification": "Pasaporte/DNI"
     },
     "purpose": {
       "title": "Finalidad del Tratamiento",
