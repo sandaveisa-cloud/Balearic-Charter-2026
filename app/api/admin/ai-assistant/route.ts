@@ -15,7 +15,8 @@ export async function POST(req: Request) {
     const genAI = new GoogleGenerativeAI(key);
 
     // 2. IZLABOTS: Izmantojam 'gemini-1.5-flash-latest' stabilākai darbībai caur v1beta
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+    // Šis nosaukums ir vislabāk saderīgs ar Eiropas reģionu un v1beta versiju
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const systemInstruction = `
       You are an expert web developer and business consultant for "Wide Dream".
