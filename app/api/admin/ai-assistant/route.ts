@@ -11,7 +11,8 @@ export async function POST(req: Request) {
 
     const { prompt } = await req.json()
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
+    // IZLABOTS: Izmantojam 'gemini-1.5-flash' modeli, lai strādātu Eiropā bez kartes
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 
     const systemInstruction = `
       You are an expert web developer and business consultant for "Wide Dream".
