@@ -104,6 +104,8 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                             fill
                             sizes="(max-width: 1024px) 100vw, 40vw"
                             objectFit="cover"
+                            priority={false} // ŠIS IR LABOJUMS - izslēdzam preload
+                            loading="lazy"   // ŠIS IR LABOJUMS - ieslēdzam lazy loading
                             onError={() => setImageErrors(prev => ({ ...prev, [yacht.id]: true }))}
                           />
                           {yacht.recently_refitted && (
