@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image' // Importējam Image komponenti
 
 interface HeroProps {
   settings: Record<string, string>
@@ -10,7 +11,7 @@ interface HeroProps {
 // Default YouTube video ID (hardcoded fallback)
 const DEFAULT_VIDEO_ID = 'v3ejpQjaScg'
 
-// Extract YouTube video ID from various URL formats
+// Extract YouTube video ID
 function extractYouTubeId(url: string | null | undefined): string | null {
   if (!url || typeof url !== 'string') return null
   if (/^[a-zA-Z0-9_-]{11}$/.test(url.trim())) return url.trim()
@@ -25,7 +26,7 @@ function extractYouTubeId(url: string | null | undefined): string | null {
   return null
 }
 
-// Build YouTube embed URL with all required parameters
+// Build YouTube embed URL
 function buildYouTubeEmbedUrl(videoId: string): string {
   const params = new URLSearchParams({
     autoplay: '1', mute: '1', loop: '1', playlist: videoId,
@@ -48,6 +49,9 @@ export default function Hero({ settings }: HeroProps) {
 
   const embedUrl = useMemo(() => buildYouTubeEmbedUrl(videoId), [videoId])
 
+  // Fona attēla URL - izmantojam tavu failu no public mapes
+  const bgImage = settings.hero_image_url || '/images/hero-sunset-view.jpg'
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const timer = setTimeout(() => setIsMounted(true), 100)
@@ -56,32 +60,41 @@ export default function Hero({ settings }: HeroProps) {
   }, [])
 
   return (
-    /* SAMAZINĀTS h-screen uz h-[85vh], lai noņemtu balto tukšumu */
-    <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden">
-      {/* YouTube Video Background */}
+    <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden bg-luxury-blue">
+      
+      {/* 1. SLĀNIS: Optimizēta fona bilde (Rādās vienmēr, kamēr video lādējas) */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={bgImage}
+          alt="Luxury Yacht Charter"
+          fill
+          priority={true} // SVARĪGI: Ielādē šo bildi pirmo (LCP optimizācija)
+          quality={90}
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
+
+      {/* 2. SLĀNIS: YouTube Video (Parādās virs bildes, kad gatavs) */}
       {isMounted && !videoError && (
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1, overflow: 'hidden', pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', top: '50%', left: '50%', width: '177.77777778vh', height: '100vh', minWidth: '100%', minHeight: '56.25vw', transform: 'translate(-50%, -50%) scale(1.1)', pointerEvents: 'none' }}>
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-0 animate-fade-in" style={{ opacity: 1, transition: 'opacity 1s ease-in' }}>
+          <div style={{ position: 'absolute', top: '50%', left: '50%', width: '177.77777778vh', height: '100vh', minWidth: '100%', minHeight: '56.25vw', transform: 'translate(-50%, -50%) scale(1.1)' }}>
             <iframe
               src={embedUrl}
               title="Hero Background Video"
               allow="autoplay; encrypted-media"
               allowFullScreen={false}
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none', pointerEvents: 'none' }}
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
               onError={() => setVideoError(true)}
             />
           </div>
         </div>
       )}
 
-      {/* Fallback Background */}
-      {(!isMounted || videoError) && (
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1, background: 'linear-gradient(135deg, #002366 0%, #003d99 50%, #D4AF37 100%)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-      )}
+      {/* 3. SLĀNIS: Tumšais pārklājums (Overlay) */}
+      <div className="absolute inset-0 bg-black/40 z-1" />
 
-      <div className="absolute inset-0 bg-black/40 z-[1]" />
-
-      {/* Content Overlay - SAMAZINĀTS pb no space-y uz pb-12, lai tuvinātu flotei */}
+      {/* 4. SLĀNIS: Saturs */}
       <div className="relative z-10 flex h-full items-center justify-center px-4 text-center pb-12">
         <div className="max-w-4xl space-y-6">
           <h1 className="font-serif text-5xl font-bold text-white md:text-7xl lg:text-8xl drop-shadow-lg">
