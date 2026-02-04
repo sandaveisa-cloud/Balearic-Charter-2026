@@ -90,7 +90,7 @@ export default function Footer() {
 
         <div className="mt-4 border-t border-gray-700 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-gray-400">
-            <p>&copy; 2026 {settings.company_name || 'Balearic Yacht Charters'}</p>
+            <p>&copy; 2026 {settings.company_name || 'Balearic Yacht Charters'}. {t('rights')}</p>
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
               <Link 
                 href="/legal"
