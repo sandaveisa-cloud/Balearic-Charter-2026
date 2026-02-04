@@ -106,7 +106,7 @@ export async function generateMetadata({ params }: Props) {
   }
 
   return {
-    title: `${yacht.name} | Balearic & Costa Blanca Charters`,
+    title: `${yacht.name} | Balearic Yacht Charters`,
     description: yacht.short_description || yacht.description || '',
   }
 }

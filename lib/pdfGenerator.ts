@@ -37,7 +37,7 @@ export function generateBookingPDF(data: BookingData): Promise<Buffer> {
         .fontSize(24)
         .font('Helvetica-Bold')
         .fillColor('#002366') // luxury-blue
-        .text('Balearic & Costa Blanca Charters', { align: 'center' })
+        .text('Balearic Yacht Charters', { align: 'center' })
         .moveDown(0.5)
 
       doc
@@ -241,7 +241,7 @@ export function generateBookingPDF(data: BookingData): Promise<Buffer> {
         .moveDown(0.5)
       doc
         .text(
-          'Balearic & Costa Blanca Charters | +34 680 957 096',
+          'Balearic Yacht Charters | +34 680 957 096',
           leftColumn,
           doc.y,
           { align: 'center', width: 495 }

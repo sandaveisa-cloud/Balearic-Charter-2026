@@ -21,7 +21,7 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <h3 className="mb-4 font-serif text-2xl font-bold">
-              {settings.company_name || 'Balearic & Costa Blanca Charters'}
+              {settings.company_name || 'Balearic Yacht Charters'}
             </h3>
             <p className="text-gray-300">
               {t('tagline', { default: 'Your premier destination for luxury yacht charters in the Mediterranean.' })}
@@ -90,7 +90,7 @@ export default function Footer() {
 
         <div className="mt-4 border-t border-gray-700 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-gray-400">
-            <p>&copy; {new Date().getFullYear()} {settings.company_name || 'Balearic & Costa Blanca Charters'}. {t('rights')}</p>
+            <p>&copy; {new Date().getFullYear()} {settings.company_name || 'Balearic Yacht Charters'}. {t('rights')}</p>
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
               <Link 
                 href="/legal"

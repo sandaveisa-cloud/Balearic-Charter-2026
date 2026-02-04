@@ -199,7 +199,7 @@ export default function SettingsAdminPage() {
                     value={settings.company_name || ''}
                     onChange={(e) => updateSetting('company_name', e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
-                    placeholder="Balearic & Costa Blanca Charters"
+                    placeholder="Balearic Yacht Charters"
                   />
                 </div>
 

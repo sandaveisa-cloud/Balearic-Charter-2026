@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const t = await getTranslations({ locale, namespace: 'contact' })
   
   return {
-    title: t('title') + ' | Balearic & Costa Blanca Charters',
+    title: t('title') + ' | Balearic Yacht Charters',
     description: t('subtitle'),
   }
 }

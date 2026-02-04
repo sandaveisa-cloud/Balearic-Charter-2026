@@ -1,5 +1,5 @@
 -- ============================================================================
--- Balearic & Costa Blanca Charters - Complete Database Schema
+-- Balearic Yacht Charters - Complete Database Schema
 -- ============================================================================
 -- This is a complete schema file that includes all tables, indexes, triggers,
 -- and migrations. Run this entire file in Supabase SQL Editor.
@@ -288,7 +288,7 @@ INSERT INTO site_settings (key, value) VALUES
   ('telegram_link', 'https://t.me/baleariccharters'),
   ('instagram_link', 'https://instagram.com/baleariccharters'),
   ('facebook_link', ''),
-  ('company_name', 'Balearic & Costa Blanca Charters')
+  ('company_name', 'Balearic Yacht Charters')
 ON CONFLICT (key) DO NOTHING;
 
 -- Insert sample fleet data
