@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     // Resend e-pasts
     if (resend) {
       await resend.emails.send({
-        from: 'Wide Dream <onboarding@resend.dev>',
+        from: 'Balearic Yacht Charters <onboarding@resend.dev>',
         to: 'peter.sutter@gmail.com',
         subject: body.yachtName ? `New Booking: ${body.yachtName}` : `New Message from ${body.name}`,
         html: `<p><strong>Name:</strong> ${body.name}</p><p><strong>Email:</strong> ${body.email}</p><p><strong>Message:</strong> ${body.message || 'N/A'}</p>`

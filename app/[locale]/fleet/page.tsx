@@ -7,36 +7,46 @@ import Breadcrumb from '@/components/Breadcrumb'
 import { ArrowLeft, Ship } from 'lucide-react'
 import { locales } from '@/i18n/routing'
 
-export const revalidate = 60 // Revalidate every 60 seconds for quick updates from Admin
+export const revalidate = 60 // Atjaunināt datus reizi minūtē
 
 type Props = {
   params: Promise<{ locale: string }>
 }
 
+// 1. STRATĒĢISKĀ ATSLĒGVĀRDU MAIŅA (Baleāru salas)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   
   const titles: Record<string, string> = {
-    en: 'Our Luxury Fleet | Premium Yacht Charter | Wide Dream',
-    es: 'Nuestra Flota de Lujo | Chárter de Yates Premium | Wide Dream',
-    de: 'Unsere Luxusflotte | Premium Yachtcharter | Wide Dream',
+    en: 'Luxury Yacht Charter Balearic Islands | Ibiza & Mallorca | Balearic Yacht Charters',
+    es: 'Alquiler de Yates en Baleares | Ibiza y Mallorca | Balearic Yacht Charters',
+    de: 'Luxus Yachtcharter Balearen | Ibiza & Mallorca | Balearic Yacht Charters',
   }
   
   const descriptions: Record<string, string> = {
-    en: 'Explore our premium fleet of luxury yachts available for charter. Professional crew, modern amenities, unforgettable experiences in the Mediterranean.',
-    es: 'Explore nuestra flota premium de yates de lujo disponibles para chárter. Tripulación profesional, comodidades modernas, experiencias inolvidables en el Mediterráneo.',
-    de: 'Entdecken Sie unsere Premium-Flotte luxuriöser Yachten zum Charter. Professionelle Crew, moderne Annehmlichkeiten, unvergessliche Erlebnisse im Mittelmeer.',
+    en: 'Premium yacht rentals in Ibiza, Mallorca and Menorca. Discover our exclusive fleet of catamarans and luxury yachts. Professional crew and bespoke Balearic charters.',
+    es: 'Alquiler exclusivo de yates en Ibiza, Mallorca y Menorca. Explore nuestra flota premium de catamaranes y yates de lujo. Chárters a medida con tripulación.',
+    de: 'Exklusive Yachtmiete auf Ibiza, Mallorca und Menorca. Entdecken Sie unsere Premium-Flotte von Katamaranen und Luxusyachten. Maßgeschneiderte Charter.',
   }
+
+  const baseUrl = 'https://balearicyachtcharters.com'
 
   return {
     title: titles[locale] || titles.en,
     description: descriptions[locale] || descriptions.en,
     alternates: {
+      canonical: `${baseUrl}/${locale}/fleet`,
       languages: {
-        'en': '/en/fleet',
-        'es': '/es/fleet',
-        'de': '/de/fleet',
+        en: `${baseUrl}/en/fleet`,
+        es: `${baseUrl}/es/fleet`,
+        de: `${baseUrl}/de/fleet`,
       },
+    },
+    keywords: ['yacht charter Ibiza', 'Mallorca boat rental', 'Balearic Islands sailing', 'luxury catamaran Menorca', 'Formentera boat trips'],
+    openGraph: {
+      title: titles[locale] || titles.en,
+      description: descriptions[locale] || descriptions.en,
+      images: [{ url: '/images/fleet-og.jpg', width: 1200, height: 630, alt: 'Balearic Yacht Charters Fleet' }],
     },
   }
 }
@@ -48,16 +58,38 @@ export default async function FleetPage({ params }: Props) {
   const content = await getSiteContent()
   const fleet = content.fleet || []
 
+  // 2. STRUKTURĒTIE DATI (Schema.org) Google meklētājam
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "Balearic Yacht Charters",
+    "serviceType": "Yacht Rental",
+    "areaServed": [
+      { "@type": "State", "name": "Balearic Islands" },
+      { "@type": "City", "name": "Ibiza" },
+      { "@type": "City", "name": "Palma de Mallorca" }
+    ],
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": "Balearic Yacht Charters",
+      "url": "https://widedream.es"
+    }
+  }
+
   return (
     <main className="min-h-screen pt-20">
-      {/* Breadcrumb Navigation */}
+      {/* Pievienojam JSON-LD galvenajā lapas daļā */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <Breadcrumb 
         items={[
           { label: t('title') || 'Fleet', href: '/fleet' }
         ]} 
       />
       
-      {/* Hero Header */}
       <header className="bg-gradient-to-br from-luxury-blue via-luxury-blue/95 to-luxury-blue/90 py-12 px-4">
         <div className="container mx-auto max-w-6xl">
           <div className="flex items-center gap-4 mb-4">
@@ -68,22 +100,20 @@ export default async function FleetPage({ params }: Props) {
           </div>
           
           <p className="text-xl text-white/80 max-w-2xl">
-            {t('subtitle') || 'Discover our carefully selected fleet of premium yachts, each offering exceptional comfort, style, and performance for your Mediterranean adventure.'}
+            {t('subtitle') || 'Discover our exclusive fleet in the Balearic Islands, offering exceptional style and performance for your Mediterranean adventure.'}
           </p>
         </div>
       </header>
 
-      {/* Fleet Grid */}
       <FleetSection fleet={fleet} />
 
-      {/* CTA Section */}
       <section className="bg-gradient-to-r from-luxury-blue/5 via-luxury-gold/5 to-luxury-blue/5 py-16 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-4">
             {t('ctaTitle') || 'Ready to Set Sail?'}
           </h2>
           <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
-            {t('ctaDescription') || 'Contact us to book your perfect yacht. Our team will help you choose the ideal vessel for your dream Mediterranean charter.'}
+            {t('ctaDescription') || 'Book your dream charter in Ibiza or Mallorca. Our team is ready to help you plan the perfect journey.'}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link

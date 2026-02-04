@@ -75,7 +75,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             
             {/* Email */}
             <a 
-              href={`mailto:${settings.contact_email || 'info@widedream.es'}`}
+              href={`mailto:${settings.contact_email || 'info@balearicyachtcharters.com'}`}
               className="flex items-center gap-4 p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="w-12 h-12 bg-luxury-blue rounded-full flex items-center justify-center">
@@ -83,7 +83,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
               </div>
               <div>
                 <p className="text-sm text-gray-500">{t('emailLabel')}</p>
-                <p className="font-semibold text-luxury-blue">{settings.contact_email || 'info@widedream.es'}</p>
+                <p className="font-semibold text-luxury-blue">{settings.contact_email || 'info@balearicyachtcharters.com'}</p>
               </div>
             </a>
             

@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: Props) {
   const name = yachtNames[slug as YachtSlug]?.[locale] || yachtNames[slug as YachtSlug]?.en
 
   return {
-    title: `${name} | widedream.es - Premium Yacht Charters`,
+    title: `${name} | balearicyachtcharters.com - Premium Yacht Charters`,
     description: `Discover the ${name}, a luxury catamaran available for charter in the Balearic Islands and Costa Blanca.`,
   }
 }

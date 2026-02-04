@@ -6,7 +6,7 @@
     "getQuote": "Solicitar Presupuesto"
   },
   "metadata": {
-    "title": "Wide Dream - Alquiler de Yates de Lujo",
+    "title": "Balearic Yacht Charters - Alquiler de Yates de Lujo",
     "description": "Experimente el máximo lujo en alquiler de yates en las Islas Baleares.",
     "keywords": "yate, chárter, mallorca, ibiza, lujo"
   },
@@ -180,15 +180,15 @@
     "subtitle": "Pasión por el mar",
     "mission": "Nuestra misión es proporcionar experiencias inolvidables.",
     "companyTitle": "Nuestra Empresa",
-    "companyDescription": "Wide Dream se dedica a proporcionar la mejor experiencia de alquiler de yates de lujo en las Islas Baleares.",
+    "companyDescription": "Balearic Yacht Charters se dedica a proporcionar la mejor experiencia de alquiler de yates de lujo en las Islas Baleares.",
     "areasTitle": "Áreas de Navegación",
     "areasDescription": "Operamos principalmente en las impresionantes aguas de Mallorca, Ibiza y Formentera.",
     "ctaTitle": "¿Listo para una Aventura?",
     "ctaDescription": "Únete a nosotros a bordo para las vacaciones de tu vida.",
     "viewFleet": "Ver Nuestra Flota",
     "backToHome": "Volver al Inicio",
-    "metaTitle": "Sobre Nosotros - Wide Dream",
-    "metaDescription": "Conozca Wide Dream, nuestra misión y nuestros servicios de chárter de yates de lujo."
+    "metaTitle": "Sobre Nosotros - Balearic Yacht Charters",
+    "metaDescription": "Conozca Balearic Yacht Charters, nuestra misión y nuestros servicios de chárter de yates de lujo."
   },
   "mission": {
     "title": "Nuestra Misión",
@@ -209,7 +209,7 @@
   },
   "legal": {
     "title": "Aviso Legal",
-    "metaDescription": "Aviso legal e información de la empresa Wide Dream S.L.",
+    "metaDescription": "Aviso legal e información de la empresa Balearic Yacht Charters S.L.",
     "lastUpdated": "Última actualización: Enero 2026",
     "backToHome": "Volver al Inicio",
     "companyInfo": {
@@ -257,9 +257,9 @@
     "backToHome": "Volver al Inicio",
     "dataController": {
       "title": "Responsable del Tratamiento",
-      "entity": "Wide Dream S.L.",
+      "entity": "Balearic Yacht Charters S.L.",
       "cif": "B-12345678",
-      "email": "privacy@widedream.es"
+      "email": "privacy@balearicyachtcharters.com"
     },
     "dataCollection": {
       "title": "Recopilación de Datos",
@@ -330,12 +330,12 @@
   },
   "terms": {
     "title": "Términos y Condiciones",
-    "metaDescription": "Términos y condiciones para reservas y chárter con Wide Dream.",
+    "metaDescription": "Términos y condiciones para reservas y chárter con Balearic Yacht Charters.",
     "lastUpdated": "Última actualización: Enero 2026",
     "backToHome": "Volver al Inicio",
     "provider": {
       "title": "Proveedor de Servicios",
-      "entity": "Wide Dream S.L.",
+      "entity": "Balearic Yacht Charters S.L.",
       "cif": "B-12345678",
       "form": "Forma Jurídica",
       "formValue": "S.L.",

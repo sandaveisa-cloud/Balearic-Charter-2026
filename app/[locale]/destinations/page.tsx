@@ -18,9 +18,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: 'destinations' })
   
   const titles: Record<string, string> = {
-    en: 'Explore Our Destinations | Ibiza, Mallorca, Menorca, Costa Blanca | Wide Dream',
-    es: 'Explora Nuestros Destinos | Ibiza, Mallorca, Menorca, Costa Blanca | Wide Dream',
-    de: 'Entdecken Sie Unsere Reiseziele | Ibiza, Mallorca, Menorca, Costa Blanca | Wide Dream',
+    en: 'Explore Our Destinations | Ibiza, Mallorca, Menorca, Costa Blanca | Balearic Yacht Charters',
+    es: 'Explora Nuestros Destinos | Ibiza, Mallorca, Menorca, Costa Blanca | Balearic Yacht Charters',
+    de: 'Entdecken Sie Unsere Reiseziele | Ibiza, Mallorca, Menorca, Costa Blanca | Balearic Yacht Charters',
   }
   
   const descriptions: Record<string, string> = {

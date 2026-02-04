@@ -26,7 +26,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = params instanceof Promise ? await params : params
   const { locale } = resolvedParams
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.widedream.es'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.balearicyachtcharters.com'
   
   let currentTitle: string
   let currentDescription: string

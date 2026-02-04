@@ -10,13 +10,13 @@ interface StructuredDataProps {
 }
 
 export default function StructuredData({ type, settings = {}, yacht, destination, locale = 'en' }: StructuredDataProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.widedream.es'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.balearicyachtcharters.com'
   
   if (type === 'TravelAgency') {
     const travelAgencySchema = {
       "@context": "https://schema.org",
       "@type": "TravelAgency",
-      "name": settings.company_name || "Wide Dream",
+      "name": settings.company_name || "Balearic Yacht Charters",
       "description": locale === 'en' 
         ? "Luxury yacht charter in Majorca, Ibiza, and Costa Blanca"
         : locale === 'es'
@@ -84,7 +84,7 @@ export default function StructuredData({ type, settings = {}, yacht, destination
       "description": yachtDescription,
       "provider": {
         "@type": "TravelAgency",
-        "name": settings.company_name || "Wide Dream",
+        "name": settings.company_name || "Balearic Yacht Charters",
         "url": baseUrl
       },
       "offers": {

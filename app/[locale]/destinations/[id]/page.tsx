@@ -67,34 +67,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const description = getLocalizedDescription(destination, locale)
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.widedream.es'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.balearicyachtcharters.com'
   
   // SEO-optimized titles and descriptions
   const seoTitles: Record<string, Record<string, string>> = {
     ibiza: {
-      en: `Ibiza Boat Rentals & Yacht Charter | Luxury Private Boats | Wide Dream`,
-      es: `Alquiler de Barcos en Ibiza | Chárter de Yates de Lujo | Wide Dream`,
-      de: `Bootsvermietung Ibiza | Luxus Yachtcharter | Wide Dream`,
+      en: `Ibiza Boat Rentals & Yacht Charter | Luxury Private Boats | Balearic Yacht Charters`,
+      es: `Alquiler de Barcos en Ibiza | Chárter de Yates de Lujo | Balearic Yacht Charters`,
+      de: `Bootsvermietung Ibiza | Luxus Yachtcharter | Balearic Yacht Charters`,
     },
     formentera: {
-      en: `Formentera Yacht Charter | Private Boat Rentals | Wide Dream`,
-      es: `Chárter de Yates en Formentera | Alquiler de Barcos Privados | Wide Dream`,
-      de: `Yachtcharter Formentera | Privatbootvermietung | Wide Dream`,
+      en: `Formentera Yacht Charter | Private Boat Rentals | Balearic Yacht Charters`,
+      es: `Chárter de Yates en Formentera | Alquiler de Barcos Privados | Balearic Yacht Charters`,
+      de: `Yachtcharter Formentera | Privatbootvermietung | Balearic Yacht Charters`,
     },
     mallorca: {
-      en: `Mallorca Yacht Charter | Luxury Boat Rentals Majorca | Wide Dream`,
-      es: `Chárter de Yates en Mallorca | Alquiler de Barcos de Lujo | Wide Dream`,
-      de: `Yachtcharter Mallorca | Luxus Bootsvermietung | Wide Dream`,
+      en: `Mallorca Yacht Charter | Luxury Boat Rentals Majorca | Balearic Yacht Charters`,
+      es: `Chárter de Yates en Mallorca | Alquiler de Barcos de Lujo | Balearic Yacht Charters`,
+      de: `Yachtcharter Mallorca | Luxus Bootsvermietung | Balearic Yacht Charters`,
     },
     menorca: {
-      en: `Menorca Boat Rentals & Yacht Charter | Private Yachts | Wide Dream`,
-      es: `Alquiler de Barcos en Menorca | Chárter de Yates Privados | Wide Dream`,
-      de: `Bootsvermietung Menorca | Privat Yachtcharter | Wide Dream`,
+      en: `Menorca Boat Rentals & Yacht Charter | Private Yachts | Balearic Yacht Charters`,
+      es: `Alquiler de Barcos en Menorca | Chárter de Yates Privados | Balearic Yacht Charters`,
+      de: `Bootsvermietung Menorca | Privat Yachtcharter | Balearic Yacht Charters`,
     },
     'costa-blanca': {
-      en: `Costa Blanca Yacht Charter | Boat Rentals Spain | Wide Dream`,
-      es: `Chárter de Yates Costa Blanca | Alquiler de Barcos España | Wide Dream`,
-      de: `Yachtcharter Costa Blanca | Bootsvermietung Spanien | Wide Dream`,
+      en: `Costa Blanca Yacht Charter | Boat Rentals Spain | Balearic Yacht Charters`,
+      es: `Chárter de Yates Costa Blanca | Alquiler de Barcos España | Balearic Yacht Charters`,
+      de: `Yachtcharter Costa Blanca | Bootsvermietung Spanien | Balearic Yacht Charters`,
     },
   }
 
@@ -127,7 +127,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const slug = destination.slug?.toLowerCase() || (destinationName || '').toLowerCase().replace(/\s+/g, '-')
-  const seoTitle = seoTitles[slug]?.[locale] || `${destinationName} Yacht Charter | Wide Dream`
+  const seoTitle = seoTitles[slug]?.[locale] || `${destinationName} Yacht Charter | Balearic Yacht Charters`
   const seoDescription = seoDescriptions[slug]?.[locale] || 
     (description.substring(0, 155) || `Explore ${destinationName} with our luxury yacht charter services. Professional crew, gourmet cuisine, premium boats. Book today!`)
 
@@ -152,7 +152,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: seoTitle,
       description: seoDescription,
       url: canonicalUrl,
-      siteName: 'Wide Dream',
+      siteName: 'Balearic Yacht Charters',
       locale: locale,
       type: 'website',
       ...(imageUrl && {

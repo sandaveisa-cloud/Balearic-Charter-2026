@@ -49,7 +49,7 @@ export default function AiAssistant() {
           <Bot className="w-5 h-5 text-luxury-gold" />
         </div>
         <div>
-          <h3 className="font-bold text-gray-800">Wide Dream AI</h3>
+          <h3 className="font-bold text-gray-800">Balearic Yacht Charters AI</h3>
           <p className="text-xs text-gray-500">Your charter business assistant</p>
         </div>
       </div>

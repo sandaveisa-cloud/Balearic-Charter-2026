@@ -53,7 +53,7 @@ export default function StickyHeader() {
             href="/"
             className="font-serif text-xl md:text-2xl lg:text-3xl font-bold text-white hover:text-luxury-gold transition-colors duration-300"
           >
-            Wide Dream
+            Balearic Yacht Charters
           </Link>
           
           {/* Desktop Navigation */}

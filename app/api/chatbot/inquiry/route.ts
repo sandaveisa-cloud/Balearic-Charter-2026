@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     // Prepare insert payload
     const insertPayload: any = {
       name: 'Chatbot Inquiry', // Default name, can be updated later
-      email: emailMatch ? emailMatch[0] : 'chatbot@widedream.es', // Default email if not found
+      email: emailMatch ? emailMatch[0] : 'chatbot@balearicyachtcharters.com', // Default email if not found
       phone: phoneMatch ? phoneMatch[0] : null,
       yacht_id: null, // Can be extracted from message if needed
       start_date: null,

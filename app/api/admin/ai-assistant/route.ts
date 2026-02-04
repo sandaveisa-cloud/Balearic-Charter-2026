@@ -3,37 +3,38 @@ import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
   try {
-    // 1. Pārbaudām atslēgu tieši funkcijas iekšpusē
     const key = process.env.GEMINI_API_KEY;
     
     if (!key) {
-      console.error('KĻŪDA: GEMINI_API_KEY nav atrasts vides mainīgajos');
+      console.error('KĻŪDA: GEMINI_API_KEY nav atrasts');
       return NextResponse.json({ error: 'API Key not configured' }, { status: 500 });
     }
 
     const { prompt } = await req.json();
-    
-    // Inicializējam AI ar tavu atslēgu
     const genAI = new GoogleGenerativeAI(key);
 
-    // 2. IZLABOTS: Izmantojam specifisku modeļa versiju, kas vislabāk strādā ar v1beta un jauno bibliotēku
-    // Ja gemini-1.5-flash joprojām met 404, šis nosaukums ir visdrošākais
     const model = genAI.getGenerativeModel({ 
       model: "gemini-1.5-flash",
     });
 
+    // UZLABOTA INSTRUKCIJA: Fokusējamies uz Baleāru salām un Luksusa segmentu
     const systemInstruction = `
-      You are an expert web developer and business consultant for "Wide Dream" (widedream.es).
-      Your expertise:
-      1. Write SEO-optimized descriptions for yacht rentals and maritime logistics in Ibiza/Mallorca.
-      2. Fix grammar and improve professional tone.
-      3. Precise translations between Latvian, Spanish, and English.
-      Keep answers concise and business-oriented.
+      You are the Senior Marketing Expert for "Balearic Yacht Charters" (balearicyachtcharters.com), a luxury yacht charter agency specializing in the Balearic Islands (Ibiza, Mallorca, Menorca, Formentera).
+
+      Your writing style:
+      1. LUXURY & EXCLUSIVE: Use sophisticated, inviting language (e.g., "pristine waters", "bespoke experiences", "hidden gems").
+      2. SEO-DRIVEN: Naturally weave in keywords like "yacht charter Ibiza", "Mallorca boat rental", "luxury sailing Mediterranean", and "private catamaran".
+      3. EXPERT KNOWLEDGE: When describing destinations, mention specific anchorages (calas), beach clubs, or sailing conditions unique to the Balearics.
+      4. LOGISTICS FOCUS: For logistics prompts, emphasize reliability, safety, and Mediterranean expertise.
+
+      Output Requirements:
+      - Always provide professional tone.
+      - If translating, ensure the nuance of "luxury travel" is preserved in English, Spanish, German, or Latvian.
+      - Keep formatting clean (suitable for website sections).
     `;
 
     const fullPrompt = `${systemInstruction}\n\nUser Request: ${prompt}`;
 
-    // 3. AI satura ģenerēšana ar papildus drošības pārbaudi response gaidīšanai
     const result = await model.generateContent(fullPrompt);
     const response = await result.response;
     const text = response.text();
