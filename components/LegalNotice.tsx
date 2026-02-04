@@ -47,8 +47,8 @@ export default function LegalNotice() {
                 <ul className="space-y-2 ml-4">
                   <li className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-luxury-gold" />
-                    <a href="mailto:peter.sutter@gmail.com" className="text-luxury-blue hover:text-luxury-gold transition-colors">
-                      peter.sutter@gmail.com
+                    <a href="mailto:petersutter@gmail.com" className="text-luxury-blue hover:text-luxury-gold transition-colors">
+                      petersutter@gmail.com
                     </a>
                   </li>
                   <li className="flex items-center gap-2">
@@ -139,10 +139,10 @@ export default function LegalNotice() {
             <div className="flex items-center gap-3 justify-center md:justify-start">
               <Mail className="w-5 h-5 text-luxury-gold" />
               <a 
-                href="mailto:peter.sutter@gmail.com" 
+                href="mailto:petersutter@gmail.com" 
                 className="text-luxury-blue hover:text-luxury-gold transition-colors font-semibold"
               >
-                peter.sutter@gmail.com
+                petersutter@gmail.com
               </a>
             </div>
             <div className="flex items-center gap-3 justify-center md:justify-start">
