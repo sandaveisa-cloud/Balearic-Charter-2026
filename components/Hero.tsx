@@ -50,7 +50,15 @@ export default function Hero({ settings }: HeroProps) {
   const embedUrl = useMemo(() => buildYouTubeEmbedUrl(videoId), [videoId])
 
   // Fona attēla URL - izmantojam tavu failu no public mapes
-  const bgImage = settings.hero_image_url || '/images/hero-sunset-view.jpg'
+  // Validate hero_image_url to ensure it's not an ID or invalid value
+  const rawHeroImage = settings.hero_image_url
+  const bgImage = (rawHeroImage && 
+                   typeof rawHeroImage === 'string' && 
+                   rawHeroImage.trim() !== '' &&
+                   !/^\d+$/.test(rawHeroImage.trim()) &&
+                   !/^image:\d+$/i.test(rawHeroImage.trim())) 
+    ? rawHeroImage.trim() 
+    : '/images/hero-sunset-view.jpg'
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -63,17 +71,19 @@ export default function Hero({ settings }: HeroProps) {
     <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden bg-luxury-blue">
       
       {/* 1. SLĀNIS: Optimizēta fona bilde (Rādās vienmēr, kamēr video lādējas) */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={bgImage}
-          alt="Luxury Yacht Charter"
-          fill
-          priority={true} // SVARĪGI: Ielādē šo bildi pirmo (LCP optimizācija)
-          quality={90}
-          sizes="100vw"
-          className="object-cover"
-        />
-      </div>
+      {bgImage && (
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={bgImage}
+            alt="Luxury Yacht Charter"
+            fill
+            priority={true} // SVARĪGI: Ielādē šo bildi pirmo (LCP optimizācija)
+            quality={90}
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
+      )}
 
       {/* 2. SLĀNIS: YouTube Video (Parādās virs bildes, kad gatavs) */}
       {isMounted && !videoError && (

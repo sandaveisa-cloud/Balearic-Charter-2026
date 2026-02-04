@@ -83,7 +83,8 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                 format: 'webp',
               })
               const hasError = imageErrors[yacht.id]
-              const showImage = imageUrl && !hasError
+              // Explicit null check: only show image if imageUrl is a valid string
+              const showImage = imageUrl && typeof imageUrl === 'string' && imageUrl.trim() !== '' && !hasError
 
               const baseStartingPrice = yacht.low_season_price || yacht.high_season_price || null
               const priceInfo = baseStartingPrice ? calculateEarlyBirdPrice(baseStartingPrice) : null
@@ -96,7 +97,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                 <div key={yacht.id} className="group relative overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200 transition-all hover:shadow-xl">
                   <div className="flex flex-col lg:flex-row">
                     <div className="w-full lg:w-2/5 flex-shrink-0">
-                      {showImage ? (
+                      {showImage && imageUrl ? (
                         <div className="aspect-[4/3] lg:aspect-square overflow-hidden relative">
                           <OptimizedImage
                             src={imageUrl}

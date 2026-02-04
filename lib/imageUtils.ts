@@ -12,26 +12,41 @@ export function getImageUrl(imageUrlOrFilename: string | null | undefined): stri
     return null
   }
 
+  const trimmed = imageUrlOrFilename.trim()
+  
+  // Validate: reject values that look like IDs or invalid formats
+  // Reject pure numbers (likely IDs)
+  if (/^\d+$/.test(trimmed)) {
+    console.warn('[ImageUtils] Rejected numeric ID as image URL:', trimmed)
+    return null
+  }
+  
+  // Reject patterns like "image:1", "image:123", etc.
+  if (/^image:\d+$/i.test(trimmed)) {
+    console.warn('[ImageUtils] Rejected image ID pattern as image URL:', trimmed)
+    return null
+  }
+
   // If it's already a full URL, return as-is
-  if (imageUrlOrFilename.startsWith('http://') || imageUrlOrFilename.startsWith('https://')) {
-    return imageUrlOrFilename
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed
   }
 
   // If it's a local path starting with /images/, return as-is
   // Next.js will serve these from the public folder
-  if (imageUrlOrFilename.startsWith('/images/') || imageUrlOrFilename.startsWith('/')) {
-    return imageUrlOrFilename
+  if (trimmed.startsWith('/images/') || trimmed.startsWith('/')) {
+    return trimmed
   }
 
   // Otherwise, construct the Supabase Storage public URL
   try {
     const { data } = supabase.storage
       .from('yacht-images')
-      .getPublicUrl(imageUrlOrFilename)
+      .getPublicUrl(trimmed)
 
     return data.publicUrl
   } catch (error) {
-    console.error('[ImageUtils] Error constructing image URL:', error)
+    console.error('[ImageUtils] Error constructing image URL:', error, 'for value:', trimmed)
     return null
   }
 }
@@ -61,6 +76,32 @@ export function getOptimizedImageUrl(
     return null
   }
 
+  // Validate: reject values that look like IDs or invalid formats
+  const trimmed = imageUrlOrFilename.trim()
+  
+  // Reject pure numbers (likely IDs)
+  if (/^\d+$/.test(trimmed)) {
+    console.warn('[ImageUtils] Rejected numeric ID as image URL:', trimmed)
+    return null
+  }
+  
+  // Reject patterns like "image:1", "image:123", etc.
+  if (/^image:\d+$/i.test(trimmed)) {
+    console.warn('[ImageUtils] Rejected image ID pattern as image URL:', trimmed)
+    return null
+  }
+  
+  // Reject values without file extensions (unless they're URLs or paths)
+  // Allow URLs, local paths, and Supabase paths
+  if (!trimmed.startsWith('/') && 
+      !trimmed.startsWith('http://') && 
+      !trimmed.startsWith('https://') &&
+      !/\.(jpg|jpeg|png|gif|webp|avif|svg|bmp|ico)(\?|$)/i.test(trimmed) &&
+      !trimmed.includes('/')) {
+    console.warn('[ImageUtils] Rejected value without file extension or path structure:', trimmed)
+    return null
+  }
+
   // Default options
   const {
     width = 1200,
@@ -71,17 +112,17 @@ export function getOptimizedImageUrl(
 
   // If it's a local path starting with /, return as-is
   // Next.js Image component will handle optimization
-  if (imageUrlOrFilename.startsWith('/')) {
-    return imageUrlOrFilename
+  if (trimmed.startsWith('/')) {
+    return trimmed
   }
 
   // If it's already a full URL
-  if (imageUrlOrFilename.startsWith('http://') || imageUrlOrFilename.startsWith('https://')) {
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
     // Check if it's a Supabase Storage URL
-    if (imageUrlOrFilename.includes('.supabase.co/storage/v1/object/public/')) {
+    if (trimmed.includes('.supabase.co/storage/v1/object/public/')) {
       // Add transformation query parameters
       try {
-        const url = new URL(imageUrlOrFilename)
+        const url = new URL(trimmed)
         url.searchParams.set('width', width.toString())
         if (options.height) {
           url.searchParams.set('height', options.height.toString())
@@ -91,18 +132,18 @@ export function getOptimizedImageUrl(
         url.searchParams.set('resize', resize)
         return url.toString()
       } catch {
-        return imageUrlOrFilename
+        return trimmed
       }
     }
     // For non-Supabase URLs, return as-is (Next.js Image will handle optimization)
-    return imageUrlOrFilename
+    return trimmed
   }
 
   // Construct Supabase Storage URL with transformations
   try {
     const { data } = supabase.storage
       .from('yacht-images')
-      .getPublicUrl(imageUrlOrFilename, {
+      .getPublicUrl(trimmed, {
         transform: {
           width,
           height: options.height,
@@ -114,8 +155,9 @@ export function getOptimizedImageUrl(
 
     return data.publicUrl
   } catch (error) {
+    console.error('[ImageUtils] Error constructing Supabase Storage URL:', error, 'for value:', trimmed)
     // Fallback to regular URL
-    return getImageUrl(imageUrlOrFilename)
+    return getImageUrl(trimmed)
   }
 }
 

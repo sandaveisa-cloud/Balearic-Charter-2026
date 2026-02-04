@@ -158,13 +158,35 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
   const shipTranslations = getShipTranslations()
 
   // Combine main_image_url and gallery_images into a single array
+  // Filter out invalid values (IDs, null, undefined, empty strings)
   const allImages = (() => {
     const gallery = yacht.gallery_images || []
     const main = yacht.main_image_url
-    if (main && !gallery.includes(main)) {
-      return [main, ...gallery]
+    
+    // Helper to validate image URL
+    const isValidImageUrl = (url: string | null | undefined): boolean => {
+      if (!url || typeof url !== 'string' || url.trim() === '') return false
+      const trimmed = url.trim()
+      // Reject pure numbers or ID patterns
+      if (/^\d+$/.test(trimmed) || /^image:\d+$/i.test(trimmed)) return false
+      return true
     }
-    return gallery.length > 0 ? gallery : (main ? [main] : [])
+    
+    const validImages: string[] = []
+    
+    // Add main image if valid
+    if (main && isValidImageUrl(main) && !gallery.includes(main)) {
+      validImages.push(main)
+    }
+    
+    // Add valid gallery images
+    gallery.forEach(img => {
+      if (isValidImageUrl(img) && !validImages.includes(img)) {
+        validImages.push(img)
+      }
+    })
+    
+    return validImages
   })()
 
   // Check if layout image exists (look for layout/blueprint in gallery or as a separate field)
