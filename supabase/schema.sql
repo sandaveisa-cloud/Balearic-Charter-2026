@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS site_settings (
 -- Insert default site settings
 INSERT INTO site_settings (key, value) VALUES
   ('hero_title', 'Experience Luxury at Sea'),
-  ('hero_subtitle', 'Premium Yacht Charters in the Balearic Islands & Costa Blanca'),
+  ('hero_subtitle', 'Premium Yacht Charters in the Balearic Islands'),
   ('hero_video_url', ''),
   ('contact_phone', '+34 680 957 096'),
   ('contact_email', 'peter.sutter@gmail.com'),

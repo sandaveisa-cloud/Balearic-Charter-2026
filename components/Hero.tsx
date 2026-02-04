@@ -107,7 +107,7 @@ export default function Hero({ settings }: HeroProps) {
 
           <div className="pt-4 max-w-3xl mx-auto">
             <p className="text-lg md:text-xl text-white/95 leading-relaxed drop-shadow-md">
-              We provide premium yacht charters in the Balearic Islands and Costa Blanca with professional crew and tailored experiences.
+              We provide premium yacht charters in the Balearic Islands with a professional crew and tailored luxury experiences.
             </p>
           </div>
 

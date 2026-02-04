@@ -18,10 +18,10 @@ export default function StructuredData({ type, settings = {}, yacht, destination
       "@type": "TravelAgency",
       "name": settings.company_name || "Balearic Yacht Charters",
       "description": locale === 'en' 
-        ? "Luxury yacht charter in Majorca, Ibiza, and Costa Blanca"
+        ? "Luxury yacht charter in Majorca, Ibiza, and the Balearic Islands"
         : locale === 'es'
-        ? "Alquiler de yates de lujo en Mallorca, Ibiza y Costa Blanca"
-        : "Luxus Yachtcharter auf Mallorca, Ibiza und Costa Blanca",
+        ? "Alquiler de yates de lujo en Mallorca, Ibiza y las Islas Baleares"
+        : "Luxus Yachtcharter auf Mallorca, Ibiza und den Balearen",
       "url": baseUrl,
       "telephone": settings.contact_phone || undefined,
       "email": settings.contact_email || undefined,

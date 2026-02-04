@@ -18,7 +18,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: 'Balearic Yacht Charters | Luxury Yacht Charter',
-  description: 'Premium yacht charters in the Balearic Islands and Costa Blanca.',
+  description: 'Premium yacht charters in the Balearic Islands.',
 }
 
 export default function RootLayout({

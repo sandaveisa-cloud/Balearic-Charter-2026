@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: Props) {
 
   return {
     title: `${name} | balearicyachtcharters.com - Premium Yacht Charters`,
-    description: `Discover the ${name}, a luxury catamaran available for charter in the Balearic Islands and Costa Blanca.`,
+    description: `Discover the ${name}, a luxury catamaran available for charter in the Balearic Islands.`,
   }
 }
 
