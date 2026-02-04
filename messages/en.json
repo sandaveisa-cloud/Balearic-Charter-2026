@@ -18,7 +18,7 @@
     "contact": "Contact"
   },
   "hero": {
-    "title": "Luxury Yacht Charter",
+    "title": "Premium Yacht Charters in the Balearic Islands",
     "subtitle": "Experience the Mediterranean like never before",
     "cta": "Explore Our Fleet"
   },
@@ -220,7 +220,7 @@
       "formValue": "Sociedad Limitada (S.L.)",
       "contact": "Contact:",
       "operatingAreas": "Operating Areas:",
-      "operatingAreasValue": "Balearic Islands & Costa Blanca"
+      "operatingAreasValue": "Balearic Islands"
     },
     "maritime": {
       "title": "Maritime Compliance",
@@ -302,18 +302,18 @@
     "backToHome": "Back to Home",
     "intro": "We use cookies to improve your experience.",
     "whatAre": {
-        "title": "What are Cookies?",
-        "description": "Cookies are small text files used to store small information."
+      "title": "What are Cookies?",
+      "description": "Cookies are small text files used to store small information."
     },
     "types": {
       "title": "Types of Cookies",
       "essential": {
-          "title": "Essential Cookies",
-          "description": "Required for the site to function properly."
+        "title": "Essential Cookies",
+        "description": "Required for the site to function properly."
       },
       "analytical": {
-          "title": "Analytical Cookies",
-          "description": "Used to understand how visitors interact with the website."
+        "title": "Analytical Cookies",
+        "description": "Used to understand how visitors interact with the website."
       }
     },
     "managing": {
@@ -324,8 +324,8 @@
       "firefox": "Mozilla Firefox"
     },
     "consent": {
-        "title": "Consent",
-        "description": "By continuing to use our website, you consent to the use of cookies."
+      "title": "Consent",
+      "description": "By continuing to use our website, you consent to the use of cookies."
     }
   },
   "terms": {
@@ -334,87 +334,87 @@
     "lastUpdated": "Last updated: January 2026",
     "backToHome": "Back to Home",
     "provider": {
-        "title": "Service Provider",
-        "entity": "Balearic Yacht Charters S.L.",
-        "cif": "B-12345678",
-        "form": "Legal Form",
-        "formValue": "Sociedad Limitada",
-        "description": "Service provider information."
+      "title": "Service Provider",
+      "entity": "Balearic Yacht Charters S.L.",
+      "cif": "B-12345678",
+      "form": "Legal Form",
+      "formValue": "Sociedad Limitada",
+      "description": "Service provider information."
     },
     "compliance": {
-        "title": "Compliance",
-        "flag": {
-            "title": "Flag State",
-            "description": "The vessel flies the Spanish flag.",
-            "note": "Fully compliant with Spanish maritime law."
-        },
-        "manifest": {
-            "title": "Passenger Manifest",
-            "description": "A complete passenger list is required.",
-            "id": "Passport Number",
-            "nationality": "Nationality",
-            "emergency": "Emergency Contact",
-            "note": "Must be provided 48h before departure."
-        }
+      "title": "Compliance",
+      "flag": {
+        "title": "Flag State",
+        "description": "The vessel flies the Spanish flag.",
+        "note": "Fully compliant with Spanish maritime law."
+      },
+      "manifest": {
+        "title": "Passenger Manifest",
+        "description": "A complete passenger list is required.",
+        "id": "Passport Number",
+        "nationality": "Nationality",
+        "emergency": "Emergency Contact",
+        "note": "Must be provided 48h before departure."
+      }
     },
     "booking": {
       "title": "Booking Conditions",
       "description": "General booking terms.",
       "deposit": {
-          "title": "Deposit",
-          "description": "50% deposit required to secure booking.",
-          "note": "Non-refundable."
+        "title": "Deposit",
+        "description": "50% deposit required to secure booking.",
+        "note": "Non-refundable."
       },
       "final": {
-          "title": "Final Payment",
-          "description": "Balance due 30 days before charter.",
-          "note": "Failure to pay may result in cancellation."
+        "title": "Final Payment",
+        "description": "Balance due 30 days before charter.",
+        "note": "Failure to pay may result in cancellation."
       },
       "paymentMethods": {
-          "title": "Payment Methods",
-          "bank": "Bank Transfer",
-          "card": "Credit Card",
-          "transfer": "Transfer"
+        "title": "Payment Methods",
+        "bank": "Bank Transfer",
+        "card": "Credit Card",
+        "transfer": "Transfer"
       }
     },
     "cancellation": {
       "title": "Cancellation Policy",
       "description": "Our cancellation terms are as follows:",
       "table": {
-          "period": "Notice Period",
-          "refund": "Refund Amount",
-          "more30": "More than 30 days",
-          "full": "100% Refund",
-          "15to30": "15 to 30 days",
-          "half": "50% Refund",
-          "less15": "Less than 15 days",
-          "none": "No Refund"
+        "period": "Notice Period",
+        "refund": "Refund Amount",
+        "more30": "More than 30 days",
+        "full": "100% Refund",
+        "15to30": "15 to 30 days",
+        "half": "50% Refund",
+        "less15": "Less than 15 days",
+        "none": "No Refund"
       },
       "weather": {
-          "title": "Weather Conditions",
-          "description": "Cancellations due to bad weather are at the captain's discretion."
+        "title": "Weather Conditions",
+        "description": "Cancellations due to bad weather are at the captain's discretion."
       }
     },
     "safety": {
-        "title": "Safety Onboard",
-        "description": "Safety is our top priority.",
-        "responsibilities": {
-            "title": "Responsibilities",
-            "vessel": "The vessel is equipped with all safety gear.",
-            "crew": "The crew is trained in emergency procedures.",
-            "insurance": "The vessel is fully insured.",
-            "safety": "Passengers must attend the safety briefing."
-        },
-        "passenger": {
-            "title": "Passenger Conduct",
-            "follow": "Must follow captain's instructions.",
-            "inform": "Must inform of medical conditions.",
-            "respect": "Must respect the vessel and crew."
-        },
-        "liability": {
-            "title": "Liability",
-            "description": "Liability is limited to the insurance coverage."
-        }
+      "title": "Safety Onboard",
+      "description": "Safety is our top priority.",
+      "responsibilities": {
+        "title": "Responsibilities",
+        "vessel": "The vessel is equipped with all safety gear.",
+        "crew": "The crew is trained in emergency procedures.",
+        "insurance": "The vessel is fully insured.",
+        "safety": "Passengers must attend the safety briefing."
+      },
+      "passenger": {
+        "title": "Passenger Conduct",
+        "follow": "Must follow captain's instructions.",
+        "inform": "Must inform of medical conditions.",
+        "respect": "Must respect the vessel and crew."
+      },
+      "liability": {
+        "title": "Liability",
+        "description": "Liability is limited to the insurance coverage."
+      }
     },
     "usage": {
       "title": "Vessel Usage",

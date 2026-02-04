@@ -1,14 +1,14 @@
 {
   "common": {
     "readMore": "Leer más",
-    "back": "Volver",
+    "back": "Atrás",
     "loading": "Cargando...",
-    "getQuote": "Solicitar Presupuesto"
+    "getQuote": "Obtener presupuesto"
   },
   "metadata": {
     "title": "Balearic Yacht Charters - Alquiler de Yates de Lujo",
-    "description": "Experimente el máximo lujo en alquiler de yates en las Islas Baleares.",
-    "keywords": "yate, chárter, mallorca, ibiza, lujo"
+    "description": "Viva la experiencia definitiva de alquiler de yates de lujo en las Islas Baleares.",
+    "keywords": "yate, alquiler, mallorca, ibiza, lujo"
   },
   "navigation": {
     "home": "Inicio",
@@ -18,133 +18,133 @@
     "contact": "Contacto"
   },
   "hero": {
-    "title": "Alquiler de Yates de Lujo",
-    "subtitle": "Experimenta el Mediterráneo como nunca antes",
-    "cta": "Explora Nuestra Flota"
+    "title": "Alquiler de Yates Premium en las Islas Baleares",
+    "subtitle": "Viva el Mediterráneo como nunca antes",
+    "cta": "Explore nuestra flota"
   },
   "breadcrumb": {
     "home": "Inicio",
-    "fleet": "Nuestra Flota",
+    "fleet": "Nuestra flota",
     "backTo": "Volver a",
-    "backToHome": "Volver al Inicio"
+    "backToHome": "Volver al inicio"
   },
   "contact": {
-    "title": "Contáctanos",
-    "subtitle": "Ponte en contacto para planificar tu experiencia perfecta.",
+    "title": "Contáctenos",
+    "subtitle": "Póngase en contacto para planificar su viaje perfecto.",
     "phoneLabel": "Teléfono",
-    "emailLabel": "Correo",
+    "emailLabel": "Email",
     "whatsapp": "WhatsApp",
     "availability": "Disponible 24/7",
-    "formTitle": "Solicitar Presupuesto",
-    "formName": "Nombre Completo",
-    "formEmail": "Correo Electrónico",
-    "formPhone": "Número de Teléfono",
-    "formGuests": "Número de Huéspedes",
-    "formDates": "Fechas Preferidas",
-    "formYacht": "Yate de Interés (Opcional)",
-    "formMessage": "Tu Mensaje / Peticiones Especiales",
-    "sendMessage": "Solicitar Presupuesto",
+    "formTitle": "Solicitar presupuesto",
+    "formName": "Nombre completo",
+    "formEmail": "Correo electrónico",
+    "formPhone": "Número de teléfono",
+    "formGuests": "Número de invitados",
+    "formDates": "Fechas preferidas",
+    "formYacht": "Yate preferido (Opcional)",
+    "formMessage": "Su mensaje / Solicitudes especiales",
+    "sendMessage": "Obtener mi presupuesto",
     "loading": "Enviando...",
     "successTitle": "¡Gracias!",
-    "successMessage": "Hemos recibido su solicitud y nos pondremos en contacto con usted en breve.",
-    "returnToFleet": "Volver a la Flota",
+    "successMessage": "Hemos recibido su solicitud y le responderemos a la brevedad.",
+    "returnToFleet": "Volver a la flota",
     "errorTitle": "Algo salió mal",
     "errorRetryMessage": "Por favor, inténtelo de nuevo o contáctenos directamente.",
-    "tryAgain": "Intentar de Nuevo",
+    "tryAgain": "Intentar de nuevo",
     "contactWhatsApp": "Contactar por WhatsApp",
-    "locationLabel": "Nuestras Ubicaciones",
-    "backToHome": "Volver al Inicio"
+    "locationLabel": "Nuestras ubicaciones",
+    "backToHome": "Volver al inicio"
   },
   "trust": {
-    "verified": "Verificado",
-    "insured": "Asegurado",
-    "crew": "Tripulación Pro",
-    "experts": "Expertos Locales",
-    "bookings": "Reserva Segura",
-    "rating": "Mejor Valorado",
-    "secret_bays": "Calas Secretas"
+    "verified": "Yate verificado",
+    "insured": "Totalmente asegurado",
+    "crew": "Tripulación profesional",
+    "experts": "Expertos locales",
+    "bookings": "Reserva segura",
+    "rating": "Mejor valorado",
+    "secret_bays": "Acceso a calas secretas"
   },
   "fleet": {
-    "title": "Nuestra Flota de Lujo",
+    "title": "Nuestra flota de lujo",
     "subtitle": "Descubra nuestra colección de yates de clase mundial",
     "perDay": "/ día",
-    "viewDetails": "Ver Detalles",
-    "getQuote": "Solicitar Presupuesto",
-    "technicalSpecs": "Especificaciones Técnicas",
-    "selectDates": "Seleccionar Fechas",
-    "quoteFormDescription": "Rellena el formulario para recibir una oferta personalizada.",
+    "viewDetails": "Ver detalles",
+    "getQuote": "Presupuesto",
+    "technicalSpecs": "Especificaciones técnicas",
+    "selectDates": "Seleccionar fechas",
+    "quoteFormDescription": "Complete el formulario para recibir una oferta personalizada.",
     "ctaTitle": "¿Listo para reservar sus vacaciones soñadas?",
     "ctaDescription": "Contáctenos hoy para asegurar sus fechas.",
-    "exploreDestinations": "Explorar Destinos",
-    "backToHome": "Volver al Inicio",
+    "exploreDestinations": "Explorar destinos",
+    "backToHome": "Volver al inicio",
     "extras": {
-      "sup": "Paddle Surf",
+      "sup": "Tabla de Paddle",
       "snorkel": "Equipo de Snorkel",
       "efoil": "E-Foil / Fliteboard",
       "scooter": "Sea Scooter",
       "wifi": "Wi-Fi a bordo",
-      "towel": "Toallas de Playa"
+      "towel": "Toallas de playa"
     },
     "ships": {
       "simona": {
-        "headline": "La Esencia de la Navegación en Catamarán",
-        "description": "Simona (Lagoon 450F) ofrece una mezcla inigualable de confort y rendimiento. Con su amplio flybridge e interior moderno, es perfecto para familias.",
-        "tagline": "Donde el confort encuentra la aventura.",
+        "headline": "La esencia de la navegación en catamarán de lujo",
+        "description": "Simona (Lagoon 450F) ofrece una combinación inigualable de confort y rendimiento. Con su amplio flybridge e interior moderno, es perfecto para familias y grupos que desean explorar las Baleares con estilo.",
+        "tagline": "Donde el confort se encuentra con la aventura.",
         "highlights": [
-          "Flybridge Espacioso con Solárium",
-          "4 Camarotes de Lujo con Baño",
-          "Opción de Patrón y Azafata",
-          "Aire Acondicionado y Generador"
+          "Amplio Flybridge con colchonetas",
+          "4 cabinas de lujo con baño privado",
+          "Opción de patrón profesional y azafata",
+          "Aire acondicionado completo y generador"
         ]
       },
       "wide-dream": {
-        "headline": "Confort Clásico y Fiabilidad",
-        "description": "Wide Dream (Lagoon 400 S2) es la elección perfecta para quienes valoran el lujo práctico. Compacto pero increíblemente espacioso.",
-        "tagline": "Tu viaje soñado comienza aquí.",
+        "headline": "Confort clásico y fiabilidad",
+        "description": "Wide Dream (Lagoon 400 S2) es la elección perfecta para quienes valoran el lujo práctico. Compacto pero increíblemente espacioso, ofrece todo lo necesario para unas vacaciones inolvidables.",
+        "tagline": "El viaje de sus sueños comienza aquí.",
         "highlights": [
-          "Salón de Concepto Abierto",
-          "Vistas Panorámicas",
-          "Fácil Acceso al Agua",
-          "Perfecto para Familias"
+          "Salón de concepto abierto",
+          "Vistas panorámicas",
+          "Fácil acceso al agua",
+          "Ideal para familias"
         ]
       }
     }
   },
   "destinations": {
-    "title": "Destinos Exclusivos",
+    "title": "Destinos exclusivos",
     "subtitle": "Explore los mejores lugares del Mediterráneo",
-    "allDestinations": "Todos los Destinos",
+    "allDestinations": "Todos los destinos",
     "allDestinationsSubtitle": "Descubra nuestras zonas de navegación",
     "ctaDescription": "Elija su próxima aventura.",
-    "viewFleet": "Ver Nuestra Flota",
-    "getQuote": "Solicitar Presupuesto",
-    "viewDetails": "Ver Detalles",
-    "readyToExplore": "¿Listo para Explorar?",
-    "readyToExploreDescription": "Reserve hoy mismo su chárter de yates de lujo y descubra las joyas ocultas de las Islas Baleares.",
-    "weatherForecast": "Pronóstico del Tiempo Local",
-    "weatherNote": "Pronóstico marítimo para los próximos 7 días",
-    "tideMoonInfo": "Mareas y Fase Lunar",
-    "moonPhase": "Fase Lunar",
-    "nextHighTide": "Siguiente Marea Alta",
+    "viewFleet": "Ver nuestra flota",
+    "getQuote": "Presupuesto",
+    "viewDetails": "Ver detalles",
+    "readyToExplore": "¿Listo para explorar?",
+    "readyToExploreDescription": "Reserve hoy su yate y descubra las joyas ocultas de las Islas Baleares.",
+    "weatherForecast": "Pronóstico del tiempo local",
+    "weatherNote": "Pronóstico marítimo de 7 días",
+    "tideMoonInfo": "Mareas y fase lunar",
+    "moonPhase": "Fase lunar",
+    "nextHighTide": "Próxima marea alta",
     "height": "Altura",
-    "tideNote": "Los niveles de marea se basan en datos marítimos locales.",
-    "guestExperience": "Experiencia del Huésped",
-    "backToHome": "Volver al Inicio",
+    "tideNote": "Datos basados en estaciones marítimas locales.",
+    "guestExperience": "Experiencia del invitado",
+    "backToHome": "Volver al inicio",
     "location": "Ubicación",
-    "quickInfo": "Información Rápida",
-    "happyGuests": "Huéspedes Felices",
+    "quickInfo": "Información rápida",
+    "happyGuests": "Huéspedes felices",
     "happyGuestsDescription": "Únase a cientos de viajeros satisfechos que han explorado la costa con nosotros.",
-    "joinOurGuests": "Únete a nuestra comunidad de amantes del mar",
+    "joinOurGuests": "Únase a nuestra comunidad de amantes del mar",
     "seasons": {
       "spring": "Primavera",
       "summer": "Verano",
-      "earlyAutumn": "Otoño Temprano",
-      "lateAutumn": "Otoño Tardío",
+      "earlyAutumn": "Otoño temprano",
+      "lateAutumn": "Otoño tardío",
       "winter": "Invierno"
     },
     "ibiza": {
       "title": "Ibiza",
-      "description": "Experimente los clubes de playa de fama mundial y las aguas turquesas cristalinas."
+      "description": "Disfrute de los famosos beach clubs y aguas cristalinas."
     },
     "formentera": {
       "title": "Formentera",
@@ -152,99 +152,99 @@
     },
     "mallorca": {
       "title": "Mallorca",
-      "description": "Explore calas escondidas, montañas dramáticas y la vibrante cultura de Palma."
+      "description": "Explore calas ocultas y la vibrante cultura de Palma."
     },
     "menorca": {
       "title": "Menorca",
-      "description": "Disfrute de la atmósfera tranquila y la belleza natural intacta de esta Reserva de la Biosfera."
+      "description": "Disfrute de la atmósfera tranquila y la belleza natural virgen."
     },
     "costa-blanca": {
       "title": "Costa Blanca",
-      "description": "Navegue por la hermosa costa blanca con sus impresionantes acantilados y aguas claras."
+      "description": "Navegue por la hermosa costa blanca con sus impresionantes acantilados."
     }
   },
   "culinary": {
-    "title": "Cena a Bordo",
+    "title": "Gastronomía a bordo",
     "subtitle": "Sabores exquisitos en el mar",
-    "description": "Disfrute de comidas preparadas con ingredientes locales frescos."
+    "description": "Disfrute de comidas preparadas con ingredientes frescos locales."
   },
   "stats": {
-    "title": "Nuestro Viaje en Números"
+    "title": "Nuestra trayectoria en números"
   },
   "reviews": {
     "title": "Lo que dicen nuestros huéspedes",
-    "subtitle": "Escuche a quienes han experimentado el lujo de nuestros chárteres"
+    "subtitle": "Escuche a quienes han vivido el lujo de nuestros servicios"
   },
   "about": {
-    "title": "Sobre Nosotros",
+    "title": "Nosotros",
     "subtitle": "Pasión por el mar",
-    "mission": "Nuestra misión es proporcionar experiencias inolvidables.",
-    "companyTitle": "Nuestra Empresa",
-    "companyDescription": "Balearic Yacht Charters se dedica a proporcionar la mejor experiencia de alquiler de yates de lujo en las Islas Baleares.",
-    "areasTitle": "Áreas de Navegación",
-    "areasDescription": "Operamos principalmente en las impresionantes aguas de Mallorca, Ibiza y Formentera.",
-    "ctaTitle": "¿Listo para una Aventura?",
-    "ctaDescription": "Únete a nosotros a bordo para las vacaciones de tu vida.",
-    "viewFleet": "Ver Nuestra Flota",
-    "backToHome": "Volver al Inicio",
-    "metaTitle": "Sobre Nosotros - Balearic Yacht Charters",
-    "metaDescription": "Conozca Balearic Yacht Charters, nuestra misión y nuestros servicios de chárter de yates de lujo."
+    "mission": "Nuestra misión es brindar experiencias inolvidables.",
+    "companyTitle": "Nuestra empresa",
+    "companyDescription": "Balearic Yacht Charters se dedica a ofrecer la mejor experiencia de alquiler de yates en las Baleares. Nuestra flota está mantenida meticulosamente para asegurar su confort.",
+    "areasTitle": "Zonas de navegación",
+    "areasDescription": "Operamos principalmente en Mallorca, Ibiza y Formentera, ofreciendo acceso a calas exclusivas.",
+    "ctaTitle": "¿Listo para una aventura?",
+    "ctaDescription": "Únase a nosotros para las vacaciones de su vida.",
+    "viewFleet": "Ver nuestra flota",
+    "backToHome": "Volver al inicio",
+    "metaTitle": "Nosotros - Balearic Yacht Charters",
+    "metaDescription": "Conozca Balearic Yacht Charters y nuestros servicios de alquiler en España."
   },
   "mission": {
-    "title": "Nuestra Misión",
+    "title": "Nuestra misión",
     "cards": {
       "logistics": {
-        "title": "Logística Experta",
-        "description": "Nos encargamos de cada detail de su viaje, desde la planificación del itinerario hasta el aprovisionamiento."
+        "title": "Logística experta",
+        "description": "Gestionamos cada detalle de su viaje para asegurar una experiencia sin estrés."
       },
       "crew": {
-        "title": "Tripulación Profesional",
-        "description": "Nuestros capitanes y azafatas tienen mucha experiencia y están dedicados a su seguridad."
+        "title": "Tripulación profesional",
+        "description": "Nuestros capitanes tienen amplia experiencia y están dedicados a su seguridad."
       },
       "gourmet": {
-        "title": "Experiencia Gourmet",
-        "description": "Disfrute de una deliciosa cocina local preparada a bordo, adaptada a sus preferencias."
+        "title": "Experiencia gourmet",
+        "description": "Disfrute de deliciosa cocina local preparada a bordo según sus preferencias."
       }
     }
   },
   "legal": {
     "title": "Aviso Legal",
-    "metaDescription": "Aviso legal e información de la empresa Balearic Yacht Charters S.L.",
-    "lastUpdated": "Última actualización: Enero 2026",
-    "backToHome": "Volver al Inicio",
+    "metaDescription": "Información legal de Balearic Yacht Charters S.L.",
+    "lastUpdated": "Actualizado: Enero 2026",
+    "backToHome": "Volver al inicio",
     "companyInfo": {
-      "title": "Información de la Empresa",
+      "title": "Información de la empresa",
       "entity": "Entidad Legal:",
-      "cif": "NIF/CIF:",
-      "form": "Forma Jurídica:",
+      "cif": "CIF/VAT ID:",
+      "form": "Forma Legal:",
       "formValue": "Sociedad Limitada (S.L.)",
       "contact": "Contacto:",
-      "operatingAreas": "Áreas de Operación:",
-      "operatingAreasValue": "Islas Baleares y Costa Blanca"
+      "operatingAreas": "Zonas de operación:",
+      "operatingAreasValue": "Islas Baleares"
     },
     "maritime": {
       "title": "Cumplimiento Marítimo",
-      "compliance": "Cumplimiento de la Embarcación",
-      "requirements": "Todas las embarcaciones cumplen con los requisitos de seguridad marítima española.",
-      "standards": "Los controles de equipos de seguridad se realizan anualmente."
+      "compliance": "Conformidad del buque",
+      "requirements": "Todos los buques cumplen con los requisitos de seguridad españoles.",
+      "standards": "Las inspecciones se realizan anualmente."
     },
     "business": {
-      "title": "Actividad Empresarial",
-      "role": "Operador de Chárter",
-      "responsibility": "Operamos como una empresa de chárter con licencia completa."
+      "title": "Actividad comercial",
+      "role": "Operador de Charter",
+      "responsibility": "Operamos como una empresa de alquiler con licencia completa."
     },
     "insurance": {
-      "title": "Cobertura de Seguro",
-      "coverage": "Cobertura Integral Completa",
-      "liability": "Seguro de Responsabilidad Civil",
-      "passenger": "Seguro de Accidentes de Pasajeros",
-      "vessel": "Casco y Maquinaria",
-      "indemnity": "Indemnización Profesional",
-      "claims": "El procedimiento de gestión de reclamaciones está disponible bajo petición."
+      "title": "Cobertura de seguro",
+      "coverage": "Cobertura a todo riesgo",
+      "liability": "Seguro de responsabilidad civil",
+      "passenger": "Seguro de accidentes de pasajeros",
+      "vessel": "Casco y maquinaria del buque",
+      "indemnity": "Indemnización profesional",
+      "claims": "El procedimiento de reclamación está disponible bajo petición."
     },
     "ip": {
       "title": "Propiedad Intelectual",
-      "content": "Todo el contenido de este sitio web está protegido por derechos de autor."
+      "content": "Todo el contenido está protegido por derechos de autor."
     },
     "footer": {
       "title": "Información Legal"
@@ -252,182 +252,182 @@
   },
   "privacy": {
     "title": "Política de Privacidad",
-    "metaDescription": "Lea nuestra política de privacidad para entender cómo manejamos sus datos.",
-    "lastUpdated": "Última actualización: Enero 2026",
-    "backToHome": "Volver al Inicio",
+    "metaDescription": "Lea nuestra política de privacidad.",
+    "lastUpdated": "Actualizado: Enero 2026",
+    "backToHome": "Volver al inicio",
     "dataController": {
-      "title": "Responsable del Tratamiento",
+      "title": "Responsable de datos",
       "entity": "Balearic Yacht Charters S.L.",
       "cif": "B-12345678",
       "email": "petersutter@gmail.com"
     },
     "dataCollection": {
-      "title": "Recopilación de Datos",
-      "description": "Recopilamos la información necesaria para prestar servicios de chárter.",
-      "name": "Nombre Completo",
-      "email": "Correo Electrónico",
-      "phone": "Número de Teléfono",
-      "identification": "Pasaporte/DNI"
+      "title": "Recopilación de datos",
+      "description": "Recopilamos información necesaria para el servicio.",
+      "name": "Nombre completo",
+      "email": "Email",
+      "phone": "Teléfono",
+      "identification": "Pasaporte/DNI (para contratos)"
     },
     "purpose": {
-      "title": "Finalidad del Tratamiento",
-      "description": "Sus datos se utilizan para:",
-      "bookings": "Gestión de reservas y contratos",
+      "title": "Finalidad del tratamiento",
+      "description": "Sus datos se usan para:",
+      "bookings": "Gestión de reservas",
       "payments": "Procesamiento de pagos",
-      "support": "Comunicación de soporte al cliente"
+      "support": "Atención al cliente"
     },
     "retention": {
-      "title": "Conservación de Datos",
-      "description": "Conservamos los datos durante el tiempo exigido por la ley española."
+      "title": "Retención de datos",
+      "description": "Conservamos los datos según la ley española."
     },
     "rights": {
-      "title": "Sus Derechos",
-      "description": "Según el RGPD, usted tiene derecho a:",
-      "access": "Acceder a sus datos",
-      "rectification": "Corregir sus datos",
-      "erasure": "Solicitar la eliminación",
-      "portability": "Portabilidad de datos",
-      "contact": "Contáctenos para ejercer estos derechos."
+      "title": "Sus derechos",
+      "description": "Según el RGPD, usted tiene derecho a acceder, rectificar y suprimir sus datos.",
+      "access": "Acceso",
+      "rectification": "Rectificación",
+      "erasure": "Supresión",
+      "portability": "Portabilidad",
+      "contact": "Contáctenos para ejercer sus derechos."
     },
     "security": {
-      "title": "Medidas de Seguridad",
-      "description": "Implementamos protocolos de seguridad estándar de la industria."
+      "title": "Medidas de seguridad",
+      "description": "Implementamos protocolos de seguridad estándar."
     },
-    "backToHome": "Volver al Inicio"
+    "backToHome": "Volver al inicio"
   },
   "cookies": {
     "title": "Política de Cookies",
-    "metaDescription": "Información sobre cómo utilizamos las cookies en nuestro sitio web.",
-    "lastUpdated": "Última actualización: Enero 2026",
-    "backToHome": "Volver al Inicio",
-    "intro": "Utilizamos cookies para mejorar su experiencia.",
+    "metaDescription": "Información sobre el uso de cookies.",
+    "lastUpdated": "Actualizado: Enero 2026",
+    "backToHome": "Volver al inicio",
+    "intro": "Usamos cookies para mejorar su experiencia.",
     "whatAre": {
-      "title": "¿Qué son las Cookies?",
-      "description": "Pequeños archivos de texto guardados en su dispositivo."
+      "title": "¿Qué son las cookies?",
+      "description": "Archivos de texto que almacenan información."
     },
     "types": {
-      "title": "Tipos de Cookies",
+      "title": "Tipos de cookies",
       "essential": {
-        "title": "Cookies Esenciales",
-        "description": "Necesarias para el funcionamiento del sitio."
+        "title": "Cookies esenciales",
+        "description": "Necesarias para que el sitio funcione."
       },
       "analytical": {
-        "title": "Cookies Analíticas",
-        "description": "Para analizar el uso del sitio."
+        "title": "Cookies analíticas",
+        "description": "Para entender cómo interactúan los usuarios."
       }
     },
     "managing": {
-      "title": "Gestión de Cookies",
-      "description": "Puede gestionar sus preferencias en el navegador.",
+      "title": "Gestión de cookies",
+      "description": "Puede gestionarlas en la configuración de su navegador.",
       "chrome": "Google Chrome",
       "safari": "Safari",
       "firefox": "Mozilla Firefox"
     },
     "consent": {
       "title": "Consentimiento",
-      "description": "Al usar nuestro sitio, acepta el uso de cookies."
+      "description": "Al continuar navegando, acepta su uso."
     }
   },
   "terms": {
     "title": "Términos y Condiciones",
-    "metaDescription": "Términos y condiciones para reservas y chárter con Balearic Yacht Charters.",
-    "lastUpdated": "Última actualización: Enero 2026",
-    "backToHome": "Volver al Inicio",
+    "metaDescription": "Condiciones para reservar con Balearic Yacht Charters.",
+    "lastUpdated": "Actualizado: Enero 2026",
+    "backToHome": "Volver al inicio",
     "provider": {
-      "title": "Proveedor de Servicios",
+      "title": "Proveedor de servicio",
       "entity": "Balearic Yacht Charters S.L.",
       "cif": "B-12345678",
-      "form": "Forma Jurídica",
-      "formValue": "S.L.",
-      "description": "Detalles del proveedor."
+      "form": "Forma Legal",
+      "formValue": "Sociedad Limitada",
+      "description": "Información del proveedor."
     },
     "compliance": {
       "title": "Cumplimiento",
       "flag": {
         "title": "Bandera",
-        "description": "Pabellón español.",
-        "note": "Cumple normativa marítima."
+        "description": "El buque navega bajo bandera española.",
+        "note": "Cumple con la ley marítima española."
       },
       "manifest": {
-        "title": "Lista de Pasajeros",
-        "description": "Requerido por ley.",
-        "id": "DNI/Pasaporte",
+        "title": "Manifiesto de pasajeros",
+        "description": "Se requiere lista completa de pasajeros.",
+        "id": "Número de pasaporte",
         "nationality": "Nacionalidad",
-        "emergency": "Contacto Emergencia",
-        "note": "Enviar 48h antes."
+        "emergency": "Contacto de emergencia",
+        "note": "Debe enviarse 48h antes."
       }
     },
     "booking": {
-      "title": "Condiciones de Reserva",
+      "title": "Condiciones de reserva",
       "description": "Términos generales.",
       "deposit": {
         "title": "Depósito",
-        "description": "50% para reservar.",
+        "description": "Se requiere 50% para confirmar.",
         "note": "No reembolsable."
       },
       "final": {
-        "title": "Pago Final",
-        "description": "30 dia antes.",
-        "note": "Fondos compensados."
+        "title": "Pago final",
+        "description": "Resto 30 días antes del inicio.",
+        "note": "La falta de pago puede causar cancelación."
       },
       "paymentMethods": {
-        "title": "Métodos de Pago",
+        "title": "Métodos de pago",
         "bank": "Transferencia",
         "card": "Tarjeta",
         "transfer": "Transferencia"
       }
     },
     "cancellation": {
-      "title": "Política de Cancelación",
-      "description": "Detalles de cancelación.",
+      "title": "Política de cancelación",
+      "description": "Nuestros términos son:",
       "table": {
-        "period": "Aviso",
+        "period": "Plazo",
         "refund": "Reembolso",
-        "more30": "> 30 Días",
+        "more30": "Más de 30 días",
         "full": "100%",
-        "15to30": "15-30 Días",
+        "15to30": "15 a 30 días",
         "half": "50%",
-        "less15": "< 15 Días",
-        "none": "0%"
+        "less15": "Menos de 15 días",
+        "none": "Sin reembolso"
       },
       "weather": {
-        "title": "Clima",
-        "description": "Decisión del capitán."
+        "title": "Condiciones climáticas",
+        "description": "Bajo discreción del capitán."
       }
     },
     "safety": {
-      "title": "Seguridad",
-      "description": "Prioridad absoluta.",
+      "title": "Seguridad a bordo",
+      "description": "La seguridad es prioridad.",
       "responsibilities": {
         "title": "Responsabilidades",
-        "vessel": "Equipamiento seguridad",
-        "crew": "Tripulación formada",
-        "insurance": "Seguro incluido",
-        "safety": "Charla seguridad"
+        "vessel": "Equipo completo a bordo.",
+        "crew": "Tripulación entrenada.",
+        "insurance": "Seguro completo.",
+        "safety": "Briefing obligatorio."
       },
       "passenger": {
-        "title": "Deberes Pasajero",
-        "follow": "Seguir instrucciones",
-        "inform": "Informar salud",
-        "respect": "Respeto a bordo"
+        "title": "Conducta del pasajero",
+        "follow": "Seguir instrucciones del capitán.",
+        "inform": "Informar condiciones médicas.",
+        "respect": "Respetar buque y tripulación."
       },
       "liability": {
         "title": "Responsabilidad",
-        "description": "Limitada al seguro."
+        "description": "Limitada a la cobertura del seguro."
       }
     },
     "usage": {
-      "title": "Uso de la Embarcación",
-      "content": "La embarcación debe utilizarse de manera lícita."
+      "title": "Uso del buque",
+      "content": "Debe usarse de forma legal."
     }
   },
   "footer": {
     "tagline": "Su destino principal para alquiler de yates de lujo en el Mediterráneo.",
     "followUs": "Síguenos",
     "legal": "Aviso Legal",
-    "privacy": "Política de Privacidad",
-    "cookies": "Política de Cookies",
-    "terms": "Términos y Condiciones",
+    "privacy": "Privacidad",
+    "cookies": "Cookies",
+    "terms": "Términos",
     "rights": "Todos los derechos reservados."
   }
 }
