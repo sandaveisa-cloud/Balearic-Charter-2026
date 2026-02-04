@@ -38,9 +38,9 @@ export default function PrivacyPolicy() {
                 <strong className="text-luxury-blue">{t('dataController.cif')}:</strong> B44629020
               </p>
               <p>
-                <strong className="text-luxury-blue">{t('dataController.email')}:</strong>{' '}
-                <a href="mailto:peter.sutter@gmail.com" className="text-luxury-blue hover:text-luxury-gold transition-colors">
-                  peter.sutter@gmail.com
+                <strong className="text-luxury-blue">Email:</strong>{' '}
+                <a href={`mailto:${t('dataController.email')}`} className="text-luxury-blue hover:text-luxury-gold transition-colors">
+                  {t('dataController.email')}
                 </a>
               </p>
             </div>
@@ -114,8 +114,8 @@ export default function PrivacyPolicy() {
               </ul>
               <p className="mt-4">
                 {t('rights.contact')}{' '}
-                <a href="mailto:peter.sutter@gmail.com" className="text-luxury-blue hover:text-luxury-gold transition-colors font-semibold">
-                  peter.sutter@gmail.com
+                <a href={`mailto:${t('dataController.email')}`} className="text-luxury-blue hover:text-luxury-gold transition-colors font-semibold">
+                  {t('dataController.email')}
                 </a>
               </p>
             </div>
