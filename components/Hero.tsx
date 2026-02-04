@@ -2,16 +2,16 @@
 
 import { useEffect, useState, useMemo } from 'react'
 import { useTranslations } from 'next-intl'
-import Image from 'next/image' // Importējam Image komponenti
+import Image from 'next/image'
 
 interface HeroProps {
   settings: Record<string, string>
 }
 
-// Default YouTube video ID (hardcoded fallback)
+// Noklusējuma YouTube video ID
 const DEFAULT_VIDEO_ID = 'v3ejpQjaScg'
 
-// Extract YouTube video ID
+// Funkcija YouTube ID izgūšanai
 function extractYouTubeId(url: string | null | undefined): string | null {
   if (!url || typeof url !== 'string') return null
   if (/^[a-zA-Z0-9_-]{11}$/.test(url.trim())) return url.trim()
@@ -26,7 +26,7 @@ function extractYouTubeId(url: string | null | undefined): string | null {
   return null
 }
 
-// Build YouTube embed URL
+// YouTube embed URL būvēšana
 function buildYouTubeEmbedUrl(videoId: string): string {
   const params = new URLSearchParams({
     autoplay: '1', mute: '1', loop: '1', playlist: videoId,
@@ -49,75 +49,62 @@ export default function Hero({ settings }: HeroProps) {
 
   const embedUrl = useMemo(() => buildYouTubeEmbedUrl(videoId), [videoId])
 
-  // Fona attēla URL - izmantojam tavu failu no public mapes
-  // Validate hero_image_url to ensure it's not an ID or invalid value
-  const rawHeroImage = settings.hero_image_url
-  const bgImage = (rawHeroImage && 
-                   typeof rawHeroImage === 'string' && 
-                   rawHeroImage.trim() !== '' &&
-                   !/^\d+$/.test(rawHeroImage.trim()) &&
-                   !/^image:\d+$/i.test(rawHeroImage.trim())) 
-    ? rawHeroImage.trim() 
-    : '/images/hero-sunset-view.jpg'
+  // Attēla loģika: prioritāte ir failam no public mapes, lai izvairītos no kļūdām
+  const bgImage = '/images/hero-sunset-view.jpg'
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const timer = setTimeout(() => setIsMounted(true), 100)
-      return () => clearTimeout(timer)
-    }
+    setIsMounted(true)
   }, [])
 
   return (
     <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden bg-luxury-blue">
       
-      {/* 1. SLĀNIS: Optimizēta fona bilde (Rādās vienmēr, kamēr video lādējas) */}
-      {bgImage && (
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={bgImage}
-            alt="Luxury Yacht Charter"
-            fill
-            priority={true} // SVARĪGI: Ielādē šo bildi pirmo (LCP optimizācija)
-            quality={90}
-            sizes="100vw"
-            className="object-cover"
-          />
-        </div>
-      )}
+      {/* 1. SLĀNIS: Fona attēls (LCP optimizēts) */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={bgImage}
+          alt="Balearic Yacht Charters"
+          fill
+          priority={true}
+          quality={90}
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
 
-      {/* 2. SLĀNIS: YouTube Video (Parādās virs bildes, kad gatavs) */}
+      {/* 2. SLĀNIS: Video pārklājums */}
       {isMounted && !videoError && (
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-0 animate-fade-in" style={{ opacity: 1, transition: 'opacity 1s ease-in' }}>
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-0 transition-opacity duration-1000 ease-in" style={{ opacity: 1 }}>
           <div style={{ position: 'absolute', top: '50%', left: '50%', width: '177.77777778vh', height: '100vh', minWidth: '100%', minHeight: '56.25vw', transform: 'translate(-50%, -50%) scale(1.1)' }}>
             <iframe
               src={embedUrl}
               title="Hero Background Video"
               allow="autoplay; encrypted-media"
-              allowFullScreen={false}
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+              className="absolute top-0 left-0 w-full h-full border-none"
               onError={() => setVideoError(true)}
             />
           </div>
         </div>
       )}
 
-      {/* 3. SLĀNIS: Tumšais pārklājums (Overlay) */}
+      {/* 3. SLĀNIS: Overlay */}
       <div className="absolute inset-0 bg-black/40 z-1" />
 
-      {/* 4. SLĀNIS: Saturs */}
+      {/* 4. SLĀNIS: Saturs (Dinamiski teksti no JSON failiem) */}
       <div className="relative z-10 flex h-full items-center justify-center px-4 text-center pb-12">
         <div className="max-w-4xl space-y-6">
           <h1 className="font-serif text-5xl font-bold text-white md:text-7xl lg:text-8xl drop-shadow-lg">
-            Experience Luxury at Sea
+            {t('title')}
           </h1>
 
           <p className="text-xl text-white md:text-2xl lg:text-3xl drop-shadow-md">
-            {settings.hero_subtitle || t('subtitle')}
+            {t('subtitle')}
           </p>
 
           <div className="pt-4 max-w-3xl mx-auto">
             <p className="text-lg md:text-xl text-white/95 leading-relaxed drop-shadow-md">
-              We provide premium yacht charters in the Balearic Islands with a professional crew and tailored luxury experiences.
+              {/* Šis teksts tagad nāk no tulkojumiem, ja tur ir pievienots, vai arī vari to definēt šeit */}
+              Premium yacht charters in the Balearic Islands with professional crew and tailored luxury experiences.
             </p>
           </div>
 
@@ -132,7 +119,7 @@ export default function Hero({ settings }: HeroProps) {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
+      {/* Bulta uz leju */}
       <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 animate-bounce">
         <svg className="h-8 w-8 text-white" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
           <path d="M19 14l-7 7m0 0l-7-7m7 7V3" />
