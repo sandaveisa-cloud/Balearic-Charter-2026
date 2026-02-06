@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ImageIcon, Search, Ship, Trash2, ExternalLink, Loader2, RefreshCw } from 'lucide-react'
+import { ImageIcon, Search, Ship, Trash2, ExternalLink, Loader2, RefreshCw, GripVertical, Save, ArrowUp, ArrowDown } from 'lucide-react'
 import Link from 'next/link'
 
 interface GalleryImage {
@@ -22,6 +22,11 @@ interface YachtWithImages {
   imageCount: number
 }
 
+interface ImageOrder {
+  url: string
+  order: number
+}
+
 export default function GalleryPage() {
   const [images, setImages] = useState<GalleryImage[]>([])
   const [yachts, setYachts] = useState<YachtWithImages[]>([])
@@ -30,6 +35,9 @@ export default function GalleryPage() {
   const [selectedYacht, setSelectedYacht] = useState<string>('all')
   const [viewMode, setViewMode] = useState<'grid' | 'by-yacht'>('grid')
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [editingOrder, setEditingOrder] = useState<string | null>(null) // yachtId being edited
+  const [imageOrders, setImageOrders] = useState<Record<string, ImageOrder[]>>({}) // yachtId -> ImageOrder[]
+  const [savingOrder, setSavingOrder] = useState<string | null>(null) // yachtId being saved
 
   useEffect(() => {
     fetchGalleryImages()
@@ -87,6 +95,28 @@ export default function GalleryPage() {
       
       setImages(allImages)
       setYachts(yachtsWithImages.sort((a, b) => b.imageCount - a.imageCount))
+      
+      // Initialize image orders for each yacht
+      // Order: main_image_url first (if exists and not in gallery), then gallery_images in order
+      const initialOrders: Record<string, ImageOrder[]> = {}
+      yachtsWithImages.forEach(yacht => {
+        const orderedUrls: string[] = []
+        
+        // Add main image first if it exists and is not in gallery
+        if (yacht.main_image_url && !yacht.gallery_images.includes(yacht.main_image_url)) {
+          orderedUrls.push(yacht.main_image_url)
+        }
+        
+        // Add gallery images in their current order
+        orderedUrls.push(...yacht.gallery_images)
+        
+        // Create order array
+        initialOrders[yacht.id] = orderedUrls.map((url, idx) => ({
+          url,
+          order: idx + 1
+        }))
+      })
+      setImageOrders(initialOrders)
     } catch (error) {
       console.error('Error fetching gallery images:', error)
     } finally {
@@ -160,6 +190,110 @@ export default function GalleryPage() {
   const filteredYachts = yachts.filter(yacht =>
     yacht.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  // Handle order input change
+  const handleOrderChange = (yachtId: string, imageUrl: string, newOrder: number) => {
+    setImageOrders(prev => {
+      const yachtOrders = prev[yachtId] || []
+      const updated = yachtOrders.map(item => 
+        item.url === imageUrl ? { ...item, order: newOrder } : item
+      )
+      return { ...prev, [yachtId]: updated }
+    })
+  }
+
+  // Handle save order for a yacht
+  const handleSaveOrder = async (yachtId: string) => {
+    const yacht = yachts.find(y => y.id === yachtId)
+    if (!yacht) return
+
+    setSavingOrder(yachtId)
+    try {
+      const orders = imageOrders[yachtId] || []
+      // Sort by order number and extract URLs
+      const sortedUrls = orders
+        .sort((a, b) => a.order - b.order)
+        .map(item => item.url)
+      
+      // First image becomes main_image_url, rest go to gallery_images
+      const newMainImage = sortedUrls[0] || yacht.main_image_url
+      const newGalleryImages = sortedUrls.slice(1)
+
+      const response = await fetch('/api/admin/fleet', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: yachtId,
+          main_image_url: newMainImage,
+          gallery_images: newGalleryImages,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save order')
+      }
+
+      // Refresh gallery to show updated order
+      await fetchGalleryImages()
+      setEditingOrder(null)
+      alert(`Image order saved for ${yacht.name}!`)
+    } catch (error) {
+      console.error('Error saving order:', error)
+      alert('Failed to save image order. Please try again.')
+    } finally {
+      setSavingOrder(null)
+    }
+  }
+
+  // Handle drag and drop reordering
+  const handleDragOver = (e: React.DragEvent, yachtId: string, targetIndex: number) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const handleDrop = (e: React.DragEvent, yachtId: string, targetIndex: number) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const draggedIndex = parseInt(e.dataTransfer.getData('text/plain'))
+    if (isNaN(draggedIndex) || draggedIndex === targetIndex) return
+
+    const orders = imageOrders[yachtId] || []
+    // Sort orders first to get current display order
+    const sortedOrders = [...orders].sort((a, b) => a.order - b.order)
+    const newOrders = [...sortedOrders]
+    const [draggedItem] = newOrders.splice(draggedIndex, 1)
+    newOrders.splice(targetIndex, 0, draggedItem)
+    
+    // Renumber orders sequentially
+    const renumbered = newOrders.map((item, idx) => ({
+      ...item,
+      order: idx + 1
+    }))
+    
+    setImageOrders(prev => ({ ...prev, [yachtId]: renumbered }))
+  }
+
+  // Move image up/down in order
+  const moveImage = (yachtId: string, currentDisplayIndex: number, direction: 'up' | 'down') => {
+    const orders = imageOrders[yachtId] || []
+    // Sort orders to get current display order
+    const sortedOrders = [...orders].sort((a, b) => a.order - b.order)
+    
+    if (direction === 'up' && currentDisplayIndex === 0) return
+    if (direction === 'down' && currentDisplayIndex === sortedOrders.length - 1) return
+
+    const newOrders = [...sortedOrders]
+    const newIndex = direction === 'up' ? currentDisplayIndex - 1 : currentDisplayIndex + 1
+    ;[newOrders[currentDisplayIndex], newOrders[newIndex]] = [newOrders[newIndex], newOrders[currentDisplayIndex]]
+    
+    // Renumber orders sequentially
+    const renumbered = newOrders.map((item, idx) => ({
+      ...item,
+      order: idx + 1
+    }))
+    
+    setImageOrders(prev => ({ ...prev, [yachtId]: renumbered }))
+  }
 
   if (loading) {
     return (
@@ -287,40 +421,173 @@ export default function GalleryPage() {
               </div>
               
               {yacht.imageCount > 0 ? (
-                <div className="p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                  {images
-                    .filter(img => img.yachtId === yacht.id)
-                    .map((image) => (
-                      <div
-                        key={image.id}
-                        className="relative group aspect-square bg-gray-100 rounded-lg overflow-hidden"
-                      >
-                        <img
-                          src={image.url}
-                          alt={`${yacht.name} image`}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/images/placeholder.jpg'
-                          }}
-                        />
-                        {image.isMain && (
-                          <div className="absolute top-2 left-2 bg-luxury-gold text-luxury-blue text-xs px-2 py-1 rounded font-medium">
-                            Main
-                          </div>
-                        )}
+                <div className="p-4 space-y-4">
+                  {/* Edit Order Controls */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      {editingOrder === yacht.id ? (
+                        <>
+                          <span className="text-sm text-gray-600">Editing order for {yacht.name}</span>
+                          <button
+                            onClick={() => {
+                              setEditingOrder(null)
+                              // Reset to original order: main_image_url first, then gallery_images
+                              const orderedUrls: string[] = []
+                              if (yacht.main_image_url && !yacht.gallery_images.includes(yacht.main_image_url)) {
+                                orderedUrls.push(yacht.main_image_url)
+                              }
+                              orderedUrls.push(...yacht.gallery_images)
+                              
+                              setImageOrders(prev => ({
+                                ...prev,
+                                [yacht.id]: orderedUrls.map((url, idx) => ({
+                                  url,
+                                  order: idx + 1
+                                }))
+                              }))
+                            }}
+                            className="text-sm text-gray-600 hover:text-gray-800"
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
                         <button
-                          onClick={() => handleDeleteImage(image)}
-                          disabled={deleting === image.id}
-                          className="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 disabled:opacity-50"
+                          onClick={() => setEditingOrder(yacht.id)}
+                          className="text-sm text-luxury-blue hover:text-luxury-gold font-medium"
                         >
-                          {deleting === image.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="w-4 h-4" />
-                          )}
+                          Edit Order
                         </button>
-                      </div>
-                    ))}
+                      )}
+                    </div>
+                    {editingOrder === yacht.id && (
+                      <button
+                        onClick={() => handleSaveOrder(yacht.id)}
+                        disabled={savingOrder === yacht.id}
+                        className="flex items-center gap-2 px-4 py-2 bg-luxury-blue text-white rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {savingOrder === yacht.id ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4" />
+                            Save Order
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Images Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                    {images
+                      .filter(img => img.yachtId === yacht.id)
+                      .sort((a, b) => {
+                        // Sort by current order if editing, otherwise by original index
+                        if (editingOrder === yacht.id) {
+                          const orders = imageOrders[yacht.id] || []
+                          const orderA = orders.find(o => o.url === a.url)?.order || a.index + 1
+                          const orderB = orders.find(o => o.url === b.url)?.order || b.index + 1
+                          return orderA - orderB
+                        }
+                        return a.index - b.index
+                      })
+                      .map((image, displayIndex) => {
+                        const orders = imageOrders[yacht.id] || []
+                        const imageOrder = orders.find(o => o.url === image.url)?.order || displayIndex + 1
+                        const isEditing = editingOrder === yacht.id
+                        
+                        return (
+                          <div
+                            key={image.id}
+                            draggable={isEditing}
+                            onDragStart={(e) => {
+                              if (isEditing) {
+                                e.dataTransfer.setData('text/plain', displayIndex.toString())
+                              }
+                            }}
+                            onDragOver={(e) => isEditing && handleDragOver(e, yacht.id, displayIndex)}
+                            onDrop={(e) => isEditing && handleDrop(e, yacht.id, displayIndex)}
+                            className={`relative group aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 ${
+                              isEditing ? 'border-luxury-blue cursor-move' : 'border-transparent'
+                            } hover:border-luxury-gold transition-all`}
+                          >
+                            <img
+                              src={image.url}
+                              alt={`${yacht.name} image`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = '/images/placeholder.jpg'
+                              }}
+                            />
+                            
+                            {/* Order Badge */}
+                            <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded font-medium flex items-center gap-1">
+                              {isEditing && (
+                                <GripVertical className="w-3 h-3" />
+                              )}
+                              {imageOrder === 1 ? '★ Main' : `#${imageOrder}`}
+                            </div>
+
+                            {/* Order Input (when editing) */}
+                            {isEditing && (
+                              <div className="absolute bottom-2 left-2 right-2 bg-black/80 p-2 rounded">
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => moveImage(yacht.id, displayIndex, 'up')}
+                                    disabled={displayIndex === 0}
+                                    className="p-1 bg-white/20 hover:bg-white/30 rounded disabled:opacity-50"
+                                    title="Move up"
+                                  >
+                                    <ArrowUp className="w-3 h-3 text-white" />
+                                  </button>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    max={yacht.imageCount}
+                                    value={imageOrder}
+                                    onChange={(e) => {
+                                      const newOrder = parseInt(e.target.value) || 1
+                                      handleOrderChange(yacht.id, image.url, Math.max(1, Math.min(newOrder, yacht.imageCount)))
+                                    }}
+                                    className="w-12 px-1 py-0.5 text-xs text-center bg-white rounded border-0 focus:ring-1 focus:ring-luxury-gold"
+                                  />
+                                  <button
+                                    onClick={() => moveImage(yacht.id, displayIndex, 'down')}
+                                    disabled={displayIndex === yacht.imageCount - 1}
+                                    className="p-1 bg-white/20 hover:bg-white/30 rounded disabled:opacity-50"
+                                    title="Move down"
+                                  >
+                                    <ArrowDown className="w-3 h-3 text-white" />
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {image.isMain && !isEditing && (
+                              <div className="absolute top-2 left-2 bg-luxury-gold text-luxury-blue text-xs px-2 py-1 rounded font-medium">
+                                Main
+                              </div>
+                            )}
+                            
+                            <button
+                              onClick={() => handleDeleteImage(image)}
+                              disabled={deleting === image.id || isEditing}
+                              className="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 disabled:opacity-50"
+                            >
+                              {deleting === image.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-4 h-4" />
+                              )}
+                            </button>
+                          </div>
+                        )
+                      })}
+                  </div>
                 </div>
               ) : (
                 <div className="p-8 text-center text-gray-500">
