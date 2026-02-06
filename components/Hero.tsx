@@ -93,25 +93,21 @@ export default function Hero({ settings }: HeroProps) {
       {/* 4. SLĀNIS: Saturs (Dinamiski teksti no JSON failiem) */}
       <div className="relative z-10 flex h-full items-center justify-center px-4 text-center pb-12">
         <div className="max-w-4xl space-y-6">
-          <h1 className="font-serif text-5xl font-bold text-white md:text-7xl lg:text-8xl drop-shadow-lg">
+          {/* Headline with premium typography */}
+          <h1 className="font-serif text-5xl font-bold text-white md:text-7xl lg:text-8xl drop-shadow-lg tracking-[0.05em] leading-tight">
             {t('title')}
           </h1>
 
-          <p className="text-xl text-white md:text-2xl lg:text-3xl drop-shadow-md">
+          {/* Subheadline with lighter weight and refined spacing */}
+          <p className="text-xl text-white/95 md:text-2xl lg:text-3xl drop-shadow-md font-light leading-relaxed tracking-wide max-w-3xl mx-auto">
             {t('subtitle')}
           </p>
 
-          <div className="pt-4 max-w-3xl mx-auto">
-            <p className="text-lg md:text-xl text-white/95 leading-relaxed drop-shadow-md">
-              {/* Šis teksts tagad nāk no tulkojumiem, ja tur ir pievienots, vai arī vari to definēt šeit */}
-              Premium yacht charters in the Balearic Islands with professional crew and tailored luxury experiences.
-            </p>
-          </div>
-
+          {/* Premium CTA Button */}
           <div className="pt-8">
             <a
               href="#fleet"
-              className="inline-block rounded-lg bg-luxury-gold px-8 py-4 text-lg font-semibold text-luxury-blue transition-colors hover:bg-luxury-gold-dark shadow-lg"
+              className="inline-block rounded-lg bg-luxury-gold px-12 py-5 text-lg font-semibold text-luxury-blue transition-all duration-300 hover:bg-luxury-gold-dark shadow-lg hover:shadow-xl hover:scale-105 tracking-wide"
             >
               {t('cta')}
             </a>

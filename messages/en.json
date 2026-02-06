@@ -18,9 +18,9 @@
     "contact": "Contact"
   },
   "hero": {
-    "title": "Premium Yacht Charters in the Balearic Islands",
-    "subtitle": "Experience the Mediterranean like never before",
-    "cta": "Explore Our Fleet"
+    "title": "Your Private Mediterranean Escape",
+    "subtitle": "Premium yacht charters in the Balearic Islands. Tailored luxury, professional crew, and unforgettable horizons.",
+    "cta": "Start Your Journey"
   },
   "breadcrumb": {
     "home": "Home",
@@ -184,7 +184,12 @@
     "description": "Enjoy meals prepared with fresh local ingredients."
   },
   "stats": {
-    "title": "Our Journey in Numbers"
+    "title": "Our Journey in Numbers",
+    "successfulSeasons": "Successful Seasons",
+    "thousandsValue": "Thousands",
+    "happyGuestsLabel": "of Happy Guests",
+    "charterSupport": "Charter Support",
+    "clientSatisfaction": "Client Satisfaction"
   },
   "reviews": {
     "title": "What Our Guests Say",

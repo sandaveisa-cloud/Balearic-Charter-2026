@@ -20,7 +20,7 @@
   "hero": {
     "title": "Alquiler de Yates Premium en las Islas Baleares",
     "subtitle": "Viva el Mediterráneo como nunca antes",
-    "cta": "Explore nuestra flota"
+    "cta": "Comience su viaje"
   },
   "breadcrumb": {
     "home": "Inicio",
@@ -104,7 +104,7 @@
       "simona": {
         "headline": "La esencia de la navegación en catamarán de lujo",
         "description": "Este Lagoon 400 S2 meticulosamente mantenido combina fiabilidad y estilo para ofrecer experiencias de navegación inolvidables. Su diseño espacioso y comodidades modernas lo hacen ideal para explorar las Baleares.",
-        "tagline": "SIMONA es la elección perfecta para quienes buscan confort y aventura.",
+        "tagline": "Experimente la combinación perfecta de lujo y rendimiento a bordo del Lagoon 400 S2.",
         "highlights": [
           "Amplio Flybridge con colchonetas",
           "4 cabinas de lujo con baño privado",
@@ -181,10 +181,15 @@
   "culinary": {
     "title": "Gastronomía a bordo",
     "subtitle": "Sabores exquisitos en el mar",
-    "description": "Disfrute de comidas preparadas con ingredientes frescos locales."
+    "description": "Una experiencia culinaria romántica mientras el sol se pone sobre el Mediterráneo, con platos gourmet y vinos selectos."
   },
   "stats": {
-    "title": "Nuestra trayectoria en números"
+    "title": "Nuestra trayectoria en números",
+    "successfulSeasons": "Temporadas exitosas",
+    "thousandsValue": "Miles",
+    "happyGuestsLabel": "de huéspedes felices",
+    "charterSupport": "Soporte de charter",
+    "clientSatisfaction": "Satisfacción del cliente"
   },
   "reviews": {
     "title": "Lo que dicen nuestros huéspedes",

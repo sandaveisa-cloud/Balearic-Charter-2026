@@ -18,9 +18,9 @@
     "contact": "Kontakt"
   },
   "hero": {
-    "title": "Premium Yachtcharter auf den Balearen",
-    "subtitle": "Erleben Sie das Mittelmeer wie nie zuvor",
-    "cta": "Unsere Flotte entdecken"
+    "title": "Ihr privater Rückzugsort im Mittelmeer",
+    "subtitle": "Premium-Yachtcharter auf den Balearen. Maßgeschneiderter Luxus, professionelle Crew und unvergessliche Horizonte.",
+    "cta": "Beginnen Sie Ihre Reise"
   },
   "breadcrumb": {
     "home": "Home",
@@ -104,7 +104,7 @@
       "simona": {
         "headline": "Die Essenz des Luxus-Katamaran-Segelns",
         "description": "Diese bestens gepflegte Lagoon 400 S2 vereint Zuverlässigkeit mit Stil für unvergessliche Segelerlebnisse. Mit ihrem großzügigen Layout und moderner Ausstattung ist sie ideal für die Erkundung der Balearen.",
-        "tagline": "SIMONA ist die perfekte Wahl für alle, die Komfort und Abenteuer suchen.",
+        "tagline": "Erleben Sie die perfekte Mischung aus Luxus und Leistung an Bord der Lagoon 400 S2.",
         "highlights": [
           "Große Flybridge mit Sonnenpolstern",
           "4 Luxuskabinen mit eigenem Bad",
@@ -159,11 +159,11 @@
     },
     "ibiza": {
       "title": "Ibiza",
-      "description": "Erleben Sie weltberühmte Beachclubs und kristallklares Wasser."
+      "description": "Erleben Sie weltberühmte Strandclubs, ein pulsierendes Nachtleben und versteckte Buchten mit kristallklarem Wasser."
     },
     "formentera": {
       "title": "Formentera",
-      "description": "Entdecken Sie die Karibik des Mittelmeers."
+      "description": "Entdecken Sie das letzte Paradies des Mittelmeers – unberührte weiße Sandstrände und türkisfarbenes Wasser in absoluter Ruhe."
     },
     "mallorca": {
       "title": "Mallorca",
@@ -181,10 +181,15 @@
   "culinary": {
     "title": "Essen an Bord",
     "subtitle": "Exquisite Genüsse auf See",
-    "description": "Genießen Sie Mahlzeiten mit frischen lokalen Zutaten."
+    "description": "Ein romantisches Dinner-Erlebnis, während die Sonne über dem Mittelmeer untergeht, mit Gourmet-Gerichten und edlen Weinen."
   },
   "stats": {
-    "title": "Unsere Reise in Zahlen"
+    "title": "Unsere Reise in Zahlen",
+    "successfulSeasons": "Erfolgreiche Saisons",
+    "thousandsValue": "Tausende",
+    "happyGuestsLabel": "glückliche Gäste",
+    "charterSupport": "Charter-Support",
+    "clientSatisfaction": "Kundenzufriedenheit"
   },
   "reviews": {
     "title": "Was unsere Gäste sagen",
