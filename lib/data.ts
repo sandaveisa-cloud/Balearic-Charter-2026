@@ -263,9 +263,9 @@ export async function getSiteContent(): Promise<SiteContent> {
     console.log('[Data] getSiteContent called, using unstable_cache...')
     const cachedFetch = unstable_cache(
       fetchSiteContentInternal,
-      ['site-content'],
+      ['site-content-v2'], // Changed cache key to force refresh
       {
-        revalidate: 60, // 60 seconds cache (reduced from 1 hour for faster updates)
+        revalidate: 30, // 30 seconds cache (reduced to force immediate updates)
         tags: ['site-content', 'fleet', 'destinations', 'settings']
       }
     )
