@@ -93,16 +93,39 @@ export function getDescriptionForLocale(
 
 /**
  * Helper to get short description for current locale with fallback
+ * Supports both JSONB (short_description_i18n) and TEXT columns (short_description_en, short_description_es, short_description_de)
  */
 export function getShortDescriptionForLocale(
-  fleet: { short_description_i18n?: Record<string, string> | null, short_description?: string | null },
+  fleet: { 
+    short_description_i18n?: Record<string, string> | null
+    short_description_en?: string | null
+    short_description_es?: string | null
+    short_description_de?: string | null
+    short_description?: string | null
+  },
   locale: Locale
 ): string {
-  // Try i18n first
+  // Priority 1: Try JSONB i18n column
   const i18nText = getLocalizedText(fleet.short_description_i18n, locale)
   if (i18nText) return i18nText
   
-  // Fallback to legacy short_description field
+  // Priority 2: Try TEXT columns based on locale
+  switch (locale) {
+    case 'es':
+      if (fleet.short_description_es) return fleet.short_description_es
+      break
+    case 'de':
+      if (fleet.short_description_de) return fleet.short_description_de
+      break
+    case 'en':
+      if (fleet.short_description_en) return fleet.short_description_en
+      break
+  }
+  
+  // Priority 3: Fallback to English TEXT column
+  if (fleet.short_description_en) return fleet.short_description_en
+  
+  // Priority 4: Fallback to legacy short_description field
   return fleet.short_description || ''
 }
 

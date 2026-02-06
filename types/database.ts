@@ -39,6 +39,9 @@ export interface Fleet {
   description_en?: string | null // English description (TEXT column)
   description_es?: string | null // Spanish description (TEXT column)
   description_de?: string | null // German description (TEXT column)
+  short_description_en?: string | null // English short description (TEXT column) - used for fleet card previews
+  short_description_es?: string | null // Spanish short description (TEXT column) - used for fleet card previews
+  short_description_de?: string | null // German short description (TEXT column) - used for fleet card previews
   tagline_en?: string | null // English tagline (TEXT column)
   tagline_es?: string | null // Spanish tagline (TEXT column)
   tagline_de?: string | null // German tagline (TEXT column)

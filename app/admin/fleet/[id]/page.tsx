@@ -26,6 +26,9 @@ export default function FleetEditPage() {
     description_en: '',
     description_es: '',
     description_de: '',
+    short_description_en: '',
+    short_description_es: '',
+    short_description_de: '',
     tagline_en: '',
     tagline_es: '',
     tagline_de: '',
@@ -131,6 +134,9 @@ export default function FleetEditPage() {
         description_en: yacht.description_en || '',
         description_es: yacht.description_es || '',
         description_de: yacht.description_de || '',
+        short_description_en: yacht.short_description_en || yacht.short_description_i18n?.en || yacht.short_description || '',
+        short_description_es: yacht.short_description_es || yacht.short_description_i18n?.es || '',
+        short_description_de: yacht.short_description_de || yacht.short_description_i18n?.de || '',
         tagline_en: yacht.tagline_en || yacht.tagline_i18n?.en || '',
         tagline_es: yacht.tagline_es || yacht.tagline_i18n?.es || '',
         tagline_de: yacht.tagline_de || yacht.tagline_i18n?.de || '',
@@ -212,6 +218,9 @@ export default function FleetEditPage() {
         description_en: formData.description_en || null,
         description_es: formData.description_es || null,
         description_de: formData.description_de || null,
+        short_description_en: formData.short_description_en || null,
+        short_description_es: formData.short_description_es || null,
+        short_description_de: formData.short_description_de || null,
         tagline_en: formData.tagline_en || null,
         tagline_es: formData.tagline_es || null,
         tagline_de: formData.tagline_de || null,
@@ -544,6 +553,48 @@ export default function FleetEditPage() {
               onChange={(e) => setFormData({ ...formData, description_de: e.target.value })}
               rows={3}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        {/* Short Descriptions */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-800">Short Descriptions</h3>
+          <p className="text-sm text-gray-600">Brief text displayed on fleet listing cards (not the full detail page)</p>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              English Short Description
+            </label>
+            <textarea
+              value={formData.short_description_en}
+              onChange={(e) => setFormData({ ...formData, short_description_en: e.target.value })}
+              rows={2}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="e.g., Experience the perfect blend of luxury and performance..."
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Spanish Short Description
+            </label>
+            <textarea
+              value={formData.short_description_es}
+              onChange={(e) => setFormData({ ...formData, short_description_es: e.target.value })}
+              rows={2}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="e.g., Experimente la combinación perfecta de lujo y rendimiento..."
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              German Short Description
+            </label>
+            <textarea
+              value={formData.short_description_de}
+              onChange={(e) => setFormData({ ...formData, short_description_de: e.target.value })}
+              rows={2}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="e.g., Erleben Sie die perfekte Mischung aus Luxus und Leistung..."
             />
           </div>
         </div>
