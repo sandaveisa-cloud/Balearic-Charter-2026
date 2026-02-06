@@ -21,6 +21,14 @@ interface FleetDetailProps {
   yacht: Fleet
 }
 
+// Helper function to clean spec values (remove "e.g." prefix if present)
+const cleanSpecValue = (value: string | number | null | undefined): string => {
+  if (!value) return ''
+  const str = String(value).trim()
+  // Remove "e.g." or "e.g" prefix (case insensitive, with optional punctuation)
+  return str.replace(/^e\.g\.?\s*/i, '').trim()
+}
+
 export default function FleetDetail({ yacht }: FleetDetailProps) {
   const t = useTranslations('fleet')
   const tBreadcrumb = useTranslations('breadcrumb')
@@ -640,42 +648,48 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                     {/* Year - Always from database, no hardcoded values */}
                     {yacht.year && (
                       <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700 w-1/3">Year Built</td>
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700 w-1/3">{t('specs.yearBuilt', { default: 'Year Built' })}</td>
                         <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.year}</td>
                       </tr>
                     )}
                     {yacht.length && (
                       <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700 w-1/3">Length</td>
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700 w-1/3">{t('specs.length', { default: 'Length' })}</td>
                         <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.length}m</td>
                       </tr>
                     )}
-                    {/* Use specs field first, fallback to technical_specs */}
+                    {/* Prioritize technical_specs (where admin saves) over specs (legacy) */}
                     {(() => {
-                      const specs = yacht.specs || yacht.technical_specs
+                      const techSpecs = yacht.technical_specs
+                      const legacySpecs = yacht.specs
+                      
+                      const beam = techSpecs?.beam || legacySpecs?.beam
+                      const draft = techSpecs?.draft || legacySpecs?.draft
+                      const engines = techSpecs?.engines || legacySpecs?.engines || legacySpecs?.engine
+                      
                       return (
                         <>
-                          {specs?.beam && (
+                          {beam && (
                             <tr className="hover:bg-gray-50">
-                              <td className="px-6 py-4 text-sm font-medium text-gray-700">Beam</td>
+                              <td className="px-6 py-4 text-sm font-medium text-gray-700">{t('specs.beam', { default: 'Beam' })}</td>
                               <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                                {specs.beam}{typeof specs.beam === 'number' ? 'm' : ''}
+                                {typeof beam === 'number' ? `${beam}m` : cleanSpecValue(beam)}
                               </td>
                             </tr>
                           )}
-                          {specs?.draft && (
+                          {draft && (
                             <tr className="hover:bg-gray-50">
-                              <td className="px-6 py-4 text-sm font-medium text-gray-700">Draft</td>
+                              <td className="px-6 py-4 text-sm font-medium text-gray-700">{t('specs.draft', { default: 'Draft' })}</td>
                               <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                                {specs.draft}{typeof specs.draft === 'number' ? 'm' : ''}
+                                {typeof draft === 'number' ? `${draft}m` : cleanSpecValue(draft)}
                               </td>
                             </tr>
                           )}
-                          {(specs?.engine || specs?.engines) && (
+                          {engines && (
                             <tr className="hover:bg-gray-50">
-                              <td className="px-6 py-4 text-sm font-medium text-gray-700">Engines</td>
+                              <td className="px-6 py-4 text-sm font-medium text-gray-700">{t('specs.engines', { default: 'Engines' })}</td>
                               <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                                {specs.engine || specs.engines}
+                                {cleanSpecValue(engines)}
                               </td>
                             </tr>
                           )}
@@ -684,51 +698,58 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                     })()}
                     {yacht.capacity && (
                       <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Capacity</td>
-                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.capacity} Guests</td>
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">{t('specs.capacity', { default: 'Capacity' })}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.capacity} {t('specs.guests', { default: 'Guests' })}</td>
                       </tr>
                     )}
                     {yacht.cabins && (
                       <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Cabins</td>
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">{t('specs.cabins', { default: 'Cabins' })}</td>
                         <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.cabins}</td>
                       </tr>
                     )}
                     {yacht.toilets && (
                       <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Toilets</td>
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">{t('specs.toilets', { default: 'Toilets' })}</td>
                         <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.toilets}</td>
                       </tr>
                     )}
                     {yacht.technical_specs?.cruising_speed && (
                       <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Cruising Speed</td>
-                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.cruising_speed}</td>
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">{t('specs.cruisingSpeed', { default: 'Cruising Speed' })}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{cleanSpecValue(yacht.technical_specs.cruising_speed)}</td>
                       </tr>
                     )}
                     {yacht.technical_specs?.max_speed && (
                       <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-700">Max Speed</td>
-                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{yacht.technical_specs.max_speed}</td>
+                        <td className="px-6 py-4 text-sm font-medium text-gray-700">{t('specs.maxSpeed', { default: 'Max Speed' })}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900 font-semibold">{cleanSpecValue(yacht.technical_specs.max_speed)}</td>
                       </tr>
                     )}
                     {(() => {
-                      const specs = yacht.specs || yacht.technical_specs
+                      // Prioritize technical_specs (where admin saves) over specs (legacy)
+                      // Within each, prioritize _capacity over _tank (correct field names)
+                      const techSpecs = yacht.technical_specs
+                      const legacySpecs = yacht.specs
+                      
+                      const fuelCapacity = techSpecs?.fuel_capacity || legacySpecs?.fuel_capacity || legacySpecs?.fuel_tank
+                      const waterCapacity = techSpecs?.water_capacity || legacySpecs?.water_capacity || legacySpecs?.water_tank
+                      
                       return (
                         <>
-                          {(specs?.fuel_tank || specs?.fuel_capacity) && (
+                          {fuelCapacity && (
                             <tr className="hover:bg-gray-50">
-                              <td className="px-6 py-4 text-sm font-medium text-gray-700">Fuel Capacity</td>
+                              <td className="px-6 py-4 text-sm font-medium text-gray-700">{t('specs.fuelCapacity', { default: 'Fuel Capacity' })}</td>
                               <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                                {specs.fuel_tank || specs.fuel_capacity}
+                                {cleanSpecValue(fuelCapacity)}
                               </td>
                             </tr>
                           )}
-                          {(specs?.water_tank || specs?.water_capacity) && (
+                          {waterCapacity && (
                             <tr className="hover:bg-gray-50">
-                              <td className="px-6 py-4 text-sm font-medium text-gray-700">Water Capacity</td>
+                              <td className="px-6 py-4 text-sm font-medium text-gray-700">{t('specs.waterCapacity', { default: 'Water Capacity' })}</td>
                               <td className="px-6 py-4 text-sm text-gray-900 font-semibold">
-                                {specs.water_tank || specs.water_capacity}
+                                {cleanSpecValue(waterCapacity)}
                               </td>
                             </tr>
                           )}

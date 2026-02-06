@@ -771,7 +771,7 @@ export default function FleetEditPage() {
                   technical_specs: { ...formData.technical_specs, water_capacity: e.target.value }
                 })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
-                placeholder="e.g., 300L"
+                placeholder="e.g., 600L"
               />
             </div>
           </div>
