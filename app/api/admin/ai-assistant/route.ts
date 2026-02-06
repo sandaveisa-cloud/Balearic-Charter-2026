@@ -47,19 +47,9 @@ export async function POST(req: Request) {
     }
 
     // Initialize Gemini AI
-    let genAI: GoogleGenerativeAI;
-    try {
-      genAI = new GoogleGenerativeAI(key);
-    } catch (initError: any) {
-      console.error('[AI Assistant] Failed to initialize GoogleGenerativeAI:', initError);
-      return NextResponse.json({ 
-        error: 'Failed to initialize Gemini AI',
-        details: `Error initializing: ${initError?.message || 'Unknown error'}`,
-        code: 'INIT_ERROR'
-      }, { status: 500 });
-    }
+    const genAI = new GoogleGenerativeAI(key);
 
-    // Get model
+    // Get model - using v1 API (stable) instead of v1beta
     const model = genAI.getGenerativeModel({ 
       model: "gemini-1.5-flash",
     });
@@ -102,6 +92,9 @@ export async function POST(req: Request) {
       } else if (apiError?.status === 403) {
         errorMessage = 'API access forbidden. Please check your API key permissions.';
         errorCode = 'FORBIDDEN';
+      } else if (apiError?.status === 404) {
+        errorMessage = 'Model not found. The gemini-1.5-flash model may not be available for your API version.';
+        errorCode = 'MODEL_NOT_FOUND';
       } else if (apiError?.status === 429) {
         errorMessage = 'Rate limit exceeded. Please try again later.';
         errorCode = 'RATE_LIMIT';
