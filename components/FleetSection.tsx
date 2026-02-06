@@ -7,6 +7,7 @@ import { Ruler, Users, BedDouble, Ship, Sparkles, ChevronDown, ChevronUp, Calend
 import type { Fleet } from '@/types/database'
 import OptimizedImage from './OptimizedImage'
 import TrustBar from './TrustBar'
+import FleetCardSlider from './FleetCardSlider'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
 import { calculateEarlyBirdPrice, formatEarlyBirdDeadline } from '@/lib/earlyBirdDiscount'
 
@@ -87,14 +88,33 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                 yacht.short_description ||
                 ''
 
-              const imageUrl = getOptimizedImageUrl(yacht.main_image_url, {
-                width: 1200,
-                quality: 80,
-                format: 'webp',
+              // Collect all images for the slider (main_image_url + gallery_images)
+              const allImages: string[] = []
+              
+              // Helper to validate image URL
+              const isValidImageUrl = (url: string | null | undefined): boolean => {
+                if (!url || typeof url !== 'string' || url.trim() === '') return false
+                const trimmed = url.trim()
+                // Reject pure numbers or ID patterns
+                if (/^\d+$/.test(trimmed) || /^image:\d+$/i.test(trimmed)) return false
+                return true
+              }
+              
+              // Add main image if valid
+              if (yacht.main_image_url && isValidImageUrl(yacht.main_image_url)) {
+                allImages.push(yacht.main_image_url)
+              }
+              
+              // Add gallery images (avoid duplicates)
+              const gallery = Array.isArray(yacht.gallery_images) ? yacht.gallery_images : []
+              gallery.forEach((img: string) => {
+                if (isValidImageUrl(img) && !allImages.includes(img)) {
+                  allImages.push(img)
+                }
               })
+              
               const hasError = imageErrors[yacht.id]
-              // Explicit null check: only show image if imageUrl is a valid string
-              const showImage = imageUrl && typeof imageUrl === 'string' && imageUrl.trim() !== '' && !hasError
+              const hasImages = allImages.length > 0 && !hasError
 
               const baseStartingPrice = yacht.low_season_price || yacht.high_season_price || null
               const priceInfo = baseStartingPrice ? calculateEarlyBirdPrice(baseStartingPrice) : null
@@ -106,25 +126,23 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
               return (
                 <div key={yacht.id} className="group relative overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] flex flex-col h-full">
                   <div className="flex flex-col lg:flex-row flex-grow">
-                    <div className="w-full lg:w-2/5 flex-shrink-0">
-                      {showImage && imageUrl ? (
-                        <div className="aspect-[4/3] lg:aspect-square overflow-hidden relative">
-                          <OptimizedImage
-                            src={imageUrl}
-                            alt={yacht.name || 'Yacht'}
-                            fill
-                            sizes="(max-width: 1024px) 100vw, 40vw"
-                            objectFit="cover"
-                            priority={false} // ŠIS IR LABOJUMS - izslēdzam preload
-                            loading="lazy"   // ŠIS IR LABOJUMS - ieslēdzam lazy loading
-                            onError={() => setImageErrors(prev => ({ ...prev, [yacht.id]: true }))}
+                    <div className="w-full lg:w-2/5 flex-shrink-0 relative">
+                      {hasImages ? (
+                        <>
+                          <FleetCardSlider
+                            images={allImages}
+                            yachtName={yacht.name || 'Yacht'}
+                            yachtId={yacht.id}
+                            aspectRatio="4/3"
+                            priority={false}
+                            onImageError={() => setImageErrors(prev => ({ ...prev, [yacht.id]: true }))}
                           />
                           {yacht.recently_refitted && (
-                            <div className="absolute top-3 right-3 bg-gradient-to-r from-luxury-gold to-yellow-400 text-white px-3 py-1.5 rounded-full shadow-lg font-bold text-xs flex items-center gap-1.5 z-10">
+                            <div className="absolute top-3 right-3 bg-gradient-to-r from-luxury-gold to-yellow-400 text-white px-3 py-1.5 rounded-full shadow-lg font-bold text-xs flex items-center gap-1.5 z-20">
                               <Sparkles className="w-3 h-3" /> Refit 2024
                             </div>
                           )}
-                        </div>
+                        </>
                       ) : (
                         <div className="aspect-[4/3] lg:aspect-square bg-gradient-to-br from-luxury-blue to-luxury-gold flex items-center justify-center">
                           <Ship className="w-12 h-12 text-white opacity-50" />
