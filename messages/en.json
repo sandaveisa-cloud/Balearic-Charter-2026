@@ -156,11 +156,11 @@
     },
     "menorca": {
       "title": "Menorca",
-      "description": "Enjoy the peaceful atmosphere and untouched natural beauty of this Biosphere Reserve."
+      "description": "Enjoy the peaceful atmosphere and untouched natural beauty of this UNESCO Biosphere Reserve."
     },
     "costa-blanca": {
       "title": "Costa Blanca",
-      "description": "Sail along the beautiful white coast with its stunning cliffs and clear waters."
+      "description": "The sun-drenched Costa Blanca offers pristine beaches, vibrant marinas, and charming coastal towns along Spain's eastern coast."
     }
   },
   "culinary": {
@@ -292,8 +292,7 @@
     "security": {
       "title": "Security Measures",
       "description": "We implement industry-standard security protocols."
-    },
-    "backToHome": "Back to Home"
+    }
   },
   "cookies": {
     "title": "Cookies Policy",

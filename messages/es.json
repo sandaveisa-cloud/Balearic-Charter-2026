@@ -156,11 +156,11 @@
     },
     "menorca": {
       "title": "Menorca",
-      "description": "Disfrute de la atmósfera tranquila y la belleza natural virgen."
+      "description": "Disfrute de la atmósfera tranquila y la belleza natural virgen de esta Reserva de la Biosfera UNESCO."
     },
     "costa-blanca": {
       "title": "Costa Blanca",
-      "description": "Navegue por la hermosa costa blanca con sus impresionantes acantilados."
+      "description": "La Costa Blanca, bañada por el sol, ofrece playas vírgenes, puertos deportivos vibrantes y pueblos costeros con encanto a lo largo de la costa este de España."
     }
   },
   "culinary": {
@@ -292,8 +292,7 @@
     "security": {
       "title": "Medidas de seguridad",
       "description": "Implementamos protocolos de seguridad estándar."
-    },
-    "backToHome": "Volver al inicio"
+    }
   },
   "cookies": {
     "title": "Política de Cookies",

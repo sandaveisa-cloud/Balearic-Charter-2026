@@ -156,11 +156,11 @@
     },
     "menorca": {
       "title": "Menorca",
-      "description": "Genießen Sie die Ruhe und unberührte Natur."
+      "description": "Genießen Sie die friedliche Atmosphäre und die unberührte natürliche Schönheit dieses UNESCO-Biosphärenreservats."
     },
     "costa-blanca": {
       "title": "Costa Blanca",
-      "description": "Segeln Sie entlang der wunderschönen weißen Küste."
+      "description": "Die sonnenverwöhnte Costa Blanca bietet unberührte Strände, lebhafte Yachthäfen und charmante Küstenstädte an der spanischen Ostküste."
     }
   },
   "culinary": {
@@ -292,8 +292,7 @@
     "security": {
       "title": "Sicherheitsmaßnahmen",
       "description": "Industriestandard-Protokolle."
-    },
-    "backToHome": "Back to Home"
+    }
   },
   "cookies": {
     "title": "Cookie-Richtlinie",
