@@ -32,7 +32,7 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
       if (fleetResult.error) {
         // If order_index column doesn't exist, try without it
         if (fleetResult.error.message?.includes('order_index') || fleetResult.error.code === '42703') {
-          console.warn('[Data] order_index column not found, fetching without ordering by it...')
+          console.warn('[Data] order_index column not found, using fallback sort by name...')
           fleetResult = await supabase
             .from('fleet')
             .select('*')
@@ -83,13 +83,14 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
         .order('order_index', { ascending: true, nullsFirst: false })
       
       if (destinationsResult.error) {
-        // If order_index column doesn't exist, try without ordering
+        // If order_index column doesn't exist, try with fallback sorting by title
         if (destinationsResult.error.message?.includes('order_index') || destinationsResult.error.code === '42703') {
-          console.warn('[Data] order_index column not found in destinations, fetching without ordering...')
+          console.warn('[Data] order_index column not found in destinations, using fallback sort by title...')
           destinationsResult = await supabase
             .from('destinations')
             .select('id, title, name, description, description_en, description_es, description_de, image_urls, youtube_video_url, slug, region, is_active, seasonal_data, highlights_data, gallery_images, coordinates, created_at, updated_at')
             .eq('is_active', true)
+            .order('title', { ascending: true })
         } else if (destinationsResult.error.message?.includes('youtube_video_url') || 
                    destinationsResult.error.message?.includes('gallery_images')) {
           // Try without optional columns
@@ -101,11 +102,12 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
         }
       }
     } catch (orderError) {
-      console.warn('[Data] Destinations order query failed, trying simple query:', orderError)
+      console.warn('[Data] Destinations order query failed, trying simple query with title sort:', orderError)
       destinationsResult = await supabase
         .from('destinations')
         .select('*')
         .eq('is_active', true)
+        .order('title', { ascending: true })
     }
     
     if (destinationsResult.error) {

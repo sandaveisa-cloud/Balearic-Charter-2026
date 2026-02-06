@@ -8,8 +8,9 @@ import Breadcrumb from '@/components/Breadcrumb'
 import { getLocalizedText } from '@/lib/i18nUtils'
 import { locales } from '@/i18n/routing'
 
-// Revalidate every hour for performance (cache static pages)
-export const revalidate = 60 // Revalidate every 60 seconds for quick updates from Admin
+// Force dynamic rendering to always fetch fresh data from database
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 type Props = {
   params: Promise<{ id: string; locale: string }>

@@ -7,7 +7,9 @@ import Breadcrumb from '@/components/Breadcrumb'
 import { ArrowLeft, Anchor } from 'lucide-react'
 import { locales } from '@/i18n/routing'
 
-export const revalidate = 60 // Revalidate every 60 seconds for quick updates from Admin
+// Force dynamic rendering to always fetch fresh data from database
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 type Props = {
   params: Promise<{ locale: string }>

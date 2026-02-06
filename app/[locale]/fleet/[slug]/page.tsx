@@ -6,8 +6,9 @@ import StructuredData from '@/components/StructuredData'
 import Breadcrumb from '@/components/Breadcrumb'
 import { locales } from '@/i18n/routing'
 
-// Revalidate every 60 seconds for quick updates from Admin
-export const revalidate = 60
+// Force dynamic rendering to always fetch fresh data from database
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 // Reserved slugs that should NOT be treated as yacht slugs
 // These are static pages or localized URL patterns that might be mistakenly routed here
