@@ -114,7 +114,7 @@ export default function ContactSection({ contactPersons, settings: initialSettin
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16 md:mb-20">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4 tracking-wide">
             {t('title') || 'Contact Us'}
           </h2>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
@@ -219,7 +219,7 @@ export default function ContactSection({ contactPersons, settings: initialSettin
                       {/* Phone */}
                       <a
                         href={`tel:${formatPhoneForLink(contact.phone)}`}
-                        className="flex items-center gap-5 w-full px-8 py-5 bg-luxury-blue text-white rounded-xl hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 font-semibold group text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                        className="flex items-center gap-5 w-full px-8 py-5 bg-luxury-blue text-white rounded-xl hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 font-semibold group text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] tracking-wide min-h-[48px]"
                       >
                         <Phone className="w-6 h-6 group-hover:scale-110 transition-transform flex-shrink-0" />
                         <span className="flex-grow text-left">{contact.phone}</span>
@@ -228,7 +228,7 @@ export default function ContactSection({ contactPersons, settings: initialSettin
                       {/* Email */}
                       <a
                         href={`mailto:${contact.email}`}
-                        className="flex items-center gap-5 w-full px-8 py-5 bg-gray-50 text-luxury-blue rounded-xl hover:bg-luxury-gold hover:text-white transition-all duration-300 font-semibold group text-lg shadow-md hover:shadow-lg border border-gray-200 hover:border-luxury-gold transform hover:scale-[1.02]"
+                        className="flex items-center gap-5 w-full px-8 py-5 bg-gray-50 text-luxury-blue rounded-xl hover:bg-luxury-gold hover:text-white transition-all duration-300 font-semibold group text-lg shadow-md hover:shadow-lg border border-gray-200 hover:border-luxury-gold transform hover:scale-[1.02] tracking-wide min-h-[48px]"
                         // Obfuscate email display to prevent spam bots
                         data-email={contact.email.split('@')[0] + '[at]' + contact.email.split('@')[1]}
                       >
@@ -241,7 +241,7 @@ export default function ContactSection({ contactPersons, settings: initialSettin
                         href={getWhatsAppLink(contact.phone)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-5 w-full px-8 py-5 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-all duration-300 font-semibold group text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                        className="flex items-center gap-5 w-full px-8 py-5 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-all duration-300 font-semibold group text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] tracking-wide min-h-[48px]"
                       >
                         <MessageCircle className="w-6 h-6 group-hover:scale-110 transition-transform flex-shrink-0" />
                         <span className="flex-grow text-left">{t('whatsapp') || 'WhatsApp'}</span>

@@ -55,14 +55,14 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
   if (curatedReviews.length === 0) return null
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
+    <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
       <div className="container mx-auto px-4">
         
         <div className="text-center mb-16 max-w-3xl mx-auto">
           <div className="flex justify-center mb-4">
             <Quote className="w-12 h-12 text-luxury-gold/20" />
           </div>
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4 tracking-wide">
             {t('title')}
           </h2>
           <p className="text-xl text-gray-600 mb-8">
@@ -84,7 +84,7 @@ export default function ReviewsSection({ reviews }: ReviewsSectionProps) {
           {curatedReviews.map((review, index) => (
             <div 
               key={review.id || index}
-              className="flex flex-col h-full bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 relative group"
+              className="flex flex-col h-full bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 relative group"
             >
               <div className="absolute top-6 right-6 opacity-10 group-hover:opacity-20 transition-opacity">
                 <Quote className="w-10 h-10 text-luxury-blue" />

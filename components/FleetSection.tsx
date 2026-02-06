@@ -59,10 +59,10 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
   }
 
   return (
-    <section id="fleet" className="pt-10 pb-12 md:pb-20 bg-white">
+    <section id="fleet" className="pt-10 pb-12 md:pb-20 lg:pb-24 bg-white">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center mb-8 md:mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-luxury-blue mb-3 md:mb-4">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-luxury-blue mb-3 md:mb-4 tracking-wide">
             {t('title')}
           </h2>
           <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
@@ -104,7 +104,7 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
               const isExtrasExpanded = expandedExtras[yacht.id] || false
 
               return (
-                <div key={yacht.id} className="group relative overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200 transition-all hover:shadow-xl flex flex-col h-full">
+                <div key={yacht.id} className="group relative overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] flex flex-col h-full">
                   <div className="flex flex-col lg:flex-row flex-grow">
                     <div className="w-full lg:w-2/5 flex-shrink-0">
                       {showImage && imageUrl ? (
@@ -175,10 +175,10 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
 
                       {/* Buttons - Larger touch targets on mobile */}
                       <div className="mt-auto flex flex-col sm:flex-row gap-2 md:gap-3">
-                        <Link href="/contact" className="flex-1 text-center rounded-lg bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue py-3 md:py-2.5 font-bold text-sm md:text-base hover:shadow-md transition-all min-h-[44px] flex items-center justify-center">
+                        <Link href="/contact" className="flex-1 text-center rounded-lg bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue py-3 md:py-2.5 font-bold text-sm md:text-base hover:shadow-md transition-all duration-300 tracking-wide min-h-[48px] flex items-center justify-center">
                           {t('getQuote')}
                         </Link>
-                        <Link href={{ pathname: '/fleet/[slug]', params: { slug: yacht.slug } }} className="flex-1 text-center rounded-lg bg-luxury-blue text-white py-3 md:py-2.5 font-semibold text-sm md:text-base hover:bg-luxury-gold transition-colors min-h-[44px] flex items-center justify-center">
+                        <Link href={{ pathname: '/fleet/[slug]', params: { slug: yacht.slug } }} className="flex-1 text-center rounded-lg bg-luxury-blue text-white py-3 md:py-2.5 font-semibold text-sm md:text-base hover:bg-luxury-gold transition-colors duration-300 tracking-wide min-h-[48px] flex items-center justify-center">
                           {t('viewDetails')}
                         </Link>
                       </div>

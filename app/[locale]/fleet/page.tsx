@@ -96,7 +96,7 @@ export default async function FleetPage({ params }: Props) {
         <div className="container mx-auto max-w-6xl">
           <div className="flex items-center gap-4 mb-4">
             <Ship className="w-10 h-10 text-luxury-gold" />
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-white">
+            <h1 className="font-serif text-4xl md:text-5xl font-bold text-white tracking-wide">
               {t('title') || 'Our Luxury Fleet'}
             </h1>
           </div>
@@ -109,9 +109,9 @@ export default async function FleetPage({ params }: Props) {
 
       <FleetSection fleet={fleet} />
 
-      <section className="bg-gradient-to-r from-luxury-blue/5 via-luxury-gold/5 to-luxury-blue/5 py-16 px-4">
+      <section className="bg-gradient-to-r from-luxury-blue/5 via-luxury-gold/5 to-luxury-blue/5 py-16 md:py-20 lg:py-24 px-4">
         <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-4">
+          <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-4 tracking-wide">
             {t('ctaTitle') || 'Ready to Set Sail?'}
           </h2>
           <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">

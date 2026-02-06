@@ -59,7 +59,7 @@ function DestinationCard({
       className="group cursor-pointer flex flex-col h-full"
     >
       {/* Image Container - Fixed aspect ratio */}
-      <div className="relative overflow-hidden rounded-sm aspect-[4/3] shadow-sm transition-shadow hover:shadow-xl">
+      <div className="relative overflow-hidden rounded-sm aspect-[4/3] shadow-sm transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
         {imageSrc ? (
           <OptimizedImage
             src={imageSrc}
@@ -164,11 +164,11 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
   }
 
   return (
-    <section className="bg-white py-12 md:py-20 px-4 md:px-6">
+    <section className="bg-white py-12 md:py-20 lg:py-24 px-4 md:px-6">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-8 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-light text-slate-900 mb-3 md:mb-4 tracking-wide uppercase">
+          <h2 className="font-serif text-3xl md:text-4xl font-bold text-slate-900 mb-3 md:mb-4 tracking-wide uppercase">
             {t('title') || 'Exclusive Destinations'}
           </h2>
           <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto px-4 italic">

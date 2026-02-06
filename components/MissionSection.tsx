@@ -28,7 +28,7 @@ export default async function MissionSection() {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-4">
-          <h2 className="font-serif text-xl md:text-2xl font-bold text-[#0F172A] mb-1">
+          <h2 className="font-serif text-xl md:text-2xl font-bold text-[#0F172A] mb-1 tracking-wide">
             Our Mission
           </h2>
         </div>

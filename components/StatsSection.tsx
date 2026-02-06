@@ -17,10 +17,10 @@ export default async function StatsSection({ stats }: StatsSectionProps) {
   ]
 
   return (
-    <section className="py-8 md:py-12 bg-white border-t border-b border-[#E2E8F0]">
+    <section className="py-8 md:py-12 lg:py-16 bg-white border-t border-b border-[#E2E8F0]">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center mb-6 md:mb-8">
-          <h2 className="font-serif text-xl md:text-2xl font-bold text-[#0F172A] mb-1">
+          <h2 className="font-serif text-xl md:text-2xl lg:text-3xl font-bold text-[#0F172A] mb-1 tracking-wide">
             {t('title') || 'Our Journey in Numbers'}
           </h2>
         </div>

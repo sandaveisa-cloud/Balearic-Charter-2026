@@ -288,11 +288,11 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
   }
 
   return (
-    <section className="py-12 bg-white border-t border-b border-[#E2E8F0]">
+    <section className="py-12 md:py-20 lg:py-24 bg-white border-t border-b border-[#E2E8F0]">
       <div className="container mx-auto px-4 md:px-6">
         {/* Section Header */}
-        <div className="text-center mb-8">
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#0F172A] mb-2">
+        <div className="text-center mb-8 md:mb-16">
+          <h2 className="font-serif text-2xl md:text-3xl lg:text-4xl font-bold text-[#0F172A] mb-2 tracking-wide">
             Culinary Excellence
           </h2>
           <p className="text-base text-[#475569]">
@@ -323,7 +323,7 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
             return (
               <div
                 key={`culinary-${experience.id}-${index}`}
-                className="group relative overflow-hidden rounded-lg bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-[#E2E8F0] flex flex-col h-full"
+                className="group relative overflow-hidden rounded-lg bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-[#E2E8F0] flex flex-col h-full"
               >
                 {/* Image Container - Clickable */}
                 <div 

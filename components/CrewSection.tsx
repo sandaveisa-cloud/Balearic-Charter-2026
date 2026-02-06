@@ -22,10 +22,10 @@ export default function CrewSection({ crew }: CrewSectionProps) {
   }
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4 tracking-wide">
             {t('title')}
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
