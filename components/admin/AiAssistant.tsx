@@ -14,6 +14,7 @@ export default function AiAssistant() {
     if (!prompt.trim()) return
 
     setLoading(true)
+    setResponse('') // Clear previous response
     
     try {
       const res = await fetch('/api/admin/ai-assistant', {
@@ -23,13 +24,34 @@ export default function AiAssistant() {
       })
 
       const data = await res.json()
+      
       if (data.result) {
         setResponse(data.result)
       } else if (data.error) {
-        setResponse(`Error: ${data.error}`)
+        // Enhanced error messages based on error code
+        let errorMessage = `Error: ${data.error}`
+        
+        if (data.code === 'MISSING_API_KEY') {
+          errorMessage = `❌ API Key Not Configured\n\n${data.details}\n\nPlease add GEMINI_API_KEY to your .env.local file:\n\nGEMINI_API_KEY=AIza...\n\nThen restart your dev server.`
+        } else if (data.code === 'INVALID_API_KEY_FORMAT') {
+          errorMessage = `❌ Invalid API Key Format\n\n${data.details}\n\nYour API key should start with "AIza". Please check your key from Google AI Studio.`
+        } else if (data.code === 'INVALID_API_KEY') {
+          errorMessage = `❌ Invalid API Key\n\n${data.details}\n\nPlease verify your GEMINI_API_KEY in .env.local is correct.`
+        } else if (data.code === 'RATE_LIMIT') {
+          errorMessage = `⏱️ Rate Limit Exceeded\n\n${data.details}\n\nPlease wait a moment and try again.`
+        } else if (data.code === 'FORBIDDEN') {
+          errorMessage = `🚫 Access Forbidden\n\n${data.details}\n\nPlease check your API key permissions in Google AI Studio.`
+        } else if (data.details) {
+          errorMessage = `❌ ${data.error}\n\n${data.details}`
+        }
+        
+        setResponse(errorMessage)
+      } else {
+        setResponse('Error: Unexpected response from server.')
       }
-    } catch (error) {
-      setResponse('Error: Could not connect to AI assistant.')
+    } catch (error: any) {
+      console.error('[AI Assistant] Fetch error:', error)
+      setResponse(`❌ Connection Error\n\nCould not connect to AI assistant. Please check:\n\n1. Your internet connection\n2. The dev server is running\n3. The API route is accessible\n\nError: ${error?.message || 'Unknown error'}`)
     } finally {
       setLoading(false)
     }
