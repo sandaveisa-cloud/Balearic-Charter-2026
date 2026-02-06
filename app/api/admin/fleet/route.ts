@@ -86,9 +86,15 @@ const KNOWN_FLEET_COLUMNS = [
   'short_description_es',
   'short_description_de',
   
+  // Taglines (i18n individual columns)
+  'tagline_en',
+  'tagline_es',
+  'tagline_de',
+  
   // Descriptions (i18n JSONB)
   'description_i18n',
   'short_description_i18n',
+  'tagline_i18n',
   
   // Images
   'image',

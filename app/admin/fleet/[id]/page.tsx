@@ -26,6 +26,9 @@ export default function FleetEditPage() {
     description_en: '',
     description_es: '',
     description_de: '',
+    tagline_en: '',
+    tagline_es: '',
+    tagline_de: '',
     main_image_url: '',
     gallery_images: [] as string[],
     low_season_price: null as number | null,
@@ -128,6 +131,9 @@ export default function FleetEditPage() {
         description_en: yacht.description_en || '',
         description_es: yacht.description_es || '',
         description_de: yacht.description_de || '',
+        tagline_en: yacht.tagline_en || yacht.tagline_i18n?.en || '',
+        tagline_es: yacht.tagline_es || yacht.tagline_i18n?.es || '',
+        tagline_de: yacht.tagline_de || yacht.tagline_i18n?.de || '',
         main_image_url: yacht.main_image_url || (yacht.gallery_images && yacht.gallery_images.length > 0 ? yacht.gallery_images[0] : ''),
         gallery_images: yacht.gallery_images || [],
         low_season_price: yacht.low_season_price || null,
@@ -206,6 +212,9 @@ export default function FleetEditPage() {
         description_en: formData.description_en || null,
         description_es: formData.description_es || null,
         description_de: formData.description_de || null,
+        tagline_en: formData.tagline_en || null,
+        tagline_es: formData.tagline_es || null,
+        tagline_de: formData.tagline_de || null,
         main_image_url: formData.gallery_images && formData.gallery_images.length > 0 ? formData.gallery_images[0] : formData.main_image_url || null,
         gallery_images: formData.gallery_images || [],
         low_season_price: formData.low_season_price,
@@ -535,6 +544,48 @@ export default function FleetEditPage() {
               onChange={(e) => setFormData({ ...formData, description_de: e.target.value })}
               rows={3}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        {/* Taglines */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-800">Taglines</h3>
+          <p className="text-sm text-gray-600">Short marketing phrase displayed on the yacht detail page</p>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              English Tagline
+            </label>
+            <input
+              type="text"
+              value={formData.tagline_en}
+              onChange={(e) => setFormData({ ...formData, tagline_en: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="e.g., SIMONA is the perfect choice..."
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Spanish Tagline
+            </label>
+            <input
+              type="text"
+              value={formData.tagline_es}
+              onChange={(e) => setFormData({ ...formData, tagline_es: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="e.g., SIMONA es la elección perfecta..."
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              German Tagline
+            </label>
+            <input
+              type="text"
+              value={formData.tagline_de}
+              onChange={(e) => setFormData({ ...formData, tagline_de: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+              placeholder="e.g., SIMONA ist die perfekte Wahl..."
             />
           </div>
         </div>

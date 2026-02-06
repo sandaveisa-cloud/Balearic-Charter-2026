@@ -63,6 +63,11 @@ interface FleetFormData {
   short_description_es: string
   short_description_de: string
   
+  // Multi-language Taglines
+  tagline_en: string
+  tagline_es: string
+  tagline_de: string
+  
   // Images
   main_image_url: string
   gallery_images: string[]
@@ -194,6 +199,9 @@ export default function FleetEditor({
         short_description_en: fleet.short_description_i18n?.en || fleet.short_description || '',
         short_description_es: fleet.short_description_i18n?.es || '',
         short_description_de: fleet.short_description_i18n?.de || '',
+        tagline_en: fleet.tagline_en || fleet.tagline_i18n?.en || '',
+        tagline_es: fleet.tagline_es || fleet.tagline_i18n?.es || '',
+        tagline_de: fleet.tagline_de || fleet.tagline_i18n?.de || '',
         main_image_url: fleet.main_image_url || '',
         gallery_images: Array.isArray(fleet.gallery_images) ? fleet.gallery_images : [],
         recently_refitted: fleet.recently_refitted || false,
@@ -234,6 +242,9 @@ export default function FleetEditor({
         short_description_en: '',
         short_description_es: '',
         short_description_de: '',
+        tagline_en: '',
+        tagline_es: '',
+        tagline_de: '',
         main_image_url: '',
         gallery_images: [],
         recently_refitted: false,
@@ -316,6 +327,9 @@ export default function FleetEditor({
           es: data.short_description_es?.trim() || null,
           de: data.short_description_de?.trim() || null,
         },
+        tagline_en: data.tagline_en?.trim() || null,
+        tagline_es: data.tagline_es?.trim() || null,
+        tagline_de: data.tagline_de?.trim() || null,
         main_image_url: data.main_image_url || null,
         gallery_images: data.gallery_images.length > 0 ? data.gallery_images : [],
         recently_refitted: data.recently_refitted || false,
@@ -982,6 +996,47 @@ export default function FleetEditor({
                       rows={3}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
                       placeholder="Kurze Beschreibung auf Deutsch..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Taglines */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-gray-700">Tagline</h4>
+                <p className="text-sm text-gray-600 mb-2">Short marketing phrase displayed on the yacht detail page</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      English Tagline
+                    </label>
+                    <input
+                      type="text"
+                      {...register('tagline_en')}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                      placeholder="e.g., SIMONA is the perfect choice..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Spanish Tagline
+                    </label>
+                    <input
+                      type="text"
+                      {...register('tagline_es')}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                      placeholder="e.g., SIMONA es la elección perfecta..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      German Tagline
+                    </label>
+                    <input
+                      type="text"
+                      {...register('tagline_de')}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                      placeholder="e.g., SIMONA ist die perfekte Wahl..."
                     />
                   </div>
                 </div>

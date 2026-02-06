@@ -128,24 +128,53 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
   const touchEndX = useRef<number | null>(null)
 
   // Get ship-specific translations based on slug
+  // Priority: Database fields > Translation files
   const getShipTranslations = () => {
     const slug = yacht.slug?.toLowerCase()
+    const currentLocale = locale as 'en' | 'es' | 'de'
+    
+    // Get tagline from database first, fallback to translations
+    const getTagline = () => {
+      if (currentLocale === 'en' && yacht.tagline_en) return yacht.tagline_en
+      if (currentLocale === 'es' && yacht.tagline_es) return yacht.tagline_es
+      if (currentLocale === 'de' && yacht.tagline_de) return yacht.tagline_de
+      // Fallback to translation file
+      try {
+        if (slug === 'simona') return t('ships.simona.tagline')
+        if (slug === 'wide-dream') return t('ships.wide-dream.tagline')
+      } catch {}
+      return null
+    }
+    
+    // Get description from database first, fallback to translations
+    const getDescription = () => {
+      if (currentLocale === 'en' && yacht.description_en) return yacht.description_en
+      if (currentLocale === 'es' && yacht.description_es) return yacht.description_es
+      if (currentLocale === 'de' && yacht.description_de) return yacht.description_de
+      // Fallback to translation file
+      try {
+        if (slug === 'simona') return t('ships.simona.description')
+        if (slug === 'wide-dream') return t('ships.wide-dream.description')
+      } catch {}
+      return null
+    }
+    
     try {
       if (slug === 'simona') {
         const highlights = t.raw('ships.simona.highlights') as string[]
         return {
           headline: t('ships.simona.headline'),
-          description: t('ships.simona.description'),
+          description: getDescription() || t('ships.simona.description'),
           highlights: Array.isArray(highlights) ? highlights : [],
-          tagline: t('ships.simona.tagline'),
+          tagline: getTagline() || t('ships.simona.tagline'),
         }
       } else if (slug === 'wide-dream') {
         const highlights = t.raw('ships.wide-dream.highlights') as string[]
         return {
           headline: t('ships.wide-dream.headline'),
-          description: t('ships.wide-dream.description'),
+          description: getDescription() || t('ships.wide-dream.description'),
           highlights: Array.isArray(highlights) ? highlights : [],
-          tagline: t('ships.wide-dream.tagline'),
+          tagline: getTagline() || t('ships.wide-dream.tagline'),
         }
       }
     } catch (error) {
