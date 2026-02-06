@@ -56,10 +56,10 @@ function DestinationCard({
   return (
     <Link
       href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
-      className="group cursor-pointer"
+      className="group cursor-pointer flex flex-col h-full"
     >
-      {/* Image Container */}
-      <div className="relative overflow-hidden rounded-sm h-64 shadow-sm transition-shadow hover:shadow-xl">
+      {/* Image Container - Fixed aspect ratio */}
+      <div className="relative overflow-hidden rounded-sm aspect-[4/3] shadow-sm transition-shadow hover:shadow-xl">
         {imageSrc ? (
           <OptimizedImage
             src={imageSrc}
@@ -87,9 +87,9 @@ function DestinationCard({
         </div>
       </div>
 
-      {/* Content Below Image */}
-      <div className="mt-4">
-        <p className="text-slate-600 leading-relaxed mb-3">{description}</p>
+      {/* Content Below Image - Flex grow for equal height */}
+      <div className="mt-4 flex flex-col flex-grow">
+        <p className="text-slate-600 leading-relaxed mb-3 line-clamp-3">{description}</p>
         {tags.length > 0 && (
           <div className="flex gap-2 flex-wrap">
             {tags.map(tag => (
@@ -164,20 +164,20 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
   }
 
   return (
-    <section className="bg-white py-20 px-6">
+    <section className="bg-white py-12 md:py-20 px-4 md:px-6">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-light text-slate-900 mb-4 tracking-wide uppercase">
+        <div className="text-center mb-8 md:mb-16">
+          <h2 className="text-3xl md:text-4xl font-light text-slate-900 mb-3 md:mb-4 tracking-wide uppercase">
             {t('title') || 'Exclusive Destinations'}
           </h2>
-          <p className="text-slate-500 max-w-2xl mx-auto italic">
+          <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto px-4 italic">
             {t('subtitle') || 'Explore the most beautiful locations in the Mediterranean from the deck of our premium fleet.'}
           </p>
         </div>
 
-        {/* Destinations Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {/* Destinations Grid - Consistent gap and equal height cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {activeDestinations.map((destination) => {
             const destinationImage = getDestinationImage(destination)
             const imageUrl = destinationImage || null

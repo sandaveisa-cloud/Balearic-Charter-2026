@@ -289,7 +289,7 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
 
   return (
     <section className="py-12 bg-white border-t border-b border-[#E2E8F0]">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 md:px-6">
         {/* Section Header */}
         <div className="text-center mb-8">
           <h2 className="font-serif text-2xl md:text-3xl font-bold text-[#0F172A] mb-2">
@@ -300,8 +300,8 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
           </p>
         </div>
 
-        {/* Experiences Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        {/* Experiences Grid - Consistent gap and equal height cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {activeExperiences.map((experience, index) => {
             // Get PRIMARY image only (one per experience)
             const rawImageUrl = getPrimaryImageFromExperience(experience)
@@ -323,7 +323,7 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
             return (
               <div
                 key={`culinary-${experience.id}-${index}`}
-                className="group relative overflow-hidden rounded-lg bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-[#E2E8F0]"
+                className="group relative overflow-hidden rounded-lg bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-[#E2E8F0] flex flex-col h-full"
               >
                 {/* Image Container - Clickable */}
                 <div 
@@ -382,16 +382,16 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
                   )}
                 </div>
 
-                {/* Content Card */}
-                <div className="p-6">
+                {/* Content Card - Flex grow for equal height */}
+                <div className="p-6 flex flex-col flex-grow">
                   {/* Title */}
-                  <h3 className="font-serif text-xl font-bold text-[#0F172A] mb-2 group-hover:text-[#C5A059] transition-colors">
+                  <h3 className="font-serif text-lg md:text-xl font-bold text-[#0F172A] mb-2 group-hover:text-[#C5A059] transition-colors">
                     {experience.title}
                   </h3>
 
                   {/* Description */}
                   {experience.description && (
-                    <p className="text-sm text-[#475569] leading-relaxed line-clamp-3">
+                    <p className="text-sm text-[#475569] leading-relaxed line-clamp-3 flex-grow">
                       {experience.description}
                     </p>
                   )}

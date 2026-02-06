@@ -17,21 +17,22 @@ export default async function StatsSection({ stats }: StatsSectionProps) {
   ]
 
   return (
-    <section className="py-8 bg-white border-t border-b border-[#E2E8F0]">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-4">
+    <section className="py-8 md:py-12 bg-white border-t border-b border-[#E2E8F0]">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="text-center mb-6 md:mb-8">
           <h2 className="font-serif text-xl md:text-2xl font-bold text-[#0F172A] mb-1">
             {t('title') || 'Our Journey in Numbers'}
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-5xl mx-auto">
+        {/* Stats Grid - Evenly spaced and centered */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
           {displayStats.map((stat) => (
-            <div key={stat.id} className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-[#0F172A] mb-1">
+            <div key={stat.id} className="text-center flex flex-col items-center justify-center">
+              <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#0F172A] mb-2">
                 {stat.value}
               </div>
-              <div className="text-xs md:text-sm text-[#475569] leading-tight">{stat.label}</div>
+              <div className="text-xs md:text-sm text-[#475569] leading-tight px-2">{stat.label}</div>
             </div>
           ))}
         </div>

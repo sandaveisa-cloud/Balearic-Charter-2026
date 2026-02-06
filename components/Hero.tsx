@@ -57,9 +57,9 @@ export default function Hero({ settings }: HeroProps) {
   }, [])
 
   return (
-    <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden bg-luxury-blue">
+    <section className="relative h-[85vh] min-h-[500px] md:min-h-[600px] w-full overflow-hidden bg-luxury-blue">
       
-      {/* 1. SLĀNIS: Fona attēls (LCP optimizēts) */}
+      {/* 1. SLĀNIS: Fona attēls (LCP optimizēts) - Centered on mobile */}
       <div className="absolute inset-0 z-0">
         <Image
           src={bgImage}
@@ -68,7 +68,7 @@ export default function Hero({ settings }: HeroProps) {
           priority={true}
           quality={90}
           sizes="100vw"
-          className="object-cover"
+          className="object-cover object-center"
         />
       </div>
 
@@ -87,27 +87,27 @@ export default function Hero({ settings }: HeroProps) {
         </div>
       )}
 
-      {/* 3. SLĀNIS: Overlay */}
-      <div className="absolute inset-0 bg-black/40 z-1" />
+      {/* 3. SLĀNIS: Overlay - Darker on mobile for better text readability */}
+      <div className="absolute inset-0 bg-black/50 md:bg-black/40 z-1" />
 
-      {/* 4. SLĀNIS: Saturs (Dinamiski teksti no JSON failiem) */}
-      <div className="relative z-10 flex h-full items-center justify-center px-4 text-center pb-12">
-        <div className="max-w-4xl space-y-6">
-          {/* Headline with premium typography */}
-          <h1 className="font-serif text-5xl font-bold text-white md:text-7xl lg:text-8xl drop-shadow-lg tracking-[0.05em] leading-tight">
+      {/* 4. SLĀNIS: Saturs (Dinamiski teksti no JSON failiem) - Centered on all devices */}
+      <div className="relative z-10 flex h-full items-center justify-center px-4 md:px-6 text-center pb-8 md:pb-12">
+        <div className="max-w-4xl space-y-4 md:space-y-6 w-full">
+          {/* Headline with premium typography - Responsive font sizes */}
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-bold text-white drop-shadow-lg tracking-[0.05em] leading-tight px-2">
             {t('title')}
           </h1>
 
-          {/* Subheadline with lighter weight and refined spacing */}
-          <p className="text-xl text-white/95 md:text-2xl lg:text-3xl drop-shadow-md font-light leading-relaxed tracking-wide max-w-3xl mx-auto">
+          {/* Subheadline with lighter weight and refined spacing - Responsive */}
+          <p className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-white/95 drop-shadow-md font-light leading-relaxed tracking-wide max-w-3xl mx-auto px-2">
             {t('subtitle')}
           </p>
 
-          {/* Premium CTA Button */}
-          <div className="pt-8">
+          {/* Premium CTA Button - Larger touch target on mobile */}
+          <div className="pt-6 md:pt-8">
             <a
               href="#fleet"
-              className="inline-block rounded-lg bg-luxury-gold px-12 py-5 text-lg font-semibold text-luxury-blue transition-all duration-300 hover:bg-luxury-gold-dark shadow-lg hover:shadow-xl hover:scale-105 tracking-wide"
+              className="inline-block rounded-lg bg-luxury-gold px-8 md:px-12 py-4 md:py-5 text-base md:text-lg font-semibold text-luxury-blue transition-all duration-300 hover:bg-luxury-gold-dark shadow-lg hover:shadow-xl hover:scale-105 tracking-wide min-h-[48px] md:min-h-[56px] flex items-center justify-center"
             >
               {t('cta')}
             </a>

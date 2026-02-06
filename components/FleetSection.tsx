@@ -59,18 +59,19 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
   }
 
   return (
-    <section id="fleet" className="pt-10 pb-20 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-luxury-blue mb-4">
+    <section id="fleet" className="pt-10 pb-12 md:pb-20 bg-white">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="text-center mb-8 md:mb-16">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-luxury-blue mb-3 md:mb-4">
             {t('title')}
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
             {t('subtitle')}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+        {/* Fleet Grid - Consistent gap and equal height cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {visibleYachts.map((yacht) => {
             try {
               const yachtExtras = Array.isArray(yacht.extras) ? yacht.extras : []
@@ -103,8 +104,8 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
               const isExtrasExpanded = expandedExtras[yacht.id] || false
 
               return (
-                <div key={yacht.id} className="group relative overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200 transition-all hover:shadow-xl">
-                  <div className="flex flex-col lg:flex-row">
+                <div key={yacht.id} className="group relative overflow-hidden rounded-xl bg-white shadow-lg border border-gray-200 transition-all hover:shadow-xl flex flex-col h-full">
+                  <div className="flex flex-col lg:flex-row flex-grow">
                     <div className="w-full lg:w-2/5 flex-shrink-0">
                       {showImage && imageUrl ? (
                         <div className="aspect-[4/3] lg:aspect-square overflow-hidden relative">
@@ -131,10 +132,10 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                       )}
                     </div>
 
-                    <div className="w-full lg:w-3/5 flex flex-col p-5 lg:p-6">
+                    <div className="w-full lg:w-3/5 flex flex-col p-5 lg:p-6 flex-grow">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
-                          <h3 className="font-serif text-2xl lg:text-3xl font-bold text-luxury-blue mb-1">
+                          <h3 className="font-serif text-xl md:text-2xl lg:text-3xl font-bold text-luxury-blue mb-1">
                             {yacht.name}
                           </h3>
                           {startingPrice && (
@@ -165,17 +166,19 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                       <div className="mb-3"><TrustBar variant="compact" /></div>
                       {localizedDescription && <p className="text-gray-600 mb-4 line-clamp-2 text-sm">{localizedDescription}</p>}
 
-                      <div className="flex items-center justify-between gap-4 mb-4 pb-4 border-b border-gray-100">
+                      {/* Icons - Centered grid layout */}
+                      <div className="flex items-center justify-center md:justify-start gap-4 md:gap-6 mb-4 pb-4 border-b border-gray-100 flex-wrap">
                         {yacht.year && <div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-slate-400" /><span className="text-xs text-gray-600">{yacht.year}</span></div>}
                         {yacht.cabins && <div className="flex items-center gap-2"><BedDouble className="w-4 h-4 text-slate-400" /><span className="text-xs text-gray-600">{yacht.cabins} Cabins</span></div>}
                         {yacht.length && <div className="flex items-center gap-2"><Maximize2 className="w-4 h-4 text-slate-400" /><span className="text-xs text-gray-600">{yacht.length}m</span></div>}
                       </div>
 
-                      <div className="mt-auto flex gap-2">
-                        <Link href="/contact" className="flex-1 text-center rounded-lg bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue py-2.5 font-bold text-sm hover:shadow-md transition-all">
+                      {/* Buttons - Larger touch targets on mobile */}
+                      <div className="mt-auto flex flex-col sm:flex-row gap-2 md:gap-3">
+                        <Link href="/contact" className="flex-1 text-center rounded-lg bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue py-3 md:py-2.5 font-bold text-sm md:text-base hover:shadow-md transition-all min-h-[44px] flex items-center justify-center">
                           {t('getQuote')}
                         </Link>
-                        <Link href={{ pathname: '/fleet/[slug]', params: { slug: yacht.slug } }} className="flex-1 text-center rounded-lg bg-luxury-blue text-white py-2.5 font-semibold text-sm hover:bg-luxury-gold transition-colors">
+                        <Link href={{ pathname: '/fleet/[slug]', params: { slug: yacht.slug } }} className="flex-1 text-center rounded-lg bg-luxury-blue text-white py-3 md:py-2.5 font-semibold text-sm md:text-base hover:bg-luxury-gold transition-colors min-h-[44px] flex items-center justify-center">
                           {t('viewDetails')}
                         </Link>
                       </div>
