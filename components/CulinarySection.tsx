@@ -228,7 +228,7 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
     // First check media_urls array (new format) - get FIRST image only
     if (exp.media_urls && Array.isArray(exp.media_urls) && exp.media_urls.length > 0) {
       // Filter out YouTube URLs and get first image URL only
-      const imageUrl = exp.media_urls.find(url => 
+      const imageUrl = exp.media_urls.find((url: string) => 
         url && typeof url === 'string' && url.trim().length > 0 && 
         !url.includes('youtube.com') && !url.includes('youtu.be')
       )
@@ -249,7 +249,7 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
     
     // Get all images from media_urls (excluding YouTube URLs)
     if (exp.media_urls && Array.isArray(exp.media_urls) && exp.media_urls.length > 0) {
-      const imageUrls = exp.media_urls.filter(url => 
+      const imageUrls = exp.media_urls.filter((url: string) => 
         url && typeof url === 'string' && url.trim().length > 0 && 
         !url.includes('youtube.com') && !url.includes('youtu.be')
       )

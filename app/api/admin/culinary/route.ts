@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       description: (body.description_en || body.description || '').trim() || null,
       // Media gallery - ensure it's an array, filter out empty strings
       media_urls: Array.isArray(body.media_urls) 
-        ? body.media_urls.filter(url => url && url.trim().length > 0)
+        ? body.media_urls.filter((url: string) => url && url.trim().length > 0)
         : (body.media_urls && body.media_urls.trim().length > 0 ? [body.media_urls] : []),
       // Legacy single image (use first from media_urls if available)
       image_url: Array.isArray(body.media_urls) && body.media_urls.length > 0 
@@ -201,7 +201,7 @@ export async function PUT(request: NextRequest) {
     // Media gallery - ensure it's an array, handle empty arrays
     if (updateData.media_urls !== undefined) {
       if (Array.isArray(updateData.media_urls)) {
-        updatePayload.media_urls = updateData.media_urls.filter(url => url && url.trim().length > 0)
+        updatePayload.media_urls = updateData.media_urls.filter((url: string) => url && url.trim().length > 0)
       } else if (updateData.media_urls) {
         updatePayload.media_urls = [updateData.media_urls]
       } else {

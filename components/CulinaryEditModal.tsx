@@ -118,7 +118,7 @@ export default function CulinaryEditModal({
         description: legacyDescription?.trim() || '',
         // Media gallery - ensure it's an array, filter out empty/null values
         media_urls: Array.isArray(formData.media_urls) 
-          ? formData.media_urls.filter(url => url && url.trim().length > 0)
+          ? formData.media_urls.filter((url: string) => url && url.trim().length > 0)
           : [],
         // Legacy single image (use first image from gallery if available)
         image_url: Array.isArray(formData.media_urls) && formData.media_urls.length > 0 
