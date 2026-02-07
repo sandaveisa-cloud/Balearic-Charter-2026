@@ -11,6 +11,8 @@ import LuxuryTrustSection from '@/components/LuxuryTrustSection'
 import StatsSection from '@/components/StatsSection'
 import CulinarySection from '@/components/CulinarySection'
 import CrewSection from '@/components/CrewSection'
+import JourneySection from '@/components/JourneySection'
+import MissionSection from '@/components/MissionSection'
 import StructuredData from '@/components/StructuredData'
 import FloatingCTA from '@/components/FloatingCTA'
 import EarlyBirdBanner from '@/components/EarlyBirdBanner'
@@ -51,6 +53,10 @@ export default async function Home({ params }: Props) {
         culinaryExperiences: [],
         crew: [],
         contactPersons: [],
+        journeyMilestones: [],
+        missionPromises: [],
+        journeyMilestones: [],
+        missionPromises: [],
       }
     }
 
@@ -100,9 +106,14 @@ export default async function Home({ params }: Props) {
               <CulinarySection experiences={safeContent.culinaryExperiences || []} />
             )}
             
-            {/* Stats & Mission Sections */}
+            {/* Stats Section */}
             {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
-            {visibility.mission && <MissionSection />}
+            
+            {/* Journey Timeline Section */}
+            {visibility.journey && <JourneySection milestones={safeContent.journeyMilestones || []} />}
+            
+            {/* Mission/Promise Section */}
+            {visibility.mission && <MissionSection promises={safeContent.missionPromises || []} />}
             
             {/* Crew Section */}
             {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (

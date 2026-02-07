@@ -1,6 +1,6 @@
 import { supabase } from './supabase'
 import { unstable_cache } from 'next/cache'
-import type { SiteContent, Fleet, Destination, Review, Stat, CulinaryExperience, CrewMember, ContactPerson, BookingAvailability } from '@/types/database'
+import type { SiteContent, Fleet, Destination, Review, Stat, CulinaryExperience, CrewMember, ContactPerson, BookingAvailability, JourneyMilestone, MissionPromise } from '@/types/database'
 
 // Internal function to fetch data from Supabase
 async function fetchSiteContentInternal(): Promise<SiteContent> {
@@ -202,6 +202,39 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
     contactResult = { data: [], error: null }
   }
 
+  // Fetch Journey Milestones
+  try {
+    journeyResult = await supabase
+      .from('journey_milestones')
+      .select('*')
+      .eq('is_active', true)
+      .order('year', { ascending: true })
+      .order('order_index', { ascending: true })
+    
+    if (journeyResult.error) {
+      console.error('[Data] Error fetching journey_milestones:', journeyResult.error)
+    }
+  } catch (error) {
+    console.error('[Data] Exception fetching journey_milestones:', error)
+    journeyResult = { data: [], error: null }
+  }
+
+  // Fetch Mission Promises
+  try {
+    missionResult = await supabase
+      .from('mission_promises')
+      .select('*')
+      .eq('is_active', true)
+      .order('order_index', { ascending: true })
+    
+    if (missionResult.error) {
+      console.error('[Data] Error fetching mission_promises:', missionResult.error)
+    }
+  } catch (error) {
+    console.error('[Data] Exception fetching mission_promises:', error)
+    missionResult = { data: [], error: null }
+  }
+
   // Transform settings into a key-value object
   // Add error handling to prevent crashes if settings data is malformed
   console.log('[Data] Transforming settings...')
@@ -242,6 +275,8 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
     culinaryExperiences: (culinaryResult?.data as CulinaryExperience[]) || [],
     crew: (crewResult?.data as CrewMember[]) || [],
     contactPersons: (contactResult?.data as ContactPerson[]) || [],
+    journeyMilestones: (journeyResult?.data as JourneyMilestone[]) || [],
+    missionPromises: (missionResult?.data as MissionPromise[]) || [],
   }
   
   console.log('[Data] fetchSiteContentInternal completed:', {
@@ -253,6 +288,8 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
     culinaryCount: result.culinaryExperiences.length,
     crewCount: result.crew.length,
     contactCount: result.contactPersons.length,
+    journeyCount: result.journeyMilestones.length,
+    missionCount: result.missionPromises.length,
   })
   
   return result
@@ -301,6 +338,8 @@ export async function getSiteContent(): Promise<SiteContent> {
         culinaryExperiences: [],
         crew: [],
         contactPersons: [],
+        journeyMilestones: [],
+        missionPromises: [],
       }
     }
   }

@@ -253,6 +253,38 @@ export interface BookingAvailability {
   updated_at: string
 }
 
+export interface JourneyMilestone {
+  id: string
+  year: number
+  title_en: string
+  title_es: string
+  title_de: string
+  description_en: string
+  description_es: string
+  description_de: string
+  image_url: string | null
+  order_index: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface MissionPromise {
+  id: string
+  title_en: string
+  title_es: string
+  title_de: string
+  description_en: string
+  description_es: string
+  description_de: string
+  icon_name: string | null // Icon identifier (e.g., 'Ship', 'ShieldCheck', 'Utensils')
+  icon_url: string | null // Custom icon image URL
+  order_index: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
 export type Season = 'low' | 'medium' | 'high'
 
 export interface SiteContent {
@@ -271,4 +303,6 @@ export interface SiteContent {
   culinaryExperiences: CulinaryExperience[]
   crew: CrewMember[]
   contactPersons: ContactPerson[]
+  journeyMilestones: JourneyMilestone[]
+  missionPromises: MissionPromise[]
 }
