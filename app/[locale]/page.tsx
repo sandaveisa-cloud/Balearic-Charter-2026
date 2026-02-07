@@ -5,14 +5,12 @@ import { notFound } from 'next/navigation'
 import Hero from '@/components/Hero'
 import MissionSection from '@/components/MissionSection'
 import FleetSection from '@/components/FleetSection'
+import JourneySection from '@/components/JourneySection'
 import DestinationsSection from '@/components/DestinationsSection'
-import ReviewsSection from '@/components/ReviewsSection'
 import LuxuryTrustSection from '@/components/LuxuryTrustSection'
 import StatsSection from '@/components/StatsSection'
 import CulinarySection from '@/components/CulinarySection'
 import CrewSection from '@/components/CrewSection'
-import JourneySection from '@/components/JourneySection'
-import MissionSection from '@/components/MissionSection'
 import StructuredData from '@/components/StructuredData'
 import FloatingCTA from '@/components/FloatingCTA'
 import EarlyBirdBanner from '@/components/EarlyBirdBanner'
@@ -55,8 +53,6 @@ export default async function Home({ params }: Props) {
         contactPersons: [],
         journeyMilestones: [],
         missionPromises: [],
-        journeyMilestones: [],
-        missionPromises: [],
       }
     }
 
@@ -70,6 +66,8 @@ export default async function Home({ params }: Props) {
       culinaryExperiences: [],
       crew: [],
       contactPersons: [],
+      journeyMilestones: [],
+      missionPromises: [],
     }
     
     const safeSettings = safeContent.settings || {}
@@ -95,33 +93,33 @@ export default async function Home({ params }: Props) {
             {/* Hero Section - Always at the top */}
             <Hero settings={safeSettings} />
             
-            {/* Fleet Section - Immediately after Hero */}
+            {/* Mission (The Balearic Promise) - Right after Hero */}
+            {visibility.mission && <MissionSection promises={safeContent.missionPromises || []} />}
+            
+            {/* Fleet Section */}
             <FleetSection fleet={safeContent.fleet || []} />
             
-            {/* Supporting Content Sections */}
+            {/* Journey (The Timeline) */}
+            {visibility.journey && <JourneySection milestones={safeContent.journeyMilestones || []} />}
+            
+            {/* Destinations */}
             <DestinationsSection destinations={safeContent.destinations || []} />
+            
+            {/* Reviews / Guestbook */}
+            <LuxuryTrustSection reviews={safeContent.reviews || []} />
+            
+            {/* Stats Section */}
+            {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
             
             {/* Culinary Section */}
             {visibility.culinary && (
               <CulinarySection experiences={safeContent.culinaryExperiences || []} />
             )}
             
-            {/* Stats Section */}
-            {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
-            
-            {/* Journey Timeline Section */}
-            {visibility.journey && <JourneySection milestones={safeContent.journeyMilestones || []} />}
-            
-            {/* Mission/Promise Section */}
-            {visibility.mission && <MissionSection promises={safeContent.missionPromises || []} />}
-            
             {/* Crew Section */}
             {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (
               <CrewSection crew={safeContent.crew} />
             )}
-            
-            {/* Premium Luxury Trust Section */}
-            <LuxuryTrustSection reviews={safeContent.reviews || []} />
           </main>
           
           {/* Floating CTA Button */}
