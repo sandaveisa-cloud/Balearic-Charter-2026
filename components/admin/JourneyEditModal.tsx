@@ -30,6 +30,7 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'success' | 'error'>('success')
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (milestone) {
@@ -64,29 +65,90 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
+    setError(null) // Clear any previous errors
+    
     try {
+      // Prepare payload
+      const payload = milestone 
+        ? { ...formData, id: milestone.id }
+        : formData
+
+      // Log payload for debugging
+      console.log('[JourneyEditModal] 📤 Sending payload:', {
+        ...payload,
+        image_url: payload.image_url || '(empty)',
+        hasImage: !!payload.image_url
+      })
+
       const method = milestone ? 'PUT' : 'POST'
       const response = await fetch('/api/admin/journey', {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(milestone ? { ...formData, id: milestone.id } : formData)
+        body: JSON.stringify(payload)
       })
+
+      // Get response text first to handle both JSON and text errors
+      const responseText = await response.text()
+      console.log('[JourneyEditModal] 📥 Response status:', response.status, response.statusText)
+      console.log('[JourneyEditModal] 📥 Response body:', responseText.substring(0, 500))
+
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to save')
+        let errorData
+        try {
+          errorData = JSON.parse(responseText)
+        } catch {
+          errorData = { error: responseText || `HTTP ${response.status}: ${response.statusText}` }
+        }
+        
+        console.error('[JourneyEditModal] ❌ API Error:', errorData)
+        
+        // Show alert for critical errors
+        const errorMessage = errorData.error || errorData.details || `Failed to save milestone: ${response.status}`
+        alert(`Error saving milestone:\n\n${errorMessage}\n\nCheck console for details.`)
+        
+        setToastMessage(errorMessage)
+        setToastType('error')
+        setShowToast(true)
+        
+        // Don't close modal on error - let user fix and retry
+        return
       }
+
+      // Parse successful response
+      let result
+      try {
+        result = JSON.parse(responseText)
+      } catch {
+        result = { success: true }
+      }
+
+      console.log('[JourneyEditModal] ✅ Success! Result:', result)
+
       setToastMessage('Milestone saved successfully!')
       setToastType('success')
       setShowToast(true)
+      
+      // Call onSave to refresh the list
       onSave()
+      
+      // Close modal after short delay to show success toast
       setTimeout(() => {
         onClose()
-      }, 500)
+      }, 1500)
     } catch (error: any) {
-      console.error(error)
-      setToastMessage(error.message || 'Error saving milestone. Please try again.')
+      console.error('[JourneyEditModal] ❌ Unexpected error:', error)
+      console.error('[JourneyEditModal] Error stack:', error.stack)
+      
+      const errorMessage = error.message || 'Unexpected error saving milestone. Please check console and try again.'
+      
+      // Show alert for unexpected errors
+      alert(`Unexpected error:\n\n${errorMessage}\n\nCheck browser console for details.`)
+      
+      setToastMessage(errorMessage)
       setToastType('error')
       setShowToast(true)
+      
+      // Don't close modal on error
     } finally {
       setSaving(false)
     }
@@ -112,6 +174,14 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* Error Display */}
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-800 font-medium">Error:</p>
+              <p className="text-sm text-red-700 mt-1">{error}</p>
+            </div>
+          )}
+
           {/* Year & Order */}
           <div className="grid grid-cols-2 gap-4">
             <div>

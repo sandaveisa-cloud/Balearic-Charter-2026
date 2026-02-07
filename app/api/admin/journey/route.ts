@@ -79,33 +79,62 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
+    
+    // Log incoming data for debugging
+    console.log('[Admin API] 📥 POST request body:', {
+      ...body,
+      image_url: body.image_url || '(empty/null)',
+      hasImage: !!body.image_url
+    })
+    
     const supabase = createSupabaseAdminClient()
+
+    // Prepare insert data
+    const insertData = {
+      year: body.year,
+      title_en: body.title_en,
+      title_es: body.title_es,
+      title_de: body.title_de,
+      description_en: body.description_en,
+      description_es: body.description_es,
+      description_de: body.description_de,
+      image_url: body.image_url || null, // Explicitly handle empty string as null
+      order_index: body.order_index || 0,
+      is_active: body.is_active !== undefined ? body.is_active : true,
+    }
+
+    console.log('[Admin API] 📤 Inserting data:', {
+      ...insertData,
+      image_url: insertData.image_url || '(null)'
+    })
 
     // @ts-ignore - Šī rindiņa pateiks TypeScript ignorēt nākamo bloku, un build procesam jāiziet cauri
     const { data, error } = await (supabase as any)
       .from('journey_milestones')
-      .insert({
-        year: body.year,
-        title_en: body.title_en,
-        title_es: body.title_es,
-        title_de: body.title_de,
-        description_en: body.description_en,
-        description_es: body.description_es,
-        description_de: body.description_de,
-        image_url: body.image_url || null,
-        order_index: body.order_index,
-        is_active: body.is_active || true,
-      })
+      .insert(insertData)
       .select()
       .single()
 
     if (error) {
-      console.error('[Admin API] Error creating milestone:', error)
+      console.error('[Admin API] ❌ Error creating milestone:', error)
+      console.error('[Admin API] Error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      })
       return NextResponse.json(
-        { error: 'Failed to create milestone', details: error.message },
+        { 
+          error: 'Failed to create milestone', 
+          details: error.message,
+          hint: error.hint,
+          code: error.code
+        },
         { status: 500 }
       )
     }
+
+    console.log('[Admin API] ✅ Milestone created successfully:', data?.id)
 
     return NextResponse.json(data, { status: 201 })
   } catch (error) {
@@ -138,35 +167,65 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    // Log incoming data for debugging
+    console.log('[Admin API] 📥 PUT request:', {
+      id,
+      ...updateData,
+      image_url: updateData.image_url || '(empty/null)',
+      hasImage: !!updateData.image_url
+    })
+
     const supabase = createSupabaseAdminClient()
+
+    // Prepare update data
+    const updatePayload = {
+      year: updateData.year,
+      title_en: updateData.title_en,
+      title_es: updateData.title_es,
+      title_de: updateData.title_de,
+      description_en: updateData.description_en,
+      description_es: updateData.description_es,
+      description_de: updateData.description_de,
+      image_url: updateData.image_url || null, // Explicitly handle empty string as null
+      order_index: updateData.order_index || 0,
+      is_active: updateData.is_active !== false,
+      updated_at: new Date().toISOString(),
+    }
+
+    console.log('[Admin API] 📤 Updating milestone:', {
+      id,
+      ...updatePayload,
+      image_url: updatePayload.image_url || '(null)'
+    })
 
     // @ts-ignore - TypeScript doesn't recognize journey_milestones table
     const { data, error } = await (supabase as any)
       .from('journey_milestones')
-      .update({
-        year: updateData.year,
-        title_en: updateData.title_en,
-        title_es: updateData.title_es,
-        title_de: updateData.title_de,
-        description_en: updateData.description_en,
-        description_es: updateData.description_es,
-        description_de: updateData.description_de,
-        image_url: updateData.image_url || null,
-        order_index: updateData.order_index || 0,
-        is_active: updateData.is_active !== false,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updatePayload)
       .eq('id', id)
       .select()
       .single()
 
     if (error) {
-      console.error('[Admin API] Error updating milestone:', error)
+      console.error('[Admin API] ❌ Error updating milestone:', error)
+      console.error('[Admin API] Error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      })
       return NextResponse.json(
-        { error: 'Failed to update milestone', details: error.message },
+        { 
+          error: 'Failed to update milestone', 
+          details: error.message,
+          hint: error.hint,
+          code: error.code
+        },
         { status: 500 }
       )
     }
+
+    console.log('[Admin API] ✅ Milestone updated successfully:', data?.id)
 
     return NextResponse.json(data)
   } catch (error) {
