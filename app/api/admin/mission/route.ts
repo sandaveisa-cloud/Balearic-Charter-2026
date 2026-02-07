@@ -23,7 +23,8 @@ export async function GET(request: NextRequest) {
 
     if (id) {
       // Fetch single promise
-      const { data, error } = await supabase
+      // @ts-ignore - TypeScript doesn't recognize mission_promises table
+      const { data, error } = await (supabase as any)
         .from('mission_promises')
         .select('*')
         .eq('id', id)
@@ -41,7 +42,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch all promises
-    const { data, error } = await supabase
+    // @ts-ignore - TypeScript doesn't recognize mission_promises table
+    const { data, error } = await (supabase as any)
       .from('mission_promises')
       .select('*')
       .order('order_index', { ascending: true })
@@ -78,7 +80,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const supabase = createSupabaseAdminClient()
 
-    const { data, error } = await supabase
+    // @ts-ignore - TypeScript doesn't recognize mission_promises table
+    const { data, error } = await (supabase as any)
       .from('mission_promises')
       .insert({
         title_en: body.title_en,
@@ -136,7 +139,8 @@ export async function PUT(request: NextRequest) {
 
     const supabase = createSupabaseAdminClient()
 
-    const { data, error } = await supabase
+    // @ts-ignore - TypeScript doesn't recognize mission_promises table
+    const { data, error } = await (supabase as any)
       .from('mission_promises')
       .update({
         title_en: updateData.title_en,
@@ -196,7 +200,8 @@ export async function DELETE(request: NextRequest) {
 
     const supabase = createSupabaseAdminClient()
 
-    const { error } = await supabase
+    // @ts-ignore - TypeScript doesn't recognize mission_promises table
+    const { error } = await (supabase as any)
       .from('mission_promises')
       .delete()
       .eq('id', id)
