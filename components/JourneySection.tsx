@@ -69,17 +69,32 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
     for (const milestone of activeMilestones) {
       if (milestone.image_url) {
         const url = milestone.image_url.toLowerCase()
-        if (url.includes('.mp4') || url.includes('.webm') || url.includes('.mov') || url.includes('video')) {
-          console.log('[JourneySection] Found video URL:', milestone.image_url)
+        // Check for common video file extensions and video-related keywords
+        if (
+          url.includes('.mp4') || 
+          url.includes('.webm') || 
+          url.includes('.mov') || 
+          url.includes('.avi') ||
+          url.includes('.m4v') ||
+          url.includes('video') ||
+          url.includes('mp4') ||
+          url.includes('webm')
+        ) {
+          console.log('[JourneySection] ✅ Found video URL in milestone:', {
+            id: milestone.id,
+            year: milestone.year,
+            url: milestone.image_url
+          })
           return milestone.image_url
         }
       }
       // Check for video_url field if it exists in the schema
       if ((milestone as any).video_url) {
-        console.log('[JourneySection] Found video_url field:', (milestone as any).video_url)
+        console.log('[JourneySection] ✅ Found video_url field:', (milestone as any).video_url)
         return (milestone as any).video_url
       }
     }
+    console.log('[JourneySection] ⚠️ No video URL found in any milestone')
     return null
   }
   
@@ -96,22 +111,28 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
           muted
           loop
           playsInline
+          preload="auto"
           className="absolute inset-0 w-full h-full object-cover opacity-20 z-0"
           style={{ pointerEvents: 'none' }}
           onError={(e) => {
-            console.error('[JourneySection] Video load error:', e)
-            console.error('[JourneySection] Video URL that failed:', videoUrl)
+            console.error('[JourneySection] ❌ Video load error:', e)
+            console.error('[JourneySection] ❌ Video URL that failed:', videoUrl)
+            console.error('[JourneySection] ❌ Video element:', e.currentTarget)
           }}
           onLoadedData={() => {
             console.log('[JourneySection] ✅ Video loaded successfully:', videoUrl)
           }}
           onCanPlay={() => {
-            console.log('[JourneySection] ✅ Video can play')
+            console.log('[JourneySection] ✅ Video can play:', videoUrl)
+          }}
+          onLoadStart={() => {
+            console.log('[JourneySection] 🔄 Video load started:', videoUrl)
           }}
         >
           <source src={videoUrl} type="video/mp4" />
           <source src={videoUrl} type="video/webm" />
           <source src={videoUrl} type="video/quicktime" />
+          <source src={videoUrl} type="video/x-m4v" />
           Your browser does not support the video tag.
         </video>
       )}
