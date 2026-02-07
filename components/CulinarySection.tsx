@@ -263,76 +263,46 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
     return [...new Set(images)]
   }
 
-  // Helper function to get translation key from experience title (normalized matching)
-  const getTranslationKey = (title: string): string | null => {
-    const titleLower = title.toLowerCase().trim()
-    if (titleLower.includes('paella') || titleLower === 'authentic paella') return 'paella'
-    if (titleLower.includes('bbq') || titleLower.includes('steak') || titleLower.includes('barbacoa')) return 'bbq'
-    if (titleLower.includes('tapas') || titleLower.includes('wine') || titleLower.includes('vino')) return 'tapas'
-    if (titleLower.includes('mediterranean') || titleLower.includes('mediterranea')) return 'mediterranean'
-    if (titleLower.includes('sunset') || titleLower.includes('atardecer') || titleLower.includes('dining') || titleLower.includes('cena')) return 'sunset'
-    return null
-  }
-
-  // Get localized title and description for an experience
-  // Use translation files (JSON) since database doesn't have i18n fields
-  // NEVER show raw translation keys - always fallback to database title/description
+  // Get localized title from database fields
+  // Priority: title_{locale} > title_en > title (legacy)
+  // NEVER show raw translation keys - always use database fields
   const getLocalizedTitle = (exp: CulinaryExperience): string => {
-    // Always use database title as base fallback (English)
-    const dbTitle = exp.title || 'Culinary Experience'
+    const localeKey = `title_${locale}` as keyof CulinaryExperience
+    const localizedTitle = exp[localeKey] as string | null | undefined
     
-    try {
-      const key = getTranslationKey(exp.title)
-      if (key) {
-        // Use the correct translation key path: culinary.experiences.{key}.title
-        const translationKey = `culinary.experiences.${key}.title`
-        const translated = t(translationKey)
-        
-        // next-intl returns the key path if translation doesn't exist
-        // Check if we got a real translation (not the key path)
-        if (translated && 
-            typeof translated === 'string' &&
-            translated !== translationKey &&
-            !translated.startsWith('culinary.experiences.') &&
-            !translated.startsWith('experiences.') &&
-            translated.length > 0) {
-          return translated
-        }
-      }
-    } catch (error) {
-      // If translation fails, use database title
+    // Use locale-specific field if available
+    if (localizedTitle && typeof localizedTitle === 'string' && localizedTitle.trim().length > 0) {
+      return localizedTitle
     }
-    // Always fallback to database title (English)
-    return dbTitle
+    
+    // Fallback to English
+    if (exp.title_en && typeof exp.title_en === 'string' && exp.title_en.trim().length > 0) {
+      return exp.title_en
+    }
+    
+    // Final fallback to legacy title field
+    return exp.title || 'Culinary Experience'
   }
 
+  // Get localized description from database fields
+  // Priority: description_{locale} > description_en > description (legacy)
+  // NEVER show raw translation keys - always use database fields
   const getLocalizedDescription = (exp: CulinaryExperience): string | null => {
-    // Always use database description as base fallback (English)
-    const dbDescription = exp.description
+    const localeKey = `description_${locale}` as keyof CulinaryExperience
+    const localizedDescription = exp[localeKey] as string | null | undefined
     
-    try {
-      const key = getTranslationKey(exp.title)
-      if (key) {
-        // Use the correct translation key path: culinary.experiences.{key}.description
-        const translationKey = `culinary.experiences.${key}.description`
-        const translated = t(translationKey)
-        
-        // next-intl returns the key path if translation doesn't exist
-        // Check if we got a real translation (not the key path)
-        if (translated && 
-            typeof translated === 'string' &&
-            translated !== translationKey &&
-            !translated.startsWith('culinary.experiences.') &&
-            !translated.startsWith('experiences.') &&
-            translated.length > 0) {
-          return translated
-        }
-      }
-    } catch (error) {
-      // If translation fails, use database description
+    // Use locale-specific field if available
+    if (localizedDescription && typeof localizedDescription === 'string' && localizedDescription.trim().length > 0) {
+      return localizedDescription
     }
-    // Always fallback to database description (English)
-    return dbDescription
+    
+    // Fallback to English
+    if (exp.description_en && typeof exp.description_en === 'string' && exp.description_en.trim().length > 0) {
+      return exp.description_en
+    }
+    
+    // Final fallback to legacy description field
+    return exp.description || null
   }
 
   // Filter active experiences, remove duplicates by ID, and sort by order_index

@@ -72,6 +72,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Revalidate homepage and layout to ensure translations appear instantly
+    try {
+      const { revalidatePath } = await import('next/cache')
+      revalidatePath('/', 'layout')
+      revalidatePath('/[locale]', 'page')
+      revalidatePath('/[locale]/page', 'page')
+      console.log('[Admin API] ✅ Revalidated homepage and layout after culinary create')
+    } catch (revalError) {
+      console.warn('[Admin API] ⚠️ Could not revalidate paths:', revalError)
+    }
+
     return NextResponse.json({ culinary: data as any }, { status: 201 })
   } catch (error) {
     console.error('[Admin API] Unexpected error:', error)
@@ -119,6 +130,17 @@ export async function PUT(request: NextRequest) {
         { error: 'Failed to update culinary experience', details: error.message },
         { status: 500 }
       )
+    }
+
+    // Revalidate homepage and layout to ensure translations appear instantly
+    try {
+      const { revalidatePath } = await import('next/cache')
+      revalidatePath('/', 'layout')
+      revalidatePath('/[locale]', 'page')
+      revalidatePath('/[locale]/page', 'page')
+      console.log('[Admin API] ✅ Revalidated homepage and layout after culinary update')
+    } catch (revalError) {
+      console.warn('[Admin API] ⚠️ Could not revalidate paths:', revalError)
     }
 
     return NextResponse.json({ culinary: data as any })

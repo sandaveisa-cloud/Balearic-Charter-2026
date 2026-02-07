@@ -189,8 +189,14 @@ export interface ContactPerson {
 
 export interface CulinaryExperience {
   id: string
-  title: string
-  description: string | null
+  title: string // Legacy field, kept for backward compatibility
+  description: string | null // Legacy field, kept for backward compatibility
+  title_en?: string | null // English title
+  title_es?: string | null // Spanish title
+  title_de?: string | null // German title
+  description_en?: string | null // English description
+  description_es?: string | null // Spanish description
+  description_de?: string | null // German description
   image_url: string | null // Legacy field, kept for backward compatibility
   media_urls: string[] // Array of images/videos (images and YouTube URLs)
   order_index: number
