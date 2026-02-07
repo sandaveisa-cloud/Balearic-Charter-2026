@@ -5,7 +5,6 @@ import { notFound } from 'next/navigation'
 import Hero from '@/components/Hero'
 import MissionSection from '@/components/MissionSection'
 import FleetSection from '@/components/FleetSection'
-import JourneySection from '@/components/JourneySection'
 import DestinationsSection from '@/components/DestinationsSection'
 import GuestbookSection from '@/components/GuestbookSection'
 import StatsSection from '@/components/StatsSection'
@@ -98,10 +97,7 @@ export default async function Home({ params }: Props) {
             {/* Hero Section - Always at the top */}
             <Hero settings={safeSettings} />
             
-            {/* Journey (Our Journey - 4-column Trust Bar) - Right after Hero */}
-            <JourneySection milestones={safeContent.journeyMilestones || []} />
-            
-            {/* Mission (The Balearic Promise) - After Journey */}
+            {/* Mission (The Balearic Promise) - Right after Hero */}
             {visibility.mission && <MissionSection promises={safeContent.missionPromises || []} />}
             
             {/* Fleet Section */}
