@@ -80,6 +80,17 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     
+    // Validate year range
+    if (body.year < 2000 || body.year > 2030) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid year', 
+          details: `Year must be between 2000 and 2030. Received: ${body.year}` 
+        },
+        { status: 400 }
+      )
+    }
+    
     // Log incoming data for debugging
     console.log('[Admin API] 📥 POST request body:', {
       ...body,
@@ -163,6 +174,17 @@ export async function PUT(request: NextRequest) {
     if (!id) {
       return NextResponse.json(
         { error: 'Milestone ID is required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate year range
+    if (updateData.year !== undefined && (updateData.year < 2000 || updateData.year > 2030)) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid year', 
+          details: `Year must be between 2000 and 2030. Received: ${updateData.year}` 
+        },
         { status: 400 }
       )
     }

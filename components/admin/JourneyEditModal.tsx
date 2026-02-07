@@ -128,12 +128,27 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
       setToastType('success')
       setShowToast(true)
       
-      // Call onSave to refresh the list
+      // Call onSave immediately to refresh the list (this will fetch fresh data)
       onSave()
       
       // Close modal after short delay to show success toast
       setTimeout(() => {
         onClose()
+        // Clear form data after closing
+        if (!milestone) {
+          setFormData({
+            year: new Date().getFullYear(),
+            title_en: '',
+            title_es: '',
+            title_de: '',
+            description_en: '',
+            description_es: '',
+            description_de: '',
+            image_url: '',
+            order_index: 0,
+            is_active: true,
+          })
+        }
       }, 1500)
     } catch (error: any) {
       console.error('[JourneyEditModal] ❌ Unexpected error:', error)
@@ -189,12 +204,18 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
               <input
                 type="number"
                 required
-                min="1900"
-                max="2100"
+                min="2000"
+                max="2030"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#001F3F] focus:border-transparent"
                 value={formData.year}
-                onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
+                onChange={(e) => {
+                  const yearValue = parseInt(e.target.value) || 2000
+                  // Clamp value between 2000 and 2030
+                  const clampedYear = Math.max(2000, Math.min(2030, yearValue))
+                  setFormData({ ...formData, year: clampedYear })
+                }}
               />
+              <p className="text-xs text-gray-500 mt-1">Year must be between 2000 and 2030</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Order Index</label>

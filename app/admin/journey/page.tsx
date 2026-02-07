@@ -60,10 +60,11 @@ export default function JourneyAdminPage() {
     }
   }
 
-  const handleSave = () => {
-    fetchMilestones()
-    setIsModalOpen(false)
-    setSelectedMilestone(null)
+  const handleSave = async () => {
+    // Refresh the milestones list immediately
+    await fetchMilestones()
+    // Note: Modal closing is handled by JourneyEditModal after success
+    // This ensures the list is refreshed before the modal closes
   }
 
   if (loading) {
