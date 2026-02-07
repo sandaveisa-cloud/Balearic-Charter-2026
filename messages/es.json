@@ -20,7 +20,8 @@
   "hero": {
     "title": "Alquiler de Yates Premium en las Islas Baleares",
     "subtitle": "Viva el Mediterráneo como nunca antes",
-    "cta": "Comience su viaje"
+    "cta": "Comience su viaje",
+    "seasonLaunch": "Lanzamiento de Temporada 2026: ¡Reserve antes del 28 de febrero de 2026 y ahorre un 10% en todos los charters!"
   },
   "breadcrumb": {
     "home": "Inicio",
@@ -65,7 +66,7 @@
     "secret_bays": "Acceso a calas secretas"
   },
   "fleet": {
-    "title": "Nuestra flota",
+    "title": "Nuestra flota de lujo",
     "subtitle": "Descubra nuestra colección de yates de clase mundial",
     "perDay": "/ día",
     "viewDetails": "Ver detalles",
@@ -146,7 +147,7 @@
     }
   },
   "destinations": {
-    "title": "Destinos exclusivos",
+    "title": "Destinos Exclusivos",
     "subtitle": "Explore los mejores lugares del Mediterráneo",
     "allDestinations": "Todos los destinos",
     "allDestinationsSubtitle": "Descubra nuestras zonas de navegación",
@@ -337,7 +338,7 @@
     }
   },
   "vesselHistory": {
-    "title": "Historia y Hitos del Barco",
+    "title": "Legado y Hitos del Barco",
     "readHistory": "Leer Historia",
     "hideHistory": "Ocultar Historia",
     "milestones": "Hitos",

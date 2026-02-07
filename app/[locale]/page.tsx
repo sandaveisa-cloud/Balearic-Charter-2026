@@ -3,13 +3,10 @@ import { getSiteContent } from '@/lib/data'
 import { locales, defaultLocale } from '@/i18n/routing'
 import { notFound } from 'next/navigation'
 import Hero from '@/components/Hero'
-import MissionSection from '@/components/MissionSection'
 import FleetSection from '@/components/FleetSection'
 import DestinationsSection from '@/components/DestinationsSection'
 import GuestbookSection from '@/components/GuestbookSection'
-import StatsSection from '@/components/StatsSection'
 import CulinarySection from '@/components/CulinarySection'
-import CrewSection from '@/components/CrewSection'
 import StructuredData from '@/components/StructuredData'
 import FloatingCTA from '@/components/FloatingCTA'
 import EarlyBirdBanner from '@/components/EarlyBirdBanner'
@@ -97,29 +94,16 @@ export default async function Home({ params }: Props) {
             {/* Hero Section - Always at the top */}
             <Hero settings={safeSettings} />
             
-            {/* Mission (The Balearic Promise) - Right after Hero */}
-            {visibility.mission && <MissionSection promises={safeContent.missionPromises || []} />}
-            
             {/* Fleet Section */}
             <FleetSection fleet={safeContent.fleet || []} />
             
             {/* Destinations */}
             <DestinationsSection destinations={safeContent.destinations || []} />
             
-            {/* Stats Section */}
-            {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
+            {/* Culinary Section (Dining) */}
+            <CulinarySection experiences={safeContent.culinaryExperiences || []} />
             
-            {/* Culinary Section */}
-            {visibility.culinary && (
-              <CulinarySection experiences={safeContent.culinaryExperiences || []} />
-            )}
-            
-            {/* Crew Section */}
-            {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (
-              <CrewSection crew={safeContent.crew} />
-            )}
-            
-            {/* Guestbook Section - Interactive (with spacing before Footer) */}
+            {/* Guestbook Section (Testimonials) - Interactive (with spacing before Footer) */}
             <div className="pb-16 md:pb-20 lg:pb-24">
               <GuestbookSection reviews={safeContent.reviews || []} />
             </div>

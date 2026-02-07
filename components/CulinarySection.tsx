@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import OptimizedImage from './OptimizedImage'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import type { CulinaryExperience } from '@/types/database'
 import { getOptimizedImageUrl } from '@/lib/imageUtils'
 import { ChefHat, X, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -191,6 +191,7 @@ function ImageGalleryModal({
 
 export default function CulinarySection({ experiences }: CulinarySectionProps) {
   const t = useTranslations('culinary')
+  const locale = useLocale() as 'en' | 'es' | 'de'
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
   const [galleryState, setGalleryState] = useState<{
     isOpen: boolean
@@ -257,6 +258,40 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
     
     // Remove duplicates
     return [...new Set(images)]
+  }
+
+  // Helper function to get translation key from experience title
+  const getTranslationKey = (title: string): string | null => {
+    const titleLower = title.toLowerCase()
+    if (titleLower.includes('paella')) return 'paella'
+    if (titleLower.includes('bbq') || titleLower.includes('steak')) return 'bbq'
+    if (titleLower.includes('tapas') || titleLower.includes('wine')) return 'tapas'
+    if (titleLower.includes('mediterranean')) return 'mediterranean'
+    if (titleLower.includes('sunset') || titleLower.includes('dining')) return 'sunset'
+    return null
+  }
+
+  // Get localized title and description for an experience
+  const getLocalizedTitle = (exp: CulinaryExperience): string => {
+    const key = getTranslationKey(exp.title)
+    if (key) {
+      const translated = t(`experiences.${key}.title`)
+      if (translated && translated !== `experiences.${key}.title`) {
+        return translated
+      }
+    }
+    return exp.title
+  }
+
+  const getLocalizedDescription = (exp: CulinaryExperience): string | null => {
+    const key = getTranslationKey(exp.title)
+    if (key) {
+      const translated = t(`experiences.${key}.description`)
+      if (translated && translated !== `experiences.${key}.description`) {
+        return translated
+      }
+    }
+    return exp.description
   }
 
   // Filter active experiences, remove duplicates by ID, and sort by order_index
@@ -386,13 +421,13 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
                 <div className="p-6 flex flex-col flex-grow">
                   {/* Title */}
                   <h3 className="font-serif text-lg md:text-xl font-bold text-[#0F172A] mb-2 group-hover:text-[#C5A059] transition-colors">
-                    {experience.title}
+                    {getLocalizedTitle(experience)}
                   </h3>
 
                   {/* Description */}
-                  {experience.description && (
+                  {getLocalizedDescription(experience) && (
                     <p className="text-sm text-[#475569] leading-relaxed line-clamp-3 flex-grow">
-                      {experience.description}
+                      {getLocalizedDescription(experience)}
                     </p>
                   )}
                 </div>
