@@ -11,7 +11,12 @@ export default function Footer() {
   const [settings, setSettings] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    getSiteSettingsClient().then(setSettings)
+    getSiteSettingsClient()
+      .then(setSettings)
+      .catch((error) => {
+        console.error('[Footer] Error loading settings:', error)
+        // Continue with empty settings - component will use defaults
+      })
   }, [])
 
   const brandName = settings.company_name && !settings.company_name.includes('Costa Blanca') 

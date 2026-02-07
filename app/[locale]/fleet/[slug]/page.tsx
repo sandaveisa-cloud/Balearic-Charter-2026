@@ -133,7 +133,14 @@ export default async function FleetPage({ params }: Props) {
   const t = await getTranslations({ locale, namespace: 'fleet' })
 
   // Fetch vessel-specific milestones (lazy-loaded, doesn't block page render)
-  const vesselMilestones = await getVesselMilestones(yacht.id)
+  // Wrap in try-catch to prevent build failures if database is unavailable
+  let vesselMilestones = []
+  try {
+    vesselMilestones = await getVesselMilestones(yacht.id)
+  } catch (error) {
+    console.error('[FleetPage] Error fetching vessel milestones:', error)
+    // Continue with empty array - VesselHistory component handles this gracefully
+  }
 
   return (
     <main className="min-h-screen bg-white pt-20">

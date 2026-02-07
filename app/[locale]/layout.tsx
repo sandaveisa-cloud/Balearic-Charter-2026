@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -90,7 +90,9 @@ export default async function LocaleLayout({ children, params }: Props) {
         <div className="pt-16">
           {children}
         </div>
-        <Footer />
+        <Suspense fallback={<div className="h-32 bg-luxury-blue" />}>
+          <Footer />
+        </Suspense>
         <ChatBot />
         <ScrollToTop />
       </NextIntlClientProvider>
