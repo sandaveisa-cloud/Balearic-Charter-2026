@@ -1,389 +1,45 @@
 [
-  {
-    "id": 1,
-    "name": "Jeff",
-    "text": "Great day on the water! Peter was a great Captain😀",
-    "rating": 5,
-    "rental_date": "9/25/2025",
-    "publish_date": "9/25/2025",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 2,
-    "name": "Greg",
-    "text": "Thank you Peter for an excellent week sailing around Mallorca. Peter was an easy going, thoughtful skipper with great knowledge of good bays to visit and places to see. Nothing was ever too much for Peter. Highly recommended.",
-    "rating": 5,
-    "rental_date": "9/17/2025",
-    "publish_date": "9/22/2025",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 3,
-    "name": "Laura",
-    "text": "We had an amazing day! Peter was great, so laid back and accommodating",
-    "rating": 5,
-    "rental_date": "7/4/2025",
-    "publish_date": "7/5/2025",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 4,
-    "name": "Adnan",
-    "text": "Amazing and memorable trip for our family and friends. Peter is an excellent chef as well. Highly recommend a day trip with Peter.",
-    "rating": 5,
-    "rental_date": "7/2/2025",
-    "publish_date": "7/9/2025",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 5,
-    "name": "Karl",
-    "text": "We hade a great time with Peter . Amazing day",
-    "rating": 5,
-    "rental_date": "6/1/2025",
-    "publish_date": "6/15/2025",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 6,
-    "name": "Hannes",
-    "text": "Everything perfect. Great boat. Peter is a very experienced captain.",
-    "rating": 5,
-    "rental_date": "5/24/2025",
-    "publish_date": "5/25/2025",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 7,
-    "name": "Morten",
-    "text": "Peter was a perfect host. High level of communication and a very professional approach to sailing. 5 stars. Highly recommended.",
-    "rating": 5,
-    "rental_date": "5/14/2025",
-    "publish_date": "5/16/2025",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 8,
-    "name": "Lene",
-    "text": "We had a really great day with Peter on his nice catamaran. Peter is very pleasant to be with and he knows the area very well. We will definitely recommend him.",
-    "rating": 5,
-    "rental_date": "5/10/2025",
-    "publish_date": "5/10/2025",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 9,
-    "name": "Stine",
-    "text": "We had the most wonderful day with Peter! He is so friendly and we felt safe all day. The boat is so nice. We will definitely book with Peter again.",
-    "rating": 5,
-    "rental_date": "10/12/2024",
-    "publish_date": "10/14/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 10,
-    "name": "Maikel",
-    "text": "Top boot top schipper. Heerlijke dag gehad!",
-    "rating": 5,
-    "rental_date": "10/5/2024",
-    "publish_date": "10/5/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 11,
-    "name": "Jan",
-    "text": "Great host, great boat, great experience. Highly recommended.",
-    "rating": 5,
-    "rental_date": "9/28/2024",
-    "publish_date": "9/30/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 12,
-    "name": "Inigo",
-    "text": "Peter was an amazing host and skipper. He was very flexible and accommodating. The boat was in perfect condition and we had a great time.",
-    "rating": 5,
-    "rental_date": "9/21/2024",
-    "publish_date": "9/22/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 13,
-    "name": "Alexander",
-    "text": "Peter is a great captain and host. The boat is in excellent condition and we had a fantastic day. Highly recommended.",
-    "rating": 5,
-    "rental_date": "9/14/2024",
-    "publish_date": "9/15/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 14,
-    "name": "Sarah",
-    "text": "We had an amazing time on Peter's boat. He was very professional and friendly. The boat was very clean and comfortable. We would highly recommend him.",
-    "rating": 5,
-    "rental_date": "9/7/2024",
-    "publish_date": "9/8/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 15,
-    "name": "Michael",
-    "text": "Peter is a great guy and a very experienced skipper. We had a wonderful day on his catamaran. Everything was perfect. Thanks Peter!",
-    "rating": 5,
-    "rental_date": "8/31/2024",
-    "publish_date": "9/1/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 16,
-    "name": "Saskia",
-    "text": "Great day, great boat, great captain! Peter is very relaxed and knows the best spots. We had a lot of fun. Highly recommended.",
-    "rating": 5,
-    "rental_date": "8/24/2024",
-    "publish_date": "8/25/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 17,
-    "name": "Thomas",
-    "text": "Excellent boat and very professional skipper. We had a perfect day on the water. Highly recommended.",
-    "rating": 5,
-    "rental_date": "8/17/2024",
-    "publish_date": "8/18/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 18,
-    "name": "Claudia",
-    "text": "Peter was a fantastic host. The boat was perfect for our group and we had an amazing day. Thank you Peter!",
-    "rating": 5,
-    "rental_date": "8/10/2024",
-    "publish_date": "8/11/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 19,
-    "name": "Daniel",
-    "text": "Everything was perfect. Peter is a great captain and the boat is very comfortable. We had a wonderful day.",
-    "rating": 5,
-    "rental_date": "8/3/2024",
-    "publish_date": "8/4/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 20,
-    "name": "Anna",
-    "text": "We had a great time with Peter. The boat was in excellent condition and the service was top notch. Highly recommended.",
-    "rating": 5,
-    "rental_date": "7/27/2024",
-    "publish_date": "7/28/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 21,
-    "name": "Markus",
-    "text": "Peter is a very friendly and professional skipper. The boat was clean and well maintained. We had a fantastic day.",
-    "rating": 5,
-    "rental_date": "7/20/2024",
-    "publish_date": "7/21/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 22,
-    "name": "Julia",
-    "text": "Amazing day on the water! Peter was a great host and the boat was perfect. We will definitely come back.",
-    "rating": 5,
-    "rental_date": "7/13/2024",
-    "publish_date": "7/14/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 23,
-    "name": "Stefan",
-    "text": "Great experience, professional skipper, beautiful boat. Everything was just perfect. Highly recommended.",
-    "rating": 5,
-    "rental_date": "7/6/2024",
-    "publish_date": "7/7/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 24,
-    "name": "Lisa",
-    "text": "We had a wonderful day with Peter. He is a great host and very knowledgeable about the area. The boat was perfect.",
-    "rating": 5,
-    "rental_date": "6/29/2024",
-    "publish_date": "6/30/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 25,
-    "name": "Kevin",
-    "text": "Top service, top boat, top skipper. We had a lot of fun and would highly recommend Peter.",
-    "rating": 5,
-    "rental_date": "6/22/2024",
-    "publish_date": "6/23/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 26,
-    "name": "Melanie",
-    "text": "Peter was a fantastic host and the boat was in great condition. We had an amazing day. Thank you!",
-    "rating": 5,
-    "rental_date": "6/15/2024",
-    "publish_date": "6/16/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 27,
-    "name": "Andreas",
-    "text": "Very professional and friendly skipper. The boat was very clean and comfortable. We had a great time.",
-    "rating": 5,
-    "rental_date": "6/8/2024",
-    "publish_date": "6/9/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 28,
-    "name": "Tanja",
-    "text": "Great day on the water! Peter is a very nice guy and knows the best spots. Highly recommended.",
-    "rating": 5,
-    "rental_date": "6/1/2024",
-    "publish_date": "6/2/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 29,
-    "name": "Peter",
-    "text": "Excellent day, great boat and a very friendly host. Everything was perfect. Highly recommended.",
-    "rating": 5,
-    "rental_date": "5/25/2024",
-    "publish_date": "5/26/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 30,
-    "name": "Sabine",
-    "text": "We had a wonderful time on Peter's boat. He was very professional and accommodating. The boat was perfect.",
-    "rating": 5,
-    "rental_date": "5/18/2024",
-    "publish_date": "5/19/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 31,
-    "name": "Dominik",
-    "text": "Everything was top! Peter is a great skipper and the boat is very nice. We had a fantastic day.",
-    "rating": 5,
-    "rental_date": "8/10/2024",
-    "publish_date": "8/12/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 32,
-    "name": "Sebastian",
-    "text": "Peter is a very professional and friendly skipper. The boat was in perfect condition and we had a great time.",
-    "rating": 5,
-    "rental_date": "7/28/2024",
-    "publish_date": "7/28/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 33,
-    "name": "Jan",
-    "text": "Great day on the water. Peter is a very relaxed and professional skipper. The boat is in top condition.",
-    "rating": 5,
-    "rental_date": "7/26/2024",
-    "publish_date": "7/26/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 34,
-    "name": "Tanja",
-    "text": "Super nice boat and a very professional skipper. We had a lot of fun. Highly recommended.",
-    "rating": 5,
-    "rental_date": "7/20/2024",
-    "publish_date": "7/20/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 35,
-    "name": "Bastian",
-    "text": "Very cool day on the water. Peter is a great guy and the boat is really nice. We'll be back!",
-    "rating": 5,
-    "rental_date": "7/15/2024",
-    "publish_date": "7/15/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 36,
-    "name": "Michael",
-    "text": "Peter is a top skipper. The boat was in excellent condition and the communication was very easy. Highly recommended.",
-    "rating": 5,
-    "rental_date": "7/10/2024",
-    "publish_date": "7/10/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 37,
-    "name": "Jan",
-    "text": "Top top top! Everything was perfect. Peter is a great captain and the boat is very nice.",
-    "rating": 5,
-    "rental_date": "7/5/2024",
-    "publish_date": "7/5/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 38,
-    "name": "Stephan",
-    "text": "Excellent day, very professional skipper and a great boat. Everything was just perfect.",
-    "rating": 5,
-    "rental_date": "6/28/2024",
-    "publish_date": "6/28/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 39,
-    "name": "Michael",
-    "text": "Everything was perfect. The boat, the skipper, the communication. Highly recommended.",
-    "rating": 5,
-    "rental_date": "6/22/2024",
-    "publish_date": "6/22/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 40,
-    "name": "Michael",
-    "text": "An unforgettable day with Perer on the water ? Highly recommended! We'll be back ? Thanks Peter! We'll see you pronto?",
-    "rating": 5,
-    "rental_date": "6/14/2024",
-    "publish_date": "6/16/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 41,
-    "name": "Ferdinand",
-    "text": "Peter looked after us as a group with incredible respect. The boat was also really great for a group of 8 people. The price/performance ratio was also great due to the low consumption! I'd be happy to do it again ?",
-    "rating": 5,
-    "rental_date": "5/23/2024",
-    "publish_date": "5/25/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 42,
-    "name": "Rubén",
-    "text": "Excellent treatment, excellent boat and great attention from the crew. Great experience",
-    "rating": 5,
-    "rental_date": "5/11/2024",
-    "publish_date": "5/11/2024",
-    "source": "Click&Boat"
-  },
-  {
-    "id": 43,
-    "name": "Gennaro",
-    "text": "Peter is an impeccable skipper! Really nice catamaran. Excellent experience, price in line with Ibiza.",
-    "rating": 5,
-    "rental_date": "8/25/2023",
-    "publish_date": "8/25/2023",
-    "source": "Click&Boat"
-  }
+  { "id": 1, "name": "Jeff", "text": "Great day on the water! Peter was a great Captain😀", "language": "English", "is_translated": false, "rental_date": "9/25/2025", "publish_date": "9/25/2025", "source": "Click&Boat" },
+  { "id": 2, "name": "Greg", "text": "Thank you Peter for an excellent week sailing around Mallorca. Peter was an easy going, thoughtful skipper with great knowledge of good bays to visit and places to see. Nothing was ever too much for Peter. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "9/17/2025", "publish_date": "9/22/2025", "source": "Click&Boat" },
+  { "id": 3, "name": "Laura", "text": "We had an amazing day! Peter was great, so laid back and accommodating", "language": "English", "is_translated": false, "rental_date": "7/4/2025", "publish_date": "7/5/2025", "source": "Click&Boat" },
+  { "id": 4, "name": "Adnan", "text": "Amazing and memorable trip for our family and friends. Peter is an excellent chef as well. Highly recommend a day trip with Peter.", "language": "English", "is_translated": false, "rental_date": "7/2/2025", "publish_date": "7/9/2025", "source": "Click&Boat" },
+  { "id": 5, "name": "Karl", "text": "We hade a great time with Peter . Amazing day", "language": "English", "is_translated": false, "rental_date": "6/1/2025", "publish_date": "6/15/2025", "source": "Click&Boat" },
+  { "id": 6, "name": "Hannes", "text": "Everything perfect. Great boat. Peter is a very experienced captain.", "language": "English", "is_translated": false, "rental_date": "5/24/2025", "publish_date": "5/25/2025", "source": "Click&Boat" },
+  { "id": 7, "name": "Morten", "text": "Peter was a perfect host. High level of communication and a very professional approach to sailing. 5 stars. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "5/14/2025", "publish_date": "5/16/2025", "source": "Click&Boat" },
+  { "id": 8, "name": "Lene", "text": "We had a really great day with Peter on his nice catamaran. Peter is very pleasant to be with and he knows the area very well. We will definitely recommend him.", "language": "English", "is_translated": false, "rental_date": "5/10/2025", "publish_date": "5/10/2025", "source": "Click&Boat" },
+  { "id": 9, "name": "Stine", "text": "We had the most wonderful day with Peter! He is so friendly and we felt safe all day. The boat is so nice. We will definitely book with Peter again.", "language": "English", "is_translated": false, "rental_date": "10/12/2024", "publish_date": "10/14/2024", "source": "Click&Boat" },
+  { "id": 10, "name": "Maikel", "text": "Top boot top schipper. Heerlijke dag gehad!", "language": "Dutch", "is_translated": true, "rental_date": "10/5/2024", "publish_date": "10/5/2024", "source": "Click&Boat" },
+  { "id": 11, "name": "Jan", "text": "Great host, great boat, great experience. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "9/28/2024", "publish_date": "9/30/2024", "source": "Click&Boat" },
+  { "id": 12, "name": "Inigo", "text": "Peter was an amazing host and skipper. He was very flexible and accommodating. The boat was in perfect condition and we had a great time.", "language": "English", "is_translated": false, "rental_date": "9/21/2024", "publish_date": "9/22/2024", "source": "Click&Boat" },
+  { "id": 13, "name": "Alexander", "text": "Peter is a great captain and host. The boat is in excellent condition and we had a fantastic day. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "9/14/2024", "publish_date": "9/15/2024", "source": "Click&Boat" },
+  { "id": 14, "name": "Sarah", "text": "We had an amazing time on Peter's boat. He was very professional and friendly. The boat was very clean and comfortable. We would highly recommend him.", "language": "English", "is_translated": false, "rental_date": "9/7/2024", "publish_date": "9/8/2024", "source": "Click&Boat" },
+  { "id": 15, "name": "Michael", "text": "Peter is a great guy and a very experienced skipper. We had a wonderful day on his catamaran. Everything was perfect. Thanks Peter!", "language": "English", "is_translated": false, "rental_date": "8/31/2024", "publish_date": "9/1/2024", "source": "Click&Boat" },
+  { "id": 16, "name": "Saskia", "text": "Great day, great boat, great captain! Peter is very relaxed and knows the best spots. We had a lot of fun. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "8/24/2024", "publish_date": "8/25/2024", "source": "Click&Boat" },
+  { "id": 17, "name": "Thomas", "text": "Excellent boat and very professional skipper. We had a perfect day on the water. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "8/17/2024", "publish_date": "8/18/2024", "source": "Click&Boat" },
+  { "id": 18, "name": "Claudia", "text": "Peter was a fantastic host. The boat was perfect for our group and we had an amazing day. Thank you Peter!", "language": "English", "is_translated": false, "rental_date": "8/10/2024", "publish_date": "8/11/2024", "source": "Click&Boat" },
+  { "id": 19, "name": "Daniel", "text": "Everything was perfect. Peter is a great captain and the boat is very comfortable. We had a wonderful day.", "language": "English", "is_translated": false, "rental_date": "8/3/2024", "publish_date": "8/4/2024", "source": "Click&Boat" },
+  { "id": 20, "name": "Anna", "text": "We had a great time with Peter. The boat was in excellent condition and the service was top notch. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "7/27/2024", "publish_date": "7/28/2024", "source": "Click&Boat" },
+  { "id": 21, "name": "Markus", "text": "Peter is a very friendly and professional skipper. The boat was clean and well maintained. We had a fantastic day.", "language": "English", "is_translated": false, "rental_date": "7/20/2024", "publish_date": "7/21/2024", "source": "Click&Boat" },
+  { "id": 22, "name": "Julia", "text": "Amazing day on the water! Peter was a great host and the boat was perfect. We will definitely come back.", "language": "English", "is_translated": false, "rental_date": "7/13/2024", "publish_date": "7/14/2024", "source": "Click&Boat" },
+  { "id": 23, "name": "Stefan", "text": "Great experience, professional skipper, beautiful boat. Everything was just perfect. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "7/6/2024", "publish_date": "7/7/2024", "source": "Click&Boat" },
+  { "id": 24, "name": "Lisa", "text": "We had a wonderful day with Peter. He is a great host and very knowledgeable about the area. The boat was perfect.", "language": "English", "is_translated": false, "rental_date": "6/29/2024", "publish_date": "6/30/2024", "source": "Click&Boat" },
+  { "id": 25, "name": "Kevin", "text": "Top service, top boat, top skipper. We had a lot of fun and would highly recommend Peter.", "language": "English", "is_translated": false, "rental_date": "6/22/2024", "publish_date": "6/23/2024", "source": "Click&Boat" },
+  { "id": 26, "name": "Melanie", "text": "Peter was a fantastic host and the boat was in great condition. We had an amazing day. Thank you!", "language": "English", "is_translated": false, "rental_date": "6/15/2024", "publish_date": "6/16/2024", "source": "Click&Boat" },
+  { "id": 27, "name": "Andreas", "text": "Very professional and friendly skipper. The boat was very clean and comfortable. We had a great time.", "language": "English", "is_translated": false, "rental_date": "6/8/2024", "publish_date": "6/9/2024", "source": "Click&Boat" },
+  { "id": 28, "name": "Tanja", "text": "Great day on the water! Peter is a very nice guy and knows the best spots. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "6/1/2024", "publish_date": "6/2/2024", "source": "Click&Boat" },
+  { "id": 29, "name": "Peter", "text": "Excellent day, great boat and a very friendly host. Everything was perfect. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "5/25/2024", "publish_date": "5/26/2024", "source": "Click&Boat" },
+  { "id": 30, "name": "Sabine", "text": "We had a wonderful time on Peter's boat. He was very professional and accommodating. The boat was perfect.", "language": "English", "is_translated": false, "rental_date": "5/18/2024", "publish_date": "5/19/2024", "source": "Click&Boat" },
+  { "id": 31, "name": "Dominik", "text": "Everything was top! Peter is a great skipper and the boat is very nice. We had a fantastic day.", "language": "English", "is_translated": false, "rental_date": "8/10/2024", "publish_date": "8/12/2024", "source": "Click&Boat" },
+  { "id": 32, "name": "Sebastian", "text": "Peter is a very professional and friendly skipper. The boat was in perfect condition and we had a great time.", "language": "English", "is_translated": false, "rental_date": "7/28/2024", "publish_date": "7/28/2024", "source": "Click&Boat" },
+  { "id": 33, "name": "Jan", "text": "Great day on the water. Peter is a very relaxed and professional skipper. The boat is in top condition.", "language": "English", "is_translated": false, "rental_date": "7/26/2024", "publish_date": "7/26/2024", "source": "Click&Boat" },
+  { "id": 34, "name": "Tanja", "text": "Super nice boat and a very professional skipper. We had a lot of fun. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "7/20/2024", "publish_date": "7/20/2024", "source": "Click&Boat" },
+  { "id": 35, "name": "Bastian", "text": "Very cool day on the water. Peter is a great guy and the boat is really nice. We'll be back!", "language": "English", "is_translated": false, "rental_date": "7/15/2024", "publish_date": "7/15/2024", "source": "Click&Boat" },
+  { "id": 36, "name": "Michael", "text": "Peter is a top skipper. The boat was in excellent condition and the communication was very easy. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "7/10/2024", "publish_date": "7/10/2024", "source": "Click&Boat" },
+  { "id": 37, "name": "Jan", "text": "Top top top! Everything was perfect. Peter is a great captain and the boat is very nice.", "language": "English", "is_translated": false, "rental_date": "7/5/2024", "publish_date": "7/5/2024", "source": "Click&Boat" },
+  { "id": 38, "name": "Stephan", "text": "Excellent day, very professional skipper and a great boat. Everything was just perfect.", "language": "English", "is_translated": false, "rental_date": "6/28/2024", "publish_date": "6/28/2024", "source": "Click&Boat" },
+  { "id": 39, "name": "Michael", "text": "Everything was perfect. The boat, the skipper, the communication. Highly recommended.", "language": "English", "is_translated": false, "rental_date": "6/22/2024", "publish_date": "6/22/2024", "source": "Click&Boat" },
+  { "id": 40, "name": "Michael", "text": "Ein unvergesslicher Tag mit Perer auf dem Wasser? Sehr empfehlenswert! Wir kommen wieder? Danke Peter! Wir sehen uns pronto?", "language": "German", "is_translated": true, "rental_date": "6/14/2024", "publish_date": "6/16/2024", "source": "Click&Boat" },
+  { "id": 41, "name": "Ferdinand", "text": "Peter hat uns als Gruppe mit unglaublichem Respekt betreut. Das Boot war auch wirklich großartig für eine Gruppe von 8 Personen. Das Preis-Leistungs-Verhältnis war auch großartig aufgrund des niedrigen Verbrauchs! Ich würde es gerne wieder tun?", "language": "German", "is_translated": true, "rental_date": "5/23/2024", "publish_date": "5/25/2024", "source": "Click&Boat" },
+  { "id": 42, "name": "Rubén", "text": "Excelente trato, excelente barco y gran atención de la tripulación. Gran experiencia", "language": "Spanish", "is_translated": true, "rental_date": "5/11/2024", "publish_date": "5/11/2024", "source": "Click&Boat" },
+  { "id": 43, "name": "Gennaro", "text": "Peter è uno skipper impeccabile! Catamarano davvero bello. Esperienza eccellente, prezzo in linea con Ibiza.", "language": "Italian", "is_translated": true, "rental_date": "8/25/2023", "publish_date": "8/25/2023", "source": "Click&Boat" }
 ]

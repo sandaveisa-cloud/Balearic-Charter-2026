@@ -95,7 +95,7 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
 
   if (curatedReviews.length === 0) return null
 
-  // Language name mapping
+  // Language name mapping (ISO codes to full names)
   const languageNames: Record<string, string> = {
     'nl': 'Dutch',
     'de': 'German',
@@ -104,6 +104,7 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
     'it': 'Italian',
     'lv': 'Latvian',
     'pt': 'Portuguese',
+    'en': 'English',
   }
 
   const toggleLanguage = (reviewId: string) => {
@@ -187,6 +188,16 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
               />
             ))}
           </div>
+
+          {/* Verified Translation Badge */}
+          {hasTranslation && (
+            <div className="mb-3 flex items-center gap-1.5">
+              <Globe className="w-3 h-3 text-luxury-gold" />
+              <span className="text-[10px] text-gray-500 italic">
+                Verified Translation from {originalLanguageName}
+              </span>
+            </div>
+          )}
 
           {/* Review Text - Italicized Serif Font */}
           <div className="mb-6 flex-grow">
