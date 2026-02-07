@@ -237,6 +237,7 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
             image_url: '',
             order_index: 0,
             is_active: true,
+            yacht_id: null, // Reset yacht_id to null
           })
         }
       }, 1500)

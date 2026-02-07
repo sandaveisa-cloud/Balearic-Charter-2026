@@ -272,6 +272,7 @@ export async function PUT(request: NextRequest) {
       image_url: updateData.image_url || null, // Explicitly handle empty string as null
       order_index: updateData.order_index !== undefined ? parseInt(updateData.order_index) : 0,
       is_active: updateData.is_active !== undefined ? updateData.is_active : true,
+      yacht_id: updateData.yacht_id !== undefined ? (updateData.yacht_id || null) : undefined, // Include yacht_id if provided
       updated_at: new Date().toISOString(),
     }
 
