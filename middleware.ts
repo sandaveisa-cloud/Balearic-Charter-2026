@@ -1,5 +1,6 @@
 import createMiddleware from 'next-intl/middleware'
 import { routing } from './i18n/routing'
+import type { Locale } from './i18n/routing'
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseMiddlewareClient } from './lib/supabase-middleware'
 
@@ -110,7 +111,7 @@ export default async function middleware(request: NextRequest) {
   if (pathname === '/') {
     // Try to detect user's preferred language from Accept-Language header
     const acceptLanguage = request.headers.get('accept-language')
-    let preferredLocale = routing.defaultLocale
+    let preferredLocale: Locale = routing.defaultLocale
     
     if (acceptLanguage) {
       // Parse Accept-Language header (e.g., "en-US,en;q=0.9,es;q=0.8")
@@ -123,9 +124,14 @@ export default async function middleware(request: NextRequest) {
         .sort((a, b) => b.quality - a.quality)
       
       // Find first matching locale from our supported locales
-      const matchedLocale = languages.find(lang => routing.locales.includes(lang.locale as any))
+      const matchedLocale = languages.find(lang => {
+        const localeStr = lang.locale
+        return routing.locales.includes(localeStr as Locale)
+      })
+      
       if (matchedLocale) {
-        preferredLocale = matchedLocale.locale
+        // Type assertion: We've verified it's in routing.locales, so it's safe to cast
+        preferredLocale = matchedLocale.locale as Locale
       }
     }
     
