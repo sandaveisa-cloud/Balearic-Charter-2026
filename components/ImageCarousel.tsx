@@ -166,6 +166,11 @@ export default function ImageCarousel({
             format: 'webp',
           })
 
+          // Skip rendering if optimizedUrl is null
+          if (!optimizedUrl) {
+            return null
+          }
+
           return (
             <SwiperSlide key={`${imageUrl}-${index}`} className="relative">
               <div
