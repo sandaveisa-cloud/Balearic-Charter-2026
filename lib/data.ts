@@ -5,7 +5,7 @@ import type { SiteContent, Fleet, Destination, Review, Stat, CulinaryExperience,
 // Internal function to fetch data from Supabase
 async function fetchSiteContentInternal(): Promise<SiteContent> {
   // Fetch all data in parallel - catch individual errors
-  let settingsResult, fleetResult, destinationsResult, reviewsResult, statsResult, culinaryResult, crewResult, contactResult
+  let settingsResult, fleetResult, destinationsResult, reviewsResult, statsResult, culinaryResult, crewResult, contactResult, journeyResult, missionResult
   
   try {
     settingsResult = await supabase.from('site_settings').select('*')
@@ -204,14 +204,14 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
 
   // Fetch Journey Milestones
   try {
-    journeyResult = await supabase
-      .from('journey_milestones' as any)
+    journeyResult = await (supabase as any)
+      .from('journey_milestones')
       .select('*')
       .eq('is_active', true)
       .order('year', { ascending: true })
       .order('order_index', { ascending: true })
     
-    if (journeyResult.error) {
+    if (journeyResult?.error) {
       console.error('[Data] Error fetching journey_milestones:', journeyResult.error)
     }
   } catch (error) {
@@ -221,13 +221,13 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
 
   // Fetch Mission Promises
   try {
-    missionResult = await supabase
+    missionResult = await (supabase as any)
       .from('mission_promises')
       .select('*')
       .eq('is_active', true)
       .order('order_index', { ascending: true })
     
-    if (missionResult.error) {
+    if (missionResult?.error) {
       console.error('[Data] Error fetching mission_promises:', missionResult.error)
     }
   } catch (error) {
