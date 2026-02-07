@@ -16,10 +16,11 @@ const nextConfig = {
   async redirects() {
     return [
       // Root path redirect to default locale (backup if middleware fails)
+      // Note: Middleware should handle this first, but this provides an additional safety net
       {
         source: '/',
         destination: '/en',
-        permanent: false, // Use temporary redirect to allow middleware to handle it
+        permanent: true, // Permanent redirect (301) for SEO
       },
       // Spanish paths without locale prefix -> redirect to /es/
       {

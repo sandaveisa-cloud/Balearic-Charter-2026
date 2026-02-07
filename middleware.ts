@@ -105,10 +105,35 @@ export default async function middleware(request: NextRequest) {
   }
 
   // ============================================================================
-  // STEP 3: Handle root path - redirect to default locale
+  // STEP 3: Handle root path - redirect to default locale (or user's preferred language)
   // ============================================================================
   if (pathname === '/') {
-    return NextResponse.redirect(new URL(`/${routing.defaultLocale}`, request.url))
+    // Try to detect user's preferred language from Accept-Language header
+    const acceptLanguage = request.headers.get('accept-language')
+    let preferredLocale = routing.defaultLocale
+    
+    if (acceptLanguage) {
+      // Parse Accept-Language header (e.g., "en-US,en;q=0.9,es;q=0.8")
+      const languages = acceptLanguage
+        .split(',')
+        .map(lang => {
+          const [locale, q = '1'] = lang.trim().split(';q=')
+          return { locale: locale.split('-')[0].toLowerCase(), quality: parseFloat(q) }
+        })
+        .sort((a, b) => b.quality - a.quality)
+      
+      // Find first matching locale from our supported locales
+      const matchedLocale = languages.find(lang => routing.locales.includes(lang.locale as any))
+      if (matchedLocale) {
+        preferredLocale = matchedLocale.locale
+      }
+    }
+    
+    // Create permanent redirect (301) to preferred/default locale
+    const redirectUrl = new URL(`/${preferredLocale}`, request.url)
+    const response = NextResponse.redirect(redirectUrl)
+    response.headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+    return response
   }
 
   // ============================================================================
