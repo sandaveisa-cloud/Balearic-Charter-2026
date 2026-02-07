@@ -113,8 +113,10 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
       })
       
       // Validate payload structure matches database schema
-      const requiredFields = ['year', 'title_en', 'title_es', 'title_de', 'description_en', 'description_es', 'description_de']
-      const missingFields = requiredFields.filter(field => !payload[field])
+      // Use 'as const' to make TypeScript recognize these as specific string literals
+      const requiredFields = ['year', 'title_en', 'title_es', 'title_de', 'description_en', 'description_es', 'description_de'] as const
+      // Cast field to keyof typeof payload to satisfy TypeScript's strict type checking
+      const missingFields = requiredFields.filter(field => !payload[field as keyof typeof payload])
       if (missingFields.length > 0) {
         const errorMsg = `Missing required fields: ${missingFields.join(', ')}`
         console.error('[JourneyEditModal] ❌ Validation error:', errorMsg)
