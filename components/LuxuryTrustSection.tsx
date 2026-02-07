@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
+import { motion, AnimatePresence } from 'framer-motion'
 import type { Review } from '@/types/database'
 import { Star, Quote, CheckCircle, Anchor, ChevronDown, ChevronUp } from 'lucide-react'
 import { format } from 'date-fns'
+import { loadReviewsFromJson } from '@/lib/reviewLoader'
 
 interface LuxuryTrustSectionProps {
   reviews: Review[]
@@ -18,21 +20,34 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
   const [expandedReviews, setExpandedReviews] = useState<Set<string>>(new Set())
   const [displayCount, setDisplayCount] = useState(INITIAL_DISPLAY_COUNT)
   const [showAll, setShowAll] = useState(false)
+  const [mergedReviews, setMergedReviews] = useState<Review[]>([])
+
+  // Load and merge reviews from JSON on mount
+  useEffect(() => {
+    const merged = loadReviewsFromJson(reviews)
+    setMergedReviews(merged)
+  }, [reviews])
 
   // Filter and sort reviews
   const curatedReviews = useMemo(() => {
-    if (!reviews || reviews.length === 0) return []
+    if (!mergedReviews || mergedReviews.length === 0) return []
     
-    return reviews
+    return mergedReviews
       .filter((review) => review.is_approved !== false)
       .sort((a, b) => {
         // Featured reviews first
         if (a.is_featured && !b.is_featured) return -1
         if (!a.is_featured && b.is_featured) return 1
+        // Then by published date (newest first)
+        const dateA = a.published_date || a.review_date || a.created_at
+        const dateB = b.published_date || b.review_date || b.created_at
+        if (dateA && dateB) {
+          return new Date(dateB).getTime() - new Date(dateA).getTime()
+        }
         // Then by rating
         return (b.rating || 0) - (a.rating || 0)
       })
-  }, [reviews])
+  }, [mergedReviews])
 
   const displayedReviews = showAll ? curatedReviews : curatedReviews.slice(0, displayCount)
   const hasMore = curatedReviews.length > displayCount
@@ -52,7 +67,22 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
   const formatDate = (dateString: string | null | undefined): string => {
     if (!dateString) return 'N/A'
     try {
-      return format(new Date(dateString), 'MMM d, yyyy')
+      // Handle both ISO format (YYYY-MM-DD) and other formats
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return 'N/A'
+      return format(date, 'MMM d, yyyy')
+    } catch {
+      return 'N/A'
+    }
+  }
+
+  const formatRentalDate = (dateString: string | null | undefined): string => {
+    if (!dateString) return 'N/A'
+    try {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) return 'N/A'
+      // Format as MM/YYYY for rental date
+      return format(date, 'MM/yyyy')
     } catch {
       return 'N/A'
     }
@@ -96,7 +126,8 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
 
         {/* Masonry Grid */}
         <div className="columns-1 md:columns-2 lg:columns-3 gap-6 md:gap-8 space-y-6 md:space-y-8">
-          {displayedReviews.map((review, index) => {
+          <AnimatePresence mode="popLayout">
+            {displayedReviews.map((review, index) => {
             const isExpanded = expandedReviews.has(review.id)
             const reviewText = review.review_text || ''
             const shouldTruncate = reviewText.length > 200
@@ -105,12 +136,20 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
               : reviewText
 
             return (
-              <div
+              <motion.div
                 key={review.id || index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
                 className="break-inside-avoid mb-6 md:mb-8 group"
               >
                 {/* Glassmorphism Card */}
-                <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-lg border border-gray-200/50 hover:border-luxury-gold/30 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] relative overflow-hidden">
+                <motion.div
+                  whileHover={{ scale: 1.02, y: -4 }}
+                  transition={{ duration: 0.2 }}
+                  className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-lg border border-gray-200/50 hover:border-luxury-gold/30 transition-all duration-300 hover:shadow-xl relative overflow-hidden"
+                >
                   {/* Decorative gradient overlay */}
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-luxury-gold/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   
@@ -146,7 +185,7 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
 
                   {/* Review Text - Serif Font */}
                   <div className="mb-6">
-                    <p className={`font-serif text-gray-700 leading-relaxed ${
+                    <p className={`font-serif text-gray-700 leading-relaxed text-base md:text-lg ${
                       shouldTruncate && !isExpanded ? 'line-clamp-4' : ''
                     }`}>
                       "{displayText}"
@@ -186,7 +225,7 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-luxury-blue text-sm truncate">
+                      <h4 className="font-semibold text-luxury-blue text-sm md:text-base truncate">
                         {review.guest_name || 'Guest'}
                       </h4>
                       {review.guest_location && (
@@ -201,8 +240,8 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
                   <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-gray-500">
                     {review.rental_date && (
                       <div className="flex items-center gap-1.5">
-                        <span className="font-semibold text-gray-600">Rental:</span>
-                        <span>{formatDate(review.rental_date)}</span>
+                        <span className="font-semibold text-gray-600">Rental date:</span>
+                        <span>{formatRentalDate(review.rental_date)}</span>
                       </div>
                     )}
                     {(review.published_date || review.review_date) && (
@@ -227,31 +266,39 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
                       </span>
                     </div>
                   )}
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             )
           })}
+          </AnimatePresence>
         </div>
 
         {/* Show More Button */}
         {hasMore && !showAll && (
-          <div className="text-center mt-12">
-            <button
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-center mt-12"
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => {
                 setDisplayCount((prev) => Math.min(prev + INITIAL_DISPLAY_COUNT, curatedReviews.length))
                 if (displayCount + INITIAL_DISPLAY_COUNT >= curatedReviews.length) {
                   setShowAll(true)
                 }
               }}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white/80 backdrop-blur-md text-luxury-blue font-semibold rounded-full border border-luxury-gold/30 shadow-lg hover:shadow-xl hover:bg-luxury-gold hover:text-white transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white/80 backdrop-blur-md text-luxury-blue font-semibold rounded-full border border-luxury-gold/30 shadow-lg hover:shadow-xl hover:bg-luxury-gold hover:text-white transition-all duration-300"
             >
-              Show More Reviews
+              Load More Reviews
               <ChevronDown className="w-5 h-5" />
-            </button>
+            </motion.button>
             <p className="text-sm text-gray-500 mt-4">
               Showing {displayCount} of {curatedReviews.length} reviews
             </p>
-          </div>
+          </motion.div>
         )}
 
         {showAll && hasMore && (
