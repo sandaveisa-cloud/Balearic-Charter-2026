@@ -241,6 +241,38 @@
       }
     }
   },
+  "journey": {
+    "title": "Nuestro Recorrido",
+    "milestones": {
+      "beginning": {
+        "year": "2014",
+        "title": "Nuestros Inicios",
+        "description": "Comenzamos con una visión de lujo y nuestras primeras experiencias de alquiler."
+      },
+      "growth": {
+        "year": "Crecimiento",
+        "title": "Expansión de Horizontes",
+        "description": "Ampliamos gradualmente nuestra oferta, centrándonos en la calidad y el servicio premium."
+      },
+      "destinations": {
+        "year": "Destinos",
+        "title": "Nuevas Rutas",
+        "description": "Desarrollamos rutas únicas alrededor de las Islas Baleares para experiencias inolvidables."
+      },
+      "today": {
+        "year": "Hoy",
+        "title": "Su Socio de Confianza",
+        "description": "Proporcionando yates seleccionados y logística de servicio completo."
+      }
+    }
+  },
+  "vesselHistory": {
+    "title": "Historial de la Embarcación",
+    "milestones": "Hitos",
+    "expandHistory": "Ver Historial",
+    "collapseHistory": "Ocultar Historial",
+    "noHistory": "No hay historial de la embarcación disponible en este momento."
+  },
   "legal": {
     "title": "Aviso Legal",
     "metaDescription": "Información legal de Balearic Yacht Charters S.L.",

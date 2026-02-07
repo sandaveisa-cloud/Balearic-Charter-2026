@@ -241,6 +241,38 @@
       }
     }
   },
+  "journey": {
+    "title": "Our Journey",
+    "milestones": {
+      "beginning": {
+        "year": "2014",
+        "title": "Our Beginning",
+        "description": "Started with a vision for luxury and our first charter experiences."
+      },
+      "growth": {
+        "year": "Growth",
+        "title": "Expanding Horizons",
+        "description": "Gradually expanded our offerings, focusing on quality and premium service."
+      },
+      "destinations": {
+        "year": "Destinations",
+        "title": "New Routes",
+        "description": "Developed unique routes around the Balearic Islands for unforgettable experiences."
+      },
+      "today": {
+        "year": "Today",
+        "title": "Your Trusted Partner",
+        "description": "Providing hand-picked yachts and full-service logistics."
+      }
+    }
+  },
+  "vesselHistory": {
+    "title": "Vessel History",
+    "milestones": "Milestones",
+    "expandHistory": "View History",
+    "collapseHistory": "Hide History",
+    "noHistory": "No vessel history available at this time."
+  },
   "legal": {
     "title": "Legal Notice",
     "metaDescription": "Legal notice and company information for Balearic Yacht Charters S.L.",

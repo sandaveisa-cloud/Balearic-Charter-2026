@@ -241,6 +241,38 @@
       }
     }
   },
+  "journey": {
+    "title": "Unsere Reise",
+    "milestones": {
+      "beginning": {
+        "year": "2014",
+        "title": "Unser Anfang",
+        "description": "Begonnen mit einer Vision für Luxus und unseren ersten Charter-Erlebnissen."
+      },
+      "growth": {
+        "year": "Wachstum",
+        "title": "Horizonte Erweitern",
+        "description": "Erweiterten schrittweise unser Angebot mit Fokus auf Qualität und Premium-Service."
+      },
+      "destinations": {
+        "year": "Ziele",
+        "title": "Neue Routen",
+        "description": "Entwickelten einzigartige Routen rund um die Balearen für unvergessliche Erlebnisse."
+      },
+      "today": {
+        "year": "Heute",
+        "title": "Ihr Vertrauenspartner",
+        "description": "Bereitstellung handverlesener Yachten und Full-Service-Logistik."
+      }
+    }
+  },
+  "vesselHistory": {
+    "title": "Schiffsgeschichte",
+    "milestones": "Meilensteine",
+    "expandHistory": "Geschichte anzeigen",
+    "collapseHistory": "Geschichte ausblenden",
+    "noHistory": "Derzeit ist keine Schiffsgeschichte verfügbar."
+  },
   "legal": {
     "title": "Impressum",
     "metaDescription": "Rechtliche Informationen für Balearic Yacht Charters S.L.",

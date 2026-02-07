@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { ArrowLeft, ChevronLeft, ChevronRight, Anchor, Users, Ruler, BedDouble, Zap, Waves, Wind } from 'lucide-react'
 import Image from 'next/image'
+import VesselHistory from './VesselHistory'
 
 interface YachtDetailsProps {
   yachtSlug: 'lagoon-400-s2-simona' | 'lagoon-450-fly'
@@ -368,6 +369,9 @@ export default function YachtDetails({ yachtSlug }: YachtDetailsProps) {
           </div>
         </div>
       </section>
+
+      {/* Vessel History Section */}
+      <VesselHistory milestones={[]} yachtSlug={yachtSlug} />
 
       {/* CTA Section */}
       <section className="py-16 bg-[#002447]">
