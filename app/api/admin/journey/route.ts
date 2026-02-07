@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     if (id) {
       // Fetch single milestone
       const { data, error } = await supabase
-        .from('journey_milestones')
+        .from('journey_milestones' as any)
         .select('*')
         .eq('id', id)
         .single()
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch all milestones
     const { data, error } = await supabase
-      .from('journey_milestones')
+      .from('journey_milestones' as any)
       .select('*')
       .order('year', { ascending: true })
       .order('order_index', { ascending: true })
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
 
     const { data, error } = await supabase
-      .from('journey_milestones')
+      .from('journey_milestones' as any)
       .insert({
         year: body.year,
         title_en: body.title_en,
@@ -138,7 +138,7 @@ export async function PUT(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
 
     const { data, error } = await supabase
-      .from('journey_milestones')
+      .from('journey_milestones' as any)
       .update({
         year: updateData.year,
         title_en: updateData.title_en,
@@ -198,7 +198,7 @@ export async function DELETE(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
 
     const { error } = await supabase
-      .from('journey_milestones')
+      .from('journey_milestones' as any)
       .delete()
       .eq('id', id)
 

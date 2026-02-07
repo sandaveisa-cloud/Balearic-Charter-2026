@@ -205,7 +205,7 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
   // Fetch Journey Milestones
   try {
     journeyResult = await supabase
-      .from('journey_milestones')
+      .from('journey_milestones' as any)
       .select('*')
       .eq('is_active', true)
       .order('year', { ascending: true })
