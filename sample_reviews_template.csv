@@ -1,0 +1,11 @@
+guest_name,guest_location,rating,review_text,rental_date,published_date,category,profile_image_url,yacht_id,is_featured,original_language
+John Doe,London UK,5,"An absolutely unforgettable experience! The crew was exceptional, and every detail was perfect. We will definitely return!",2024-07-15,2024-08-01,With Captain,,,true,en
+Sarah Mitchell,New York USA,5,"The best vacation we've ever had. The yacht was immaculate, the food outstanding, and the service beyond compare.",2024-08-10,2024-08-25,Catamarans,,,true,en
+Michael Chen,Dubai UAE,5,"Pure luxury from start to finish. The attention to detail and personalized service made this trip extraordinary.",2024-06-20,2024-07-05,With Captain,,,true,en
+Emma Thompson,Madrid Spain,5,"Increíble experiencia con el capitán profesional. El catamarán era espacioso y cómodo. ¡Altamente recomendado!",2024-08-20,2024-09-05,Catamarans,,,false,es
+Carlos Rodriguez,Barcelona Spain,5,"Experiencia única en un yate de lujo. El servicio fue impecable y las vistas espectaculares.",2024-07-05,2024-07-20,With Captain,,,false,es
+Anna Schmidt,Berlin Germany,5,"Wundervolle Erfahrung! Die Crew war sehr professionell und aufmerksam. Wir werden auf jeden Fall wiederkommen!",2024-09-01,2024-09-15,Catamarans,,,false,de
+David Johnson,Paris France,5,"Perfect sailing conditions and an amazing crew. The yacht exceeded all our expectations!",2024-08-15,2024-08-30,Bareboat,,,false,en
+Maria Garcia,Valencia Spain,4,"Muy buena experiencia. El barco estaba en perfectas condiciones y el servicio fue excelente.",2024-07-25,2024-08-10,Catamarans,,,false,es
+James Wilson,Sydney Australia,5,"Outstanding service from start to finish. The crew made us feel like royalty. Highly recommended!",2024-06-10,2024-06-25,With Captain,,,true,en
+Sophie Martin,Lyon France,5,"Une expérience inoubliable! L'équipage était exceptionnel et le yacht magnifique.",2024-09-10,2024-09-25,With Captain,,,false,en
