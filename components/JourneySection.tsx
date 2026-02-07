@@ -8,29 +8,31 @@ interface JourneySectionProps {
 }
 
 export default function JourneySection({ milestones: _ }: JourneySectionProps) {
+  // Use translations with fallback - if translations fail, component will still render with defaults
   const t = useTranslations('journey.milestones')
 
-  // Get milestone data from translations
+  // Get milestone data from translations with fallback values
+  // If translations fail, use empty strings to prevent crashes
   const milestones = [
     {
-      year: t('beginning.year'),
-      title: t('beginning.title'),
-      description: t('beginning.description'),
+      year: t('beginning.year') || '2014',
+      title: t('beginning.title') || 'Our Beginning',
+      description: t('beginning.description') || 'Started with a vision for luxury and our first charter experiences.',
     },
     {
-      year: t('growth.year'),
-      title: t('growth.title'),
-      description: t('growth.description'),
+      year: t('growth.year') || 'Growth',
+      title: t('growth.title') || 'Growth',
+      description: t('growth.description') || 'Gradually expanded our offerings, focusing on quality and premium service.',
     },
     {
-      year: t('destinations.year'),
-      title: t('destinations.title'),
-      description: t('destinations.description'),
+      year: t('destinations.year') || 'Destinations',
+      title: t('destinations.title') || 'Destinations',
+      description: t('destinations.description') || 'Developed unique routes around the Balearic Islands for unforgettable experiences.',
     },
     {
-      year: t('today.year'),
-      title: t('today.title'),
-      description: t('today.description'),
+      year: t('today.year') || 'Today',
+      title: t('today.title') || 'Your Trusted Partner',
+      description: t('today.description') || 'Providing hand-picked yachts and full-service logistics.',
     },
   ]
 

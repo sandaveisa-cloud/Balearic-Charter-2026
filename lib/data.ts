@@ -292,10 +292,16 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
     contact: settings['section_contact_visible'] !== 'false', // Default true
   }
 
-  // Return data with safe fallbacks
-  const result = {
+  // Return data with safe fallbacks - ensure all fields are always defined
+  const result: SiteContent = {
     settings: settings || {},
-    sectionVisibility,
+    sectionVisibility: sectionVisibility || {
+      journey: true,
+      mission: true,
+      crew: true,
+      culinary: true,
+      contact: true,
+    },
     fleet: (fleetResult?.data as Fleet[]) || [],
     destinations: (destinationsResult?.data as Destination[]) || [],
     reviews: (reviewsResult?.data as Review[]) || [],
@@ -303,7 +309,7 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
     culinaryExperiences: (culinaryResult?.data as CulinaryExperience[]) || [],
     crew: (crewResult?.data as CrewMember[]) || [],
     contactPersons: (contactResult?.data as ContactPerson[]) || [],
-    journeyMilestones: (journeyResult?.data as JourneyMilestone[]) || [] || [], // Ensure it's always an array
+    journeyMilestones: (journeyResult?.data as JourneyMilestone[]) || [],
     missionPromises: (missionResult?.data as MissionPromise[]) || [],
   }
   
@@ -325,7 +331,29 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
 
 // Cached version - shorter cache for destinations (60 seconds) to allow faster updates
 // Wrap in try-catch to prevent cache errors from crashing the page
+// CRITICAL: This function MUST always return a SiteContent object, never throw or return undefined
 export async function getSiteContent(): Promise<SiteContent> {
+  // Default empty structure - always return this if anything fails
+  const emptyContent: SiteContent = {
+    settings: {},
+    sectionVisibility: {
+      journey: true,
+      mission: true,
+      crew: true,
+      culinary: true,
+      contact: true,
+    },
+    fleet: [],
+    destinations: [],
+    reviews: [],
+    stats: [],
+    culinaryExperiences: [],
+    crew: [],
+    contactPersons: [],
+    journeyMilestones: [],
+    missionPromises: [],
+  }
+
   try {
     console.log('[Data] getSiteContent called, using unstable_cache...')
     const cachedFetch = unstable_cache(
@@ -338,7 +366,8 @@ export async function getSiteContent(): Promise<SiteContent> {
     )
     const result = await cachedFetch()
     console.log('[Data] getSiteContent completed successfully')
-    return result
+    // Ensure result is not null/undefined before returning
+    return result || emptyContent
   } catch (error) {
     console.error('[Data] Error in getSiteContent (cache):', error)
     // Fallback to direct fetch if cache fails
@@ -346,29 +375,12 @@ export async function getSiteContent(): Promise<SiteContent> {
     try {
       const result = await fetchSiteContentInternal()
       console.log('[Data] Direct fetch completed successfully')
-      return result
+      // Ensure result is not null/undefined before returning
+      return result || emptyContent
     } catch (fallbackError) {
       console.error('[Data] Error in direct fetch fallback:', fallbackError)
-      // Return empty data structure to prevent page crash
-      return {
-        settings: {},
-        sectionVisibility: {
-          journey: true,
-          mission: true,
-          crew: true,
-          culinary: true,
-          contact: true,
-        },
-        fleet: [],
-        destinations: [],
-        reviews: [],
-        stats: [],
-        culinaryExperiences: [],
-        crew: [],
-        contactPersons: [],
-        journeyMilestones: [],
-        missionPromises: [],
-      }
+      // Return empty data structure to prevent page crash - NEVER throw
+      return emptyContent
     }
   }
 }
