@@ -1,0 +1,157 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
+import { useLocale } from 'next-intl'
+import { motion, useInView } from 'framer-motion'
+import { Calendar, MapPin } from 'lucide-react'
+import type { JourneyMilestone } from '@/types/database'
+import OptimizedImage from './OptimizedImage'
+import { getOptimizedImageUrl } from '@/lib/imageUtils'
+
+interface JourneySectionProps {
+  milestones: JourneyMilestone[]
+}
+
+export default function JourneySection({ milestones }: JourneySectionProps) {
+  const locale = useLocale()
+  const [visibleMilestones, setVisibleMilestones] = useState<Set<string>>(new Set())
+  const sectionRef = useRef<HTMLDivElement>(null)
+
+  // Filter active milestones and sort by year
+  const activeMilestones = milestones
+    .filter((m) => m.is_active)
+    .sort((a, b) => a.year - b.year)
+
+  if (activeMilestones.length === 0) return null
+
+  // Get localized text
+  const getTitle = (milestone: JourneyMilestone) => {
+    return milestone[`title_${locale}` as keyof JourneyMilestone] as string || milestone.title_en
+  }
+
+  const getDescription = (milestone: JourneyMilestone) => {
+    return milestone[`description_${locale}` as keyof JourneyMilestone] as string || milestone.description_en
+  }
+
+  return (
+    <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-b from-white via-[#F9FAFB] to-white relative overflow-hidden">
+      {/* Subtle parallax background */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23C5A059" fill-opacity="0.03" fill-rule="evenodd"/%3E%3C/svg%3E')] opacity-40" />
+
+      <div className="container mx-auto px-4 md:px-6 relative z-10" ref={sectionRef}>
+        {/* Section Header */}
+        <div className="text-center mb-12 md:mb-16 max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="flex justify-center mb-4"
+          >
+            <div className="p-3 bg-gradient-to-br from-[#001F3F] to-[#1B263B] rounded-full shadow-lg">
+              <Calendar className="w-8 h-8 text-[#C5A059]" />
+            </div>
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-[#001F3F] mb-4 tracking-wide"
+          >
+            Our Journey
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-lg md:text-xl text-gray-600"
+          >
+            A timeline of milestones that shaped Balearic Yacht Charters
+          </motion.p>
+        </div>
+
+        {/* Timeline */}
+        <div className="max-w-4xl mx-auto relative">
+          {/* Vertical Line */}
+          <div className="absolute left-8 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#C5A059]/30 via-[#C5A059]/50 to-[#C5A059]/30" />
+
+          {/* Milestones */}
+          <div className="space-y-12 md:space-y-16">
+            {activeMilestones.map((milestone, index) => {
+              const isEven = index % 2 === 0
+              const MilestoneCard = ({ milestone, index, isEven }: { milestone: JourneyMilestone; index: number; isEven: boolean }) => {
+                const ref = useRef<HTMLDivElement>(null)
+                const isInView = useInView(ref, { once: true, margin: '-100px' })
+
+                return (
+                  <motion.div
+                    ref={ref}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                    className={`relative flex items-start gap-6 md:gap-8 ${
+                      isEven ? 'md:flex-row' : 'md:flex-row-reverse'
+                    }`}
+                  >
+                    {/* Timeline Dot */}
+                    <div className="relative z-10 flex-shrink-0">
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-[#001F3F] to-[#1B263B] border-4 border-white shadow-lg flex items-center justify-center">
+                        <span className="text-white font-bold text-sm md:text-base">{milestone.year}</span>
+                      </div>
+                    </div>
+
+                    {/* Content Card */}
+                    <div className={`flex-1 ${isEven ? 'md:text-left' : 'md:text-right'} text-left`}>
+                      <motion.div
+                        whileHover={{ scale: 1.02, y: -4 }}
+                        transition={{ duration: 0.2 }}
+                        className="bg-white rounded-2xl p-6 md:p-8 shadow-lg border border-gray-200/50 hover:border-[#C5A059]/30 transition-all duration-300 hover:shadow-xl"
+                      >
+                        {/* Year Badge */}
+                        <div className={`flex items-center gap-2 mb-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
+                          <Calendar className="w-4 h-4 text-[#C5A059]" />
+                          <span className="text-sm font-semibold text-[#C5A059] tracking-wide">{milestone.year}</span>
+                        </div>
+
+                        {/* Image */}
+                        {milestone.image_url && (
+                          <div className="mb-4 rounded-xl overflow-hidden aspect-video">
+                            <OptimizedImage
+                              src={getOptimizedImageUrl(milestone.image_url, {
+                                width: 800,
+                                quality: 85,
+                                format: 'webp',
+                              })}
+                              alt={getTitle(milestone)}
+                              width={800}
+                              height={450}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+
+                        {/* Title */}
+                        <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#001F3F] mb-3 tracking-wide">
+                          {getTitle(milestone)}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="text-gray-600 leading-relaxed text-base md:text-lg">
+                          {getDescription(milestone)}
+                        </p>
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                )
+              }
+
+              return <MilestoneCard key={milestone.id} milestone={milestone} index={index} isEven={isEven} />
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
