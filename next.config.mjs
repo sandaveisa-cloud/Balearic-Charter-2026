@@ -15,6 +15,12 @@ const nextConfig = {
   // Redirects for legacy and locale-specific paths accessed without locale prefix
   async redirects() {
     return [
+      // Root path redirect to default locale (backup if middleware fails)
+      {
+        source: '/',
+        destination: '/en',
+        permanent: false, // Use temporary redirect to allow middleware to handle it
+      },
       // Spanish paths without locale prefix -> redirect to /es/
       {
         source: '/sobre-nosotros',

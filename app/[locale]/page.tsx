@@ -18,6 +18,11 @@ import EarlyBirdBanner from '@/components/EarlyBirdBanner'
 // No cache - always fetch fresh data (especially for destinations)
 export const revalidate = 0
 
+// Generate static params for all locales to prevent 404s
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }))
+}
+
 type Props = {
   params: Promise<{ locale: string }>
 }
