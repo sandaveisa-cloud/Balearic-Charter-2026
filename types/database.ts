@@ -121,11 +121,11 @@ export interface Destination {
   name?: string // Optional legacy field (code uses fallback: name || title)
   region: string | null
   description: string | null // Legacy field, kept for backward compatibility
-  description_en: string | null // Legacy field, kept for backward compatibility
-  description_es: string | null // Legacy field, kept for backward compatibility
-  description_de: string | null // Legacy field, kept for backward compatibility
+  description_en: string | null // English description
+  description_es: string | null // Spanish description
+  description_de: string | null // German description
   description_i18n?: Record<string, string> | null // Multi-language descriptions: { "en": "...", "es": "...", "de": "..." }
-  image_urls: string[] | null // Primary field: JSONB array of image URLs
+  image_urls: string[] // Primary field: JSONB array of image URLs
   youtube_video_url: string | null
   slug: string
   order_index: number
@@ -191,14 +191,14 @@ export interface CulinaryExperience {
   id: string
   title: string // Legacy field, kept for backward compatibility
   description: string | null // Legacy field, kept for backward compatibility
-  title_en?: string | null // English title
-  title_es?: string | null // Spanish title
-  title_de?: string | null // German title
-  description_en?: string | null // English description
-  description_es?: string | null // Spanish description
-  description_de?: string | null // German description
+  title_en: string | null // English title
+  title_es: string | null // Spanish title
+  title_de: string | null // German title
+  description_en: string | null // English description
+  description_es: string | null // Spanish description
+  description_de: string | null // German description
   image_url: string | null // Legacy field, kept for backward compatibility
-  media_urls: string[] | null // Array of images/videos (images and YouTube URLs)
+  media_urls: string[] // Array of images/videos (images and YouTube URLs)
   order_index: number
   is_active: boolean
   created_at: string

@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     // Insert with explicit column selection to avoid cache issues
     const { data, error } = await supabase
       .from('culinary_experiences')
-      .insert(insertData)
+      .insert(insertData as any)
       .select('id, title, description, title_en, title_es, title_de, description_en, description_es, description_de, image_url, media_urls, order_index, is_active, created_at, updated_at')
       .single()
 

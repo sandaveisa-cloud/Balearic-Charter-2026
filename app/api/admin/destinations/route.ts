@@ -24,11 +24,11 @@ export async function GET(request: NextRequest) {
     // Create admin client (bypasses RLS)
     const supabase = createSupabaseAdminClient()
 
-    // Fetch all destinations
-    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { data: destinations, error } = await (supabase
-      .from('destinations' as any) as any)
-      .select('*')
+    // Explicit column list to avoid PGRST204 cache errors
+    // Only select columns that exist in the database
+    const { data: destinations, error } = await supabase
+      .from('destinations')
+      .select('id, title, name, slug, region, description, description_en, description_es, description_de, description_i18n, ready_to_explore_title_en, ready_to_explore_title_es, ready_to_explore_title_de, image_urls, gallery_images, youtube_video_url, coordinates, highlights_data, seasonal_data, order_index, is_active, created_at, updated_at')
       .order('order_index', { ascending: true })
 
     if (error) {
@@ -120,12 +120,11 @@ export async function POST(request: NextRequest) {
       gallery_images_count: insertData.gallery_images?.length || 0,
     })
 
-    // Insert new destination
-    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { data, error } = await (supabase
-      .from('destinations' as any) as any)
+    // Insert new destination with explicit column selection to avoid cache issues
+    const { data, error } = await supabase
+      .from('destinations')
       .insert(insertData as any)
-      .select()
+      .select('id, title, name, slug, region, description, description_en, description_es, description_de, description_i18n, ready_to_explore_title_en, ready_to_explore_title_es, ready_to_explore_title_de, image_urls, gallery_images, youtube_video_url, coordinates, highlights_data, seasonal_data, order_index, is_active, created_at, updated_at')
       .single()
 
     if (error) {
@@ -256,13 +255,12 @@ export async function PUT(request: NextRequest) {
 
     console.log('[Admin API] 🔄 Updating destination with data:', updateData)
 
-    // Update destination
-    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { data, error } = await (supabase
-      .from('destinations' as any) as any)
+    // Update destination with explicit column selection to avoid cache issues
+    const { data, error } = await supabase
+      .from('destinations')
       .update(updateData as any)
       .eq('id', id)
-      .select()
+      .select('id, title, name, slug, region, description, description_en, description_es, description_de, description_i18n, ready_to_explore_title_en, ready_to_explore_title_es, ready_to_explore_title_de, image_urls, gallery_images, youtube_video_url, coordinates, highlights_data, seasonal_data, order_index, is_active, created_at, updated_at')
       .single()
 
     if (error) {
@@ -365,9 +363,8 @@ export async function DELETE(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
 
     // Delete destination
-    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { error } = await (supabase
-      .from('destinations' as any) as any)
+    const { error } = await supabase
+      .from('destinations')
       .delete()
       .eq('id', id)
 
