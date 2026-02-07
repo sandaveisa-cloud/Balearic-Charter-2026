@@ -7,7 +7,7 @@ import MissionSection from '@/components/MissionSection'
 import FleetSection from '@/components/FleetSection'
 import JourneySection from '@/components/JourneySection'
 import DestinationsSection from '@/components/DestinationsSection'
-import LuxuryTrustSection from '@/components/LuxuryTrustSection'
+import GuestbookSection from '@/components/GuestbookSection'
 import StatsSection from '@/components/StatsSection'
 import CulinarySection from '@/components/CulinarySection'
 import CrewSection from '@/components/CrewSection'
@@ -105,9 +105,6 @@ export default async function Home({ params }: Props) {
             {/* Destinations */}
             <DestinationsSection destinations={safeContent.destinations || []} />
             
-            {/* Reviews / Guestbook */}
-            <LuxuryTrustSection reviews={safeContent.reviews || []} />
-            
             {/* Stats Section */}
             {visibility.journey && <StatsSection stats={safeContent.stats || []} />}
             
@@ -120,6 +117,11 @@ export default async function Home({ params }: Props) {
             {visibility.crew && safeContent.crew && safeContent.crew.length > 0 && (
               <CrewSection crew={safeContent.crew} />
             )}
+            
+            {/* Guestbook Section - Interactive (with spacing before Footer) */}
+            <div className="pb-16 md:pb-20 lg:pb-24">
+              <GuestbookSection reviews={safeContent.reviews || []} />
+            </div>
           </main>
           
           {/* Floating CTA Button */}
