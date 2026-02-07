@@ -256,8 +256,8 @@ export async function PUT(request: NextRequest) {
     console.log('[Admin API] 🔄 Updating destination with data:', updateData)
 
     // Update destination with explicit column selection to avoid cache issues
-    const { data, error } = await supabase
-      .from('destinations')
+    const { data, error } = await (supabase
+      .from('destinations') as any)
       .update(updateData as any)
       .eq('id', id)
       .select('id, title, name, slug, region, description, description_en, description_es, description_de, description_i18n, ready_to_explore_title_en, ready_to_explore_title_es, ready_to_explore_title_de, image_urls, gallery_images, youtube_video_url, coordinates, highlights_data, seasonal_data, order_index, is_active, created_at, updated_at')

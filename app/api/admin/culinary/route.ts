@@ -242,8 +242,8 @@ export async function PUT(request: NextRequest) {
     })
 
     // Update with explicit column selection to avoid cache issues
-    const { data, error } = await supabase
-      .from('culinary_experiences')
+    const { data, error } = await (supabase
+      .from('culinary_experiences') as any)
       .update(updatePayload)
       .eq('id', id)
       .select('id, title, description, title_en, title_es, title_de, description_en, description_es, description_de, image_url, media_urls, order_index, is_active, created_at, updated_at')
