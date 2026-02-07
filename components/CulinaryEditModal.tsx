@@ -103,25 +103,41 @@ export default function CulinaryEditModal({
       const legacyTitle = formData.title_en || formData.title || ''
       const legacyDescription = formData.description_en || formData.description || ''
 
+      // Prepare payload with all localized fields and media_urls array
       const payload = {
         ...(culinary?.id && { id: culinary.id }),
-        // Multi-language fields
-        title_en: formData.title_en || legacyTitle,
-        title_es: formData.title_es || '',
-        title_de: formData.title_de || '',
-        description_en: formData.description_en || legacyDescription,
-        description_es: formData.description_es || '',
-        description_de: formData.description_de || '',
+        // Multi-language fields - send empty strings, API will convert to null
+        title_en: formData.title_en?.trim() || legacyTitle?.trim() || '',
+        title_es: formData.title_es?.trim() || '',
+        title_de: formData.title_de?.trim() || '',
+        description_en: formData.description_en?.trim() || legacyDescription?.trim() || '',
+        description_es: formData.description_es?.trim() || '',
+        description_de: formData.description_de?.trim() || '',
         // Legacy fields (for backward compatibility)
-        title: legacyTitle,
-        description: legacyDescription,
-        // Media gallery
-        media_urls: formData.media_urls.length > 0 ? formData.media_urls : [],
+        title: legacyTitle?.trim() || '',
+        description: legacyDescription?.trim() || '',
+        // Media gallery - ensure it's an array, filter out empty/null values
+        media_urls: Array.isArray(formData.media_urls) 
+          ? formData.media_urls.filter(url => url && url.trim().length > 0)
+          : [],
         // Legacy single image (use first image from gallery if available)
-        image_url: formData.media_urls.length > 0 ? formData.media_urls[0] : formData.image_url || null,
-        order_index: formData.order_index,
-        is_active: formData.is_active,
+        image_url: Array.isArray(formData.media_urls) && formData.media_urls.length > 0 
+          ? formData.media_urls[0] 
+          : (formData.image_url?.trim() || null),
+        order_index: parseInt(String(formData.order_index)) || 0,
+        is_active: formData.is_active !== false,
       }
+
+      console.log('[CulinaryEditModal] 📤 Sending payload:', {
+        ...payload,
+        media_urls_count: payload.media_urls?.length || 0,
+        has_title_en: !!payload.title_en,
+        has_title_es: !!payload.title_es,
+        has_title_de: !!payload.title_de,
+        has_description_en: !!payload.description_en,
+        has_description_es: !!payload.description_es,
+        has_description_de: !!payload.description_de,
+      })
 
       // Use Admin API route with SERVICE_ROLE_KEY
       const url = '/api/admin/culinary'
@@ -137,7 +153,26 @@ export default function CulinaryEditModal({
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to save culinary experience')
+        console.error('[CulinaryEditModal] ❌ API Error Response:', errorData)
+        console.error('[CulinaryEditModal] ❌ Error Code:', errorData.code)
+        console.error('[CulinaryEditModal] ❌ Error Details:', errorData.details)
+        console.error('[CulinaryEditModal] ❌ Error Hint:', errorData.hint)
+        console.error('[CulinaryEditModal] ❌ Full Error:', errorData.fullError)
+        console.error('[CulinaryEditModal] ❌ Payload sent:', JSON.stringify(payload, null, 2))
+        
+        // Build detailed error message
+        let errorMessage = errorData.error || 'Failed to save culinary experience'
+        if (errorData.details) {
+          errorMessage += `: ${errorData.details}`
+        }
+        if (errorData.hint) {
+          errorMessage += ` (Hint: ${errorData.hint})`
+        }
+        if (errorData.code) {
+          errorMessage += ` [Code: ${errorData.code}]`
+        }
+        
+        throw new Error(errorMessage)
       }
 
       setSuccess(true)

@@ -58,25 +58,28 @@ export async function POST(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
 
     // Prepare insert data with all localized fields and media_urls
+    // Handle empty strings by converting to null for optional fields
     const insertData: any = {
-      // Multi-language titles
-      title_en: body.title_en || body.title || '',
-      title_es: body.title_es || '',
-      title_de: body.title_de || '',
-      // Multi-language descriptions
-      description_en: body.description_en || body.description || '',
-      description_es: body.description_es || '',
-      description_de: body.description_de || '',
+      // Multi-language titles - convert empty strings to null for optional fields
+      title_en: (body.title_en || body.title || '').trim() || null,
+      title_es: (body.title_es || '').trim() || null,
+      title_de: (body.title_de || '').trim() || null,
+      // Multi-language descriptions - convert empty strings to null
+      description_en: (body.description_en || body.description || '').trim() || null,
+      description_es: (body.description_es || '').trim() || null,
+      description_de: (body.description_de || '').trim() || null,
       // Legacy fields (for backward compatibility)
-      title: body.title_en || body.title || '',
-      description: body.description_en || body.description || null,
-      // Media gallery - ensure it's an array
-      media_urls: Array.isArray(body.media_urls) ? body.media_urls : (body.media_urls ? [body.media_urls] : []),
+      title: (body.title_en || body.title || '').trim() || null,
+      description: (body.description_en || body.description || '').trim() || null,
+      // Media gallery - ensure it's an array, filter out empty strings
+      media_urls: Array.isArray(body.media_urls) 
+        ? body.media_urls.filter(url => url && url.trim().length > 0)
+        : (body.media_urls && body.media_urls.trim().length > 0 ? [body.media_urls] : []),
       // Legacy single image (use first from media_urls if available)
       image_url: Array.isArray(body.media_urls) && body.media_urls.length > 0 
-        ? body.media_urls[0] 
-        : (body.image_url || null),
-      order_index: body.order_index || 0,
+        ? body.media_urls[0].trim()
+        : (body.image_url && body.image_url.trim().length > 0 ? body.image_url.trim() : null),
+      order_index: parseInt(String(body.order_index)) || 0,
       is_active: body.is_active !== false,
     }
 
@@ -94,8 +97,20 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('[Admin API] ❌ Error creating culinary:', error)
+      console.error('[Admin API] ❌ Full Supabase error:', JSON.stringify(error, null, 2))
+      console.error('[Admin API] ❌ Error code:', error.code)
+      console.error('[Admin API] ❌ Error message:', error.message)
+      console.error('[Admin API] ❌ Error details:', error.details)
+      console.error('[Admin API] ❌ Error hint:', error.hint)
+      console.error('[Admin API] ❌ Payload that failed:', JSON.stringify(insertData, null, 2))
       return NextResponse.json(
-        { error: 'Failed to create culinary experience', details: error.message },
+        { 
+          error: 'Failed to create culinary experience', 
+          details: error.message || 'Unknown error',
+          code: error.code,
+          hint: error.hint,
+          fullError: error
+        },
         { status: 500 }
       )
     }
@@ -151,36 +166,67 @@ export async function PUT(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
 
     // Prepare update data with all localized fields and media_urls
-    const updatePayload: any = {
-      // Multi-language titles
-      title_en: updateData.title_en !== undefined ? updateData.title_en : undefined,
-      title_es: updateData.title_es !== undefined ? updateData.title_es : undefined,
-      title_de: updateData.title_de !== undefined ? updateData.title_de : undefined,
-      // Multi-language descriptions
-      description_en: updateData.description_en !== undefined ? updateData.description_en : undefined,
-      description_es: updateData.description_es !== undefined ? updateData.description_es : undefined,
-      description_de: updateData.description_de !== undefined ? updateData.description_de : undefined,
-      // Legacy fields (for backward compatibility)
-      title: updateData.title_en !== undefined ? updateData.title_en : (updateData.title !== undefined ? updateData.title : undefined),
-      description: updateData.description_en !== undefined ? updateData.description_en : (updateData.description !== undefined ? updateData.description : undefined),
-      // Media gallery - ensure it's an array
-      media_urls: updateData.media_urls !== undefined 
-        ? (Array.isArray(updateData.media_urls) ? updateData.media_urls : (updateData.media_urls ? [updateData.media_urls] : []))
-        : undefined,
-      // Legacy single image (use first from media_urls if available)
-      image_url: updateData.media_urls !== undefined && Array.isArray(updateData.media_urls) && updateData.media_urls.length > 0
-        ? updateData.media_urls[0]
-        : (updateData.image_url !== undefined ? updateData.image_url : undefined),
-      order_index: updateData.order_index !== undefined ? updateData.order_index : undefined,
-      is_active: updateData.is_active !== undefined ? updateData.is_active : undefined,
+    const updatePayload: any = {}
+    
+    // Multi-language titles - handle empty strings by converting to null or excluding
+    if (updateData.title_en !== undefined) {
+      updatePayload.title_en = updateData.title_en?.trim() || null
     }
-
-    // Remove undefined fields to avoid Supabase errors
-    Object.keys(updatePayload).forEach(key => {
-      if (updatePayload[key] === undefined) {
-        delete updatePayload[key]
+    if (updateData.title_es !== undefined) {
+      updatePayload.title_es = updateData.title_es?.trim() || null
+    }
+    if (updateData.title_de !== undefined) {
+      updatePayload.title_de = updateData.title_de?.trim() || null
+    }
+    
+    // Multi-language descriptions - handle empty strings
+    if (updateData.description_en !== undefined) {
+      updatePayload.description_en = updateData.description_en?.trim() || null
+    }
+    if (updateData.description_es !== undefined) {
+      updatePayload.description_es = updateData.description_es?.trim() || null
+    }
+    if (updateData.description_de !== undefined) {
+      updatePayload.description_de = updateData.description_de?.trim() || null
+    }
+    
+    // Legacy fields (for backward compatibility)
+    if (updateData.title_en !== undefined || updateData.title !== undefined) {
+      updatePayload.title = (updateData.title_en || updateData.title || '').trim() || null
+    }
+    if (updateData.description_en !== undefined || updateData.description !== undefined) {
+      updatePayload.description = (updateData.description_en || updateData.description || '').trim() || null
+    }
+    
+    // Media gallery - ensure it's an array, handle empty arrays
+    if (updateData.media_urls !== undefined) {
+      if (Array.isArray(updateData.media_urls)) {
+        updatePayload.media_urls = updateData.media_urls.filter(url => url && url.trim().length > 0)
+      } else if (updateData.media_urls) {
+        updatePayload.media_urls = [updateData.media_urls]
+      } else {
+        updatePayload.media_urls = []
       }
-    })
+    }
+    
+    // Legacy single image (use first from media_urls if available)
+    if (updateData.media_urls !== undefined) {
+      if (Array.isArray(updateData.media_urls) && updateData.media_urls.length > 0) {
+        updatePayload.image_url = updateData.media_urls[0]
+      } else {
+        updatePayload.image_url = null
+      }
+    } else if (updateData.image_url !== undefined) {
+      updatePayload.image_url = updateData.image_url?.trim() || null
+    }
+    
+    // Order index and active status
+    if (updateData.order_index !== undefined) {
+      updatePayload.order_index = parseInt(String(updateData.order_index)) || 0
+    }
+    if (updateData.is_active !== undefined) {
+      updatePayload.is_active = updateData.is_active !== false
+    }
 
     console.log('[Admin API] 📤 Updating culinary experience:', {
       id,
@@ -198,8 +244,21 @@ export async function PUT(request: NextRequest) {
 
     if (error) {
       console.error('[Admin API] ❌ Error updating culinary:', error)
+      console.error('[Admin API] ❌ Full Supabase error:', JSON.stringify(error, null, 2))
+      console.error('[Admin API] ❌ Error code:', error.code)
+      console.error('[Admin API] ❌ Error message:', error.message)
+      console.error('[Admin API] ❌ Error details:', error.details)
+      console.error('[Admin API] ❌ Error hint:', error.hint)
+      console.error('[Admin API] ❌ Payload that failed:', JSON.stringify(updatePayload, null, 2))
+      console.error('[Admin API] ❌ Original updateData:', JSON.stringify(updateData, null, 2))
       return NextResponse.json(
-        { error: 'Failed to update culinary experience', details: error.message },
+        { 
+          error: 'Failed to update culinary experience', 
+          details: error.message || 'Unknown error',
+          code: error.code,
+          hint: error.hint,
+          fullError: error
+        },
         { status: 500 }
       )
     }
