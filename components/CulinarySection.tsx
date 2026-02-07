@@ -260,38 +260,77 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
     return [...new Set(images)]
   }
 
-  // Helper function to get translation key from experience title
+  // Helper function to get translation key from experience title (normalized matching)
   const getTranslationKey = (title: string): string | null => {
-    const titleLower = title.toLowerCase()
-    if (titleLower.includes('paella')) return 'paella'
-    if (titleLower.includes('bbq') || titleLower.includes('steak')) return 'bbq'
-    if (titleLower.includes('tapas') || titleLower.includes('wine')) return 'tapas'
-    if (titleLower.includes('mediterranean')) return 'mediterranean'
-    if (titleLower.includes('sunset') || titleLower.includes('dining')) return 'sunset'
+    const titleLower = title.toLowerCase().trim()
+    if (titleLower.includes('paella') || titleLower === 'authentic paella') return 'paella'
+    if (titleLower.includes('bbq') || titleLower.includes('steak') || titleLower.includes('barbacoa')) return 'bbq'
+    if (titleLower.includes('tapas') || titleLower.includes('wine') || titleLower.includes('vino')) return 'tapas'
+    if (titleLower.includes('mediterranean') || titleLower.includes('mediterranea')) return 'mediterranean'
+    if (titleLower.includes('sunset') || titleLower.includes('atardecer') || titleLower.includes('dining') || titleLower.includes('cena')) return 'sunset'
     return null
   }
 
   // Get localized title and description for an experience
+  // NEVER show raw translation keys - always fallback to database title/description
   const getLocalizedTitle = (exp: CulinaryExperience): string => {
-    const key = getTranslationKey(exp.title)
-    if (key) {
-      const translated = t(`experiences.${key}.title`)
-      if (translated && translated !== `experiences.${key}.title`) {
-        return translated
+    // Always use database title as base (English)
+    const dbTitle = exp.title || 'Culinary Experience'
+    
+    try {
+      const key = getTranslationKey(exp.title)
+      if (key) {
+        const translationKey = `experiences.${key}.title`
+        try {
+          const translated = t(translationKey)
+          // next-intl returns the key path if translation doesn't exist
+          // Check if we got a real translation (not the key path)
+          if (translated && 
+              typeof translated === 'string' &&
+              translated !== translationKey &&
+              !translated.startsWith('experiences.') &&
+              !translated.startsWith('culinary.experiences.')) {
+            return translated
+          }
+        } catch {
+          // Translation key doesn't exist, use database title
+        }
       }
+    } catch (error) {
+      // If anything fails, use database title
     }
-    return exp.title
+    // Always fallback to database title (English)
+    return dbTitle
   }
 
   const getLocalizedDescription = (exp: CulinaryExperience): string | null => {
-    const key = getTranslationKey(exp.title)
-    if (key) {
-      const translated = t(`experiences.${key}.description`)
-      if (translated && translated !== `experiences.${key}.description`) {
-        return translated
+    // Always use database description as base (English)
+    const dbDescription = exp.description
+    
+    try {
+      const key = getTranslationKey(exp.title)
+      if (key) {
+        const translationKey = `experiences.${key}.description`
+        try {
+          const translated = t(translationKey)
+          // next-intl returns the key path if translation doesn't exist
+          // Check if we got a real translation (not the key path)
+          if (translated && 
+              typeof translated === 'string' &&
+              translated !== translationKey &&
+              !translated.startsWith('experiences.') &&
+              !translated.startsWith('culinary.experiences.')) {
+            return translated
+          }
+        } catch {
+          // Translation key doesn't exist, use database description
+        }
       }
+    } catch (error) {
+      // If anything fails, use database description
     }
-    return exp.description
+    // Always fallback to database description (English)
+    return dbDescription
   }
 
   // Filter active experiences, remove duplicates by ID, and sort by order_index

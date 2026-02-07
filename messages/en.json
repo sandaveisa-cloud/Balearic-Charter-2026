@@ -201,7 +201,29 @@
   "culinary": {
     "title": "Onboard Dining",
     "subtitle": "Exquisite tastes at sea",
-    "description": "Enjoy meals prepared with fresh local ingredients."
+    "description": "Enjoy meals prepared with fresh local ingredients.",
+    "experiences": {
+      "paella": {
+        "title": "Authentic Paella",
+        "description": "Freshly cooked onboard using local seafood and traditional saffron recipes."
+      },
+      "bbq": {
+        "title": "Premium BBQ & Steaks",
+        "description": "High-quality cuts grilled to perfection on the open deck."
+      },
+      "tapas": {
+        "title": "Local Tapas & Wines",
+        "description": "A curated selection of Spanish cheeses, hams, and regional wines."
+      },
+      "mediterranean": {
+        "title": "Mediterranean Cuisine",
+        "description": "Fresh seafood, local produce, and Mediterranean flavors curated by our experienced culinary team."
+      },
+      "sunset": {
+        "title": "Sunset Dining",
+        "description": "A romantic dining experience as the sun sets over the Mediterranean, with gourmet dishes and fine wines."
+      }
+    }
   },
   "stats": {
     "title": "Our Journey in Numbers",
@@ -294,7 +316,7 @@
   },
   "vesselHistory": {
     "title": "Vessel Legacy & Milestones",
-    "readHistory": "Read History",
+    "readHistory": "Explore our Story",
     "hideHistory": "Hide History",
     "milestones": "Milestones",
     "expandHistory": "View History",

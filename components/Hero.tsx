@@ -50,8 +50,8 @@ export default function Hero({ settings }: HeroProps) {
   const embedUrl = useMemo(() => buildYouTubeEmbedUrl(videoId), [videoId])
 
   // Professional yacht/Mediterranean landscape background - no people, clean wide shot
-  // Using a yacht at sea or Mediterranean landscape image
-  const bgImage = settings.hero_image_url || '/images/simona-ibiza-port.jpg'
+  // High-res panoramic view of Balearic coastline or yacht at sea
+  const bgImage = settings.hero_image_url || '/images/formentera-beach.jpg'
 
   useEffect(() => {
     setIsMounted(true)
