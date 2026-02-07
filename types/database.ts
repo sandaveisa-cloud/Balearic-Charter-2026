@@ -151,6 +151,12 @@ export interface Review {
   is_approved: boolean
   created_at: string
   updated_at: string
+  // Optional fields for enhanced testimonials
+  rental_date?: string | null // Date of the yacht rental/charter
+  published_date?: string | null // Date when review was published
+  category?: string | null // Category like 'With Captain', 'Catamarans', etc.
+  original_language?: string | null // Language code of the original review (e.g., 'lv', 'es', 'en')
+  translated_text?: string | null // Pre-translated English version of the review
 }
 
 export interface Stat {

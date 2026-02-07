@@ -195,6 +195,20 @@
     "title": "Lo que dicen nuestros huéspedes",
     "subtitle": "Escuche a quienes han vivido el lujo de nuestros servicios"
   },
+  "testimonials": {
+    "title": "Testimonios de Clientes",
+    "subtitle": "Experiencias reales de nuestros valiosos huéspedes",
+    "filterByCategory": "Filtrar por Categoría",
+    "noReviews": "No hay reseñas disponibles",
+    "showingResults": "Mostrando {count} de {total} reseñas",
+    "translateToEnglish": "Traducir al Inglés",
+    "showOriginal": "Mostrar Original",
+    "translating": "Traduciendo...",
+    "verifiedReview": "Reseña Verificada",
+    "rentalDate": "Fecha de Alquiler",
+    "publishedDate": "Publicado",
+    "reviewDate": "Fecha de Reseña"
+  },
   "about": {
     "title": "Nosotros",
     "subtitle": "Pasión por el mar",

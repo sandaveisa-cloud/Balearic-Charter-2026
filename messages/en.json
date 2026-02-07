@@ -195,6 +195,20 @@
     "title": "What Our Guests Say",
     "subtitle": "Hear from those who have experienced the luxury of our charters"
   },
+  "testimonials": {
+    "title": "Customer Testimonials",
+    "subtitle": "Real experiences from our valued guests",
+    "filterByCategory": "Filter by Category",
+    "noReviews": "No reviews available",
+    "showingResults": "Showing {count} of {total} reviews",
+    "translateToEnglish": "Translate to English",
+    "showOriginal": "Show Original",
+    "translating": "Translating...",
+    "verifiedReview": "Verified Review",
+    "rentalDate": "Rental Date",
+    "publishedDate": "Published",
+    "reviewDate": "Review Date"
+  },
   "about": {
     "title": "About Us",
     "subtitle": "Passion for the sea",

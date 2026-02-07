@@ -195,6 +195,20 @@
     "title": "Was unsere Gäste sagen",
     "subtitle": "Hören Sie von denen, die unseren Luxus erlebt haben"
   },
+  "testimonials": {
+    "title": "Kundenbewertungen",
+    "subtitle": "Echte Erfahrungen unserer geschätzten Gäste",
+    "filterByCategory": "Nach Kategorie filtern",
+    "noReviews": "Keine Bewertungen verfügbar",
+    "showingResults": "Zeige {count} von {total} Bewertungen",
+    "translateToEnglish": "Ins Englische übersetzen",
+    "showOriginal": "Original anzeigen",
+    "translating": "Übersetze...",
+    "verifiedReview": "Verifizierte Bewertung",
+    "rentalDate": "Mietdatum",
+    "publishedDate": "Veröffentlicht",
+    "reviewDate": "Bewertungsdatum"
+  },
   "about": {
     "title": "Über uns",
     "subtitle": "Leidenschaft für das Meer",
