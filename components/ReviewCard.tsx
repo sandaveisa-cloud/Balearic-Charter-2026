@@ -83,7 +83,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
   }
 
   const profileImageUrl = review.profile_image_url
-    ? getOptimizedImageUrl(review.profile_image_url, {
+    ? getOptimizedImageUrl((review.profile_image_url as string), {
         width: 80,
         height: 80,
         quality: 80,

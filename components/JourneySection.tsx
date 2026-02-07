@@ -119,7 +119,7 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
                         {milestone.image_url && (
                           <div className="mb-4 rounded-xl overflow-hidden aspect-video">
                             <OptimizedImage
-                              src={getOptimizedImageUrl(milestone.image_url || '', {
+                              src={getOptimizedImageUrl((milestone.image_url as string) || '', {
                                 width: 800,
                                 quality: 85,
                                 format: 'webp',

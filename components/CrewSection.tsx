@@ -35,11 +35,13 @@ export default function CrewSection({ crew }: CrewSectionProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
           {activeCrew.map((member) => {
-            const imageUrl = getOptimizedImageUrl(member.image_url, {
-              width: 800,
-              quality: 80,
-              format: 'webp',
-            })
+            const imageUrl = member.image_url
+              ? getOptimizedImageUrl((member.image_url as string), {
+                  width: 800,
+                  quality: 80,
+                  format: 'webp',
+                })
+              : null
 
             return (
               <div key={member.id} className="text-center">
