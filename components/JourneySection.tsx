@@ -18,20 +18,39 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
   const [visibleMilestones, setVisibleMilestones] = useState<Set<string>>(new Set())
   const sectionRef = useRef<HTMLDivElement>(null)
 
+  // Debug logging
+  useEffect(() => {
+    console.log('[JourneySection] Received milestones:', milestones?.length || 0)
+    if (milestones && milestones.length > 0) {
+      console.log('[JourneySection] Sample milestone:', {
+        id: milestones[0].id,
+        year: milestones[0].year,
+        order_index: milestones[0].order_index,
+        title_en: milestones[0].title_en,
+        is_active: milestones[0].is_active
+      })
+    }
+  }, [milestones])
+
   // Filter active milestones and sort by order_index first, then by year
-  const activeMilestones = milestones
-    .filter((m) => m.is_active)
+  // IMPORTANT: Include milestones with order_index = 0
+  const activeMilestones = (milestones || [])
+    .filter((m) => m.is_active !== false) // Include all where is_active is not explicitly false
     .sort((a, b) => {
-      // First sort by order_index
-      if (a.order_index !== b.order_index) {
-        return (a.order_index || 0) - (b.order_index || 0)
+      // First sort by order_index (including 0)
+      const orderA = a.order_index ?? 0
+      const orderB = b.order_index ?? 0
+      if (orderA !== orderB) {
+        return orderA - orderB
       }
       // If order_index is the same, sort by year
       return a.year - b.year
     })
 
-  // Don't hide section if empty - show empty state instead
-  // if (activeMilestones.length === 0) return null
+  console.log('[JourneySection] Active milestones after filtering:', activeMilestones.length)
+
+  // Always show section - don't hide even if empty
+  // This ensures the section is visible for debugging
 
   // Get localized text
   const getTitle = (milestone: JourneyMilestone) => {
@@ -42,15 +61,31 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
     return milestone[`description_${locale}` as keyof JourneyMilestone] as string || milestone.description_en
   }
 
-  // Check if there's a video URL (could be in image_url field if it's a video file)
-  const videoUrl = activeMilestones.length > 0 && activeMilestones[0].image_url 
-    ? (activeMilestones[0].image_url.includes('.mp4') || 
-       activeMilestones[0].image_url.includes('.webm') || 
-       activeMilestones[0].image_url.includes('.mov') ||
-       activeMilestones[0].image_url.includes('video'))
-      ? activeMilestones[0].image_url 
-      : null
-    : null
+  // Check if there's a background video URL
+  // Look for video in any milestone's image_url field (if it's a video file)
+  // Or check if there's a dedicated video_url field (if added to schema)
+  const findVideoUrl = () => {
+    // First, check all milestones for video URLs
+    for (const milestone of activeMilestones) {
+      if (milestone.image_url) {
+        const url = milestone.image_url.toLowerCase()
+        if (url.includes('.mp4') || url.includes('.webm') || url.includes('.mov') || url.includes('video')) {
+          console.log('[JourneySection] Found video URL:', milestone.image_url)
+          return milestone.image_url
+        }
+      }
+      // Check for video_url field if it exists in the schema
+      if ((milestone as any).video_url) {
+        console.log('[JourneySection] Found video_url field:', (milestone as any).video_url)
+        return (milestone as any).video_url
+      }
+    }
+    return null
+  }
+  
+  const videoUrl = findVideoUrl()
+  
+  console.log('[JourneySection] Background video URL:', videoUrl || 'none')
 
   return (
     <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-b from-white via-[#F9FAFB] to-white relative overflow-hidden">
@@ -63,9 +98,20 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
           playsInline
           className="absolute inset-0 w-full h-full object-cover opacity-20 z-0"
           style={{ pointerEvents: 'none' }}
+          onError={(e) => {
+            console.error('[JourneySection] Video load error:', e)
+            console.error('[JourneySection] Video URL that failed:', videoUrl)
+          }}
+          onLoadedData={() => {
+            console.log('[JourneySection] ✅ Video loaded successfully:', videoUrl)
+          }}
+          onCanPlay={() => {
+            console.log('[JourneySection] ✅ Video can play')
+          }}
         >
           <source src={videoUrl} type="video/mp4" />
           <source src={videoUrl} type="video/webm" />
+          <source src={videoUrl} type="video/quicktime" />
           Your browser does not support the video tag.
         </video>
       )}

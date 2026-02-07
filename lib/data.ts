@@ -204,15 +204,43 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
 
   // Fetch Journey Milestones
   try {
+    console.log('[Data] Fetching journey_milestones...')
     journeyResult = await (supabase as any)
       .from('journey_milestones')
       .select('*')
       .eq('is_active', true)
-      .order('order_index', { ascending: true }) // Sort by order_index first
+      // NO filter on order_index - include all active milestones including order_index 0
+      .order('order_index', { ascending: true, nullsFirst: false }) // Sort by order_index first (includes 0)
       .order('year', { ascending: true }) // Then by year
     
     if (journeyResult?.error) {
-      console.error('[Data] Error fetching journey_milestones:', journeyResult.error)
+      console.error('[Data] ❌ Error fetching journey_milestones:', journeyResult.error)
+      journeyResult = { data: [], error: journeyResult.error }
+    } else {
+      const milestoneCount = journeyResult?.data?.length || 0
+      console.log('[Data] ✅ journey_milestones fetched:', milestoneCount, 'items')
+      if (journeyResult?.data && journeyResult.data.length > 0) {
+        console.log('[Data] Sample milestone:', {
+          id: journeyResult.data[0].id,
+          year: journeyResult.data[0].year,
+          order_index: journeyResult.data[0].order_index,
+          title_en: journeyResult.data[0].title_en?.substring(0, 50),
+          is_active: journeyResult.data[0].is_active,
+          hasImage: !!journeyResult.data[0].image_url
+        })
+        // Log all milestones for debugging
+        journeyResult.data.forEach((m: JourneyMilestone, idx: number) => {
+          console.log(`[Data] Milestone ${idx + 1}:`, {
+            id: m.id,
+            year: m.year,
+            order_index: m.order_index,
+            title_en: m.title_en?.substring(0, 30),
+            is_active: m.is_active
+          })
+        })
+      } else {
+        console.warn('[Data] ⚠️ No milestones returned from database (check is_active and RLS policies)')
+      }
     }
   } catch (error) {
     console.error('[Data] Exception fetching journey_milestones:', error)
@@ -275,7 +303,7 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
     culinaryExperiences: (culinaryResult?.data as CulinaryExperience[]) || [],
     crew: (crewResult?.data as CrewMember[]) || [],
     contactPersons: (contactResult?.data as ContactPerson[]) || [],
-    journeyMilestones: (journeyResult?.data as JourneyMilestone[]) || [],
+    journeyMilestones: (journeyResult?.data as JourneyMilestone[]) || [] || [], // Ensure it's always an array
     missionPromises: (missionResult?.data as MissionPromise[]) || [],
   }
   
