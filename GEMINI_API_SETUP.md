@@ -83,7 +83,7 @@ npm run dev
 
 - Google Gemini API has a generous free tier
 - Check your usage and limits at [Google AI Studio](https://aistudio.google.com/)
-- The AI Assistant uses the `gemini-1.5-flash` model for fast responses
+- The AI Assistant uses the `gemini-2.0-flash` model for fast responses (latest stable version)
 
 ## Support
 

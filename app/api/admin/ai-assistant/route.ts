@@ -61,9 +61,9 @@ export async function POST(req: Request) {
       }, { status: 500 });
     }
 
-    // Get model - using gemini-1.5-flash for speed and efficiency
+    // Get model - using gemini-2.0-flash for latest stable version and speed
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
     });
 
     // System instruction for luxury yacht charter content
@@ -105,7 +105,7 @@ export async function POST(req: Request) {
         errorMessage = 'API access forbidden. Please check your API key permissions.';
         errorCode = 'FORBIDDEN';
       } else if (apiError?.status === 404) {
-        errorMessage = 'Model not found. The gemini-1.5-flash model may not be available for your API version.';
+        errorMessage = 'Model not found. The gemini-2.0-flash model may not be available for your API version. Try gemini-1.5-flash or gemini-pro as alternatives.';
         errorCode = 'MODEL_NOT_FOUND';
       } else if (apiError?.status === 429) {
         errorMessage = 'Rate limit exceeded. Please try again later.';
