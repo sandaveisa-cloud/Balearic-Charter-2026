@@ -165,11 +165,11 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
         transition={{ duration: 0.4, delay: index * 0.05 }}
         className="h-full"
       >
-        {/* Glassmorphism Card - Compact (15% smaller via reduced padding/fonts) */}
+        {/* Glassmorphism Card - Compact with max-width for 3-4 columns */}
         <motion.div
           whileHover={{ scale: 1.01, y: -2 }}
           transition={{ duration: 0.2 }}
-          className="bg-white/70 backdrop-blur-md rounded-xl p-4 md:p-5 shadow-md border border-gray-200/50 hover:border-luxury-gold/30 transition-all duration-300 hover:shadow-lg relative overflow-hidden h-full flex flex-col"
+          className="bg-white/70 backdrop-blur-md rounded-xl p-4 md:p-5 shadow-md border border-gray-200/50 hover:border-luxury-gold/30 transition-all duration-300 hover:shadow-lg relative overflow-hidden h-full flex flex-col max-w-full"
         >
           {/* Decorative gradient overlay */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-luxury-gold/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -211,7 +211,7 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
             </div>
           )}
 
-          {/* Review Text - Compact, 3 lines max */}
+          {/* Review Text - Light Serif Font */}
           <div className="mb-3 flex-grow">
             <AnimatePresence mode="wait">
               <motion.p
@@ -220,7 +220,7 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className={`font-serif italic text-gray-700 leading-tight text-sm md:text-base ${
+                className={`font-serif italic text-gray-700 leading-relaxed text-sm md:text-base font-light ${
                   shouldTruncate && !isExpanded ? 'line-clamp-3' : ''
                 }`}
               >
@@ -278,18 +278,18 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
             </div>
           </div>
 
-          {/* Footer with Dates - Compact */}
+          {/* Footer with Dates - Spaced Sans-Serif */}
           <div className="flex flex-wrap items-center justify-between gap-2 mt-auto">
             {review.rental_date && (
-              <div className="flex items-center gap-1">
-                <span className="text-[8px] text-gray-400">Rental:</span>
-                <span className="text-[8px] text-gray-500">{formatRentalDate(review.rental_date)}</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[8px] text-gray-400 font-sans tracking-wider uppercase">RENTAL DATE</span>
+                <span className="text-[8px] text-gray-500 font-sans tracking-wide">{formatRentalDate(review.rental_date)}</span>
               </div>
             )}
             {(review.published_date || review.review_date) && (
-              <div className="flex items-center gap-1">
-                <span className="text-[8px] text-gray-400">Pub:</span>
-                <span className="text-[8px] text-gray-500">{formatDate(review.published_date || review.review_date)}</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[8px] text-gray-400 font-sans tracking-wider uppercase">PUBLISHED</span>
+                <span className="text-[8px] text-gray-500 font-sans tracking-wide">{formatDate(review.published_date || review.review_date)}</span>
               </div>
             )}
           </div>
@@ -370,10 +370,10 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
           </Swiper>
         </div>
 
-        {/* Desktop: 3-Column Masonry Grid - Tight layout */}
+        {/* Desktop: 3-4 Column Masonry Grid - Compact layout */}
         <div className="hidden md:block relative">
           <div className="relative">
-            <div className="columns-1 md:columns-2 lg:columns-3 gap-4 md:gap-5 space-y-4 md:space-y-5">
+            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-4 md:gap-5 space-y-4 md:space-y-5">
               <AnimatePresence mode="popLayout">
                 {displayedReviews.map((review, index) => (
                   <div key={review.id || index} className="break-inside-avoid mb-4 md:mb-5">
@@ -383,30 +383,48 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
               </AnimatePresence>
             </div>
             
-            {/* Fade-out gradient overlay (only when showing first 2 rows) */}
+            {/* Fade-out gradient overlay with mask effect (only when showing first 2 rows) */}
             {!showAll && hasMore && (
-              <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-none z-10" />
+              <>
+                {/* CSS Mask Image for smooth fade */}
+                <div 
+                  className="absolute bottom-0 left-0 right-0 h-48 pointer-events-none z-10"
+                  style={{
+                    maskImage: 'linear-gradient(to top, black 0%, black 30%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to top, black 0%, black 30%, transparent 100%)',
+                    background: 'linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 40%, transparent 100%)'
+                  }}
+                />
+                {/* Additional gradient overlay for depth */}
+                <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/60 to-transparent pointer-events-none z-10" />
+              </>
             )}
           </div>
         </div>
 
-        {/* Read All Experiences Button - Minimalist */}
+        {/* Read All Experiences Button - Luxury Link Style */}
         {hasMore && !showAll && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-center mt-8 md:mt-10 relative z-10"
+            className="text-center mt-10 md:mt-12 relative z-20"
           >
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ y: -2 }}
+              whileTap={{ y: 0 }}
               onClick={() => {
                 setShowAll(true)
               }}
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-white/90 backdrop-blur-sm text-luxury-blue text-sm font-medium rounded-full border border-gray-200/50 shadow-sm hover:shadow-md hover:border-luxury-gold/30 transition-all duration-300"
+              className="group relative inline-block text-[#001F3F] text-sm md:text-base font-medium tracking-wide transition-all duration-300 cursor-pointer"
             >
-              Read All {curatedReviews.length} Experiences
+              <span className="relative z-10 inline-block">Discover All Guest Stories</span>
+              <motion.div
+                initial={{ width: '100%', scaleX: 1 }}
+                whileHover={{ width: '110%', scaleX: 1.1 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                className="absolute bottom-0 left-0 h-[1.5px] bg-[#C5A059] origin-left"
+              />
             </motion.button>
           </motion.div>
         )}
@@ -420,20 +438,20 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
         )}
       </div>
 
-      {/* Back to Top Button - Floating Circle */}
+      {/* Back to Top Button - Luxury Thin Gold Circle */}
       <AnimatePresence>
         {showBackToTop && (
           <motion.button
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 0.6, scale: 1 }}
+            animate={{ opacity: 0.7, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
-            whileHover={{ opacity: 1, scale: 1.1 }}
+            whileHover={{ opacity: 1, scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={scrollToTop}
-            className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/50 shadow-lg hover:shadow-xl hover:border-luxury-gold/30 flex items-center justify-center transition-all duration-300"
+            className="fixed bottom-8 right-8 z-50 w-10 h-10 rounded-full bg-white/40 backdrop-blur-sm border border-[#C5A059]/60 shadow-sm hover:shadow-md hover:border-[#C5A059] flex items-center justify-center transition-all duration-300"
             aria-label="Back to top"
           >
-            <ChevronUp className="w-5 h-5 text-luxury-blue" />
+            <ChevronUp className="w-4 h-4 text-[#C5A059] stroke-[1.5]" />
           </motion.button>
         )}
       </AnimatePresence>
