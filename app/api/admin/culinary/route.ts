@@ -19,10 +19,11 @@ export async function GET(request: NextRequest) {
 
     const supabase = createSupabaseAdminClient()
 
-    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { data: culinary, error } = await (supabase
-      .from('culinary_experiences' as any) as any)
-      .select('*')
+    // Explicit column list to avoid PGRST204 cache errors
+    // Only select columns that exist in the database
+    const { data: culinary, error } = await supabase
+      .from('culinary_experiences')
+      .select('id, title, description, title_en, title_es, title_de, description_en, description_es, description_de, image_url, media_urls, order_index, is_active, created_at, updated_at')
       .order('order_index', { ascending: true })
 
     if (error) {
@@ -57,28 +58,29 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const supabase = createSupabaseAdminClient()
 
-    // Prepare insert data with all localized fields and media_urls
+    // Prepare insert data - ONLY fields that exist in the database
+    // Schema: title_en, title_es, title_de, description_en, description_es, description_de, media_urls
     // Handle empty strings by converting to null for optional fields
-    const insertData: any = {
-      // Multi-language titles - convert empty strings to null for optional fields
+    const insertData = {
+      // Multi-language titles - exact column names
       title_en: (body.title_en || body.title || '').trim() || null,
       title_es: (body.title_es || '').trim() || null,
       title_de: (body.title_de || '').trim() || null,
-      // Multi-language descriptions - convert empty strings to null
+      // Multi-language descriptions - exact column names
       description_en: (body.description_en || body.description || '').trim() || null,
       description_es: (body.description_es || '').trim() || null,
       description_de: (body.description_de || '').trim() || null,
       // Legacy fields (for backward compatibility)
       title: (body.title_en || body.title || '').trim() || null,
       description: (body.description_en || body.description || '').trim() || null,
-      // Media gallery - ensure it's an array, filter out empty strings
+      // Media gallery - ensure it's an array (JSONB in database)
       media_urls: Array.isArray(body.media_urls) 
         ? body.media_urls.filter((url: string) => url && url.trim().length > 0)
-        : (body.media_urls && body.media_urls.trim().length > 0 ? [body.media_urls] : []),
+        : (body.media_urls && typeof body.media_urls === 'string' && body.media_urls.trim().length > 0 ? [body.media_urls] : []),
       // Legacy single image (use first from media_urls if available)
       image_url: Array.isArray(body.media_urls) && body.media_urls.length > 0 
         ? body.media_urls[0].trim()
-        : (body.image_url && body.image_url.trim().length > 0 ? body.image_url.trim() : null),
+        : (body.image_url && typeof body.image_url === 'string' && body.image_url.trim().length > 0 ? body.image_url.trim() : null),
       order_index: parseInt(String(body.order_index)) || 0,
       is_active: body.is_active !== false,
     }
@@ -88,11 +90,11 @@ export async function POST(request: NextRequest) {
       media_urls_count: insertData.media_urls?.length || 0,
     })
 
-    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { data, error } = await (supabase
-      .from('culinary_experiences' as any) as any)
-      .insert(insertData as any)
-      .select()
+    // Insert with explicit column selection to avoid cache issues
+    const { data, error } = await supabase
+      .from('culinary_experiences')
+      .insert(insertData)
+      .select('id, title, description, title_en, title_es, title_de, description_en, description_es, description_de, image_url, media_urls, order_index, is_active, created_at, updated_at')
       .single()
 
     if (error) {
@@ -165,45 +167,50 @@ export async function PUT(request: NextRequest) {
 
     const supabase = createSupabaseAdminClient()
 
-    // Prepare update data with all localized fields and media_urls
-    const updatePayload: any = {}
+    // Prepare update data - ONLY fields that exist in the database
+    // Schema: title_en, title_es, title_de, description_en, description_es, description_de, media_urls
+    const updatePayload: Record<string, any> = {}
     
-    // Multi-language titles - handle empty strings by converting to null or excluding
+    // Multi-language titles - exact column names
     if (updateData.title_en !== undefined) {
-      updatePayload.title_en = updateData.title_en?.trim() || null
+      updatePayload.title_en = typeof updateData.title_en === 'string' ? updateData.title_en.trim() || null : null
     }
     if (updateData.title_es !== undefined) {
-      updatePayload.title_es = updateData.title_es?.trim() || null
+      updatePayload.title_es = typeof updateData.title_es === 'string' ? updateData.title_es.trim() || null : null
     }
     if (updateData.title_de !== undefined) {
-      updatePayload.title_de = updateData.title_de?.trim() || null
+      updatePayload.title_de = typeof updateData.title_de === 'string' ? updateData.title_de.trim() || null : null
     }
     
-    // Multi-language descriptions - handle empty strings
+    // Multi-language descriptions - exact column names
     if (updateData.description_en !== undefined) {
-      updatePayload.description_en = updateData.description_en?.trim() || null
+      updatePayload.description_en = typeof updateData.description_en === 'string' ? updateData.description_en.trim() || null : null
     }
     if (updateData.description_es !== undefined) {
-      updatePayload.description_es = updateData.description_es?.trim() || null
+      updatePayload.description_es = typeof updateData.description_es === 'string' ? updateData.description_es.trim() || null : null
     }
     if (updateData.description_de !== undefined) {
-      updatePayload.description_de = updateData.description_de?.trim() || null
+      updatePayload.description_de = typeof updateData.description_de === 'string' ? updateData.description_de.trim() || null : null
     }
     
     // Legacy fields (for backward compatibility)
     if (updateData.title_en !== undefined || updateData.title !== undefined) {
-      updatePayload.title = (updateData.title_en || updateData.title || '').trim() || null
+      updatePayload.title = typeof (updateData.title_en || updateData.title) === 'string' 
+        ? (updateData.title_en || updateData.title || '').trim() || null 
+        : null
     }
     if (updateData.description_en !== undefined || updateData.description !== undefined) {
-      updatePayload.description = (updateData.description_en || updateData.description || '').trim() || null
+      updatePayload.description = typeof (updateData.description_en || updateData.description) === 'string'
+        ? (updateData.description_en || updateData.description || '').trim() || null
+        : null
     }
     
-    // Media gallery - ensure it's an array, handle empty arrays
+    // Media gallery - ensure it's an array (JSONB in database)
     if (updateData.media_urls !== undefined) {
       if (Array.isArray(updateData.media_urls)) {
-        updatePayload.media_urls = updateData.media_urls.filter((url: string) => url && url.trim().length > 0)
-      } else if (updateData.media_urls) {
-        updatePayload.media_urls = [updateData.media_urls]
+        updatePayload.media_urls = updateData.media_urls.filter((url: string) => url && typeof url === 'string' && url.trim().length > 0)
+      } else if (updateData.media_urls && typeof updateData.media_urls === 'string') {
+        updatePayload.media_urls = updateData.media_urls.trim() ? [updateData.media_urls] : []
       } else {
         updatePayload.media_urls = []
       }
@@ -212,12 +219,12 @@ export async function PUT(request: NextRequest) {
     // Legacy single image (use first from media_urls if available)
     if (updateData.media_urls !== undefined) {
       if (Array.isArray(updateData.media_urls) && updateData.media_urls.length > 0) {
-        updatePayload.image_url = updateData.media_urls[0]
+        updatePayload.image_url = typeof updateData.media_urls[0] === 'string' ? updateData.media_urls[0].trim() : null
       } else {
         updatePayload.image_url = null
       }
     } else if (updateData.image_url !== undefined) {
-      updatePayload.image_url = updateData.image_url?.trim() || null
+      updatePayload.image_url = typeof updateData.image_url === 'string' ? updateData.image_url.trim() || null : null
     }
     
     // Order index and active status
@@ -234,12 +241,12 @@ export async function PUT(request: NextRequest) {
       media_urls_count: updatePayload.media_urls?.length || 0,
     })
 
-    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { data, error } = await (supabase
-      .from('culinary_experiences' as any) as any)
-      .update(updatePayload as any)
+    // Update with explicit column selection to avoid cache issues
+    const { data, error } = await supabase
+      .from('culinary_experiences')
+      .update(updatePayload)
       .eq('id', id)
-      .select()
+      .select('id, title, description, title_en, title_es, title_de, description_en, description_es, description_de, image_url, media_urls, order_index, is_active, created_at, updated_at')
       .single()
 
     if (error) {
@@ -313,9 +320,8 @@ export async function DELETE(request: NextRequest) {
 
     const supabase = createSupabaseAdminClient()
 
-    // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
-    const { error } = await (supabase
-      .from('culinary_experiences' as any) as any)
+    const { error } = await supabase
+      .from('culinary_experiences')
       .delete()
       .eq('id', id)
 
