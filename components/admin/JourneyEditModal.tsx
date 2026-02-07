@@ -25,6 +25,7 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
     image_url: '',
     order_index: 0,
     is_active: true,
+    yacht_id: null as string | null, // Link to specific yacht
   })
   const [saving, setSaving] = useState(false)
   const [showToast, setShowToast] = useState(false)
@@ -46,8 +47,11 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
         image_url: milestone.image_url || '',
         order_index: milestone.order_index || 0,
         is_active: milestone.is_active ?? true,
+        yacht_id: (milestone as any).yacht_id || null,
       })
     } else {
+      // For new milestones, use yacht_id from milestone prop if provided
+      const initialYachtId = milestone && (milestone as any).yacht_id ? (milestone as any).yacht_id : null
       setFormData({
         year: new Date().getFullYear(),
         title_en: '',
@@ -59,6 +63,7 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
         image_url: '',
         order_index: 0,
         is_active: true,
+        yacht_id: initialYachtId,
       })
     }
   }, [milestone, isOpen])
@@ -86,18 +91,25 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
       }
 
       // Prepare payload - ensure all numeric fields are numbers
-      const payload = milestone 
+      const payload: any = milestone 
         ? { 
             ...formData, 
             id: milestone.id,
             year: yearAsNumber, // Ensure year is NUMBER
-            order_index: parseInt(String(formData.order_index)) || 0 // Ensure order_index is NUMBER
+            order_index: parseInt(String(formData.order_index)) || 0, // Ensure order_index is NUMBER
+            yacht_id: formData.yacht_id || null, // Include yacht_id if provided
           }
         : {
             ...formData,
             year: yearAsNumber, // Ensure year is NUMBER
-            order_index: parseInt(String(formData.order_index)) || 0 // Ensure order_index is NUMBER
+            order_index: parseInt(String(formData.order_index)) || 0, // Ensure order_index is NUMBER
+            yacht_id: formData.yacht_id || null, // Include yacht_id if provided
           }
+      
+      // Remove yacht_id if it's null/empty to avoid database issues
+      if (!payload.yacht_id) {
+        delete payload.yacht_id
+      }
 
       // Log payload for debugging - show exact structure and types
       console.log('[JourneyEditModal] 📤 Sending payload:', {

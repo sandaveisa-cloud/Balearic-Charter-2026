@@ -1,17 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
+import { X, Loader2, CheckCircle2, AlertCircle, Plus, Trash2 } from 'lucide-react'
 import ImageUpload from '@/components/ImageUpload'
-
-interface CulinaryExperience {
-  id: string
-  title: string
-  description: string | null
-  image_url: string | null
-  order_index: number
-  is_active: boolean
-}
+import type { CulinaryExperience } from '@/types/database'
 
 interface CulinaryEditModalProps {
   culinary: CulinaryExperience | null
@@ -27,8 +19,20 @@ export default function CulinaryEditModal({
   onSave,
 }: CulinaryEditModalProps) {
   const [formData, setFormData] = useState({
+    // Multi-language titles
+    title_en: '',
+    title_es: '',
+    title_de: '',
+    // Multi-language descriptions
+    description_en: '',
+    description_es: '',
+    description_de: '',
+    // Legacy fields (for backward compatibility)
     title: '',
     description: '',
+    // Media gallery (array of image URLs)
+    media_urls: [] as string[],
+    // Legacy single image (for backward compatibility)
     image_url: '',
     order_index: 0,
     is_active: true,
@@ -36,12 +40,21 @@ export default function CulinaryEditModal({
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
 
   useEffect(() => {
     if (culinary) {
       setFormData({
+        title_en: (culinary as any).title_en || culinary.title || '',
+        title_es: (culinary as any).title_es || '',
+        title_de: (culinary as any).title_de || '',
+        description_en: (culinary as any).description_en || culinary.description || '',
+        description_es: (culinary as any).description_es || '',
+        description_de: (culinary as any).description_de || '',
         title: culinary.title || '',
         description: culinary.description || '',
+        media_urls: Array.isArray(culinary.media_urls) ? culinary.media_urls : 
+                    (culinary.image_url ? [culinary.image_url] : []),
         image_url: culinary.image_url || '',
         order_index: culinary.order_index || 0,
         is_active: culinary.is_active !== false,
@@ -49,8 +62,15 @@ export default function CulinaryEditModal({
     } else {
       // Reset form for new culinary experience
       setFormData({
+        title_en: '',
+        title_es: '',
+        title_de: '',
+        description_en: '',
+        description_es: '',
+        description_de: '',
         title: '',
         description: '',
+        media_urls: [],
         image_url: '',
         order_index: 0,
         is_active: true,
@@ -60,6 +80,17 @@ export default function CulinaryEditModal({
     setError(null)
   }, [culinary, isOpen])
 
+  const handleAddImage = (url: string) => {
+    if (url && !formData.media_urls.includes(url)) {
+      setFormData({ ...formData, media_urls: [...formData.media_urls, url] })
+    }
+  }
+
+  const handleRemoveImage = (index: number) => {
+    const newMediaUrls = formData.media_urls.filter((_, i) => i !== index)
+    setFormData({ ...formData, media_urls: newMediaUrls })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
@@ -67,11 +98,26 @@ export default function CulinaryEditModal({
     setSuccess(false)
 
     try {
+      // Use English title as fallback for legacy title field
+      const legacyTitle = formData.title_en || formData.title || ''
+      const legacyDescription = formData.description_en || formData.description || ''
+
       const payload = {
         ...(culinary?.id && { id: culinary.id }),
-        title: formData.title,
-        description: formData.description || null,
-        image_url: formData.image_url || null,
+        // Multi-language fields
+        title_en: formData.title_en || legacyTitle,
+        title_es: formData.title_es || '',
+        title_de: formData.title_de || '',
+        description_en: formData.description_en || legacyDescription,
+        description_es: formData.description_es || '',
+        description_de: formData.description_de || '',
+        // Legacy fields (for backward compatibility)
+        title: legacyTitle,
+        description: legacyDescription,
+        // Media gallery
+        media_urls: formData.media_urls.length > 0 ? formData.media_urls : [],
+        // Legacy single image (use first image from gallery if available)
+        image_url: formData.media_urls.length > 0 ? formData.media_urls[0] : formData.image_url || null,
         order_index: formData.order_index,
         is_active: formData.is_active,
       }
@@ -147,19 +193,6 @@ export default function CulinaryEditModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Title *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Order Index
               </label>
               <input
@@ -171,27 +204,136 @@ export default function CulinaryEditModal({
             </div>
           </div>
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={4}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
-            />
+          {/* Multi-Language Titles */}
+          <div className="space-y-4 border-t pt-4">
+            <h3 className="text-lg font-semibold text-gray-800">Titles (Multi-Language)</h3>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                English Title *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.title_en}
+                onChange={(e) => setFormData({ ...formData, title_en: e.target.value, title: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="e.g., Authentic Paella"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Spanish Title (ES)
+              </label>
+              <input
+                type="text"
+                value={formData.title_es}
+                onChange={(e) => setFormData({ ...formData, title_es: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="e.g., Paella Auténtica"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                German Title (DE)
+              </label>
+              <input
+                type="text"
+                value={formData.title_de}
+                onChange={(e) => setFormData({ ...formData, title_de: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="e.g., Authentische Paella"
+              />
+            </div>
           </div>
 
-          {/* Image Upload */}
-          <div>
-            <ImageUpload
-              currentImageUrl={formData.image_url}
-              onImageUploaded={(url) => setFormData({ ...formData, image_url: url })}
-              folder="culinary"
-              bucket="fleet-images"
-            />
+          {/* Multi-Language Descriptions */}
+          <div className="space-y-4 border-t pt-4">
+            <h3 className="text-lg font-semibold text-gray-800">Descriptions (Multi-Language)</h3>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                English Description *
+              </label>
+              <textarea
+                required
+                value={formData.description_en}
+                onChange={(e) => setFormData({ ...formData, description_en: e.target.value, description: e.target.value })}
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="Freshly cooked onboard using local seafood..."
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Spanish Description (ES)
+              </label>
+              <textarea
+                value={formData.description_es}
+                onChange={(e) => setFormData({ ...formData, description_es: e.target.value })}
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="Cocinada fresca a bordo con mariscos locales..."
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                German Description (DE)
+              </label>
+              <textarea
+                value={formData.description_de}
+                onChange={(e) => setFormData({ ...formData, description_de: e.target.value })}
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-blue focus:border-transparent"
+                placeholder="Frisch an Bord zubereitet mit lokalen Meeresfrüchten..."
+              />
+            </div>
+          </div>
+
+          {/* Media Gallery */}
+          <div className="space-y-4 border-t pt-4">
+            <h3 className="text-lg font-semibold text-gray-800">Media Gallery</h3>
+            <p className="text-sm text-gray-600">Upload multiple images for this culinary experience</p>
+            
+            {/* Image Upload Component */}
+            <div>
+              <ImageUpload
+                currentImageUrl=""
+                onImageUploaded={(url) => {
+                  handleAddImage(url)
+                  setUploadingImage(false)
+                }}
+                folder="culinary"
+                bucket="fleet-images"
+              />
+            </div>
+
+            {/* Gallery Preview */}
+            {formData.media_urls.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                {formData.media_urls.map((url, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={url}
+                      alt={`Gallery ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      aria-label="Remove image"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Status */}

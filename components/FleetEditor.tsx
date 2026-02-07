@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { X, Loader2, CheckCircle2, AlertCircle, Plus, Trash2 } from 'lucide-react'
+import { X, Loader2, CheckCircle2, AlertCircle, Plus, Trash2, Edit } from 'lucide-react'
 import ImageUploader from '@/components/admin/ImageUploader'
 import GalleryImageManager from '@/components/GalleryImageManager'
+import JourneyEditModal from '@/components/admin/JourneyEditModal'
 import type { Fleet } from '@/types/database'
 
 interface FleetFormData {
@@ -97,8 +98,12 @@ export default function FleetEditor({
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'specs' | 'amenities' | 'gallery' | 'content' | 'settings'>('basic')
+  const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'specs' | 'amenities' | 'gallery' | 'content' | 'milestones' | 'settings'>('basic')
   const [newExtra, setNewExtra] = useState('')
+  const [vesselMilestones, setVesselMilestones] = useState<any[]>([])
+  const [loadingMilestones, setLoadingMilestones] = useState(false)
+  const [milestoneModalOpen, setMilestoneModalOpen] = useState(false)
+  const [editingMilestone, setEditingMilestone] = useState<any | null>(null)
 
   const {
     register,
@@ -148,6 +153,60 @@ export default function FleetEditor({
       is_active: true,
     },
   })
+
+  // Load vessel milestones when fleet is loaded
+  useEffect(() => {
+    if (fleet?.id) {
+      fetchVesselMilestones(fleet.id)
+    } else {
+      setVesselMilestones([])
+    }
+  }, [fleet?.id])
+
+  const fetchVesselMilestones = async (yachtId: string) => {
+    try {
+      setLoadingMilestones(true)
+      const response = await fetch(`/api/admin/journey?yacht_id=${yachtId}`)
+      if (response.ok) {
+        const data = await response.json()
+        setVesselMilestones(Array.isArray(data) ? data : [])
+      }
+    } catch (error) {
+      console.error('[FleetEditor] Error fetching vessel milestones:', error)
+    } finally {
+      setLoadingMilestones(false)
+    }
+  }
+
+  const handleAddMilestone = () => {
+    setEditingMilestone(null)
+    setMilestoneModalOpen(true)
+  }
+
+  const handleEditMilestone = (milestone: any) => {
+    setEditingMilestone(milestone)
+    setMilestoneModalOpen(true)
+  }
+
+  const handleDeleteMilestone = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this milestone?')) return
+    try {
+      const response = await fetch(`/api/admin/journey?id=${id}`, { method: 'DELETE' })
+      if (response.ok && fleet?.id) {
+        fetchVesselMilestones(fleet.id)
+      }
+    } catch (error) {
+      console.error('[FleetEditor] Error deleting milestone:', error)
+    }
+  }
+
+  const handleMilestoneSave = () => {
+    if (fleet?.id) {
+      fetchVesselMilestones(fleet.id)
+    }
+    setMilestoneModalOpen(false)
+    setEditingMilestone(null)
+  }
 
   // Load fleet data
   useEffect(() => {
@@ -535,7 +594,7 @@ export default function FleetEditor({
         {/* Tabs */}
         <div className="border-b border-gray-200 bg-gray-50">
           <div className="flex gap-1 px-6 overflow-x-auto">
-            {(['basic', 'pricing', 'specs', 'amenities', 'gallery', 'content', 'settings'] as const).map((tab) => (
+            {(['basic', 'pricing', 'specs', 'amenities', 'gallery', 'content', 'milestones', 'settings'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -551,6 +610,7 @@ export default function FleetEditor({
                 {tab === 'amenities' && 'Amenities'}
                 {tab === 'gallery' && 'Gallery'}
                 {tab === 'content' && 'Content'}
+                {tab === 'milestones' && 'Vessel History'}
                 {tab === 'settings' && 'Settings'}
               </button>
             ))}
@@ -1170,7 +1230,85 @@ export default function FleetEditor({
             </div>
           )}
 
-          {/* Settings Tab */}
+          {/* Vessel History / Milestones Tab */}
+          {activeTab === 'milestones' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between border-b pb-2">
+                <h3 className="text-xl font-semibold text-gray-800">Vessel Legacy & Milestones</h3>
+                {fleet?.id && (
+                  <button
+                    type="button"
+                    onClick={handleAddMilestone}
+                    className="flex items-center gap-2 px-4 py-2 bg-luxury-blue text-white rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Milestone
+                  </button>
+                )}
+              </div>
+
+              {!fleet?.id ? (
+                <div className="text-center py-8 text-gray-500">
+                  <p>Please save the yacht first before adding milestones.</p>
+                </div>
+              ) : loadingMilestones ? (
+                <div className="text-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-luxury-blue mx-auto" />
+                </div>
+              ) : vesselMilestones.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No milestones yet. Click "Add Milestone" to create vessel history.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {vesselMilestones.map((milestone) => (
+                    <div
+                      key={milestone.id}
+                      className="flex items-start justify-between p-4 bg-gray-50 rounded-lg border border-gray-200"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="px-3 py-1 bg-luxury-blue text-white rounded-full text-sm font-semibold">
+                            {milestone.year}
+                          </span>
+                          <h4 className="font-semibold text-gray-800">{milestone.title_en || 'Untitled'}</h4>
+                        </div>
+                        <p className="text-sm text-gray-600 line-clamp-2">{milestone.description_en || ''}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className={`px-2 py-1 rounded text-xs ${
+                            milestone.is_active 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-gray-100 text-gray-600'
+                          }`}>
+                            {milestone.is_active ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 ml-4">
+                        <button
+                          type="button"
+                          onClick={() => handleEditMilestone(milestone)}
+                          className="p-2 text-luxury-blue hover:bg-luxury-blue/10 rounded-lg transition-colors"
+                          title="Edit milestone"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteMilestone(milestone.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete milestone"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {activeTab === 'settings' && (
             <div className="space-y-6">
               <h3 className="text-xl font-semibold text-gray-800 border-b pb-2">Settings</h3>
@@ -1227,6 +1365,19 @@ export default function FleetEditor({
             </button>
           </div>
         </form>
+
+        {/* Milestone Edit Modal */}
+        {fleet?.id && (
+          <JourneyEditModal
+            isOpen={milestoneModalOpen}
+            onClose={() => {
+              setMilestoneModalOpen(false)
+              setEditingMilestone(null)
+            }}
+            onSave={handleMilestoneSave}
+            milestone={editingMilestone ? { ...editingMilestone, yacht_id: fleet.id } : { yacht_id: fleet.id } as any}
+          />
+        )}
       </div>
     </div>
   )

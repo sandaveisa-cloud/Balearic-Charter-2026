@@ -28,6 +28,7 @@ export default function DestinationEditModal({
     description_es: '',
     description_de: '',
     image_url: '',
+    gallery_images: [] as string[], // Multi-image gallery
     youtube_video_url: '',
     order_index: 0,
     is_active: true,
@@ -50,6 +51,8 @@ export default function DestinationEditModal({
         image_url: (destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0) 
           ? destination.image_urls[0] 
           : '',
+        gallery_images: Array.isArray(destination.gallery_images) ? destination.gallery_images :
+                        (destination.image_urls && Array.isArray(destination.image_urls) ? destination.image_urls : []),
         youtube_video_url: destination.youtube_video_url || '',
         order_index: destination.order_index || 0,
         is_active: destination.is_active !== false,
@@ -65,6 +68,7 @@ export default function DestinationEditModal({
         description_es: '',
         description_de: '',
         image_url: '',
+        gallery_images: [],
         youtube_video_url: '',
         order_index: 0,
         is_active: true,
@@ -108,6 +112,11 @@ export default function DestinationEditModal({
         throw new Error('Slug is required and must be valid')
       }
 
+      // Combine single image_url and gallery_images into image_urls array
+      const allImages = formData.gallery_images.length > 0 
+        ? formData.gallery_images 
+        : (formData.image_url ? [formData.image_url] : [])
+
       const payload = {
         ...(destination?.id && { id: destination.id }),
         name: formData.name.trim(),
@@ -117,7 +126,8 @@ export default function DestinationEditModal({
         description_en: formData.description_en?.trim() || null,
         description_es: formData.description_es?.trim() || null,
         description_de: formData.description_de?.trim() || null,
-        image_urls: formData.image_url ? [formData.image_url] : [],
+        image_urls: allImages, // Multi-image gallery
+        gallery_images: formData.gallery_images, // Also store in gallery_images field
         youtube_video_url: formData.youtube_video_url?.trim() || null,
         order_index: formData.order_index || 0,
         is_active: formData.is_active !== false,
@@ -348,15 +358,54 @@ export default function DestinationEditModal({
 
           {/* Media */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-800">Media</h3>
+            <h3 className="text-lg font-semibold text-gray-800">Media Gallery</h3>
+            <p className="text-sm text-gray-600">Upload multiple images for this destination</p>
 
             {/* Image Upload Component */}
             <ImageUpload
-              currentImageUrl={formData.image_url}
-              onImageUploaded={(url) => setFormData({ ...formData, image_url: url })}
+              currentImageUrl=""
+              onImageUploaded={(url) => {
+                if (url && !formData.gallery_images.includes(url)) {
+                  setFormData({ 
+                    ...formData, 
+                    gallery_images: [...formData.gallery_images, url],
+                    image_url: formData.gallery_images.length === 0 ? url : formData.image_url
+                  })
+                }
+              }}
               folder="destinations"
               bucket="fleet-images"
             />
+
+            {/* Gallery Preview */}
+            {formData.gallery_images.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                {formData.gallery_images.map((url, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={url}
+                      alt={`Gallery ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newGallery = formData.gallery_images.filter((_, i) => i !== index)
+                        setFormData({ 
+                          ...formData, 
+                          gallery_images: newGallery,
+                          image_url: index === 0 && newGallery.length > 0 ? newGallery[0] : formData.image_url
+                        })
+                      }}
+                      className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      aria-label="Remove image"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

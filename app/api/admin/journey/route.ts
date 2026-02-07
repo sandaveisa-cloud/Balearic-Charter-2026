@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
+    const yachtId = searchParams.get('yacht_id')
 
     if (id) {
       // Fetch single milestone
@@ -41,12 +42,17 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(data)
     }
 
-    // Fetch all milestones
+    // Fetch milestones - filter by yacht_id if provided
+    let query = (supabase as any).from('journey_milestones').select('*')
+    
+    if (yachtId) {
+      // Fetch milestones for specific yacht
+      query = query.eq('yacht_id', yachtId)
+    }
+    
     // @ts-ignore - TypeScript doesn't recognize journey_milestones table
-    const { data, error } = await (supabase as any)
-      .from('journey_milestones')
-      .select('*')
-      .order('year', { ascending: true })
+    const { data, error } = await query
+      .order('year', { ascending: false })
       .order('order_index', { ascending: true })
 
     if (error) {
@@ -113,7 +119,7 @@ export async function POST(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
 
     // Prepare insert data - ensure all fields match database schema exactly
-    const insertData = {
+    const insertData: any = {
       year: body.year, // Already validated and converted to integer
       title_en: body.title_en,
       title_es: body.title_es,
@@ -124,6 +130,11 @@ export async function POST(request: NextRequest) {
       image_url: body.image_url || null, // Explicitly handle empty string as null
       order_index: body.order_index || 0,
       is_active: body.is_active !== undefined ? body.is_active : true,
+    }
+    
+    // Add yacht_id if provided (links milestone to specific yacht)
+    if (body.yacht_id) {
+      insertData.yacht_id = body.yacht_id
     }
 
     console.log('[Admin API] 📤 Inserting data:', {
@@ -137,6 +148,32 @@ export async function POST(request: NextRequest) {
       .insert(insertData)
       .select()
       .single()
+
+    // COMPREHENSIVE REVALIDATION - ensure changes appear instantly
+    if (!error && data) {
+      try {
+        const { revalidatePath, revalidateTag } = await import('next/cache')
+        revalidatePath('/', 'layout')
+        
+        const locales = ['en', 'es', 'de']
+        locales.forEach(loc => {
+          revalidatePath(`/${loc}`, 'layout')
+          revalidatePath(`/${loc}`, 'page')
+        })
+        
+        // Revalidate specific yacht page if yacht_id exists
+        if (insertData.yacht_id) {
+          locales.forEach(loc => {
+            revalidatePath(`/${loc}/fleet`, 'page')
+          })
+        }
+        
+        revalidateTag('site-content')
+        console.log('[Admin API] ✅ Revalidated pages after milestone create')
+      } catch (revalError) {
+        console.warn('[Admin API] ⚠️ Could not revalidate paths:', revalError)
+      }
+    }
 
     if (error) {
       console.error('[Admin API] ❌ Error creating milestone:', error)
@@ -306,6 +343,33 @@ export async function PUT(request: NextRequest) {
     }
 
     console.log('[Admin API] ✅ Milestone updated successfully:', data?.id)
+
+    // COMPREHENSIVE REVALIDATION - ensure changes appear instantly
+    try {
+      const { revalidatePath, revalidateTag } = await import('next/cache')
+      revalidatePath('/', 'layout')
+      
+      const locales = ['en', 'es', 'de']
+      locales.forEach(loc => {
+        revalidatePath(`/${loc}`, 'layout')
+        revalidatePath(`/${loc}`, 'page')
+      })
+      
+      // Revalidate specific yacht page if yacht_id exists
+      if (updatePayload.yacht_id || data?.yacht_id) {
+        const yachtId = updatePayload.yacht_id || data?.yacht_id
+        // Note: We'd need to fetch yacht slug to revalidate specific page
+        // For now, revalidate all fleet pages
+        locales.forEach(loc => {
+          revalidatePath(`/${loc}/fleet`, 'page')
+        })
+      }
+      
+      revalidateTag('site-content')
+      console.log('[Admin API] ✅ Revalidated pages after milestone update')
+    } catch (revalError) {
+      console.warn('[Admin API] ⚠️ Could not revalidate paths:', revalError)
+    }
 
     return NextResponse.json(data)
   } catch (error) {
