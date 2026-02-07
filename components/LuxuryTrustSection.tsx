@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { FreeMode, Pagination } from 'swiper/modules'
 import type { Review } from '@/types/database'
-import { Star, Quote, CheckCircle, Globe } from 'lucide-react'
+import { Star, Quote, CheckCircle, Globe, ChevronUp, ExternalLink } from 'lucide-react'
 import { format } from 'date-fns'
 import { loadReviewsFromJson } from '@/lib/reviewLoader'
 
@@ -17,8 +17,9 @@ interface LuxuryTrustSectionProps {
   reviews: Review[]
 }
 
-const INITIAL_DISPLAY_COUNT = 6
+const INITIAL_DISPLAY_COUNT = 6 // Show first 2 rows (3 columns x 2 rows)
 const TRUNCATE_LENGTH = 120
+const LINES_TO_SHOW = 3 // Show first 3 lines of text
 
 export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps) {
   const t = useTranslations('reviews')
@@ -27,12 +28,26 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
   const [showAll, setShowAll] = useState(false)
   const [mergedReviews, setMergedReviews] = useState<Review[]>([])
   const [showOriginalText, setShowOriginalText] = useState<Record<string, boolean>>({})
+  const [showBackToTop, setShowBackToTop] = useState(false)
 
   // Load and merge reviews from JSON on mount
   useEffect(() => {
     const merged = loadReviewsFromJson(reviews)
     setMergedReviews(merged)
   }, [reviews])
+
+  // Back to Top button visibility
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 500)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   // Filter and sort reviews
   const curatedReviews = useMemo(() => {
@@ -133,9 +148,13 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
       ? languageNames[review.original_language] || review.original_language.toUpperCase() 
       : ''
     
-    const shouldTruncate = currentText.length > TRUNCATE_LENGTH
+    // Calculate lines to show (approximately 3 lines)
+    const words = currentText.split(' ')
+    const wordsPerLine = 12 // Approximate words per line for compact text
+    const maxWords = LINES_TO_SHOW * wordsPerLine
+    const shouldTruncate = words.length > maxWords
     const displayText = shouldTruncate && !isExpanded 
-      ? currentText.substring(0, TRUNCATE_LENGTH) + '...' 
+      ? words.slice(0, maxWords).join(' ') + '...' 
       : currentText
 
     return (
@@ -146,41 +165,34 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
         transition={{ duration: 0.4, delay: index * 0.05 }}
         className="h-full"
       >
-        {/* Glassmorphism Card */}
+        {/* Glassmorphism Card - Compact (15% smaller via reduced padding/fonts) */}
         <motion.div
-          whileHover={{ scale: 1.02, y: -4 }}
+          whileHover={{ scale: 1.01, y: -2 }}
           transition={{ duration: 0.2 }}
-          className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-lg border border-gray-200/50 hover:border-luxury-gold/30 transition-all duration-300 hover:shadow-xl relative overflow-hidden h-full flex flex-col"
+          className="bg-white/70 backdrop-blur-md rounded-xl p-4 md:p-5 shadow-md border border-gray-200/50 hover:border-luxury-gold/30 transition-all duration-300 hover:shadow-lg relative overflow-hidden h-full flex flex-col"
         >
           {/* Decorative gradient overlay */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-luxury-gold/10 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           
-          {/* Verified Badge */}
-          <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-luxury-gold/10 backdrop-blur-sm px-3 py-1.5 rounded-full border border-luxury-gold/20 z-10">
-            <CheckCircle className="w-3.5 h-3.5 text-luxury-gold" />
-            <span className="text-[10px] font-bold text-luxury-blue uppercase tracking-wider">
-              Verified
-            </span>
-          </div>
-
-          {/* Subtle Click&Boat Source Link */}
-          <div className="absolute top-4 left-4 z-10">
+          {/* Tiny Click&Boat Source Link in corner */}
+          <div className="absolute top-2 right-2 z-10">
             <a
               href="https://www.clickandboat.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[10px] text-gray-400 hover:text-blue-500 transition-colors"
+              className="text-[8px] text-gray-300 hover:text-blue-500 transition-colors flex items-center gap-0.5"
+              title="Source: Click&Boat"
             >
-              Source: Click&Boat
+              <ExternalLink className="w-2.5 h-2.5" />
             </a>
           </div>
 
-          {/* Stars */}
-          <div className="flex gap-1 mb-4 pt-8">
+          {/* Stars - Smaller */}
+          <div className="flex gap-0.5 mb-2 pt-6">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`w-4 h-4 ${
+                className={`w-3 h-3 ${
                   i < (review.rating || 5)
                     ? 'text-luxury-gold fill-luxury-gold'
                     : 'text-gray-200'
@@ -189,18 +201,18 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
             ))}
           </div>
 
-          {/* Verified Translation Badge */}
+          {/* Verified Translation Badge - Compact */}
           {hasTranslation && (
-            <div className="mb-3 flex items-center gap-1.5">
-              <Globe className="w-3 h-3 text-luxury-gold" />
-              <span className="text-[10px] text-gray-500 italic">
-                Verified Translation from {originalLanguageName}
+            <div className="mb-2 flex items-center gap-1">
+              <Globe className="w-2.5 h-2.5 text-luxury-gold" />
+              <span className="text-[8px] text-gray-400 italic">
+                {originalLanguageName}
               </span>
             </div>
           )}
 
-          {/* Review Text - Italicized Serif Font */}
-          <div className="mb-6 flex-grow">
+          {/* Review Text - Compact, 3 lines max */}
+          <div className="mb-3 flex-grow">
             <AnimatePresence mode="wait">
               <motion.p
                 key={`${review.id}-${showOriginal}-${isExpanded}`}
@@ -208,44 +220,41 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className={`font-serif italic text-gray-700 leading-relaxed text-base md:text-lg ${
-                  shouldTruncate && !isExpanded ? '' : ''
+                className={`font-serif italic text-gray-700 leading-tight text-sm md:text-base ${
+                  shouldTruncate && !isExpanded ? 'line-clamp-3' : ''
                 }`}
               >
                 "{displayText}"
               </motion.p>
             </AnimatePresence>
             
-            {/* Action Buttons Row */}
-            <div className="mt-3 flex flex-wrap items-center gap-3">
+            {/* Action Buttons Row - Compact */}
+            <div className="mt-2 flex flex-wrap items-center gap-2">
               {shouldTruncate && (
                 <button
                   onClick={() => toggleExpand(review.id)}
-                  className="text-xs text-luxury-gold hover:text-luxury-blue font-medium transition-colors flex items-center gap-1"
+                  className="text-[10px] text-luxury-gold hover:text-luxury-blue font-medium transition-colors underline underline-offset-1"
                 >
-                  {isExpanded ? 'Read less' : 'Read'}
+                  {isExpanded ? 'less' : 'more'}
                 </button>
               )}
               
-              {/* Language Toggle */}
+              {/* Language Toggle - Compact */}
               {hasTranslation && (
                 <button
                   onClick={() => toggleLanguage(review.id)}
-                  className="text-[10px] text-gray-400 hover:text-gray-600 font-light underline underline-offset-2 transition-colors flex items-center gap-1"
+                  className="text-[9px] text-gray-400 hover:text-gray-600 font-light underline underline-offset-1 transition-colors flex items-center gap-0.5"
                 >
-                  <Globe className="w-3 h-3" />
-                  {showOriginal 
-                    ? `Show Translation` 
-                    : `Show Original (${originalLanguageName})`
-                  }
+                  <Globe className="w-2.5 h-2.5" />
+                  {showOriginal ? 'EN' : originalLanguageName.substring(0, 2).toUpperCase()}
                 </button>
               )}
             </div>
           </div>
 
-          {/* Reviewer Info */}
-          <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-200/50">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-luxury-blue to-luxury-gold flex items-center justify-center text-white font-bold text-lg overflow-hidden relative shadow-md border-2 border-white flex-shrink-0">
+          {/* Reviewer Info - Compact */}
+          <div className="flex items-center gap-2 mb-2 pb-2 border-b border-gray-200/30">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-luxury-blue to-luxury-gold flex items-center justify-center text-white font-semibold text-xs overflow-hidden relative shadow-sm border border-white flex-shrink-0">
               {review.profile_image_url ? (
                 <Image
                   src={review.profile_image_url}
@@ -258,35 +267,29 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-luxury-blue text-sm md:text-base truncate">
+              <h4 className="font-semibold text-luxury-blue text-xs truncate">
                 {review.guest_name || 'Guest'}
               </h4>
               {review.guest_location && (
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-[9px] text-gray-400 truncate">
                   {review.guest_location}
                 </p>
               )}
             </div>
           </div>
 
-          {/* Footer with Dates - Very Small Font for Rental Date */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mt-auto">
+          {/* Footer with Dates - Compact */}
+          <div className="flex flex-wrap items-center justify-between gap-2 mt-auto">
             {review.rental_date && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] text-gray-400">Rental Date:</span>
-                <span className="text-[10px] text-gray-500">{formatRentalDate(review.rental_date)}</span>
+              <div className="flex items-center gap-1">
+                <span className="text-[8px] text-gray-400">Rental:</span>
+                <span className="text-[8px] text-gray-500">{formatRentalDate(review.rental_date)}</span>
               </div>
             )}
             {(review.published_date || review.review_date) && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] text-gray-400">Published:</span>
-                <span className="text-[10px] text-gray-500">{formatDate(review.published_date || review.review_date)}</span>
-              </div>
-            )}
-            {!review.rental_date && !review.published_date && !review.review_date && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] text-gray-400">Date:</span>
-                <span className="text-[10px] text-gray-500">{formatDate(review.created_at)}</span>
+              <div className="flex items-center gap-1">
+                <span className="text-[8px] text-gray-400">Pub:</span>
+                <span className="text-[8px] text-gray-500">{formatDate(review.published_date || review.review_date)}</span>
               </div>
             )}
           </div>
@@ -305,36 +308,36 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
   }
 
   return (
-    <section className="py-12 md:py-20 lg:py-24 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden">
+    <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden">
       {/* Glassmorphism background elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-luxury-gold/5 via-transparent to-luxury-blue/5 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(197,160,89,0.1),transparent_50%)] pointer-events-none" />
       
       <div className="container mx-auto px-4 md:px-6 relative z-10">
-        {/* Section Header */}
-        <div className="text-center mb-12 md:mb-16 max-w-3xl mx-auto">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-luxury-gold/20">
-              <Quote className="w-8 h-8 text-luxury-gold" />
+        {/* Section Header - Compact */}
+        <div className="text-center mb-8 md:mb-10 max-w-3xl mx-auto">
+          <div className="flex justify-center mb-3">
+            <div className="p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md border border-luxury-gold/20">
+              <Quote className="w-6 h-6 text-luxury-gold" />
             </div>
           </div>
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-luxury-blue mb-4 tracking-wide">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-luxury-blue mb-3 tracking-wide">
             Luxury Trust
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 mb-8">
+          <p className="text-base md:text-lg text-gray-600 mb-6">
             {t('subtitle') || 'What our guests say about their Mediterranean experience'}
           </p>
           
-          {/* Average Rating Badge */}
-          <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-md px-6 py-3 rounded-full border border-luxury-gold/20 shadow-lg">
-            <div className="flex items-center gap-1">
+          {/* Average Rating Badge - Compact */}
+          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-luxury-gold/20 shadow-md">
+            <div className="flex items-center gap-0.5">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 text-luxury-gold fill-luxury-gold" />
+                <Star key={i} className="w-4 h-4 text-luxury-gold fill-luxury-gold" />
               ))}
             </div>
-            <span className="font-bold text-luxury-blue text-lg">4.9</span>
-            <span className="text-gray-500 text-sm">/ 5</span>
-            <span className="text-gray-400 text-xs ml-2">({curatedReviews.length} reviews)</span>
+            <span className="font-bold text-luxury-blue text-base">4.9</span>
+            <span className="text-gray-500 text-xs">/ 5</span>
+            <span className="text-gray-400 text-[10px] ml-1">({curatedReviews.length})</span>
           </div>
         </div>
 
@@ -359,7 +362,7 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
           >
             {displayedReviews.map((review, index) => (
               <SwiperSlide key={review.id || index} className="!h-auto">
-                <div className="h-[500px]">
+                <div className="h-[400px]">
                   <ReviewCard review={review} index={index} />
                 </div>
               </SwiperSlide>
@@ -367,48 +370,73 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
           </Swiper>
         </div>
 
-        {/* Desktop: 3-Column Masonry Grid */}
-        <div className="hidden md:block">
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-6 md:gap-8 space-y-6 md:space-y-8">
-            <AnimatePresence mode="popLayout">
-              {displayedReviews.map((review, index) => (
-                <div key={review.id || index} className="break-inside-avoid mb-6 md:mb-8">
-                  <ReviewCard review={review} index={index} />
-                </div>
-              ))}
-            </AnimatePresence>
+        {/* Desktop: 3-Column Masonry Grid - Tight layout */}
+        <div className="hidden md:block relative">
+          <div className="relative">
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-4 md:gap-5 space-y-4 md:space-y-5">
+              <AnimatePresence mode="popLayout">
+                {displayedReviews.map((review, index) => (
+                  <div key={review.id || index} className="break-inside-avoid mb-4 md:mb-5">
+                    <ReviewCard review={review} index={index} />
+                  </div>
+                ))}
+              </AnimatePresence>
+            </div>
+            
+            {/* Fade-out gradient overlay (only when showing first 2 rows) */}
+            {!showAll && hasMore && (
+              <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-none z-10" />
+            )}
           </div>
         </div>
 
-        {/* Discover More Stories Button (Desktop) */}
+        {/* Read All Experiences Button - Minimalist */}
         {hasMore && !showAll && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-center mt-12 md:mt-16"
+            className="text-center mt-8 md:mt-10 relative z-10"
           >
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => {
                 setShowAll(true)
               }}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white/80 backdrop-blur-md text-luxury-blue font-semibold rounded-full border border-luxury-gold/30 shadow-lg hover:shadow-xl hover:bg-luxury-gold hover:text-white transition-all duration-300"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-white/90 backdrop-blur-sm text-luxury-blue text-sm font-medium rounded-full border border-gray-200/50 shadow-sm hover:shadow-md hover:border-luxury-gold/30 transition-all duration-300"
             >
-              Discover more stories
+              Read All {curatedReviews.length} Experiences
             </motion.button>
           </motion.div>
         )}
 
         {showAll && hasMore && (
-          <div className="text-center mt-8">
-            <p className="text-sm text-gray-500">
+          <div className="text-center mt-6">
+            <p className="text-xs text-gray-400">
               Showing all {curatedReviews.length} reviews
             </p>
           </div>
         )}
       </div>
+
+      {/* Back to Top Button - Floating Circle */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.6, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            whileHover={{ opacity: 1, scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-gray-200/50 shadow-lg hover:shadow-xl hover:border-luxury-gold/30 flex items-center justify-center transition-all duration-300"
+            aria-label="Back to top"
+          >
+            <ChevronUp className="w-5 h-5 text-luxury-blue" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </section>
   )
 }
