@@ -83,29 +83,42 @@ export async function POST(request: NextRequest) {
     const supabase = createSupabaseAdminClient()
 
     // Build insert data - use title as primary field (required in schema)
+    // Ensure all localized fields and media arrays are properly handled
     const insertData: any = {
-      title: name, // title is required in schema
+      title: name.trim(), // title is required in schema
+      name: name.trim(),
+      slug: slug.trim(),
       order_index: order_index || 0,
-      is_active: true,
+      is_active: is_active !== false,
     }
 
     // Add optional fields if provided
-    if (name) insertData.name = name
-    if (slug) insertData.slug = slug
-    if (region) insertData.region = region
-    if (description) insertData.description = description
-    if (description_en) insertData.description_en = description_en
-    if (description_es) insertData.description_es = description_es
-    if (description_de) insertData.description_de = description_de
-    if (image_urls) insertData.image_urls = Array.isArray(image_urls) ? image_urls : []
-    if (youtube_video_url) insertData.youtube_video_url = youtube_video_url
+    if (region) insertData.region = region.trim()
+    if (description) insertData.description = description.trim()
+    // Multi-language descriptions - ensure they're included
+    if (description_en !== undefined) insertData.description_en = description_en?.trim() || null
+    if (description_es !== undefined) insertData.description_es = description_es?.trim() || null
+    if (description_de !== undefined) insertData.description_de = description_de?.trim() || null
+    // Media arrays - ensure they're proper arrays
+    if (image_urls !== undefined) {
+      insertData.image_urls = Array.isArray(image_urls) ? image_urls : (image_urls ? [image_urls] : [])
+    }
+    if (gallery_images !== undefined) {
+      insertData.gallery_images = Array.isArray(gallery_images) ? gallery_images : (gallery_images ? [gallery_images] : [])
+    }
+    if (youtube_video_url) insertData.youtube_video_url = youtube_video_url.trim()
     // Store additional fields as JSONB (if your schema supports it)
     if (highlights_data) insertData.highlights_data = highlights_data
     if (coordinates) insertData.coordinates = coordinates
-    if (ready_to_explore_title_en) insertData.ready_to_explore_title_en = ready_to_explore_title_en
-    if (ready_to_explore_title_es) insertData.ready_to_explore_title_es = ready_to_explore_title_es
-    if (ready_to_explore_title_de) insertData.ready_to_explore_title_de = ready_to_explore_title_de
-    if (gallery_images) insertData.gallery_images = gallery_images
+    if (ready_to_explore_title_en) insertData.ready_to_explore_title_en = ready_to_explore_title_en.trim()
+    if (ready_to_explore_title_es) insertData.ready_to_explore_title_es = ready_to_explore_title_es.trim()
+    if (ready_to_explore_title_de) insertData.ready_to_explore_title_de = ready_to_explore_title_de.trim()
+
+    console.log('[Admin API] 📤 Inserting destination:', {
+      ...insertData,
+      image_urls_count: insertData.image_urls?.length || 0,
+      gallery_images_count: insertData.gallery_images?.length || 0,
+    })
 
     // Insert new destination
     // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
@@ -202,28 +215,30 @@ export async function PUT(request: NextRequest) {
     // Create admin client (bypasses RLS)
     const supabase = createSupabaseAdminClient()
 
-    // Build update data object, only including fields that exist in the database
-    // First, try to get the current destination to see what columns exist
+    // Build update data object with all localized fields and media arrays
     const updateData: any = {
       // Always update these core fields
       title: name.trim(), // title is the primary field in schema
+      name: name.trim(),
+      slug: slug.trim(),
       order_index: order_index || 0,
       is_active: is_active !== false,
     }
 
-    // Add name if column exists (will be ignored if it doesn't)
-    if (name) updateData.name = name.trim()
-    
-    // Add slug if provided
-    if (slug) updateData.slug = slug.trim()
-    
     // Add optional fields only if they are provided
     if (region !== undefined) updateData.region = region?.trim() || null
     if (description !== undefined) updateData.description = description?.trim() || null
+    // Multi-language descriptions - ensure they're included
     if (description_en !== undefined) updateData.description_en = description_en?.trim() || null
     if (description_es !== undefined) updateData.description_es = description_es?.trim() || null
     if (description_de !== undefined) updateData.description_de = description_de?.trim() || null
-    if (image_urls !== undefined) updateData.image_urls = Array.isArray(image_urls) ? image_urls : []
+    // Media arrays - ensure they're proper arrays
+    if (image_urls !== undefined) {
+      updateData.image_urls = Array.isArray(image_urls) ? image_urls : (image_urls ? [image_urls] : [])
+    }
+    if (gallery_images !== undefined) {
+      updateData.gallery_images = Array.isArray(gallery_images) ? gallery_images : (gallery_images ? [gallery_images] : [])
+    }
     if (youtube_video_url !== undefined) updateData.youtube_video_url = youtube_video_url?.trim() || null
     // Store additional fields as JSONB (if your schema supports it)
     if (highlights_data !== undefined) updateData.highlights_data = highlights_data
@@ -231,7 +246,13 @@ export async function PUT(request: NextRequest) {
     if (ready_to_explore_title_en !== undefined) updateData.ready_to_explore_title_en = ready_to_explore_title_en?.trim() || null
     if (ready_to_explore_title_es !== undefined) updateData.ready_to_explore_title_es = ready_to_explore_title_es?.trim() || null
     if (ready_to_explore_title_de !== undefined) updateData.ready_to_explore_title_de = ready_to_explore_title_de?.trim() || null
-    if (gallery_images !== undefined) updateData.gallery_images = gallery_images
+
+    console.log('[Admin API] 📤 Updating destination:', {
+      id,
+      ...updateData,
+      image_urls_count: updateData.image_urls?.length || 0,
+      gallery_images_count: updateData.gallery_images?.length || 0,
+    })
 
     console.log('[Admin API] 🔄 Updating destination with data:', updateData)
 

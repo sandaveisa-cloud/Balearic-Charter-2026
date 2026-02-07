@@ -57,10 +57,38 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const supabase = createSupabaseAdminClient()
 
+    // Prepare insert data with all localized fields and media_urls
+    const insertData: any = {
+      // Multi-language titles
+      title_en: body.title_en || body.title || '',
+      title_es: body.title_es || '',
+      title_de: body.title_de || '',
+      // Multi-language descriptions
+      description_en: body.description_en || body.description || '',
+      description_es: body.description_es || '',
+      description_de: body.description_de || '',
+      // Legacy fields (for backward compatibility)
+      title: body.title_en || body.title || '',
+      description: body.description_en || body.description || null,
+      // Media gallery - ensure it's an array
+      media_urls: Array.isArray(body.media_urls) ? body.media_urls : (body.media_urls ? [body.media_urls] : []),
+      // Legacy single image (use first from media_urls if available)
+      image_url: Array.isArray(body.media_urls) && body.media_urls.length > 0 
+        ? body.media_urls[0] 
+        : (body.image_url || null),
+      order_index: body.order_index || 0,
+      is_active: body.is_active !== false,
+    }
+
+    console.log('[Admin API] 📤 Inserting culinary experience:', {
+      ...insertData,
+      media_urls_count: insertData.media_urls?.length || 0,
+    })
+
     // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
     const { data, error } = await (supabase
       .from('culinary_experiences' as any) as any)
-      .insert(body as any)
+      .insert(insertData as any)
       .select()
       .single()
 
@@ -122,10 +150,48 @@ export async function PUT(request: NextRequest) {
 
     const supabase = createSupabaseAdminClient()
 
+    // Prepare update data with all localized fields and media_urls
+    const updatePayload: any = {
+      // Multi-language titles
+      title_en: updateData.title_en !== undefined ? updateData.title_en : undefined,
+      title_es: updateData.title_es !== undefined ? updateData.title_es : undefined,
+      title_de: updateData.title_de !== undefined ? updateData.title_de : undefined,
+      // Multi-language descriptions
+      description_en: updateData.description_en !== undefined ? updateData.description_en : undefined,
+      description_es: updateData.description_es !== undefined ? updateData.description_es : undefined,
+      description_de: updateData.description_de !== undefined ? updateData.description_de : undefined,
+      // Legacy fields (for backward compatibility)
+      title: updateData.title_en !== undefined ? updateData.title_en : (updateData.title !== undefined ? updateData.title : undefined),
+      description: updateData.description_en !== undefined ? updateData.description_en : (updateData.description !== undefined ? updateData.description : undefined),
+      // Media gallery - ensure it's an array
+      media_urls: updateData.media_urls !== undefined 
+        ? (Array.isArray(updateData.media_urls) ? updateData.media_urls : (updateData.media_urls ? [updateData.media_urls] : []))
+        : undefined,
+      // Legacy single image (use first from media_urls if available)
+      image_url: updateData.media_urls !== undefined && Array.isArray(updateData.media_urls) && updateData.media_urls.length > 0
+        ? updateData.media_urls[0]
+        : (updateData.image_url !== undefined ? updateData.image_url : undefined),
+      order_index: updateData.order_index !== undefined ? updateData.order_index : undefined,
+      is_active: updateData.is_active !== undefined ? updateData.is_active : undefined,
+    }
+
+    // Remove undefined fields to avoid Supabase errors
+    Object.keys(updatePayload).forEach(key => {
+      if (updatePayload[key] === undefined) {
+        delete updatePayload[key]
+      }
+    })
+
+    console.log('[Admin API] 📤 Updating culinary experience:', {
+      id,
+      ...updatePayload,
+      media_urls_count: updatePayload.media_urls?.length || 0,
+    })
+
     // @ts-ignore - Atvieglo build procesu, apejot striktos Supabase tipus
     const { data, error } = await (supabase
       .from('culinary_experiences' as any) as any)
-      .update(updateData as any)
+      .update(updatePayload as any)
       .eq('id', id)
       .select()
       .single()
