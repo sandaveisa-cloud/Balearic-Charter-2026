@@ -19,6 +19,7 @@
   },
   "hero": {
     "title": "Ihr privater Rückzugsort im Mittelmeer",
+    "seasonLaunch": "Saisonstart 2026: Buchen Sie vor dem 28. Februar 2026 und sparen Sie 10% auf alle Charter!",
     "subtitle": "Premium-Yachtcharter auf den Balearen. Maßgeschneiderter Luxus, professionelle Crew und unvergessliche Horizonte.",
     "cta": "Beginnen Sie Ihre Reise"
   },
@@ -69,7 +70,7 @@
     "subtitle": "Entdecken Sie unsere Kollektion an Weltklasse-Yachten",
     "perDay": "/ Tag",
     "viewDetails": "Details ansehen",
-    "getQuote": "Angebot",
+    "getQuote": "Angebot anfordern",
     "technicalSpecs": "Technische Daten",
     "specs": {
       "yearBuilt": "Baujahr",
@@ -132,7 +133,7 @@
     "allDestinationsSubtitle": "Entdecken Sie unsere Segelreviere",
     "ctaDescription": "Wählen Sie Ihr nächstes Abenteuer.",
     "viewFleet": "Unsere Flotte ansehen",
-    "getQuote": "Angebot",
+    "getQuote": "Angebot anfordern",
     "viewDetails": "Details ansehen",
     "readyToExplore": "Bereit zum Entdecken?",
     "readyToExploreDescription": "Buchen Sie heute und entdecken Sie die Schätze der Balearen.",
@@ -175,19 +176,43 @@
     },
     "costa-blanca": {
       "title": "Costa Blanca",
-      "description": "Die sonnenverwöhnte Costa Blanca bietet unberührte Strände, lebhafte Yachthäfen und charmante Küstenstädte an der spanischen Ostküste."
+      "description": "Die sonnenverwöhnte Costa Blanca bietet goldene Strände, lebhafte Jachthäfen und charmante Küstenstädte an der Ostküste Spaniens.",
+      "tags": ["Sonne", "Küstenstädte", "Lokales Flair"]
     }
   },
   "culinary": {
-    "title": "Essen an Bord",
+    "title": "Kulinarische Exzellenz",
     "subtitle": "Exquisite Genüsse auf See",
-    "description": "Ein romantisches Dinner-Erlebnis, während die Sonne über dem Mittelmeer untergeht, mit Gourmet-Gerichten und edlen Weinen."
+    "description": "Ein romantisches Dinner-Erlebnis, während die Sonne über dem Mittelmeer untergeht, mit Gourmet-Gerichten und edlen Weinen.",
+    "experiences": {
+      "paella": {
+        "title": "Authentische Paella",
+        "description": "Traditionelle spanische Paella, frisch zubereitet an Bord."
+      },
+      "bbq": {
+        "title": "Premium BBQ & Steaks",
+        "description": "Hochwertige Grillgerichte und Steaks vom Grill."
+      },
+      "tapas": {
+        "title": "Lokale Tapas & Weine",
+        "description": "Ausgewählte Tapas und regionale Weine."
+      },
+      "mediterranean": {
+        "title": "Mediterrane Küche",
+        "description": "Frische mediterrane Gerichte mit lokalen Zutaten."
+      },
+      "sunset": {
+        "title": "Abendessen bei Sonnenuntergang",
+        "description": "Romantisches Dinner mit Blick auf den Sonnenuntergang."
+      }
+    }
   },
   "stats": {
     "title": "Unsere Reise in Zahlen",
     "successfulSeasons": "Erfolgreiche Saisons",
     "thousandsValue": "Tausende",
     "happyGuestsLabel": "glückliche Gäste",
+    "happyGuestsFull": "Tausende glückliche Gäste",
     "charterSupport": "Charter-Support",
     "clientSatisfaction": "Kundenzufriedenheit"
   },
@@ -225,18 +250,19 @@
     "metaDescription": "Erfahren Sie mehr über Balearic Yacht Charters in Spanien."
   },
   "mission": {
-    "title": "Unsere Mission",
+    "title": "Das Signature-Erlebnis",
+    "subtitle": "Unser Versprechen für Exzellenz in jedem Detail.",
     "cards": {
       "logistics": {
-        "title": "Experten-Logistik",
+        "title": "Maßgeschneiderte Perfektion",
         "description": "Wir kümmern uns um jedes Detail Ihrer Reise."
       },
       "crew": {
-        "title": "Professionelle Crew",
+        "title": "Erstklassige lokale Crew",
         "description": "Erfahrene Kapitäne für Ihre Sicherheit."
       },
       "gourmet": {
-        "title": "Gourmet-Erlebnis",
+        "title": "Mediterrane Kulinarik",
         "description": "Genießen Sie lokale Küche an Bord."
       }
     }
@@ -491,6 +517,7 @@
   "footer": {
     "tagline": "Ihre erste Adresse für Luxusyachtcharter im Mittelmeer.",
     "followUs": "Folgen Sie uns",
+    "whatsappButton": "Kontaktieren Sie uns per WhatsApp",
     "legal": "Impressum",
     "privacy": "Datenschutz",
     "cookies": "Cookies",

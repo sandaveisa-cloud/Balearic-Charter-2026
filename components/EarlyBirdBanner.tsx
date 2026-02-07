@@ -3,12 +3,13 @@
 import { useState, useEffect } from 'react'
 import { X, Zap } from 'lucide-react'
 import { isEarlyBirdEligible, formatEarlyBirdDeadline } from '@/lib/earlyBirdDiscount'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 export default function EarlyBirdBanner() {
   const [isVisible, setIsVisible] = useState(false)
   const [isDismissed, setIsDismissed] = useState(false)
   const locale = useLocale()
+  const t = useTranslations('hero')
 
   useEffect(() => {
     // Check if banner was dismissed in session storage
@@ -39,8 +40,7 @@ export default function EarlyBirdBanner() {
       <div className="container mx-auto flex items-center justify-center gap-3 relative">
         <Zap className="w-5 h-5 flex-shrink-0 animate-pulse" />
         <p className="text-sm md:text-base font-medium text-center flex-1">
-          <span className="font-bold">2026 Season Launch:</span> Book before {formatEarlyBirdDeadline(locale)} and save{' '}
-          <span className="font-bold">10%</span> on all charters!
+          {t('seasonLaunch')}
         </p>
         <button
           onClick={handleDismiss}

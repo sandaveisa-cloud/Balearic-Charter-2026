@@ -11,7 +11,7 @@ export default async function StatsSection({ stats }: StatsSectionProps) {
   // Always use these specific stats as requested (now with translations)
   const displayStats: Stat[] = [
     { id: '1', value: '3', label: t('successfulSeasons', { default: 'Successful Seasons' }), order_index: 1, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
-    { id: '2', value: t('thousandsValue', { default: 'Thousands' }), label: t('happyGuestsLabel', { default: 'of Happy Guests' }), order_index: 2, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
+    { id: '2', value: t('thousandsValue', { default: 'Thousands' }), label: t('happyGuestsFull', { default: t('happyGuestsLabel', { default: 'of Happy Guests' }) }), order_index: 2, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
     { id: '3', value: '24/7', label: t('charterSupport', { default: 'Charter Support' }), order_index: 3, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
     { id: '4', value: '99%', label: t('clientSatisfaction', { default: 'Client Satisfaction' }), order_index: 4, is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), icon: null, title: null, description: null, media_urls: [], category: null },
   ]

@@ -1,7 +1,7 @@
 // @ts-nocheck
 'use client'
 
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { motion } from 'framer-motion'
 import { Ship, ShieldCheck, Utensils, Anchor, Compass, Users } from 'lucide-react'
 import type { MissionPromise } from '@/types/database'
@@ -24,6 +24,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 
 export default function MissionSection({ promises }: MissionSectionProps) {
   const locale = useLocale()
+  const t = useTranslations('mission')
 
   // Filter active promises and sort by order_index
   const activePromises = promises
@@ -51,7 +52,7 @@ export default function MissionSection({ promises }: MissionSectionProps) {
       id: '2',
       title_en: 'Elite Local Crew',
       title_es: 'Tripulación Local de Élite',
-      title_de: 'Elite-Lokale Crew',
+      title_de: 'Erstklassige lokale Crew',
       description_en: 'Expert local captains and crew with deep knowledge of Mediterranean waters. Your safety and comfort are our highest priority.',
       description_es: 'Capitanes y tripulación local experta con profundo conocimiento de las aguas mediterráneas. Su seguridad y comodidad son nuestra máxima prioridad.',
       description_de: 'Erfahrene lokale Kapitäne und Crew mit tiefem Wissen über die Gewässer des Mittelmeers. Ihre Sicherheit und Ihr Komfort haben für uns höchste Priorität.',
@@ -66,7 +67,7 @@ export default function MissionSection({ promises }: MissionSectionProps) {
       id: '3',
       title_en: 'Mediterranean Flavors',
       title_es: 'Sabores Mediterráneos',
-      title_de: 'Mittelmeer-Aromen',
+      title_de: 'Mediterrane Kulinarik',
       description_en: 'Culinary excellence featuring the finest local ingredients. Savor authentic Mediterranean cuisine prepared by skilled chefs on board.',
       description_es: 'Excelencia culinaria con los mejores ingredientes locales. Saboree auténtica cocina mediterránea preparada por chefs expertos a bordo.',
       description_de: 'Kulinarische Exzellenz mit den feinsten lokalen Zutaten. Genießen Sie authentische Mittelmeerküche, zubereitet von erfahrenen Köchen an Bord.',
@@ -128,7 +129,7 @@ export default function MissionSection({ promises }: MissionSectionProps) {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-[#001F3F] mb-4 tracking-[0.08em]"
           >
-            The Signature Experience
+            {t('title')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -137,7 +138,7 @@ export default function MissionSection({ promises }: MissionSectionProps) {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg md:text-xl text-gray-600"
           >
-            Our commitment to excellence in every detail
+            {t('subtitle')}
           </motion.p>
         </div>
 
