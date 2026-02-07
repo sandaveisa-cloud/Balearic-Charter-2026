@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns'
+import { de, es, enUS } from 'date-fns/locale'
+import { useLocale } from 'next-intl'
 import { getBookingAvailability } from '@/lib/data'
 import type { BookingAvailability } from '@/types/database'
 
@@ -11,11 +13,22 @@ interface BookingCalendarProps {
 }
 
 export default function BookingCalendar({ yachtId, onDateSelect }: BookingCalendarProps) {
+  const locale = useLocale()
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [selectedStart, setSelectedStart] = useState<Date | null>(null)
   const [selectedEnd, setSelectedEnd] = useState<Date | null>(null)
   const [availability, setAvailability] = useState<BookingAvailability[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Get date-fns locale based on next-intl locale
+  const dateLocale = locale === 'de' ? de : locale === 'es' ? es : enUS
+  
+  // Localized day names
+  const dayNames = locale === 'de' 
+    ? ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
+    : locale === 'es'
+    ? ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá']
+    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
   useEffect(() => {
     const monthStart = startOfMonth(currentMonth)
@@ -75,7 +88,6 @@ export default function BookingCalendar({ yachtId, onDateSelect }: BookingCalend
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1))
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1))
 
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   const firstDayOfMonth = startOfMonth(currentMonth).getDay()
 
   return (
@@ -88,7 +100,7 @@ export default function BookingCalendar({ yachtId, onDateSelect }: BookingCalend
           ←
         </button>
         <h3 className="font-semibold text-luxury-blue">
-          {format(currentMonth, 'MMMM yyyy')}
+          {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
         </h3>
         <button
           onClick={nextMonth}

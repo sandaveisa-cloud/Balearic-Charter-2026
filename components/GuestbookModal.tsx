@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Star, Globe, ExternalLink } from 'lucide-react'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 import type { Review } from '@/types/database'
 import { format } from 'date-fns'
 
@@ -47,6 +48,7 @@ const formatRentalDate = (dateString: string | null | undefined): string => {
 }
 
 export default function GuestbookModal({ isOpen, onClose, reviews }: GuestbookModalProps) {
+  const t = useTranslations('reviews')
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -101,7 +103,7 @@ export default function GuestbookModal({ isOpen, onClose, reviews }: GuestbookMo
                     Guestbook
                   </h2>
                   <p className="text-sm text-white/80">
-                    {reviews.length} unforgettable stories from our guests
+                    {t('discoverStories', { count: reviews.length })}
                   </p>
                 </div>
                 <button

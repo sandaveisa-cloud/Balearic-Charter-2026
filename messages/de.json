@@ -71,7 +71,11 @@
     "perDay": "/ Tag",
     "viewDetails": "Details ansehen",
     "getQuote": "Angebot anfordern",
+    "requestQuote": "Angebot anfordern",
     "technicalSpecs": "Technische Daten",
+    "technicalData": "Technische Daten",
+    "keyHighlights": "Wichtige Highlights",
+    "amenitiesFeatures": "Ausstattung & Features",
     "specs": {
       "yearBuilt": "Baujahr",
       "length": "Länge",
@@ -92,7 +96,23 @@
     "ctaTitle": "Bereit für Ihren Traumurlaub?",
     "ctaDescription": "Kontaktieren Sie uns heute, um Ihren Termin zu sichern.",
     "exploreDestinations": "Ziele entdecken",
+    "discoverYacht": "Entdecken",
+    "lookingForClassicSailing": "Suchen Sie eine klassische Segelerfahrung?",
+    "experienceCharmClassic": "Erleben Sie den Charme unserer klassischen Yacht mit ausgezeichnetem Preis-Leistungs-Verhältnis.",
     "backToHome": "Zurück zum Home",
+    "amenities": {
+      "ac": "Klimaanlage",
+      "watermaker": "Wassermacher",
+      "generator": "Generator",
+      "flybridge": "Flybridge",
+      "heating": "Heizung",
+      "teak_deck": "Teak-Deck",
+      "full_batten": "Full Batten",
+      "folding_table": "Klapptisch",
+      "fridge": "Kühlschrank",
+      "dinghy": "Beiboot",
+      "water_entertainment": "Wassersport"
+    },
     "extras": {
       "sup": "Paddle Board",
       "snorkel": "Schnorchelausrüstung",
@@ -151,6 +171,23 @@
     "happyGuests": "Zufriedene Gäste",
     "happyGuestsDescription": "Schließen Sie sich hunderten zufriedenen Reisenden an.",
     "joinOurGuests": "Werden Sie Teil unserer Community",
+    "tags": {
+      "crystalWater": "Kristallklares Wasser",
+      "nature": "Natur",
+      "relax": "Entspannung",
+      "beachClubs": "Beach Clubs",
+      "luxury": "Luxus",
+      "nightlife": "Nachtleben",
+      "calas": "Buchten",
+      "culture": "Kultur",
+      "sailing": "Segeln",
+      "peaceful": "Friedlich",
+      "unspoiled": "Unberührt",
+      "eco": "Öko",
+      "sun": "Sonne",
+      "coastalTowns": "Küstenstädte",
+      "localVibe": "Lokales Flair"
+    },
     "seasons": {
       "spring": "Frühling",
       "summer": "Sommer",
@@ -160,19 +197,23 @@
     },
     "ibiza": {
       "title": "Ibiza",
-      "description": "Erleben Sie weltberühmte Strandclubs, ein pulsierendes Nachtleben und versteckte Buchten mit kristallklarem Wasser."
+      "description": "Erleben Sie weltberühmte Strandclubs, ein pulsierendes Nachtleben und versteckte Buchten mit kristallklarem Wasser.",
+      "tags": ["Beach Clubs", "Luxus", "Nachtleben"]
     },
     "formentera": {
       "title": "Formentera",
-      "description": "Entdecken Sie das letzte Paradies des Mittelmeers – unberührte weiße Sandstrände unvergessliche Ruhe abseits des Trubels."
+      "description": "Entdecken Sie das letzte Paradies des Mittelmeers – unberührte weiße Sandstrände unvergessliche Ruhe abseits des Trubels.",
+      "tags": ["Kristallklares Wasser", "Natur", "Entspannung"]
     },
     "mallorca": {
       "title": "Mallorca",
-      "description": "Entdecken Sie versteckte Buchten und die Kultur Palmas."
+      "description": "Entdecken Sie versteckte Buchten und die Kultur Palmas.",
+      "tags": ["Buchten", "Kultur", "Segeln"]
     },
     "menorca": {
       "title": "Menorca",
-      "description": "Genießen Sie die friedliche Atmosphäre und die unberührte natürliche Schönheit dieses UNESCO-Biosphärenreservats."
+      "description": "Genießen Sie die friedliche Atmosphäre und die unberührte natürliche Schönheit dieses UNESCO-Biosphärenreservats.",
+      "tags": ["Friedlich", "Unberührt", "Öko"]
     },
     "costa-blanca": {
       "title": "Costa Blanca",
@@ -187,23 +228,23 @@
     "experiences": {
       "paella": {
         "title": "Authentische Paella",
-        "description": "Traditionelle spanische Paella, frisch zubereitet an Bord."
+        "description": "Frisch an Bord zubereitet mit lokalen Meeresfrüchten und traditionellen Safran-Rezepten."
       },
       "bbq": {
         "title": "Premium BBQ & Steaks",
-        "description": "Hochwertige Grillgerichte und Steaks vom Grill."
+        "description": "Hochwertige Fleischstücke, auf dem offenen Deck perfekt gegrillt."
       },
       "tapas": {
         "title": "Lokale Tapas & Weine",
-        "description": "Ausgewählte Tapas und regionale Weine."
+        "description": "Eine erlesene Auswahl an spanischen Käsesorten, Schinken und regionalen Weinen."
       },
       "mediterranean": {
         "title": "Mediterrane Küche",
-        "description": "Frische mediterrane Gerichte mit lokalen Zutaten."
+        "description": "Frische Meeresfrüchte, lokale Produkte und mediterrane Aromen, kuratiert von unserem erfahrenen Küchenteam."
       },
       "sunset": {
         "title": "Abendessen bei Sonnenuntergang",
-        "description": "Romantisches Dinner mit Blick auf den Sonnenuntergang."
+        "description": "Ein romantisches kulinarisches Erlebnis bei untergehender Sonne mit Gourmet-Gerichten und edlen Weinen."
       }
     }
   },
@@ -218,7 +259,13 @@
   },
   "reviews": {
     "title": "Was unsere Gäste sagen",
-    "subtitle": "Hören Sie von denen, die unseren Luxus erlebt haben"
+    "subtitle": "Hören Sie von denen, die unseren Luxus erlebt haben",
+    "discoverStories": "Entdecken Sie {count} unvergessliche Geschichten",
+    "fromOurGuests": "von unseren Gästen",
+    "discoverAllStories": "Alle Gästegeschichten entdecken",
+    "showingAllReviews": "Alle {count} Bewertungen anzeigen",
+    "ourGuestsHaveLeft": "Unsere Gäste haben {count} unvergessliche Geschichten hinterlassen",
+    "exploreGuestbook": "Erkunden Sie das Gästebuch von Balearic Yacht Charters"
   },
   "testimonials": {
     "title": "Kundenbewertungen",

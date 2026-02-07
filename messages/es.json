@@ -70,7 +70,11 @@
     "perDay": "/ día",
     "viewDetails": "Ver detalles",
     "getQuote": "Presupuesto",
+    "requestQuote": "Solicitar Presupuesto",
     "technicalSpecs": "Especificaciones técnicas",
+    "technicalData": "Datos Técnicos",
+    "keyHighlights": "Aspectos Destacados",
+    "amenitiesFeatures": "Comodidades y Características",
     "specs": {
       "yearBuilt": "Año de construcción",
       "length": "Eslora",
@@ -91,7 +95,23 @@
     "ctaTitle": "¿Listo para reservar sus vacaciones soñadas?",
     "ctaDescription": "Contáctenos hoy para asegurar sus fechas.",
     "exploreDestinations": "Explorar destinos",
+    "discoverYacht": "Descubre",
+    "lookingForClassicSailing": "¿Buscas una experiencia de navegación clásica?",
+    "experienceCharmClassic": "Experimenta el encanto de nuestro yate clásico con excelente relación calidad-precio.",
     "backToHome": "Volver al inicio",
+    "amenities": {
+      "ac": "Aire Acondicionado",
+      "watermaker": "Desalinizador",
+      "generator": "Generador",
+      "flybridge": "Flybridge",
+      "heating": "Calefacción",
+      "teak_deck": "Cubierta de Teak",
+      "full_batten": "Full Batten",
+      "folding_table": "Mesa Plegable",
+      "fridge": "Refrigerador",
+      "dinghy": "Bote Auxiliar",
+      "water_entertainment": "Entretenimiento Acuático"
+    },
     "extras": {
       "sup": "Tabla de Paddle",
       "snorkel": "Equipo de Snorkel",
@@ -150,6 +170,23 @@
     "happyGuests": "Huéspedes felices",
     "happyGuestsDescription": "Únase a cientos de viajeros satisfechos que han explorado la costa con nosotros.",
     "joinOurGuests": "Únase a nuestra comunidad de amantes del mar",
+    "tags": {
+      "crystalWater": "Agua Cristalina",
+      "nature": "Naturaleza",
+      "relax": "Relajación",
+      "beachClubs": "Clubes de Playa",
+      "luxury": "Lujo",
+      "nightlife": "Vida Nocturna",
+      "calas": "Calas",
+      "culture": "Cultura",
+      "sailing": "Navegación",
+      "peaceful": "Tranquilo",
+      "unspoiled": "Virgen",
+      "eco": "Ecológico",
+      "sun": "Sol",
+      "coastalTowns": "Pueblos Costeros",
+      "localVibe": "Ambiente Local"
+    },
     "seasons": {
       "spring": "Primavera",
       "summer": "Verano",
@@ -159,29 +196,56 @@
     },
     "ibiza": {
       "title": "Ibiza",
-      "description": "Disfrute de los famosos beach clubs y aguas cristalinas."
+      "description": "Disfrute de los famosos beach clubs y aguas cristalinas.",
+      "tags": ["Clubes de Playa", "Lujo", "Vida Nocturna"]
     },
     "formentera": {
       "title": "Formentera",
-      "description": "Descubra el Caribe del Mediterráneo con playas vírgenes de arena blanca."
+      "description": "Descubra el Caribe del Mediterráneo con playas vírgenes de arena blanca.",
+      "tags": ["Agua Cristalina", "Naturaleza", "Relajación"]
     },
     "mallorca": {
       "title": "Mallorca",
-      "description": "Explore calas ocultas y la vibrante cultura de Palma."
+      "description": "Explore calas ocultas y la vibrante cultura de Palma.",
+      "tags": ["Calas", "Cultura", "Navegación"]
     },
     "menorca": {
       "title": "Menorca",
-      "description": "Disfrute de la atmósfera tranquila y la belleza natural virgen de esta Reserva de la Biosfera UNESCO."
+      "description": "Disfrute de la atmósfera tranquila y la belleza natural virgen de esta Reserva de la Biosfera UNESCO.",
+      "tags": ["Tranquilo", "Virgen", "Ecológico"]
     },
     "costa-blanca": {
       "title": "Costa Blanca",
-      "description": "La Costa Blanca, bañada por el sol, ofrece playas vírgenes, puertos deportivos vibrantes y pueblos costeros con encanto a lo largo de la costa este de España."
+      "description": "La Costa Blanca, bañada por el sol, ofrece playas vírgenes, puertos deportivos vibrantes y pueblos costeros con encanto a lo largo de la costa este de España.",
+      "tags": ["Sol", "Pueblos Costeros", "Ambiente Local"]
     }
   },
   "culinary": {
     "title": "Gastronomía a bordo",
     "subtitle": "Sabores exquisitos en el mar",
-    "description": "Una experiencia culinaria romántica mientras el sol se pone sobre el Mediterráneo, con platos gourmet y vinos selectos."
+    "description": "Una experiencia culinaria romántica mientras el sol se pone sobre el Mediterráneo, con platos gourmet y vinos selectos.",
+    "experiences": {
+      "paella": {
+        "title": "Paella Auténtica",
+        "description": "Cocinada fresca a bordo con mariscos locales y recetas tradicionales de azafrán."
+      },
+      "bbq": {
+        "title": "Barbacoa y Chuletones Premium",
+        "description": "Cortes de alta calidad asados a la perfección en la cubierta abierta."
+      },
+      "tapas": {
+        "title": "Tapas y Vinos Locales",
+        "description": "Una selección curada de quesos españoles, jamones y vinos regionales."
+      },
+      "mediterranean": {
+        "title": "Cocina Mediterránea",
+        "description": "Mariscos frescos, productos locales y sabores mediterráneos seleccionados por nuestro experto equipo culinario."
+      },
+      "sunset": {
+        "title": "Cena al Atardecer",
+        "description": "Una experiencia culinaria romántica mientras el sol se pone sobre el Mediterráneo, con platos gourmet y vinos finos."
+      }
+    }
   },
   "stats": {
     "title": "Nuestra trayectoria en números",
@@ -193,7 +257,13 @@
   },
   "reviews": {
     "title": "Lo que dicen nuestros huéspedes",
-    "subtitle": "Escuche a quienes han vivido el lujo de nuestros servicios"
+    "subtitle": "Escuche a quienes han vivido el lujo de nuestros servicios",
+    "discoverStories": "Descubre {count} Historias Inolvidables",
+    "fromOurGuests": "de Nuestros Huéspedes",
+    "discoverAllStories": "Descubre Todas las Historias de Huéspedes",
+    "showingAllReviews": "Mostrando todas las {count} reseñas",
+    "ourGuestsHaveLeft": "Nuestros huéspedes han dejado {count} historias inolvidables",
+    "exploreGuestbook": "Explora el Libro de Visitas de Balearic Yacht Charters"
   },
   "testimonials": {
     "title": "Testimonios de Clientes",

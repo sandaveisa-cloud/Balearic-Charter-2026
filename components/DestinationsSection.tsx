@@ -153,14 +153,27 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
   // Map destination names to tags (can be extended with database field later)
   const getDestinationTags = (destinationName: string): string[] => {
     const name = destinationName.toLowerCase()
-    const tagMap: Record<string, string[]> = {
-      'ibiza': ['Beach Clubs', 'Luxury', 'Nightlife'],
-      'formentera': ['Crystal Water', 'Nature', 'Relax'],
-      'mallorca': ['Calas', 'Culture', 'Sailing'],
-      'menorca': ['Peaceful', 'Unspoiled', 'Eco'],
-      'costa blanca': ['Sun', 'Coastal Towns', 'Local Vibe'],
+    try {
+      const tagTranslations = t.raw('tags') || {}
+      const tagMap: Record<string, string[]> = {
+        'ibiza': [tagTranslations.beachClubs || 'Beach Clubs', tagTranslations.luxury || 'Luxury', tagTranslations.nightlife || 'Nightlife'],
+        'formentera': [tagTranslations.crystalWater || 'Crystal Water', tagTranslations.nature || 'Nature', tagTranslations.relax || 'Relax'],
+        'mallorca': [tagTranslations.calas || 'Calas', tagTranslations.culture || 'Culture', tagTranslations.sailing || 'Sailing'],
+        'menorca': [tagTranslations.peaceful || 'Peaceful', tagTranslations.unspoiled || 'Unspoiled', tagTranslations.eco || 'Eco'],
+        'costa blanca': [tagTranslations.sun || 'Sun', tagTranslations.coastalTowns || 'Coastal Towns', tagTranslations.localVibe || 'Local Vibe'],
+      }
+      return tagMap[name] || []
+    } catch {
+      // Fallback to English if translations fail
+      const tagMap: Record<string, string[]> = {
+        'ibiza': ['Beach Clubs', 'Luxury', 'Nightlife'],
+        'formentera': ['Crystal Water', 'Nature', 'Relax'],
+        'mallorca': ['Calas', 'Culture', 'Sailing'],
+        'menorca': ['Peaceful', 'Unspoiled', 'Eco'],
+        'costa blanca': ['Sun', 'Coastal Towns', 'Local Vibe'],
+      }
+      return tagMap[name] || []
     }
-    return tagMap[name] || []
   }
 
   return (

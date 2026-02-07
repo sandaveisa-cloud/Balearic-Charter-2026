@@ -331,10 +331,10 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
                 </div>
               </div>
               <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#001F3F] mb-3 tracking-wide">
-                Our guests have left {curatedReviews.length} unforgettable stories
+                {t('ourGuestsHaveLeft', { count: curatedReviews.length })}
               </h3>
               <p className="text-gray-600 mb-6 text-base md:text-lg">
-                Explore the Balearic Yacht Charters Guestbook
+                {t('exploreGuestbook')}
               </p>
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
@@ -464,7 +464,7 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
               }}
               className="group relative inline-block text-[#001F3F] text-sm md:text-base font-medium tracking-wide transition-all duration-300 cursor-pointer"
             >
-              <span className="relative z-10 inline-block">Discover All Guest Stories</span>
+              <span className="relative z-10 inline-block">{t('discoverAllStories')}</span>
               <motion.div
                 initial={{ width: '100%', scaleX: 1 }}
                 whileHover={{ width: '110%', scaleX: 1.1 }}
@@ -478,7 +478,7 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
         {showAll && hasMore && (
           <div className="text-center mt-6">
             <p className="text-xs text-gray-400">
-              Showing all {curatedReviews.length} reviews
+              {t('showingAllReviews', { count: curatedReviews.length })}
             </p>
           </div>
         )}

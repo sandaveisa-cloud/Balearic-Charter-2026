@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, X, Star, Globe, ExternalLink, BookOpen } from 'lucide-react'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 import type { Review } from '@/types/database'
 import { format } from 'date-fns'
 import { loadReviewsFromJson } from '@/lib/reviewLoader'
@@ -121,10 +122,10 @@ export default function GuestbookSection({ reviews }: GuestbookSectionProps) {
               </div>
               <div className="text-left">
                 <h3 className="font-serif text-xl md:text-2xl lg:text-3xl font-bold text-[#001F3F] mb-1 tracking-wide">
-                  Discover {curatedReviews.length} Unforgettable Stories
+                  {t('discoverStories', { count: curatedReviews.length })}
                 </h3>
                 <p className="text-sm md:text-base text-gray-600">
-                  from Our Guests
+                  {t('fromOurGuests')}
                 </p>
               </div>
             </div>

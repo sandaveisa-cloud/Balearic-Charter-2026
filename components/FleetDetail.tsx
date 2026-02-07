@@ -631,7 +631,7 @@ export default function FleetDetail({ yacht, vesselMilestones = [] }: FleetDetai
                   
                   {/* Key Highlights */}
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-xl text-gray-800">Key Highlights:</h4>
+                    <h4 className="font-semibold text-xl text-gray-800">{t('keyHighlights')}:</h4>
                     <ul className="space-y-3 list-none">
                       {shipTranslations.highlights.map((highlight, index) => (
                         <li key={index} className="flex items-start gap-3">
@@ -664,7 +664,7 @@ export default function FleetDetail({ yacht, vesselMilestones = [] }: FleetDetai
 
             {/* Technical Specifications Table */}
             <section>
-              <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">{t('technicalSpecs', { default: 'Technical Specifications' })}</h2>
+              <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">{t('technicalData') || t('technicalSpecs')}</h2>
               <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                 <table className="w-full">
                   <tbody className="divide-y divide-gray-200">
@@ -792,29 +792,29 @@ export default function FleetDetail({ yacht, vesselMilestones = [] }: FleetDetai
             {/* Amenities Section */}
             {yacht.amenities && Object.keys(yacht.amenities).filter(key => yacht.amenities?.[key]).length > 0 && (
               <section>
-                <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">Amenities & Features</h2>
+                <h2 className="font-serif text-3xl font-bold text-luxury-blue mb-6">{t('amenitiesFeatures')}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {[
-                    { key: 'ac', label: 'Air Conditioning', icon: Snowflake },
-                    { key: 'watermaker', label: 'Watermaker', icon: Droplets },
-                    { key: 'generator', label: 'Generator', icon: Zap },
-                    { key: 'flybridge', label: 'Flybridge', icon: Ship },
-                    { key: 'heating', label: 'Heating', icon: Flame },
-                    { key: 'teak_deck', label: 'Teak Deck', icon: Waves },
-                    { key: 'full_batten', label: 'Full Batten', icon: Ship },
-                    { key: 'folding_table', label: 'Folding Table', icon: Table },
-                    { key: 'fridge', label: 'Refrigerator', icon: Refrigerator },
-                    { key: 'dinghy', label: 'Dinghy', icon: Anchor },
-                    { key: 'water_entertainment', label: 'Water Entertainment', icon: Sparkles },
+                    { key: 'ac', icon: Snowflake },
+                    { key: 'watermaker', icon: Droplets },
+                    { key: 'generator', icon: Zap },
+                    { key: 'flybridge', icon: Ship },
+                    { key: 'heating', icon: Flame },
+                    { key: 'teak_deck', icon: Waves },
+                    { key: 'full_batten', icon: Ship },
+                    { key: 'folding_table', icon: Table },
+                    { key: 'fridge', icon: Refrigerator },
+                    { key: 'dinghy', icon: Anchor },
+                    { key: 'water_entertainment', icon: Sparkles },
                   ]
                     .filter(({ key }) => yacht.amenities?.[key as keyof typeof yacht.amenities])
-                    .map(({ key, label, icon: Icon }) => (
+                    .map(({ key, icon: Icon }) => (
                       <div
                         key={key}
                         className="flex items-center gap-3 p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-600 hover:shadow-md transition-all"
                       >
                         <Icon className="w-5 h-5 text-blue-600 flex-shrink-0" />
-                        <span className="text-sm font-medium text-gray-900">{label}</span>
+                        <span className="text-sm font-medium text-gray-900">{t(`amenities.${key}`)}</span>
                       </div>
                     ))}
                 </div>
@@ -948,7 +948,7 @@ export default function FleetDetail({ yacht, vesselMilestones = [] }: FleetDetai
 
               {/* Quote Request Form */}
               <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-                <h3 className="font-serif text-xl font-bold text-luxury-blue mb-4">{t('getQuote') || 'Get a Quote'}</h3>
+                <h3 className="font-serif text-xl font-bold text-luxury-blue mb-4">{t('requestQuote') || t('getQuote') || 'Request a Quote'}</h3>
                 <p className="text-sm text-gray-600 mb-4">
                   {t('quoteFormDescription') || 'Fill out the form below and we\'ll get back to you with a personalized quote.'}
                 </p>
@@ -1092,10 +1092,10 @@ export default function FleetDetail({ yacht, vesselMilestones = [] }: FleetDetai
               <div className="mt-20 mb-12 bg-gradient-to-br from-luxury-blue/5 via-gray-50 to-luxury-blue/5 rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg">
                 <div className="max-w-3xl mx-auto text-center">
                   <h2 className="font-serif text-2xl md:text-3xl font-bold text-luxury-blue mb-4">
-                    Looking for a classic sailing experience? Discover Yacht {upsellYacht.name}
+                    {t('lookingForClassicSailing')} {t('discoverYacht')} Yacht {upsellYacht.name}
                   </h2>
                   <p className="text-gray-600 mb-6">
-                    Experience the charm of our classic yacht with excellent value for money.
+                    {t('experienceCharmClassic')}
                   </p>
                   {upsellPrice && (
                     <div className="mb-6">
@@ -1144,7 +1144,7 @@ export default function FleetDetail({ yacht, vesselMilestones = [] }: FleetDetai
                       href={{ pathname: '/fleet/[slug]' as const, params: { slug: upsellYacht.slug } }}
                       className="inline-flex items-center justify-center gap-2 bg-luxury-blue text-white font-semibold px-6 py-3 rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 shadow-lg hover:shadow-xl"
                     >
-                      <span>Discover {upsellYacht.name}</span>
+                      <span>{t('discoverYacht')} {upsellYacht.name}</span>
                       <ArrowRight className="w-5 h-5" />
                     </Link>
                   )}

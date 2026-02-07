@@ -70,7 +70,11 @@
     "perDay": "/ day",
     "viewDetails": "View Details",
     "getQuote": "Get a Quote",
+    "requestQuote": "Request a Quote",
     "technicalSpecs": "Technical Specifications",
+    "technicalData": "Technical Data",
+    "keyHighlights": "Key Highlights",
+    "amenitiesFeatures": "Amenities & Features",
     "specs": {
       "yearBuilt": "Year Built",
       "length": "Length",
@@ -91,7 +95,23 @@
     "ctaTitle": "Ready to book your dream vacation?",
     "ctaDescription": "Contact us today to secure your dates.",
     "exploreDestinations": "Explore Destinations",
+    "discoverYacht": "Discover",
+    "lookingForClassicSailing": "Looking for a classic sailing experience?",
+    "experienceCharmClassic": "Experience the charm of our classic yacht with excellent value for money.",
     "backToHome": "Back to Home",
+    "amenities": {
+      "ac": "Air Conditioning",
+      "watermaker": "Watermaker",
+      "generator": "Generator",
+      "flybridge": "Flybridge",
+      "heating": "Heating",
+      "teak_deck": "Teak Deck",
+      "full_batten": "Full Batten",
+      "folding_table": "Folding Table",
+      "fridge": "Refrigerator",
+      "dinghy": "Dinghy",
+      "water_entertainment": "Water Entertainment"
+    },
     "extras": {
       "sup": "Paddle Board",
       "snorkel": "Snorkeling Gear",
@@ -193,7 +213,13 @@
   },
   "reviews": {
     "title": "What Our Guests Say",
-    "subtitle": "Hear from those who have experienced the luxury of our charters"
+    "subtitle": "Hear from those who have experienced the luxury of our charters",
+    "discoverStories": "Discover {count} Unforgettable Stories",
+    "fromOurGuests": "from Our Guests",
+    "discoverAllStories": "Discover All Guest Stories",
+    "showingAllReviews": "Showing all {count} reviews",
+    "ourGuestsHaveLeft": "Our guests have left {count} unforgettable stories",
+    "exploreGuestbook": "Explore the Balearic Yacht Charters Guestbook"
   },
   "testimonials": {
     "title": "Customer Testimonials",
