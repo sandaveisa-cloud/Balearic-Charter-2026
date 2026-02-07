@@ -80,29 +80,41 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     
-    // Validate year range
-    if (body.year < 2000 || body.year > 2030) {
+    // Validate year range (allow 2000-2030, including 2012)
+    const yearNum = parseInt(body.year)
+    if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2030) {
+      console.error('[Admin API] ❌ Year validation failed:', {
+        received: body.year,
+        parsed: yearNum,
+        isValid: !isNaN(yearNum) && yearNum >= 2000 && yearNum <= 2030
+      })
       return NextResponse.json(
         { 
           error: 'Invalid year', 
-          details: `Year must be between 2000 and 2030. Received: ${body.year}` 
+          details: `Year must be between 2000 and 2030 (inclusive). Received: ${body.year}`,
+          received: body.year,
+          parsed: yearNum
         },
         { status: 400 }
       )
     }
+    // Ensure year is stored as integer
+    body.year = yearNum
     
     // Log incoming data for debugging
     console.log('[Admin API] 📥 POST request body:', {
       ...body,
       image_url: body.image_url || '(empty/null)',
-      hasImage: !!body.image_url
+      hasImage: !!body.image_url,
+      year: body.year,
+      yearType: typeof body.year
     })
     
     const supabase = createSupabaseAdminClient()
 
-    // Prepare insert data
+    // Prepare insert data - ensure all fields match database schema exactly
     const insertData = {
-      year: body.year,
+      year: body.year, // Already validated and converted to integer
       title_en: body.title_en,
       title_es: body.title_es,
       title_de: body.title_de,
@@ -178,15 +190,27 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Validate year range
-    if (updateData.year !== undefined && (updateData.year < 2000 || updateData.year > 2030)) {
-      return NextResponse.json(
-        { 
-          error: 'Invalid year', 
-          details: `Year must be between 2000 and 2030. Received: ${updateData.year}` 
-        },
-        { status: 400 }
-      )
+    // Validate year range (allow 2000-2030, including 2012)
+    if (updateData.year !== undefined) {
+      const yearNum = parseInt(updateData.year)
+      if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2030) {
+        console.error('[Admin API] ❌ Year validation failed:', {
+          received: updateData.year,
+          parsed: yearNum,
+          isValid: !isNaN(yearNum) && yearNum >= 2000 && yearNum <= 2030
+        })
+        return NextResponse.json(
+          { 
+            error: 'Invalid year', 
+            details: `Year must be between 2000 and 2030 (inclusive). Received: ${updateData.year}`,
+            received: updateData.year,
+            parsed: yearNum
+          },
+          { status: 400 }
+        )
+      }
+      // Ensure year is stored as integer
+      updateData.year = yearNum
     }
 
     // Log incoming data for debugging
@@ -199,9 +223,9 @@ export async function PUT(request: NextRequest) {
 
     const supabase = createSupabaseAdminClient()
 
-    // Prepare update data
-    const updatePayload = {
-      year: updateData.year,
+    // Prepare update data - ensure all fields match database schema exactly
+    const updatePayload: any = {
+      year: updateData.year !== undefined ? parseInt(updateData.year) : undefined,
       title_en: updateData.title_en,
       title_es: updateData.title_es,
       title_de: updateData.title_de,
@@ -209,15 +233,24 @@ export async function PUT(request: NextRequest) {
       description_es: updateData.description_es,
       description_de: updateData.description_de,
       image_url: updateData.image_url || null, // Explicitly handle empty string as null
-      order_index: updateData.order_index || 0,
-      is_active: updateData.is_active !== false,
+      order_index: updateData.order_index !== undefined ? parseInt(updateData.order_index) : 0,
+      is_active: updateData.is_active !== undefined ? updateData.is_active : true,
       updated_at: new Date().toISOString(),
     }
 
+    // Remove undefined fields to avoid Supabase errors
+    Object.keys(updatePayload).forEach(key => {
+      if (updatePayload[key] === undefined) {
+        delete updatePayload[key]
+      }
+    })
+
     console.log('[Admin API] 📤 Updating milestone:', {
       id,
-      ...updatePayload,
-      image_url: updatePayload.image_url || '(null)'
+      payload: updatePayload,
+      image_url: updatePayload.image_url || '(null)',
+      year: updatePayload.year,
+      yearType: typeof updatePayload.year
     })
 
     // @ts-ignore - TypeScript doesn't recognize journey_milestones table
@@ -230,18 +263,36 @@ export async function PUT(request: NextRequest) {
 
     if (error) {
       console.error('[Admin API] ❌ Error updating milestone:', error)
+      console.error('[Admin API] Full error object:', JSON.stringify(error, null, 2))
       console.error('[Admin API] Error details:', {
         message: error.message,
         details: error.details,
         hint: error.hint,
-        code: error.code
+        code: error.code,
+        statusCode: error.statusCode
       })
+      console.error('[Admin API] Update payload that failed:', updatePayload)
+      console.error('[Admin API] Milestone ID:', id)
+      
+      // Check for specific error types
+      let errorMessage = 'Failed to update milestone'
+      if (error.code === '23505') {
+        errorMessage = 'Duplicate entry: A milestone with these details already exists'
+      } else if (error.code === '23503') {
+        errorMessage = 'Foreign key constraint violation'
+      } else if (error.code === '23514') {
+        errorMessage = `Check constraint violation: ${error.message}`
+      } else if (error.message?.includes('permission') || error.message?.includes('policy')) {
+        errorMessage = 'Permission denied: Check RLS policies for journey_milestones table'
+      }
+      
       return NextResponse.json(
         { 
-          error: 'Failed to update milestone', 
+          error: errorMessage,
           details: error.message,
           hint: error.hint,
-          code: error.code
+          code: error.code,
+          fullError: error // Include full error for debugging
         },
         { status: 500 }
       )

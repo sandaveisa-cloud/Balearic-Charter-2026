@@ -73,12 +73,30 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
         ? { ...formData, id: milestone.id }
         : formData
 
-      // Log payload for debugging
+      // Log payload for debugging - show exact structure
       console.log('[JourneyEditModal] 📤 Sending payload:', {
         ...payload,
         image_url: payload.image_url || '(empty)',
-        hasImage: !!payload.image_url
+        hasImage: !!payload.image_url,
+        year: payload.year,
+        yearType: typeof payload.year,
+        isUpdate: !!milestone,
+        milestoneId: milestone?.id
       })
+      
+      // Validate payload structure matches database schema
+      const requiredFields = ['year', 'title_en', 'title_es', 'title_de', 'description_en', 'description_es', 'description_de']
+      const missingFields = requiredFields.filter(field => !payload[field])
+      if (missingFields.length > 0) {
+        const errorMsg = `Missing required fields: ${missingFields.join(', ')}`
+        console.error('[JourneyEditModal] ❌ Validation error:', errorMsg)
+        alert(`Validation Error:\n\n${errorMsg}\n\nPlease fill in all required fields.`)
+        setError(errorMsg)
+        setToastMessage(errorMsg)
+        setToastType('error')
+        setShowToast(true)
+        return
+      }
 
       const method = milestone ? 'PUT' : 'POST'
       const response = await fetch('/api/admin/journey', {
@@ -101,10 +119,21 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
         }
         
         console.error('[JourneyEditModal] ❌ API Error:', errorData)
+        console.error('[JourneyEditModal] ❌ Full error object:', JSON.stringify(errorData, null, 2))
+        console.error('[JourneyEditModal] ❌ Response status:', response.status)
+        console.error('[JourneyEditModal] ❌ Payload that failed:', payload)
         
-        // Show alert for critical errors
+        // Show alert for critical errors with full details
         const errorMessage = errorData.error || errorData.details || `Failed to save milestone: ${response.status}`
-        alert(`Error saving milestone:\n\n${errorMessage}\n\nCheck console for details.`)
+        const fullErrorDetails = [
+          `Error: ${errorMessage}`,
+          errorData.details ? `Details: ${errorData.details}` : '',
+          errorData.hint ? `Hint: ${errorData.hint}` : '',
+          errorData.code ? `Code: ${errorData.code}` : '',
+          `Status: ${response.status}`
+        ].filter(Boolean).join('\n')
+        
+        alert(`Error saving milestone:\n\n${fullErrorDetails}\n\nCheck browser console for full details.`)
         
         setToastMessage(errorMessage)
         setToastType('error')
