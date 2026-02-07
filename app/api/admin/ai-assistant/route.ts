@@ -47,9 +47,21 @@ export async function POST(req: Request) {
     }
 
     // Initialize Gemini AI
-    const genAI = new GoogleGenerativeAI(key);
+    let genAI: GoogleGenerativeAI;
 
-    // Get model - using v1 API (stable) instead of v1beta
+    try {
+      // Pārliecinies, ka 'key' mainīgais ir definēts iepriekš no procesa vides
+      genAI = new GoogleGenerativeAI(key);
+    } catch (initError: any) {
+      console.error('[AI Assistant] Failed to initialize GoogleGenerativeAI:', initError);
+      return NextResponse.json({ 
+        error: 'Failed to initialize Gemini AI',
+        details: `Error initializing: ${initError?.message || 'Unknown error'}`,
+        code: 'INIT_ERROR'
+      }, { status: 500 });
+    }
+
+    // Get model - using gemini-1.5-flash for speed and efficiency
     const model = genAI.getGenerativeModel({ 
       model: "gemini-1.5-flash",
     });
