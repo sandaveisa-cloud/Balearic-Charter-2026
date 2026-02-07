@@ -90,27 +90,48 @@ export default function FleetDetail({ yacht, vesselMilestones = [] }: FleetDetai
     
     loadComparisonBoats()
     
-    // Load upsell yacht (Wide Dream for Simona, Simona for Wide Dream)
+    // Load upsell yacht - dynamically find another active yacht from the database
     const loadUpsellYacht = async () => {
       try {
-        const currentSlug = yacht.slug?.toLowerCase() || yacht.name?.toLowerCase() || ''
-        let targetSlug = ''
+        const currentSlug = yacht.slug?.toLowerCase() || ''
+        if (!currentSlug) return
         
-        // Determine which yacht to upsell
-        if (currentSlug.includes('simona') || yacht.name?.toLowerCase().includes('simona')) {
-          // If viewing Simona, show Wide Dream
-          targetSlug = 'wide-dream'
-        } else if (currentSlug.includes('wide-dream') || currentSlug.includes('widedream') || yacht.name?.toLowerCase().includes('wide dream')) {
-          // If viewing Wide Dream, show Simona
-          targetSlug = 'simona'
+        // Fetch all active yachts using client-side Supabase query
+        // Import supabase client for client-side use
+        const { createClient } = await import('@supabase/supabase-js')
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        
+        if (!supabaseUrl || !supabaseKey) {
+          console.warn('[FleetDetail] Supabase env vars not available for upsell fetch')
+          return
         }
         
-        if (targetSlug) {
-          // Use getFleetBySlugs which works client-side
-          const upsells = await getFleetBySlugs([targetSlug])
-          if (upsells && upsells.length > 0) {
-            setUpsellYacht(upsells[0])
-          }
+        const supabase = createClient(supabaseUrl, supabaseKey)
+        
+        // Fetch all active yachts
+        const { data: fleetData, error } = await supabase
+          .from('fleet')
+          .select('*')
+          .eq('is_active', true)
+        
+        if (error || !fleetData) {
+          console.warn('[FleetDetail] Failed to fetch fleet for upsell:', error)
+          return
+        }
+        
+        // Filter out current yacht and find an alternative
+        const activeYachts = fleetData.filter((y: Fleet) => 
+          y.slug && 
+          y.slug.toLowerCase() !== currentSlug
+        )
+        
+        // Find a different yacht to show as upsell
+        // Prefer featured yachts, or just pick the first available one
+        const upsellCandidate = activeYachts.find((y: Fleet) => y.is_featured) || activeYachts[0]
+        
+        if (upsellCandidate && upsellCandidate.slug) {
+          setUpsellYacht(upsellCandidate)
         }
       } catch (error) {
         console.error('[FleetDetail] Error loading upsell yacht:', error)
