@@ -99,8 +99,10 @@ export default async function Home({ params }: Props) {
             {/* Fleet Section */}
             <FleetSection fleet={safeContent.fleet || []} />
             
-            {/* Journey (The Timeline) */}
-            {visibility.journey && <JourneySection milestones={safeContent.journeyMilestones || []} />}
+            {/* Journey (The Timeline) - Always show if milestones exist, or if visibility is enabled */}
+            {(visibility.journey || (safeContent.journeyMilestones && safeContent.journeyMilestones.length > 0)) && (
+              <JourneySection milestones={safeContent.journeyMilestones || []} />
+            )}
             
             {/* Destinations */}
             <DestinationsSection destinations={safeContent.destinations || []} />

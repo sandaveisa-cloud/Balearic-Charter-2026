@@ -208,8 +208,8 @@ async function fetchSiteContentInternal(): Promise<SiteContent> {
       .from('journey_milestones')
       .select('*')
       .eq('is_active', true)
-      .order('year', { ascending: true })
-      .order('order_index', { ascending: true })
+      .order('order_index', { ascending: true }) // Sort by order_index first
+      .order('year', { ascending: true }) // Then by year
     
     if (journeyResult?.error) {
       console.error('[Data] Error fetching journey_milestones:', journeyResult.error)

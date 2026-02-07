@@ -18,12 +18,20 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
   const [visibleMilestones, setVisibleMilestones] = useState<Set<string>>(new Set())
   const sectionRef = useRef<HTMLDivElement>(null)
 
-  // Filter active milestones and sort by year
+  // Filter active milestones and sort by order_index first, then by year
   const activeMilestones = milestones
     .filter((m) => m.is_active)
-    .sort((a, b) => a.year - b.year)
+    .sort((a, b) => {
+      // First sort by order_index
+      if (a.order_index !== b.order_index) {
+        return (a.order_index || 0) - (b.order_index || 0)
+      }
+      // If order_index is the same, sort by year
+      return a.year - b.year
+    })
 
-  if (activeMilestones.length === 0) return null
+  // Don't hide section if empty - show empty state instead
+  // if (activeMilestones.length === 0) return null
 
   // Get localized text
   const getTitle = (milestone: JourneyMilestone) => {
@@ -34,10 +42,38 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
     return milestone[`description_${locale}` as keyof JourneyMilestone] as string || milestone.description_en
   }
 
+  // Check if there's a video URL (could be in image_url field if it's a video file)
+  const videoUrl = activeMilestones.length > 0 && activeMilestones[0].image_url 
+    ? (activeMilestones[0].image_url.includes('.mp4') || 
+       activeMilestones[0].image_url.includes('.webm') || 
+       activeMilestones[0].image_url.includes('.mov') ||
+       activeMilestones[0].image_url.includes('video'))
+      ? activeMilestones[0].image_url 
+      : null
+    : null
+
   return (
     <section className="py-16 md:py-24 lg:py-32 bg-gradient-to-b from-white via-[#F9FAFB] to-white relative overflow-hidden">
-      {/* Subtle parallax background */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%22100%22 height=%22100%22 viewBox=%220 0 100 100%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z%22 fill=%22%23C5A059%22 fill-opacity=%220.03%22 fill-rule=%22evenodd%22/%3E%3C/svg%3E')] opacity-40" />
+      {/* Video Background (if video URL exists) */}
+      {videoUrl && (
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-20 z-0"
+          style={{ pointerEvents: 'none' }}
+        >
+          <source src={videoUrl} type="video/mp4" />
+          <source src={videoUrl} type="video/webm" />
+          Your browser does not support the video tag.
+        </video>
+      )}
+      
+      {/* Subtle parallax background (fallback if no video) */}
+      {!videoUrl && (
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=%22100%22 height=%22100%22 viewBox=%220 0 100 100%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cpath d=%22M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z%22 fill=%22%23C5A059%22 fill-opacity=%220.03%22 fill-rule=%22evenodd%22/%3E%3C/svg%3E')] opacity-40 z-0" />
+      )}
 
       <div className="container mx-auto px-4 md:px-6 relative z-10" ref={sectionRef}>
         {/* Section Header */}
@@ -80,7 +116,12 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
 
           {/* Milestones */}
           <div className="space-y-12 md:space-y-16">
-            {activeMilestones.map((milestone, index) => {
+            {activeMilestones.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No milestones available yet.</p>
+              </div>
+            ) : (
+              activeMilestones.map((milestone, index) => {
               const isEven = index % 2 === 0
               const MilestoneCard = ({ milestone, index, isEven }: { milestone: JourneyMilestone; index: number; isEven: boolean }) => {
                 const ref = useRef<HTMLDivElement>(null)
@@ -116,8 +157,12 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
                           <span className="text-sm font-semibold text-[#C5A059] tracking-wide">{milestone.year}</span>
                         </div>
 
-                        {/* Image */}
-                        {milestone.image_url && (
+                        {/* Image (only show if not a video file) */}
+                        {milestone.image_url && 
+                         !milestone.image_url.includes('.mp4') && 
+                         !milestone.image_url.includes('.webm') && 
+                         !milestone.image_url.includes('.mov') &&
+                         !milestone.image_url.includes('video') && (
                           <div className="mb-4 rounded-xl overflow-hidden aspect-video">
                             <OptimizedImage
                               src={(getOptimizedImageUrl as any)(milestone.image_url || '', {
@@ -130,6 +175,25 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
                               height={450}
                               className="w-full h-full object-cover"
                             />
+                          </div>
+                        )}
+                        
+                        {/* Video (if image_url is a video file) */}
+                        {milestone.image_url && 
+                         (milestone.image_url.includes('.mp4') || 
+                          milestone.image_url.includes('.webm') || 
+                          milestone.image_url.includes('.mov') ||
+                          milestone.image_url.includes('video')) && (
+                          <div className="mb-4 rounded-xl overflow-hidden aspect-video">
+                            <video
+                              controls
+                              className="w-full h-full object-cover"
+                              preload="metadata"
+                            >
+                              <source src={milestone.image_url} type="video/mp4" />
+                              <source src={milestone.image_url} type="video/webm" />
+                              Your browser does not support the video tag.
+                            </video>
                           </div>
                         )}
 
@@ -149,7 +213,8 @@ export default function JourneySection({ milestones }: JourneySectionProps) {
               }
 
               return <MilestoneCard key={milestone.id} milestone={milestone} index={index} isEven={isEven} />
-            })}
+              })
+            )}
           </div>
         </div>
       </div>
