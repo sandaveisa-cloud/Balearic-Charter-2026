@@ -72,12 +72,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Revalidate homepage and layout to ensure translations appear instantly
+    // COMPREHENSIVE REVALIDATION - ensure translations appear instantly
     try {
-      const { revalidatePath } = await import('next/cache')
+      const { revalidatePath, revalidateTag } = await import('next/cache')
       revalidatePath('/', 'layout')
-      revalidatePath('/[locale]', 'page')
-      revalidatePath('/[locale]/page', 'page')
+      
+      const locales = ['en', 'es', 'de']
+      locales.forEach(loc => {
+        revalidatePath(`/${loc}`, 'layout')
+        revalidatePath(`/${loc}`, 'page')
+      })
+      
+      revalidateTag('site-content')
       console.log('[Admin API] ✅ Revalidated homepage and layout after culinary create')
     } catch (revalError) {
       console.warn('[Admin API] ⚠️ Could not revalidate paths:', revalError)
@@ -132,12 +138,18 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Revalidate homepage and layout to ensure translations appear instantly
+    // COMPREHENSIVE REVALIDATION - ensure translations appear instantly
     try {
-      const { revalidatePath } = await import('next/cache')
+      const { revalidatePath, revalidateTag } = await import('next/cache')
       revalidatePath('/', 'layout')
-      revalidatePath('/[locale]', 'page')
-      revalidatePath('/[locale]/page', 'page')
+      
+      const locales = ['en', 'es', 'de']
+      locales.forEach(loc => {
+        revalidatePath(`/${loc}`, 'layout')
+        revalidatePath(`/${loc}`, 'page')
+      })
+      
+      revalidateTag('site-content')
       console.log('[Admin API] ✅ Revalidated homepage and layout after culinary update')
     } catch (revalError) {
       console.warn('[Admin API] ⚠️ Could not revalidate paths:', revalError)

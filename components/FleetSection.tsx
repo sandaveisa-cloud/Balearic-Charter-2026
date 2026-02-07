@@ -76,14 +76,10 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
           {visibleYachts.map((yacht) => {
             try {
               const yachtExtras = Array.isArray(yacht.extras) ? yacht.extras : []
+              // GOLDEN RULE: field_${locale} || field_en || ''
               // Use short_description for fleet card previews (not full description)
-              // Priority: short_description_[locale] > short_description_i18n > short_description_en > short_description (legacy)
               const shortDescriptionKey = `short_description_${locale}` as keyof Fleet
               const localizedDescription = (yacht[shortDescriptionKey] as string) || 
-                (locale === 'en' && yacht.short_description_en) ||
-                (locale === 'es' && yacht.short_description_es) ||
-                (locale === 'de' && yacht.short_description_de) ||
-                yacht.short_description_i18n?.[locale] ||
                 yacht.short_description_en ||
                 yacht.short_description ||
                 ''

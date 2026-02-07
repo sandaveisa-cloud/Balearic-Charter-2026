@@ -137,17 +137,23 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
     return null
   }
 
-  // Get localized description - use description_en/es/de columns (not description_i18n)
+  // Get localized description - GOLDEN RULE: field_${locale} || field_en || ''
   const getLocalizedDescription = (destination: Destination): string => {
-    // Use description_en, description_es, description_de columns (not description_i18n JSONB)
-    switch (locale) {
-      case 'es':
-        return destination.description_es || destination.description || ''
-      case 'de':
-        return destination.description_de || destination.description || ''
-      default:
-        return destination.description_en || destination.description || ''
+    const localeKey = `description_${locale}` as keyof Destination
+    const localizedDesc = destination[localeKey] as string | null | undefined
+    
+    // Use locale-specific field if available
+    if (localizedDesc && typeof localizedDesc === 'string' && localizedDesc.trim().length > 0) {
+      return localizedDesc
     }
+    
+    // Fallback to English
+    if (destination.description_en && typeof destination.description_en === 'string' && destination.description_en.trim().length > 0) {
+      return destination.description_en
+    }
+    
+    // Final fallback to legacy description field
+    return destination.description || ''
   }
 
   // Map destination names to tags (can be extended with database field later)

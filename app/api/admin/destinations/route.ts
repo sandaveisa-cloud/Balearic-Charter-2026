@@ -125,33 +125,28 @@ export async function POST(request: NextRequest) {
 
     console.log('[Admin API] ✅ Created destination:', (data as any)?.id)
     
-    // Revalidate pages that display destinations
+    // COMPREHENSIVE REVALIDATION - ensure translations appear instantly
     const destinationSlug = (data as any)?.slug || slug
     
-    // Revalidate all locale paths
+    // Layout-level revalidation ensures all pages using this data update
     revalidatePath('/', 'layout')
-    revalidatePath('/destinations', 'page')
     
-    // Revalidate locale-specific home pages (where DestinationsSection is displayed)
-    revalidatePath('/en', 'page')
-    revalidatePath('/es', 'page')
-    revalidatePath('/de', 'page')
+    // Revalidate homepage for all locales
+    const locales = ['en', 'es', 'de']
+    locales.forEach(loc => {
+      revalidatePath(`/${loc}`, 'layout')
+      revalidatePath(`/${loc}`, 'page')
+      
+      // Revalidate specific destination page if slug exists
+      if (destinationSlug) {
+        revalidatePath(`/${loc}/destinations/${destinationSlug}`, 'page')
+      }
+    })
     
-    if (destinationSlug) {
-      revalidatePath(`/destinations/${destinationSlug}`, 'page')
-      // Revalidate for all locales
-      revalidatePath('/en/destinations', 'page')
-      revalidatePath('/es/destinations', 'page')
-      revalidatePath('/de/destinations', 'page')
-      revalidatePath(`/en/destinations/${destinationSlug}`, 'page')
-      revalidatePath(`/es/destinations/${destinationSlug}`, 'page')
-      revalidatePath(`/de/destinations/${destinationSlug}`, 'page')
-    }
-    
-    // Invalidate cache tags to force fresh data fetch
+    // Revalidate cache tags for instant updates
     revalidateTag('destinations')
     revalidateTag('destinations-list')
-    revalidateTag('site-content') // This is the main cache tag used in getSiteContent
+    revalidateTag('site-content') // Main cache tag used in getSiteContent
 
     console.log('[Admin API] ✅ Revalidated cache after creating destination')
     return NextResponse.json({ destination: data as any }, { status: 201 })
@@ -366,14 +361,15 @@ export async function DELETE(request: NextRequest) {
     console.log('[Admin API] ✅ Deleted destination:', id)
     
     // Revalidate all destination pages after deletion
+    // COMPREHENSIVE REVALIDATION for DELETE
     revalidatePath('/', 'layout')
-    revalidatePath('/destinations', 'page')
-    revalidatePath('/en', 'page')
-    revalidatePath('/es', 'page')
-    revalidatePath('/de', 'page')
-    revalidatePath('/en/destinations', 'page')
-    revalidatePath('/es/destinations', 'page')
-    revalidatePath('/de/destinations', 'page')
+    
+    const locales = ['en', 'es', 'de']
+    locales.forEach(loc => {
+      revalidatePath(`/${loc}`, 'layout')
+      revalidatePath(`/${loc}`, 'page')
+    })
+    
     revalidateTag('destinations')
     revalidateTag('destinations-list')
     revalidateTag('site-content')
