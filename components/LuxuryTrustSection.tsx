@@ -7,9 +7,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { FreeMode, Pagination } from 'swiper/modules'
 import type { Review } from '@/types/database'
-import { Star, Quote, CheckCircle, Globe, ChevronUp, ExternalLink } from 'lucide-react'
+import { Star, Quote, CheckCircle, Globe, ChevronUp, ExternalLink, BookOpen } from 'lucide-react'
 import { format } from 'date-fns'
 import { loadReviewsFromJson } from '@/lib/reviewLoader'
+import GuestbookModal from './GuestbookModal'
 
 // Swiper styles are imported in globals.css
 
@@ -29,6 +30,7 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
   const [mergedReviews, setMergedReviews] = useState<Review[]>([])
   const [showOriginalText, setShowOriginalText] = useState<Record<string, boolean>>({})
   const [showBackToTop, setShowBackToTop] = useState(false)
+  const [isGuestbookOpen, setIsGuestbookOpen] = useState(false)
 
   // Load and merge reviews from JSON on mount
   useEffect(() => {
@@ -308,14 +310,58 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
   }
 
   return (
-    <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden">
-      {/* Glassmorphism background elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-luxury-gold/5 via-transparent to-luxury-blue/5 pointer-events-none" />
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(197,160,89,0.1),transparent_50%)] pointer-events-none" />
-      
-      <div className="container mx-auto px-4 md:px-6 relative z-10">
-        {/* Section Header - Compact */}
-        <div className="text-center mb-8 md:mb-10 max-w-3xl mx-auto">
+    <>
+      <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden">
+        {/* Glassmorphism background elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-luxury-gold/5 via-transparent to-luxury-blue/5 pointer-events-none" />
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(197,160,89,0.1),transparent_50%)] pointer-events-none" />
+        
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
+          {/* Guestbook CTA Section */}
+          <div className="text-center mb-12 md:mb-16 max-w-3xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 md:p-10 shadow-lg border border-[#C5A059]/20"
+            >
+              <div className="flex justify-center mb-4">
+                <div className="p-3 bg-gradient-to-br from-[#001F3F] to-[#1B263B] rounded-full shadow-md">
+                  <BookOpen className="w-8 h-8 text-[#C5A059]" />
+                </div>
+              </div>
+              <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#001F3F] mb-3 tracking-wide">
+                Our guests have left {curatedReviews.length} unforgettable stories
+              </h3>
+              <p className="text-gray-600 mb-6 text-base md:text-lg">
+                Explore the Balearic Yacht Charters Guestbook
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setIsGuestbookOpen(true)}
+                className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#001F3F] to-[#1B263B] text-white font-medium tracking-wide rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <span>Open Guestbook</span>
+                <motion.div
+                  initial={{ x: 0 }}
+                  whileHover={{ x: 4 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <BookOpen className="w-5 h-5" />
+                </motion.div>
+                <motion.div
+                  initial={{ width: '0%' }}
+                  whileHover={{ width: '100%' }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute bottom-0 left-0 h-[2px] bg-[#C5A059] origin-left"
+                />
+              </motion.button>
+            </motion.div>
+          </div>
+
+          {/* Section Header - Compact */}
+          <div className="text-center mb-8 md:mb-10 max-w-3xl mx-auto">
           <div className="flex justify-center mb-3">
             <div className="p-2 bg-white/80 backdrop-blur-sm rounded-full shadow-md border border-luxury-gold/20">
               <Quote className="w-6 h-6 text-luxury-gold" />
@@ -455,6 +501,14 @@ export default function LuxuryTrustSection({ reviews }: LuxuryTrustSectionProps)
           </motion.button>
         )}
       </AnimatePresence>
+
+      {/* Guestbook Modal */}
+      <GuestbookModal
+        isOpen={isGuestbookOpen}
+        onClose={() => setIsGuestbookOpen(false)}
+        reviews={curatedReviews}
+      />
     </section>
+    </>
   )
 }
