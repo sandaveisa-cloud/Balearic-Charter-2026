@@ -7,6 +7,7 @@ import MissionSection from '@/components/MissionSection'
 import FleetSection from '@/components/FleetSection'
 import DestinationsSection from '@/components/DestinationsSection'
 import ReviewsSection from '@/components/ReviewsSection'
+import LuxuryTrustSection from '@/components/LuxuryTrustSection'
 import StatsSection from '@/components/StatsSection'
 import CulinarySection from '@/components/CulinarySection'
 import CrewSection from '@/components/CrewSection'
@@ -108,8 +109,8 @@ export default async function Home({ params }: Props) {
               <CrewSection crew={safeContent.crew} />
             )}
             
-            {/* Consolidated Reviews Section */}
-            <ReviewsSection reviews={safeContent.reviews || []} />
+            {/* Premium Luxury Trust Section */}
+            <LuxuryTrustSection reviews={safeContent.reviews || []} />
           </main>
           
           {/* Floating CTA Button */}
