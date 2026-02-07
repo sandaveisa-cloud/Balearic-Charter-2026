@@ -255,6 +255,39 @@ export default function FleetEditor({
     }
   }, [fleet, reset, isOpen])
 
+  // Auto-slugify yacht name when it changes (only if slug is empty or matches old name)
+  const watchedName = watch('name')
+  const watchedSlug = watch('slug')
+  const initialName = fleet?.name || ''
+  
+  useEffect(() => {
+    // Only auto-generate slug if:
+    // 1. Name has changed from initial value
+    // 2. Slug is empty OR slug matches the old name's slugified version
+    if (watchedName && watchedName.trim()) {
+      const slugifiedName = watchedName
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')           // Replace spaces with hyphens
+        .replace(/[^a-z0-9-]/g, '')     // Remove special characters
+        .replace(/-+/g, '-')             // Replace multiple hyphens with single
+        .replace(/^-|-$/g, '')           // Remove leading/trailing hyphens
+      
+      const oldSlugifiedName = initialName
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+      
+      // Auto-update slug if it's empty or matches the old name
+      if (!watchedSlug || watchedSlug === oldSlugifiedName || watchedSlug === initialName.toLowerCase().replace(/\s+/g, '-')) {
+        setValue('slug', slugifiedName, { shouldValidate: false })
+      }
+    }
+  }, [watchedName, initialName, setValue]) // Removed watchedSlug from deps to avoid loops
+
   const onSubmit = async (data: FleetFormData) => {
     setSaving(true)
     setError(null)
@@ -280,7 +313,26 @@ export default function FleetEditor({
         }
       }
 
-      const slug = data.slug || data.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+      // Generate slug if not provided - use improved slugification
+      let slug = data.slug?.trim() || ''
+      if (!slug) {
+        slug = data.name
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, '-')           // Replace spaces with hyphens
+          .replace(/[^a-z0-9-]/g, '')     // Remove special characters
+          .replace(/-+/g, '-')             // Replace multiple hyphens with single
+          .replace(/^-|-$/g, '')           // Remove leading/trailing hyphens
+      } else {
+        // Clean up provided slug
+        slug = slug
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, '')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')
+      }
       
       if (!slug || !slug.trim()) {
         throw new Error('Slug is required and must be valid')
@@ -345,6 +397,11 @@ export default function FleetEditor({
 
       const url = '/api/admin/fleet'
       const method = fleet?.id ? 'PUT' : 'POST'
+
+      // Include old slug in PUT requests to help with revalidation
+      if (method === 'PUT' && fleet?.slug) {
+        payload.oldSlug = fleet.slug
+      }
 
       const response = await fetch(url, {
         method,

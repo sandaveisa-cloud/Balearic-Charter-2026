@@ -450,27 +450,33 @@ export async function POST(request: NextRequest) {
     }
 
     // Revalidate pages that display fleet data
-    const slug = (data as any)?.slug
+    const slug = (data as any)?.slug || body.slug
+    
+    // Revalidate homepage and fleet list pages
     revalidatePath('/', 'layout')
     revalidatePath('/fleet', 'page')
+    
+    // Revalidate for all locales
+    const locales = ['en', 'es', 'de']
+    locales.forEach(locale => {
+      revalidatePath(`/${locale}/fleet`, 'page')
+      revalidatePath(`/${locale}`, 'page')
+      
+      // Revalidate new yacht detail page
+      if (slug) {
+        revalidatePath(`/${locale}/fleet/${slug}`, 'page')
+      }
+    })
+    
+    // Also revalidate without locale prefix (fallback routes)
     if (slug) {
       revalidatePath(`/fleet/${slug}`, 'page')
-      // Revalidate for all locales
-      revalidatePath('/en/fleet', 'page')
-      revalidatePath('/es/fleet', 'page')
-      revalidatePath('/de/fleet', 'page')
-      revalidatePath(`/en/fleet/${slug}`, 'page')
-      revalidatePath(`/es/fleet/${slug}`, 'page')
-      revalidatePath(`/de/fleet/${slug}`, 'page')
     }
+    
+    // Revalidate cache tags
     revalidateTag('fleet')
     revalidateTag('fleet-list')
     revalidateTag('site-content') // Main cache tag used in getSiteContent()
-    
-    // Revalidate home pages for all locales
-    revalidatePath('/en', 'page')
-    revalidatePath('/es', 'page')
-    revalidatePath('/de', 'page')
 
     console.log('[Admin API] ✅ Created fleet and revalidated cache:', { id: data?.id, slug })
     
@@ -570,29 +576,49 @@ export async function PUT(request: NextRequest) {
     }
 
     // Revalidate pages that display fleet data
-    const slug = (data as any)?.slug || body.slug
+    const newSlug = (data as any)?.slug || body.slug
+    const oldSlug = body.oldSlug // Get old slug from request body if provided
+    
+    // Revalidate homepage and fleet list pages
     revalidatePath('/', 'layout')
     revalidatePath('/fleet', 'page')
-    if (slug) {
-      revalidatePath(`/fleet/${slug}`, 'page')
-      // Revalidate for all locales
-      revalidatePath('/en/fleet', 'page')
-      revalidatePath('/es/fleet', 'page')
-      revalidatePath('/de/fleet', 'page')
-      revalidatePath(`/en/fleet/${slug}`, 'page')
-      revalidatePath(`/es/fleet/${slug}`, 'page')
-      revalidatePath(`/de/fleet/${slug}`, 'page')
+    
+    // Revalidate for all locales
+    const locales = ['en', 'es', 'de']
+    locales.forEach(locale => {
+      revalidatePath(`/${locale}/fleet`, 'page')
+      revalidatePath(`/${locale}`, 'page')
+      
+      // Revalidate new slug path
+      if (newSlug) {
+        revalidatePath(`/${locale}/fleet/${newSlug}`, 'page')
+      }
+      
+      // Revalidate old slug path if it changed (to clear old cache)
+      if (oldSlug && oldSlug !== newSlug) {
+        revalidatePath(`/${locale}/fleet/${oldSlug}`, 'page')
+      }
+    })
+    
+    // Also revalidate without locale prefix (fallback routes)
+    if (newSlug) {
+      revalidatePath(`/fleet/${newSlug}`, 'page')
     }
+    if (oldSlug && oldSlug !== newSlug) {
+      revalidatePath(`/fleet/${oldSlug}`, 'page')
+    }
+    
+    // Revalidate cache tags
     revalidateTag('fleet')
     revalidateTag('fleet-list')
     revalidateTag('site-content') // Main cache tag used in getSiteContent()
-    
-    // Revalidate home pages for all locales
-    revalidatePath('/en', 'page')
-    revalidatePath('/es', 'page')
-    revalidatePath('/de', 'page')
 
-    console.log('[Admin API] ✅ Updated fleet and revalidated cache:', { id: data?.id, slug })
+    console.log('[Admin API] ✅ Updated fleet and revalidated cache:', { 
+      id: data?.id, 
+      oldSlug, 
+      newSlug,
+      slugChanged: oldSlug && oldSlug !== newSlug 
+    })
     
     // Return success with warning if columns were skipped
     const response: any = { fleet: data as any }

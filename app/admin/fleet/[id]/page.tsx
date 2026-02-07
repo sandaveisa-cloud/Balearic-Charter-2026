@@ -250,9 +250,15 @@ export default function FleetEditPage() {
         currency: 'EUR', // Default currency
       }
 
-      // For existing yacht, add ID and use PUT
+      // For existing yacht, add ID and old slug (for revalidation)
       if (!isNew) {
         payload.id = id
+        // Include old slug to help revalidate old paths when slug changes
+        if (formData.slug && formData.slug !== payload.slug) {
+          payload.oldSlug = formData.slug
+        } else if (fleet?.slug) {
+          payload.oldSlug = fleet.slug
+        }
       }
 
       const response = await fetch('/api/admin/fleet', {
