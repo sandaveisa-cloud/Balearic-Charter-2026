@@ -20,7 +20,8 @@
   "hero": {
     "title": "Your Private Mediterranean Escape",
     "subtitle": "Premium yacht charters in the Balearic Islands. Tailored luxury, professional crew, and unforgettable horizons.",
-    "cta": "Start Your Journey"
+    "cta": "Start Your Journey",
+    "seasonLaunch": "2026 Season Launch: Book before February 28, 2026 and save 10% on all charters!"
   },
   "breadcrumb": {
     "home": "Home",
@@ -316,7 +317,7 @@
   },
   "vesselHistory": {
     "title": "Vessel Legacy & Milestones",
-    "readHistory": "Explore our Story",
+    "readHistory": "View Vessel History",
     "hideHistory": "Hide History",
     "milestones": "Milestones",
     "expandHistory": "View History",

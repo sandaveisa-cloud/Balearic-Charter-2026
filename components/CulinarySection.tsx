@@ -191,7 +191,10 @@ function ImageGalleryModal({
 
 export default function CulinarySection({ experiences }: CulinarySectionProps) {
   const t = useTranslations('culinary')
-  const locale = useLocale() as 'en' | 'es' | 'de'
+  const locale = useLocale()
+  
+  // Ensure we're using the correct translation namespace
+  // Translation keys are under 'culinary.experiences.{key}.title' as 'en' | 'es' | 'de'
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
   const [galleryState, setGalleryState] = useState<{
     isOpen: boolean
@@ -272,62 +275,61 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
   }
 
   // Get localized title and description for an experience
+  // Use translation files (JSON) since database doesn't have i18n fields
   // NEVER show raw translation keys - always fallback to database title/description
   const getLocalizedTitle = (exp: CulinaryExperience): string => {
-    // Always use database title as base (English)
+    // Always use database title as base fallback (English)
     const dbTitle = exp.title || 'Culinary Experience'
     
     try {
       const key = getTranslationKey(exp.title)
       if (key) {
-        const translationKey = `experiences.${key}.title`
-        try {
-          const translated = t(translationKey)
-          // next-intl returns the key path if translation doesn't exist
-          // Check if we got a real translation (not the key path)
-          if (translated && 
-              typeof translated === 'string' &&
-              translated !== translationKey &&
-              !translated.startsWith('experiences.') &&
-              !translated.startsWith('culinary.experiences.')) {
-            return translated
-          }
-        } catch {
-          // Translation key doesn't exist, use database title
+        // Use the correct translation key path: culinary.experiences.{key}.title
+        const translationKey = `culinary.experiences.${key}.title`
+        const translated = t(translationKey)
+        
+        // next-intl returns the key path if translation doesn't exist
+        // Check if we got a real translation (not the key path)
+        if (translated && 
+            typeof translated === 'string' &&
+            translated !== translationKey &&
+            !translated.startsWith('culinary.experiences.') &&
+            !translated.startsWith('experiences.') &&
+            translated.length > 0) {
+          return translated
         }
       }
     } catch (error) {
-      // If anything fails, use database title
+      // If translation fails, use database title
     }
     // Always fallback to database title (English)
     return dbTitle
   }
 
   const getLocalizedDescription = (exp: CulinaryExperience): string | null => {
-    // Always use database description as base (English)
+    // Always use database description as base fallback (English)
     const dbDescription = exp.description
     
     try {
       const key = getTranslationKey(exp.title)
       if (key) {
-        const translationKey = `experiences.${key}.description`
-        try {
-          const translated = t(translationKey)
-          // next-intl returns the key path if translation doesn't exist
-          // Check if we got a real translation (not the key path)
-          if (translated && 
-              typeof translated === 'string' &&
-              translated !== translationKey &&
-              !translated.startsWith('experiences.') &&
-              !translated.startsWith('culinary.experiences.')) {
-            return translated
-          }
-        } catch {
-          // Translation key doesn't exist, use database description
+        // Use the correct translation key path: culinary.experiences.{key}.description
+        const translationKey = `culinary.experiences.${key}.description`
+        const translated = t(translationKey)
+        
+        // next-intl returns the key path if translation doesn't exist
+        // Check if we got a real translation (not the key path)
+        if (translated && 
+            typeof translated === 'string' &&
+            translated !== translationKey &&
+            !translated.startsWith('culinary.experiences.') &&
+            !translated.startsWith('experiences.') &&
+            translated.length > 0) {
+          return translated
         }
       }
     } catch (error) {
-      // If anything fails, use database description
+      // If translation fails, use database description
     }
     // Always fallback to database description (English)
     return dbDescription
