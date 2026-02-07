@@ -47,6 +47,7 @@ const formatRentalDate = (dateString: string | null | undefined): string => {
 }
 
 export default function GuestbookSection({ reviews }: GuestbookSectionProps) {
+  const t = useTranslations('reviews')
   const [isExpanded, setIsExpanded] = useState(false)
   const [mergedReviews, setMergedReviews] = useState<Review[]>([])
   const [showOriginalText, setShowOriginalText] = useState<Record<string, boolean>>({})
