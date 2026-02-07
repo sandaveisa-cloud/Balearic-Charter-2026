@@ -34,13 +34,13 @@ export default function MissionSection({ promises }: MissionSectionProps) {
   const displayPromises = activePromises.length > 0 ? activePromises : [
     {
       id: '1',
-      title_en: 'Seamless Coordination',
-      title_es: 'Coordinación Perfecta',
-      title_de: 'Nahtlose Koordination',
-      description_en: 'Expert planning and safe routes for every charter journey.',
-      description_es: 'Planificación experta y rutas seguras para cada viaje en charter.',
-      description_de: 'Expertenplanung und sichere Routen für jede Charterreise.',
-      icon_name: 'Ship',
+      title_en: 'Tailored Perfection',
+      title_es: 'Perfección Personalizada',
+      title_de: 'Maßgeschneiderte Perfektion',
+      description_en: 'Every detail curated to your preferences. Our concierge service ensures a seamless, personalized journey from start to finish.',
+      description_es: 'Cada detalle curado según sus preferencias. Nuestro servicio de conserjería garantiza un viaje fluido y personalizado de principio a fin.',
+      description_de: 'Jedes Detail nach Ihren Wünschen kuratiert. Unser Concierge-Service gewährleistet eine nahtlose, personalisierte Reise von Anfang bis Ende.',
+      icon_name: 'Compass',
       icon_url: null,
       order_index: 0,
       is_active: true,
@@ -49,13 +49,13 @@ export default function MissionSection({ promises }: MissionSectionProps) {
     },
     {
       id: '2',
-      title_en: 'Professional Crew',
-      title_es: 'Tripulación Profesional',
-      title_de: 'Professionelle Crew',
-      description_en: 'Experienced maritime experts dedicated to your safety and comfort.',
-      description_es: 'Expertos marítimos experimentados dedicados a su seguridad y comodidad.',
-      description_de: 'Erfahrene maritime Experten, die sich Ihrer Sicherheit und Ihrem Komfort widmen.',
-      icon_name: 'ShieldCheck',
+      title_en: 'Elite Local Crew',
+      title_es: 'Tripulación Local de Élite',
+      title_de: 'Elite-Lokale Crew',
+      description_en: 'Expert local captains and crew with deep knowledge of Mediterranean waters. Your safety and comfort are our highest priority.',
+      description_es: 'Capitanes y tripulación local experta con profundo conocimiento de las aguas mediterráneas. Su seguridad y comodidad son nuestra máxima prioridad.',
+      description_de: 'Erfahrene lokale Kapitäne und Crew mit tiefem Wissen über die Gewässer des Mittelmeers. Ihre Sicherheit und Ihr Komfort haben für uns höchste Priorität.',
+      icon_name: 'Users',
       icon_url: null,
       order_index: 1,
       is_active: true,
@@ -64,12 +64,12 @@ export default function MissionSection({ promises }: MissionSectionProps) {
     },
     {
       id: '3',
-      title_en: 'Gourmet Excellence',
-      title_es: 'Excelencia Gourmet',
-      title_de: 'Gourmet-Exzellenz',
-      description_en: 'Exquisite dining experiences crafted by expert chefs on board.',
-      description_es: 'Experiencias gastronómicas exquisitas elaboradas por chefs expertos a bordo.',
-      description_de: 'Exquisite kulinarische Erlebnisse, die von erfahrenen Köchen an Bord kreiert werden.',
+      title_en: 'Mediterranean Flavors',
+      title_es: 'Sabores Mediterráneos',
+      title_de: 'Mittelmeer-Aromen',
+      description_en: 'Culinary excellence featuring the finest local ingredients. Savor authentic Mediterranean cuisine prepared by skilled chefs on board.',
+      description_es: 'Excelencia culinaria con los mejores ingredientes locales. Saboree auténtica cocina mediterránea preparada por chefs expertos a bordo.',
+      description_de: 'Kulinarische Exzellenz mit den feinsten lokalen Zutaten. Genießen Sie authentische Mittelmeerküche, zubereitet von erfahrenen Köchen an Bord.',
       icon_name: 'Utensils',
       icon_url: null,
       order_index: 2,
@@ -126,9 +126,9 @@ export default function MissionSection({ promises }: MissionSectionProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-[#001F3F] mb-4 tracking-wide"
+            className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-[#001F3F] mb-4 tracking-[0.08em]"
           >
-            The Balearic Promise
+            The Signature Experience
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -155,8 +155,8 @@ export default function MissionSection({ promises }: MissionSectionProps) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.05, y: -8 }}
-                  className="bg-white rounded-2xl p-8 lg:p-10 shadow-lg border border-gray-200/50 hover:border-[#C5A059]/30 transition-all duration-300 hover:shadow-xl text-center flex flex-col items-center"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  className="bg-white rounded-2xl p-8 lg:p-10 shadow-sm border border-gray-200/50 hover:border-[#C5A059]/30 transition-all duration-300 hover:shadow-md text-center flex flex-col items-center"
                 >
                   {/* Icon */}
                   <div className="mb-6">
@@ -177,13 +177,13 @@ export default function MissionSection({ promises }: MissionSectionProps) {
                       </div>
                     ) : IconComponent ? (
                       <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#001F3F]/10 to-[#1B263B]/10 flex items-center justify-center">
-                        <IconComponent className="w-8 h-8 text-[#C5A059]" strokeWidth={1.5} />
+                        <IconComponent className="w-8 h-8 text-[#C5A059]" strokeWidth={1} />
                       </div>
                     ) : null}
                   </div>
 
                   {/* Title - Elegant Serif */}
-                  <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#001F3F] mb-4 tracking-wide">
+                  <h3 className="font-serif text-2xl md:text-3xl font-bold text-[#001F3F] mb-4 tracking-[0.06em]">
                     {getTitle(promise)}
                   </h3>
 
@@ -230,13 +230,13 @@ export default function MissionSection({ promises }: MissionSectionProps) {
                         </div>
                       ) : IconComponent ? (
                         <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#001F3F]/10 to-[#1B263B]/10 flex items-center justify-center">
-                          <IconComponent className="w-7 h-7 text-[#C5A059]" strokeWidth={1.5} />
+                          <IconComponent className="w-7 h-7 text-[#C5A059]" strokeWidth={1} />
                         </div>
                       ) : null}
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-serif text-xl font-bold text-[#001F3F] mb-3 tracking-wide">
+                    <h3 className="font-serif text-xl font-bold text-[#001F3F] mb-3 tracking-[0.06em]">
                       {getTitle(promise)}
                     </h3>
 
