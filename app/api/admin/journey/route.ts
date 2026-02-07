@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
         description_en: body.description_en,
         description_es: body.description_es,
         description_de: body.description_de,
-        image_url: body.image_url,
+        image_url: body.image_url || null,
         order_index: body.order_index,
         is_active: body.is_active || true,
       })

@@ -162,7 +162,7 @@ export default function MissionSection({ promises }: MissionSectionProps) {
                     {promise.icon_url ? (
                       <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#001F3F]/10 to-[#1B263B]/10 flex items-center justify-center">
                         <OptimizedImage
-                          src={getOptimizedImageUrl(promise.icon_url, {
+                          src={getOptimizedImageUrl(promise.icon_url || '', {
                             width: 64,
                             height: 64,
                             quality: 90,
@@ -215,7 +215,7 @@ export default function MissionSection({ promises }: MissionSectionProps) {
                       {promise.icon_url ? (
                         <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#001F3F]/10 to-[#1B263B]/10 flex items-center justify-center">
                           <OptimizedImage
-                            src={getOptimizedImageUrl(promise.icon_url, {
+                            src={getOptimizedImageUrl(promise.icon_url || '', {
                               width: 56,
                               height: 56,
                               quality: 90,
