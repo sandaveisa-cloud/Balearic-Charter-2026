@@ -8,6 +8,7 @@ import imageCompression from 'browser-image-compression'
 interface ImageUploaderProps {
   value: string // Current image URL
   onChange: (url: string) => void // Callback when image URL changes
+  onUploadStateChange?: (isUploading: boolean) => void // Callback when upload state changes
   folder?: string // Folder name in storage (e.g., 'milestones', 'promises', 'fleet')
   bucket?: string // Storage bucket name (default: 'website-assets')
   maxSizeMB?: number // Max file size in MB (default: 0.5)
@@ -19,6 +20,7 @@ interface ImageUploaderProps {
 export default function ImageUploader({
   value,
   onChange,
+  onUploadStateChange,
   folder = 'general',
   bucket = 'website-assets',
   maxSizeMB = 0.5,
@@ -29,6 +31,13 @@ export default function ImageUploader({
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [preview, setPreview] = useState<string | null>(value || null)
+
+  // Notify parent when upload state changes
+  useEffect(() => {
+    if (onUploadStateChange) {
+      onUploadStateChange(uploading)
+    }
+  }, [uploading, onUploadStateChange])
 
   // Sync preview with value prop when it changes externally
   useEffect(() => {

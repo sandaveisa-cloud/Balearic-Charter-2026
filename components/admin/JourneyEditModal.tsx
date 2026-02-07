@@ -31,6 +31,7 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'success' | 'error'>('success')
   const [error, setError] = useState<string | null>(null)
+  const [imageUploading, setImageUploading] = useState(false)
 
   useEffect(() => {
     if (milestone) {
@@ -64,22 +65,49 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Prevent submission if image is still uploading
+    if (imageUploading) {
+      alert('Please wait for the image upload to complete before saving.')
+      return
+    }
+    
     setSaving(true)
     setError(null) // Clear any previous errors
     
     try {
-      // Prepare payload
-      const payload = milestone 
-        ? { ...formData, id: milestone.id }
-        : formData
+      // CRITICAL: Ensure year is a NUMBER (integer), not a string
+      const yearAsNumber = typeof formData.year === 'string' 
+        ? parseInt(formData.year) 
+        : parseInt(String(formData.year))
+      
+      if (isNaN(yearAsNumber)) {
+        throw new Error('Year must be a valid number')
+      }
 
-      // Log payload for debugging - show exact structure
+      // Prepare payload - ensure all numeric fields are numbers
+      const payload = milestone 
+        ? { 
+            ...formData, 
+            id: milestone.id,
+            year: yearAsNumber, // Ensure year is NUMBER
+            order_index: parseInt(String(formData.order_index)) || 0 // Ensure order_index is NUMBER
+          }
+        : {
+            ...formData,
+            year: yearAsNumber, // Ensure year is NUMBER
+            order_index: parseInt(String(formData.order_index)) || 0 // Ensure order_index is NUMBER
+          }
+
+      // Log payload for debugging - show exact structure and types
       console.log('[JourneyEditModal] 📤 Sending payload:', {
         ...payload,
         image_url: payload.image_url || '(empty)',
         hasImage: !!payload.image_url,
         year: payload.year,
         yearType: typeof payload.year,
+        order_index: payload.order_index,
+        order_indexType: typeof payload.order_index,
         isUpdate: !!milestone,
         milestoneId: milestone?.id
       })
@@ -91,6 +119,18 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
         const errorMsg = `Missing required fields: ${missingFields.join(', ')}`
         console.error('[JourneyEditModal] ❌ Validation error:', errorMsg)
         alert(`Validation Error:\n\n${errorMsg}\n\nPlease fill in all required fields.`)
+        setError(errorMsg)
+        setToastMessage(errorMsg)
+        setToastType('error')
+        setShowToast(true)
+        return
+      }
+      
+      // Validate year is in correct range
+      if (payload.year < 2000 || payload.year > 2030) {
+        const errorMsg = `Year must be between 2000 and 2030. Received: ${payload.year}`
+        console.error('[JourneyEditModal] ❌ Year validation error:', errorMsg)
+        alert(`Validation Error:\n\n${errorMsg}`)
         setError(errorMsg)
         setToastMessage(errorMsg)
         setToastType('error')
@@ -123,15 +163,22 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
         console.error('[JourneyEditModal] ❌ Response status:', response.status)
         console.error('[JourneyEditModal] ❌ Payload that failed:', payload)
         
-        // Show alert for critical errors with full details
-        const errorMessage = errorData.error || errorData.details || `Failed to save milestone: ${response.status}`
+        // Extract Supabase error message - prioritize error.message from Supabase
+        const supabaseErrorMessage = errorData.fullError?.message || errorData.details || errorData.error || errorData.message
+        const errorMessage = supabaseErrorMessage || `Failed to save milestone: ${response.status}`
+        
+        // Build detailed error message
         const fullErrorDetails = [
           `Error: ${errorMessage}`,
-          errorData.details ? `Details: ${errorData.details}` : '',
+          errorData.details && errorData.details !== errorMessage ? `Details: ${errorData.details}` : '',
           errorData.hint ? `Hint: ${errorData.hint}` : '',
-          errorData.code ? `Code: ${errorData.code}` : '',
-          `Status: ${response.status}`
+          errorData.code ? `Error Code: ${errorData.code}` : '',
+          errorData.fullError?.code ? `Supabase Code: ${errorData.fullError.code}` : '',
+          `HTTP Status: ${response.status}`
         ].filter(Boolean).join('\n')
+        
+        console.error('[JourneyEditModal] ❌ Supabase Error Message:', supabaseErrorMessage)
+        console.error('[JourneyEditModal] ❌ Full Error Details:', fullErrorDetails)
         
         alert(`Error saving milestone:\n\n${fullErrorDetails}\n\nCheck browser console for full details.`)
         
@@ -261,13 +308,26 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
           <div>
             <ImageUploader
               value={formData.image_url}
-              onChange={(url) => setFormData({ ...formData, image_url: url })}
+              onChange={(url) => {
+                console.log('[JourneyEditModal] Image URL updated:', url)
+                setFormData({ ...formData, image_url: url })
+              }}
+              onUploadStateChange={(isUploading) => {
+                console.log('[JourneyEditModal] Image upload state:', isUploading)
+                setImageUploading(isUploading)
+              }}
               folder="milestones"
               bucket="website-assets"
               maxSizeMB={0.5}
               aspectRatio="16/9"
               label="Milestone Image"
             />
+            {imageUploading && (
+              <p className="text-xs text-yellow-600 mt-1">⏳ Image is uploading... Please wait before saving.</p>
+            )}
+            {formData.image_url && !imageUploading && (
+              <p className="text-xs text-green-600 mt-1">✓ Image URL ready: {formData.image_url.substring(0, 50)}...</p>
+            )}
           </div>
 
           {/* English */}

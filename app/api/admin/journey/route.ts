@@ -286,13 +286,20 @@ export async function PUT(request: NextRequest) {
         errorMessage = 'Permission denied: Check RLS policies for journey_milestones table'
       }
       
+      // Return detailed error with Supabase error.message as the primary message
       return NextResponse.json(
         { 
-          error: errorMessage,
-          details: error.message,
+          error: error.message || errorMessage, // Supabase error.message is the primary error
+          message: error.message, // Explicitly include error.message
+          details: error.details || error.message,
           hint: error.hint,
           code: error.code,
-          fullError: error // Include full error for debugging
+          fullError: {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+          }
         },
         { status: 500 }
       )
