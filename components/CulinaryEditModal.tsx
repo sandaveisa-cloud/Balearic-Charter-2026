@@ -53,8 +53,9 @@ export default function CulinaryEditModal({
         description_de: (culinary as any).description_de || '',
         title: culinary.title || '',
         description: culinary.description || '',
-        media_urls: Array.isArray(culinary.media_urls) ? culinary.media_urls : 
-                    (culinary.image_url ? [culinary.image_url] : []),
+        media_urls: Array.isArray(culinary.media_urls) && culinary.media_urls.length > 0 
+          ? culinary.media_urls 
+          : (culinary.image_url ? [culinary.image_url] : []),
         image_url: culinary.image_url || '',
         order_index: culinary.order_index || 0,
         is_active: culinary.is_active !== false,

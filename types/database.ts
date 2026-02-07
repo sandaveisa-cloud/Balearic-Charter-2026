@@ -198,7 +198,7 @@ export interface CulinaryExperience {
   description_es?: string | null // Spanish description
   description_de?: string | null // German description
   image_url: string | null // Legacy field, kept for backward compatibility
-  media_urls: string[] // Array of images/videos (images and YouTube URLs)
+  media_urls: string[] | null // Array of images/videos (images and YouTube URLs)
   order_index: number
   is_active: boolean
   created_at: string

@@ -3,15 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Plus, Edit, Trash2, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 import CulinaryEditModal from '@/components/CulinaryEditModal'
-
-interface CulinaryExperience {
-  id: string
-  title: string
-  description: string | null
-  image_url: string | null
-  order_index: number
-  is_active: boolean
-}
+import type { CulinaryExperience } from '@/types/database'
 
 export default function CulinaryAdminPage() {
   const [culinary, setCulinary] = useState<CulinaryExperience[]>([])

@@ -191,10 +191,10 @@ function ImageGalleryModal({
 
 export default function CulinarySection({ experiences }: CulinarySectionProps) {
   const t = useTranslations('culinary')
-  const locale = useLocale()
+  const locale = useLocale() as 'en' | 'es' | 'de'
   
-  // Ensure we're using the correct translation namespace
-  // Translation keys are under 'culinary.experiences.{key}.title' as 'en' | 'es' | 'de'
+  // GOLDEN RULE: Use direct database fields - NEVER use translation keys for database content
+  // All components use: field_${locale} || field_en || ''
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({})
   const [galleryState, setGalleryState] = useState<{
     isOpen: boolean
@@ -229,14 +229,15 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
     if (exp.media_urls && Array.isArray(exp.media_urls) && exp.media_urls.length > 0) {
       // Filter out YouTube URLs and get first image URL only
       const imageUrl = exp.media_urls.find(url => 
-        url && typeof url === 'string' && !url.includes('youtube.com') && !url.includes('youtu.be')
+        url && typeof url === 'string' && url.trim().length > 0 && 
+        !url.includes('youtube.com') && !url.includes('youtu.be')
       )
-      if (imageUrl) return imageUrl
+      if (imageUrl) return imageUrl.trim()
     }
     
     // Fallback to legacy image_url field
-    if (exp.image_url && typeof exp.image_url === 'string') {
-      return exp.image_url
+    if (exp.image_url && typeof exp.image_url === 'string' && exp.image_url.trim().length > 0) {
+      return exp.image_url.trim()
     }
     
     return null
@@ -247,15 +248,16 @@ export default function CulinarySection({ experiences }: CulinarySectionProps) {
     const images: string[] = []
     
     // Get all images from media_urls (excluding YouTube URLs)
-    if (exp.media_urls && Array.isArray(exp.media_urls)) {
+    if (exp.media_urls && Array.isArray(exp.media_urls) && exp.media_urls.length > 0) {
       const imageUrls = exp.media_urls.filter(url => 
-        url && typeof url === 'string' && !url.includes('youtube.com') && !url.includes('youtu.be')
+        url && typeof url === 'string' && url.trim().length > 0 && 
+        !url.includes('youtube.com') && !url.includes('youtu.be')
       )
       images.push(...imageUrls)
     }
     
     // Add legacy image_url if it exists and not already in the array
-    if (exp.image_url && typeof exp.image_url === 'string' && !images.includes(exp.image_url)) {
+    if (exp.image_url && typeof exp.image_url === 'string' && exp.image_url.trim().length > 0 && !images.includes(exp.image_url)) {
       images.push(exp.image_url)
     }
     
