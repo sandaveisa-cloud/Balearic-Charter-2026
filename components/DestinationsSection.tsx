@@ -1,46 +1,39 @@
 'use client'
 
+import { useState } from 'react'
 import OptimizedImage from './OptimizedImage'
+import ImageCarousel from './ImageCarousel'
+import ImageLightbox from './ImageLightbox'
 import { Link } from '@/i18n/navigation'
 import { useLocale } from 'next-intl'
 import { useTranslations } from 'next-intl'
+import type { Destination as DestinationType } from '@/types/database'
 
-interface Destination {
-  id: string
-  title: string // Primary field from database
-  name?: string // Optional legacy field (code uses fallback: name || title)
-  region?: string | null
-  description: string | null
-  description_en?: string | null
-  description_es?: string | null
-  description_de?: string | null
-  image_urls?: string[] | null // Primary field: JSONB array of image URLs
-  youtube_video_url?: string | null
-  slug?: string
-  order_index: number
-  is_active: boolean
-}
 
 interface DestinationsSectionProps {
-  destinations: Destination[]
+  destinations: DestinationType[]
 }
 
 interface DestinationCardProps {
   destinationName: string
   description: string
   imageUrl: string | null
+  allImages: string[]
   destinationSlug: string
   locale: string
   tags?: string[]
+  onImageClick?: (index: number) => void
 }
 
 function DestinationCard({
   destinationName,
   description,
   imageUrl,
+  allImages,
   destinationSlug,
   locale,
   tags = [],
+  onImageClick,
 }: DestinationCardProps) {
   // Default images from Unsplash if no image provided
   const defaultImages: Record<string, string> = {
@@ -52,15 +45,35 @@ function DestinationCard({
   }
 
   const imageSrc = imageUrl || defaultImages[destinationName.toLowerCase()] || null
+  const hasMultipleImages = allImages.length > 1
+  const displayImages = allImages.length > 0 ? allImages : (imageSrc ? [imageSrc] : [])
 
   return (
-    <Link
-      href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
-      className="group cursor-pointer flex flex-col h-full"
-    >
-      {/* Image Container - Fixed aspect ratio */}
-      <div className="relative overflow-hidden rounded-sm aspect-[4/3] shadow-sm transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
-        {imageSrc ? (
+    <div className="group flex flex-col h-full">
+      {/* Image Container - Carousel or Single Image */}
+      <Link
+        href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
+        className="relative overflow-hidden rounded-sm aspect-[4/3] shadow-sm transition-all duration-300 hover:shadow-xl hover:scale-[1.02] block"
+      >
+        {hasMultipleImages && displayImages.length > 0 ? (
+          // Use carousel for multiple images
+          <div onClick={(e) => e.preventDefault()}>
+            <ImageCarousel
+              images={displayImages}
+              alt={destinationName}
+              aspectRatio="4/3"
+              autoplayDelay={5000}
+              showNavigation={true}
+              showPagination={true}
+              effect="fade"
+              quality={85}
+              onImageClick={(clickedIndex) => {
+                onImageClick?.(clickedIndex)
+              }}
+            />
+          </div>
+        ) : imageSrc ? (
+          // Single image
           <OptimizedImage
             src={imageSrc}
             alt={destinationName}
@@ -71,6 +84,12 @@ function DestinationCard({
             loading="lazy"
             quality={85}
             className="transition-transform duration-500 group-hover:scale-110"
+            onClick={(e) => {
+              e.preventDefault()
+              if (displayImages.length > 0) {
+                onImageClick?.(0)
+              }
+            }}
           />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
@@ -79,13 +98,13 @@ function DestinationCard({
         )}
         
         {/* Overlay that darkens on hover */}
-        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300 pointer-events-none"></div>
         
         {/* Destination Name Overlay */}
-        <div className="absolute bottom-6 left-6 text-white">
+        <div className="absolute bottom-6 left-6 text-white z-10 pointer-events-none">
           <h3 className="text-2xl font-semibold mb-1">{destinationName}</h3>
         </div>
-      </div>
+      </Link>
 
       {/* Content Below Image - Flex grow for equal height */}
       <div className="mt-4 flex flex-col flex-grow">
@@ -103,13 +122,24 @@ function DestinationCard({
           </div>
         )}
       </div>
-    </Link>
+    </div>
   )
 }
 
 export default function DestinationsSection({ destinations }: DestinationsSectionProps) {
   const locale = useLocale()
   const t = useTranslations('destinations')
+  const [lightboxState, setLightboxState] = useState<{
+    isOpen: boolean
+    images: string[]
+    initialIndex: number
+    title: string
+  }>({
+    isOpen: false,
+    images: [],
+    initialIndex: 0,
+    title: '',
+  })
 
   // Filter active destinations and sort by order_index
   const activeDestinations = destinations
@@ -121,12 +151,18 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
   }
 
   // Get destination name (support both new 'name' and legacy 'title')
-  const getDestinationName = (destination: Destination): string => {
+  const getDestinationName = (destination: DestinationType): string => {
     return destination.name || destination.title || 'Destination'
   }
 
+  // Get localized title for alt text and SEO
+  const getLocalizedTitle = (destination: DestinationType): string => {
+    // For destinations, we use name/title (not localized yet, but ready for future)
+    return getDestinationName(destination)
+  }
+
   // Get image URL from image_urls array (first image)
-  const getDestinationImage = (destination: Destination): string | null => {
+  const getDestinationImage = (destination: DestinationType): string | null => {
     if (destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0) {
       const imageUrl = destination.image_urls[0]
       // Validate that URL is not empty and is a valid string
@@ -135,6 +171,21 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
       }
     }
     return null
+  }
+
+  // Get all images from image_urls array (excluding YouTube URLs)
+  const getAllDestinationImages = (destination: DestinationType): string[] => {
+    if (destination.image_urls && Array.isArray(destination.image_urls) && destination.image_urls.length > 0) {
+      return destination.image_urls.filter(
+        (url) =>
+          url &&
+          typeof url === 'string' &&
+          url.trim().length > 0 &&
+          !url.includes('youtube.com') &&
+          !url.includes('youtu.be')
+      )
+    }
+    return []
   }
 
   // Get localized description - GOLDEN RULE: field_${locale} || field_en || ''
@@ -200,6 +251,7 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
           {activeDestinations.map((destination) => {
             const destinationImage = getDestinationImage(destination)
             const imageUrl = destinationImage || null
+            const allImages = getAllDestinationImages(destination)
             const destinationName = getDestinationName(destination)
             const description = getLocalizedDescription(destination)
             const destinationSlug = destination.slug || destination.id
@@ -211,14 +263,34 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
                 destinationName={destinationName}
                 description={description}
                 imageUrl={imageUrl}
+                allImages={allImages}
                 destinationSlug={destinationSlug}
                 locale={locale}
                 tags={tags}
+                onImageClick={(index) => {
+                  if (allImages.length > 0) {
+                    setLightboxState({
+                      isOpen: true,
+                      images: allImages,
+                      initialIndex: index,
+                      title: getLocalizedTitle(destination),
+                    })
+                  }
+                }}
               />
             )
           })}
         </div>
       </div>
+
+      {/* Image Lightbox */}
+      <ImageLightbox
+        images={lightboxState.images}
+        initialIndex={lightboxState.initialIndex}
+        title={lightboxState.title}
+        isOpen={lightboxState.isOpen}
+        onClose={() => setLightboxState({ isOpen: false, images: [], initialIndex: 0, title: '' })}
+      />
     </section>
   )
 }
