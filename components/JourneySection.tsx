@@ -20,11 +20,11 @@ export default function JourneySection({ milestones = [] }: JourneySectionProps)
 
   // Get localized text for a milestone
   const getTitle = (milestone: JourneyMilestone) => {
-    return milestone[`title_${locale}` as keyof JourneyMilestone] as string || milestone.title_en || milestone.title || ''
+    return milestone[`title_${locale}` as keyof JourneyMilestone] as string || milestone.title_en || ''
   }
 
   const getDescription = (milestone: JourneyMilestone) => {
-    return milestone[`description_${locale}` as keyof JourneyMilestone] as string || milestone.description_en || milestone.description || ''
+    return milestone[`description_${locale}` as keyof JourneyMilestone] as string || milestone.description_en || ''
   }
 
   // Use database milestones if available, otherwise fall back to translations
