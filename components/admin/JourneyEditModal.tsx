@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { X, Loader2 } from 'lucide-react'
 import type { JourneyMilestone } from '@/types/database'
 import Toast from './Toast'
+import ImageUploader from './ImageUploader'
 
 interface JourneyEditModalProps {
   isOpen: boolean
@@ -136,21 +137,17 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
             </div>
           </div>
 
-          {/* Image URL */}
+          {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-            <input
-              type="url"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#001F3F] focus:border-transparent"
+            <ImageUploader
               value={formData.image_url}
-              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-              placeholder="https://..."
+              onChange={(url) => setFormData({ ...formData, image_url: url })}
+              folder="milestones"
+              bucket="website-assets"
+              maxSizeMB={0.5}
+              aspectRatio="16/9"
+              label="Milestone Image"
             />
-            {formData.image_url && (
-              <div className="mt-2 rounded-lg overflow-hidden">
-                <img src={formData.image_url} alt="Preview" className="w-full h-48 object-cover" />
-              </div>
-            )}
           </div>
 
           {/* English */}

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react'
 import { Upload, X, Trash2, GripVertical, Loader2, ImagePlus, AlertCircle } from 'lucide-react'
+import imageCompression from 'browser-image-compression'
 
 interface GalleryImageManagerProps {
   images: string[]
@@ -14,7 +15,7 @@ export default function GalleryImageManager({
   images,
   onImagesChange,
   folder = 'fleet',
-  bucket = 'fleet-images',
+  bucket = 'website-assets',
 }: GalleryImageManagerProps) {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -23,6 +24,26 @@ export default function GalleryImageManager({
   const [deleting, setDeleting] = useState<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [manualUrl, setManualUrl] = useState('')
+
+  // Compress image before upload
+  const compressImage = async (file: File): Promise<File> => {
+    const options = {
+      maxSizeMB: 0.5, // Compress to max 500KB
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: 'image/webp', // Convert to WebP for better compression
+    }
+
+    try {
+      const compressedFile = await imageCompression(file, options)
+      console.log('[GalleryImageManager] Compressed:', file.name, `${(file.size / 1024 / 1024).toFixed(2)}MB → ${(compressedFile.size / 1024 / 1024).toFixed(2)}MB`)
+      return compressedFile
+    } catch (error) {
+      console.error('[GalleryImageManager] Compression error:', error)
+      // If compression fails, return original file
+      return file
+    }
+  }
 
   // Handle multiple file upload with HEIC and Size validation
   const handleMultipleFileUpload = useCallback(async (files: FileList) => {
@@ -39,7 +60,7 @@ export default function GalleryImageManager({
         return
       }
 
-      // Pārbaude uz faila izmēru (5MB limits)
+      // Pārbaude uz faila izmēru (5MB limits before compression)
       if (file.size > 5 * 1024 * 1024) {
         setError(`Fails "${file.name}" pārsniedz 5MB limitu. Lūdzu, izmanto mazāka izmēra attēlu.`)
         if (fileInputRef.current) fileInputRef.current.value = ''
@@ -64,8 +85,11 @@ export default function GalleryImageManager({
 
         setUploadProgress(`Augšupielādēju ${i + 1} no ${totalFiles}: ${file.name}`)
 
+        // Compress image before upload
+        const compressedFile = await compressImage(file)
+
         const formData = new FormData()
-        formData.append('file', file)
+        formData.append('file', compressedFile)
         formData.append('folder', folder)
         formData.append('bucket', bucket)
 

@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
     }
 
     const file = formData.get('file') as File
-    const folder = formData.get('folder') as string || 'destinations'
-    const bucket = formData.get('bucket') as string || 'fleet-images'
+    const folder = formData.get('folder') as string || 'general'
+    const bucket = formData.get('bucket') as string || 'website-assets'
 
     console.log('[Admin API] 📁 Upload params:', { folder, bucket, fileName: file?.name, fileSize: file?.size })
 

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { X, Loader2 } from 'lucide-react'
 import type { MissionPromise } from '@/types/database'
 import Toast from './Toast'
+import ImageUploader from './ImageUploader'
 
 interface MissionEditModalProps {
   isOpen: boolean
@@ -148,21 +149,19 @@ export default function MissionEditModal({ isOpen, onClose, onSave, promise }: M
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Custom Icon URL (optional)</label>
-              <input
-                type="url"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#001F3F] focus:border-transparent"
+              <label className="block text-sm font-medium text-gray-700 mb-1">Custom Icon Image (optional)</label>
+              <ImageUploader
                 value={formData.icon_url}
-                onChange={(e) => setFormData({ ...formData, icon_url: e.target.value })}
-                placeholder="https://... (overrides icon name)"
+                onChange={(url) => setFormData({ ...formData, icon_url: url })}
+                folder="promises"
+                bucket="website-assets"
+                maxSizeMB={0.3}
+                aspectRatio="1/1"
+                label=""
+                className="mt-1"
               />
             </div>
           </div>
-          {formData.icon_url && (
-            <div className="rounded-lg overflow-hidden">
-              <img src={formData.icon_url} alt="Icon preview" className="w-16 h-16 object-contain" />
-            </div>
-          )}
 
           {/* English */}
           <div className="border-t pt-4">

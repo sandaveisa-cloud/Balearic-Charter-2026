@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { X, Loader2, CheckCircle2, AlertCircle, Plus, Trash2 } from 'lucide-react'
-import ImageUpload from '@/components/ImageUpload'
+import ImageUploader from '@/components/admin/ImageUploader'
 import GalleryImageManager from '@/components/GalleryImageManager'
 import type { Fleet } from '@/types/database'
 
@@ -628,14 +628,14 @@ export default function FleetEditor({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Main Image
-                  </label>
-                  <ImageUpload
-                    currentImageUrl={watch('main_image_url')}
-                    onImageUploaded={(url) => setValue('main_image_url', url)}
+                  <ImageUploader
+                    value={watch('main_image_url') || ''}
+                    onChange={(url) => setValue('main_image_url', url)}
                     folder="fleet"
-                    bucket="fleet-images"
+                    bucket="website-assets"
+                    maxSizeMB={0.5}
+                    aspectRatio="16/9"
+                    label="Main Image"
                   />
                 </div>
               </div>
@@ -953,7 +953,7 @@ export default function FleetEditor({
                   images={watch('gallery_images') || []}
                   onImagesChange={(images) => setValue('gallery_images', images)}
                   folder="fleet"
-                  bucket="fleet-images"
+                  bucket="website-assets"
                 />
               </div>
             </div>
