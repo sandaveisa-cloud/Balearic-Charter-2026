@@ -496,5 +496,10 @@
     "cookies": "Cookies Policy",
     "terms": "Terms & Conditions",
     "rights": "All rights reserved."
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you're looking for doesn't exist.",
+    "returnHome": "Return Home"
   }
 }

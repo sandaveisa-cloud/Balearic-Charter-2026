@@ -1050,7 +1050,7 @@ export default function FleetDetail({ yacht, vesselMilestones = [] }: FleetDetai
                         )}
                       </div>
                       <Link
-                        href={{ pathname: '/fleet/[slug]', params: { slug: upsellYacht.slug } }}
+                        href={`/fleet/${upsellYacht.slug}`}
                         className="inline-flex items-center justify-center gap-2 w-full bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue font-bold px-6 py-3 rounded-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                       >
                         <span>View {upsellYacht.name}</span>
@@ -1117,7 +1117,7 @@ export default function FleetDetail({ yacht, vesselMilestones = [] }: FleetDetai
                     </div>
                   )}
                   <Link
-                    href={{ pathname: '/fleet/[slug]', params: { slug: upsellYacht.slug } }}
+                    href={`/fleet/${upsellYacht.slug}`}
                     className="inline-flex items-center justify-center gap-2 bg-luxury-blue text-white font-semibold px-6 py-3 rounded-lg hover:bg-luxury-gold hover:text-luxury-blue transition-all duration-300 shadow-lg hover:shadow-xl"
                   >
                     <span>Discover {upsellYacht.name}</span>

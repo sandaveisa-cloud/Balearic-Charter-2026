@@ -496,5 +496,10 @@
     "cookies": "Cookies",
     "terms": "Términos",
     "rights": "Todos los derechos reservados."
+  },
+  "notFound": {
+    "title": "Página No Encontrada",
+    "description": "La página que busca no existe.",
+    "returnHome": "Volver al Inicio"
   }
 }

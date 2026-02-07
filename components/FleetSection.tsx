@@ -196,7 +196,10 @@ export default function FleetSection({ fleet }: FleetSectionProps) {
                         <Link href="/contact" className="flex-1 text-center rounded-lg bg-gradient-to-r from-luxury-gold to-yellow-400 text-luxury-blue py-3 md:py-2.5 font-bold text-sm md:text-base hover:shadow-md transition-all duration-300 tracking-wide min-h-[48px] flex items-center justify-center">
                           {t('getQuote')}
                         </Link>
-                        <Link href={{ pathname: '/fleet/[slug]', params: { slug: yacht.slug } }} className="flex-1 text-center rounded-lg bg-luxury-blue text-white py-3 md:py-2.5 font-semibold text-sm md:text-base hover:bg-luxury-gold transition-colors duration-300 tracking-wide min-h-[48px] flex items-center justify-center">
+                        <Link 
+                          href={`/fleet/${yacht.slug}`}
+                          className="flex-1 text-center rounded-lg bg-luxury-blue text-white py-3 md:py-2.5 font-semibold text-sm md:text-base hover:bg-luxury-gold transition-colors duration-300 tracking-wide min-h-[48px] flex items-center justify-center"
+                        >
                           {t('viewDetails')}
                         </Link>
                       </div>

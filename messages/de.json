@@ -496,5 +496,10 @@
     "cookies": "Cookies",
     "terms": "AGB",
     "rights": "Alle Rechte vorbehalten."
+  },
+  "notFound": {
+    "title": "Seite Nicht Gefunden",
+    "description": "Die gesuchte Seite existiert nicht.",
+    "returnHome": "Zurück zur Startseite"
   }
 }
