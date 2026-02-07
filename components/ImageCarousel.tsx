@@ -105,6 +105,18 @@ export default function ImageCarousel({
       style={{ aspectRatio }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={(e) => {
+        // Prevent navigation when clicking on carousel controls
+        const target = e.target as HTMLElement
+        if (
+          target.closest('.swiper-button-prev-custom') ||
+          target.closest('.swiper-button-next-custom') ||
+          target.closest('.swiper-pagination')
+        ) {
+          e.preventDefault()
+          e.stopPropagation()
+        }
+      }}
     >
       <Swiper
         modules={[Navigation, Pagination, Autoplay, EffectFade]}
@@ -135,6 +147,17 @@ export default function ImageCarousel({
           setCurrentIndex(swiper.realIndex)
         }}
         className="h-full w-full"
+        onClick={(swiper, event) => {
+          // Only trigger image click if not clicking on navigation/pagination
+          const target = event.target as HTMLElement
+          if (
+            !target.closest('.swiper-button-prev-custom') &&
+            !target.closest('.swiper-button-next-custom') &&
+            !target.closest('.swiper-pagination')
+          ) {
+            onImageClick?.(swiper.realIndex)
+          }
+        }}
       >
         {validImages.map((imageUrl, index) => {
           const optimizedUrl = getOptimizedImageUrl(imageUrl, {
@@ -147,7 +170,11 @@ export default function ImageCarousel({
             <SwiperSlide key={`${imageUrl}-${index}`} className="relative">
               <div
                 className="relative w-full h-full cursor-pointer"
-                onClick={() => onImageClick?.(index)}
+                onClick={(e) => {
+                  // Prevent event bubbling to parent Link
+                  e.stopPropagation()
+                  onImageClick?.(index)
+                }}
               >
                 <OptimizedImage
                   src={optimizedUrl}

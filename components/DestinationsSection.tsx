@@ -51,13 +51,28 @@ function DestinationCard({
   return (
     <div className="group flex flex-col h-full">
       {/* Image Container - Carousel or Single Image */}
-      <Link
-        href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
-        className="relative overflow-hidden rounded-sm aspect-[4/3] shadow-sm transition-all duration-300 hover:shadow-xl hover:scale-[1.02] block"
-      >
+      <div className="relative overflow-hidden rounded-sm aspect-[4/3] shadow-sm transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
         {hasMultipleImages && displayImages.length > 0 ? (
-          // Use carousel for multiple images
-          <div onClick={(e) => e.preventDefault()}>
+          // Use carousel for multiple images - wrap in div to prevent Link navigation
+          <div 
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+            }}
+            onMouseDown={(e) => {
+              // Prevent link navigation when interacting with carousel
+              const target = e.target as HTMLElement
+              if (
+                target.closest('.swiper-button-prev-custom') ||
+                target.closest('.swiper-button-next-custom') ||
+                target.closest('.swiper-pagination') ||
+                target.closest('.swiper-slide')
+              ) {
+                e.preventDefault()
+                e.stopPropagation()
+              }
+            }}
+          >
             <ImageCarousel
               images={displayImages}
               alt={destinationName}
@@ -73,38 +88,117 @@ function DestinationCard({
             />
           </div>
         ) : imageSrc ? (
-          // Single image
-          <OptimizedImage
-            src={imageSrc}
-            alt={destinationName}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            objectFit="cover"
-            aspectRatio="4/3"
-            loading="lazy"
-            quality={85}
-            className="transition-transform duration-500 group-hover:scale-110"
+          // Single image - wrap in Link for navigation
+          <Link
+            href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
+            className="block relative w-full h-full"
             onClick={(e) => {
-              e.preventDefault()
-              if (displayImages.length > 0) {
-                onImageClick?.(0)
+              // If clicking image to open lightbox, prevent navigation
+              if (displayImages.length > 0 && onImageClick) {
+                e.preventDefault()
+                onImageClick(0)
               }
             }}
-          />
+          >
+            <OptimizedImage
+              src={imageSrc}
+              alt={destinationName}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              objectFit="cover"
+              aspectRatio="4/3"
+              loading="lazy"
+              quality={85}
+              className="transition-transform duration-500 group-hover:scale-110"
+            />
+          </Link>
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
-            <span className="text-2xl font-semibold text-slate-600">{destinationName}</span>
-          </div>
+          <Link
+            href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
+            className="block relative w-full h-full"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+              <span className="text-2xl font-semibold text-slate-600">{destinationName}</span>
+            </div>
+          </Link>
         )}
         
         {/* Overlay that darkens on hover */}
         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300 pointer-events-none"></div>
         
-        {/* Destination Name Overlay */}
-        <div className="absolute bottom-6 left-6 text-white z-10 pointer-events-none">
-          <h3 className="text-2xl font-semibold mb-1">{destinationName}</h3>
-        </div>
-      </Link>
+        {/* Destination Name Overlay - Clickable link if no carousel */}
+        {!hasMultipleImages && (
+          <Link
+            href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
+            className="absolute bottom-6 left-6 text-white z-10 pointer-events-auto"
+          >
+            <h3 className="text-2xl font-semibold mb-1">{destinationName}</h3>
+          </Link>
+        )}
+        
+        {/* Destination Name Overlay - Non-clickable if carousel */}
+        {hasMultipleImages && (
+          <div className="absolute bottom-6 left-6 text-white z-10 pointer-events-none">
+            <h3 className="text-2xl font-semibold mb-1">{destinationName}</h3>
+          </div>
+        )}
+      </div>
+        ) : imageSrc ? (
+          // Single image - wrap in Link for navigation
+          <Link
+            href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
+            className="block relative w-full h-full"
+            onClick={(e) => {
+              // If clicking image to open lightbox, prevent navigation
+              if (displayImages.length > 0 && onImageClick) {
+                e.preventDefault()
+                onImageClick(0)
+              }
+            }}
+          >
+            <OptimizedImage
+              src={imageSrc}
+              alt={destinationName}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              objectFit="cover"
+              aspectRatio="4/3"
+              loading="lazy"
+              quality={85}
+              className="transition-transform duration-500 group-hover:scale-110"
+            />
+          </Link>
+        ) : (
+          <Link
+            href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
+            className="block relative w-full h-full"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+              <span className="text-2xl font-semibold text-slate-600">{destinationName}</span>
+            </div>
+          </Link>
+        )}
+        
+        {/* Overlay that darkens on hover */}
+        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300 pointer-events-none"></div>
+        
+        {/* Destination Name Overlay - Clickable link if no carousel */}
+        {!hasMultipleImages && (
+          <Link
+            href={{ pathname: '/destinations/[id]', params: { id: destinationSlug } }}
+            className="absolute bottom-6 left-6 text-white z-10 pointer-events-auto"
+          >
+            <h3 className="text-2xl font-semibold mb-1">{destinationName}</h3>
+          </Link>
+        )}
+        
+        {/* Destination Name Overlay - Non-clickable if carousel */}
+        {hasMultipleImages && (
+          <div className="absolute bottom-6 left-6 text-white z-10 pointer-events-none">
+            <h3 className="text-2xl font-semibold mb-1">{destinationName}</h3>
+          </div>
+        )}
+      </div>
 
       {/* Content Below Image - Flex grow for equal height */}
       <div className="mt-4 flex flex-col flex-grow">
@@ -189,8 +283,8 @@ export default function DestinationsSection({ destinations }: DestinationsSectio
   }
 
   // Get localized description - GOLDEN RULE: field_${locale} || field_en || ''
-  const getLocalizedDescription = (destination: Destination): string => {
-    const localeKey = `description_${locale}` as keyof Destination
+  const getLocalizedDescription = (destination: DestinationType): string => {
+    const localeKey = `description_${locale}` as keyof DestinationType
     const localizedDesc = destination[localeKey] as string | null | undefined
     
     // Use locale-specific field if available

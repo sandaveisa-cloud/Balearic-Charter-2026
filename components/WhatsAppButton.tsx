@@ -1,9 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { getSiteSettingsClient } from '@/lib/data'
 
 export default function WhatsAppButton() {
+  const t = useTranslations('footer')
   const [whatsappLink, setWhatsappLink] = useState<string | null>(null)
   const [isHovered, setIsHovered] = useState(false)
 
@@ -42,7 +44,7 @@ export default function WhatsAppButton() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="fixed bottom-24 right-6 z-40 flex items-center gap-3 group transition-all duration-300"
-      aria-label="Contact us on WhatsApp"
+      aria-label={t('whatsappButton') || 'Contact us on WhatsApp'}
     >
       {/* Expandable label on hover - hidden on mobile */}
       <span 
@@ -50,7 +52,7 @@ export default function WhatsAppButton() {
           isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'
         }`}
       >
-        Chat on WhatsApp
+        {t('whatsappButton') || 'Chat on WhatsApp'}
       </span>
       
       {/* Button container - Brand navy with gold accent */}
