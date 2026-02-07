@@ -24,22 +24,41 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const resolvedParams = params instanceof Promise ? await params : params
-  const { locale } = resolvedParams
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.balearicyachtcharters.com'
   
-  let currentTitle: string
-  let currentDescription: string
+  // Default fallback metadata
+  let currentTitle = 'Balearic Yacht Charters | Luxury Yacht Charter'
+  let currentDescription = 'Premium yacht charters in the Balearic Islands.'
+  let locale = 'en'
   
   try {
-    const t = await getTranslations({ locale, namespace: 'metadata' })
-    currentTitle = t('title')
-    currentDescription = t('description')
+    const resolvedParams = params instanceof Promise ? await params : params
+    locale = resolvedParams.locale || 'en'
+    
+    // Validate locale before using it
+    if (!locale || !locales.includes(locale as any)) {
+      locale = 'en'
+    }
+    
+    try {
+      const t = await getTranslations({ locale, namespace: 'metadata' })
+      currentTitle = t('title') || currentTitle
+      currentDescription = t('description') || currentDescription
+    } catch (translationError) {
+      console.error('[Metadata] Error loading translations, using fallback:', translationError)
+      // Try English fallback
+      try {
+        const fallbackT = await getTranslations({ locale: 'en', namespace: 'metadata' })
+        currentTitle = fallbackT('title') || currentTitle
+        currentDescription = fallbackT('description') || currentDescription
+      } catch (fallbackError) {
+        console.error('[Metadata] Error loading fallback translations:', fallbackError)
+        // Use hardcoded defaults already set above
+      }
+    }
   } catch (error) {
-    console.error('[Metadata] Error loading translations, using fallback:', error)
-    const fallbackT = await getTranslations({ locale: 'en', namespace: 'metadata' })
-    currentTitle = fallbackT('title')
-    currentDescription = fallbackT('description')
+    console.error('[Metadata] Error in generateMetadata, using defaults:', error)
+    // Use hardcoded defaults already set above
   }
 
   return {
@@ -76,10 +95,12 @@ export default async function LocaleLayout({ children, params }: Props) {
 
     setRequestLocale(locale)
 
-    let messages
+    let messages = {}
     try {
       messages = await getMessages({ locale })
     } catch (messagesError) {
+      console.error('[LocaleLayout] Error loading messages:', messagesError)
+      // Use empty messages object as fallback - translations will use defaults
       messages = {}
     }
 
@@ -98,13 +119,17 @@ export default async function LocaleLayout({ children, params }: Props) {
       </NextIntlClientProvider>
     )
   } catch (error) {
+    console.error('[LocaleLayout] Error in layout:', error)
+    // Return minimal layout for error cases (e.g., during static generation)
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center p-8">
-          <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Layout</h1>
-          <p className="text-gray-600 mb-4">Please check console.</p>
+      <NextIntlClientProvider messages={{}}>
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <div className="text-center p-8">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">Error Loading Layout</h1>
+            <p className="text-gray-600 mb-4">Please check console.</p>
+          </div>
         </div>
-      </div>
+      </NextIntlClientProvider>
     )
   }
 }

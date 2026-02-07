@@ -53,14 +53,21 @@ type Props = {
 }
 
 // Generate static params for all fleet slugs to prevent 404s
+// This function must never throw - it must return safe defaults if database is unavailable
 export async function generateStaticParams() {
+  // Default fallback params to ensure build never fails
+  const defaultParams = locales.map(locale => [
+    { slug: 'simona', locale: locale },
+    { slug: 'wide-dream', locale: locale },
+  ]).flat()
+  
   try {
     const siteContent = await getSiteContent()
-    const fleet = siteContent.fleet || []
+    const fleet = siteContent?.fleet || []
     const params: { slug: string; locale: string }[] = []
     
     for (const yacht of fleet) {
-      if (yacht.slug && yacht.is_active) {
+      if (yacht?.slug && yacht.is_active !== false) {
         for (const locale of locales) {
           params.push({
             slug: yacht.slug,
@@ -72,90 +79,129 @@ export async function generateStaticParams() {
     
     // If no fleet found, return default params to prevent build failure
     if (params.length === 0) {
-      return locales.map(locale => [
-        { slug: 'simona', locale: locale },
-        { slug: 'wide-dream', locale: locale },
-      ]).flat()
+      console.warn('[generateStaticParams] No fleet found, using default params')
+      return defaultParams
     }
     
     return params
   } catch (error) {
-    console.error('[generateStaticParams] Error generating fleet params:', error)
-    // Return default params to prevent build failure
-    return locales.map(locale => [
-      { slug: 'simona', locale: locale },
-      { slug: 'wide-dream', locale: locale },
-    ]).flat()
+    console.error('[generateStaticParams] Error generating fleet params, using defaults:', error)
+    // Always return default params to prevent build failure
+    return defaultParams
   }
 }
 
 export async function generateMetadata({ params }: Props) {
-  const { slug } = await params
-  
-  // Return early for reserved slugs
-  if (isReservedSlug(slug)) {
-    return {
-      title: 'Page Not Found',
+  try {
+    const { slug } = await params
+    
+    // Return early for reserved slugs
+    if (isReservedSlug(slug)) {
+      return {
+        title: 'Page Not Found',
+      }
     }
-  }
-  
-  const yacht = await getFleetBySlug(slug)
+    
+    try {
+      const yacht = await getFleetBySlug(slug)
 
-  if (!yacht) {
-    return {
-      title: 'Yacht Not Found',
+      if (!yacht) {
+        return {
+          title: 'Yacht Not Found',
+        }
+      }
+
+      return {
+        title: `${yacht.name} | Balearic Yacht Charters`,
+        description: yacht.short_description || yacht.description || '',
+      }
+    } catch (yachtError) {
+      console.error('[generateMetadata] Error fetching yacht:', yachtError)
+      return {
+        title: 'Yacht Not Found',
+      }
     }
-  }
-
-  return {
-    title: `${yacht.name} | Balearic Yacht Charters`,
-    description: yacht.short_description || yacht.description || '',
+  } catch (error) {
+    console.error('[generateMetadata] Error in generateMetadata:', error)
+    return {
+      title: 'Balearic Yacht Charters',
+      description: 'Premium yacht charters in the Balearic Islands.',
+    }
   }
 }
 
 export default async function FleetPage({ params }: Props) {
-  const { slug, locale } = await params
-  
-  // Immediately return 404 for reserved slugs - don't even try to fetch
-  if (isReservedSlug(slug)) {
-    console.log(`[FleetPage] Reserved slug detected, returning 404: ${slug}`)
-    notFound()
-  }
-  
-  const yacht = await getFleetBySlug(slug)
-
-  if (!yacht) {
-    notFound()
-  }
-
-  // Fetch settings for structured data
-  const siteContent = await getSiteContent()
-  const settings = siteContent.settings || {}
-  const t = await getTranslations({ locale, namespace: 'fleet' })
-
-  // Fetch vessel-specific milestones (lazy-loaded, doesn't block page render)
-  // Wrap in try-catch to prevent build failures if database is unavailable
-  let vesselMilestones: JourneyMilestone[] = []
   try {
-    vesselMilestones = await getVesselMilestones(yacht.id)
-  } catch (error) {
-    console.error('[FleetPage] Error fetching vessel milestones:', error)
-    // Continue with empty array - VesselHistory component handles this gracefully
-  }
+    const { slug, locale } = await params
+    
+    // Immediately return 404 for reserved slugs - don't even try to fetch
+    if (isReservedSlug(slug)) {
+      console.log(`[FleetPage] Reserved slug detected, returning 404: ${slug}`)
+      notFound()
+    }
+    
+    const yacht = await getFleetBySlug(slug)
 
-  return (
-    <main className="min-h-screen bg-white pt-20">
-      {/* Breadcrumb Navigation */}
-      <Breadcrumb 
-        items={[
-          { label: t('title') || 'Fleet', href: '/fleet' },
-          { label: yacht.name }
-        ]} 
-      />
-      
-      {/* Structured Data for SEO */}
-      <StructuredData type="BoatTrip" settings={settings} yacht={yacht} locale={locale} />
-      <FleetDetail yacht={yacht} vesselMilestones={vesselMilestones} />
-    </main>
-  )
+    if (!yacht) {
+      notFound()
+    }
+
+    // Fetch settings for structured data with error handling
+    let settings = {}
+    try {
+      const siteContent = await getSiteContent()
+      settings = siteContent?.settings || {}
+    } catch (settingsError) {
+      console.error('[FleetPage] Error fetching site content:', settingsError)
+      // Continue with empty settings
+    }
+
+    // Fetch translations with error handling
+    let t
+    try {
+      t = await getTranslations({ locale, namespace: 'fleet' })
+    } catch (translationError) {
+      console.error('[FleetPage] Error loading translations:', translationError)
+      // Use fallback translations
+      try {
+        t = await getTranslations({ locale: 'en', namespace: 'fleet' })
+      } catch (fallbackError) {
+        console.error('[FleetPage] Error loading fallback translations:', fallbackError)
+        // Create a minimal translation function
+        t = (key: string) => {
+          if (key === 'title') return 'Fleet'
+          return key
+        }
+      }
+    }
+
+    // Fetch vessel-specific milestones (lazy-loaded, doesn't block page render)
+    // Wrap in try-catch to prevent build failures if database is unavailable
+    let vesselMilestones: JourneyMilestone[] = []
+    try {
+      vesselMilestones = await getVesselMilestones(yacht.id)
+    } catch (error) {
+      console.error('[FleetPage] Error fetching vessel milestones:', error)
+      // Continue with empty array - VesselHistory component handles this gracefully
+    }
+
+    return (
+      <main className="min-h-screen bg-white pt-20">
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb 
+          items={[
+            { label: t('title') || 'Fleet', href: '/fleet' },
+            { label: yacht.name }
+          ]} 
+        />
+        
+        {/* Structured Data for SEO */}
+        <StructuredData type="BoatTrip" settings={settings} yacht={yacht} locale={locale} />
+        <FleetDetail yacht={yacht} vesselMilestones={vesselMilestones} />
+      </main>
+    )
+  } catch (error) {
+    console.error('[FleetPage] Critical error in FleetPage:', error)
+    notFound()
+  }
 }
