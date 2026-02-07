@@ -1,19 +1,38 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import type { JourneyMilestone } from '@/types/database'
 
 interface JourneySectionProps {
-  milestones?: unknown[] // Keep prop for backward compatibility but don't use it
+  milestones?: JourneyMilestone[]
 }
 
-export default function JourneySection({ milestones: _ }: JourneySectionProps) {
-  // Use translations with fallback - if translations fail, component will still render with defaults
+export default function JourneySection({ milestones = [] }: JourneySectionProps) {
+  const locale = useLocale() as 'en' | 'es' | 'de'
   const t = useTranslations('journey.milestones')
 
-  // Get milestone data from translations with fallback values
-  // If translations fail, use empty strings to prevent crashes
-  const milestones = [
+  // Filter active milestones and sort by order_index
+  const activeMilestones = milestones
+    .filter((m) => m.is_active !== false)
+    .sort((a, b) => (a.order_index || 0) - (b.order_index || 0))
+    .slice(0, 4) // Only show first 4 milestones
+
+  // Get localized text for a milestone
+  const getTitle = (milestone: JourneyMilestone) => {
+    return milestone[`title_${locale}` as keyof JourneyMilestone] as string || milestone.title_en || milestone.title || ''
+  }
+
+  const getDescription = (milestone: JourneyMilestone) => {
+    return milestone[`description_${locale}` as keyof JourneyMilestone] as string || milestone.description_en || milestone.description || ''
+  }
+
+  // Use database milestones if available, otherwise fall back to translations
+  const displayMilestones = activeMilestones.length > 0 ? activeMilestones.map(m => ({
+    year: m.year?.toString() || '',
+    title: getTitle(m),
+    description: getDescription(m),
+  })) : [
     {
       year: t('beginning.year') || '2014',
       title: t('beginning.title') || 'Our Beginning',
@@ -41,7 +60,7 @@ export default function JourneySection({ milestones: _ }: JourneySectionProps) {
       <div className="container mx-auto px-4 md:px-6">
         {/* Horizontal Trust Bar - 4 columns on desktop, 2x2 on tablet, 1 column on mobile */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          {milestones.map((milestone, index) => (
+          {displayMilestones.map((milestone, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}

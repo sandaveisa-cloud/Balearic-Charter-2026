@@ -49,8 +49,9 @@ export default function Hero({ settings }: HeroProps) {
 
   const embedUrl = useMemo(() => buildYouTubeEmbedUrl(videoId), [videoId])
 
-  // Attēla loģika: prioritāte ir failam no public mapes, lai izvairītos no kļūdām
-  const bgImage = '/images/hero-sunset-view.jpg'
+  // Professional yacht/Mediterranean landscape background - no people, clean wide shot
+  // Using a yacht at sea or Mediterranean landscape image
+  const bgImage = settings.hero_image_url || '/images/simona-ibiza-port.jpg'
 
   useEffect(() => {
     setIsMounted(true)

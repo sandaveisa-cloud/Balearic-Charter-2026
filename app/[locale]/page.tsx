@@ -98,14 +98,14 @@ export default async function Home({ params }: Props) {
             {/* Hero Section - Always at the top */}
             <Hero settings={safeSettings} />
             
-            {/* Mission (The Balearic Promise) - Right after Hero */}
+            {/* Journey (Our Journey - 4-column Trust Bar) - Right after Hero */}
+            <JourneySection milestones={safeContent.journeyMilestones || []} />
+            
+            {/* Mission (The Balearic Promise) - After Journey */}
             {visibility.mission && <MissionSection promises={safeContent.missionPromises || []} />}
             
             {/* Fleet Section */}
             <FleetSection fleet={safeContent.fleet || []} />
-            
-            {/* Journey (The Timeline) - Always show (no conditional hiding) */}
-            <JourneySection milestones={safeContent.journeyMilestones || []} />
             
             {/* Destinations */}
             <DestinationsSection destinations={safeContent.destinations || []} />
