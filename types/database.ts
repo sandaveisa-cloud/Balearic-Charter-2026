@@ -265,6 +265,7 @@ export interface JourneyMilestone {
   image_url: string | null
   order_index: number
   is_active: boolean
+  yacht_id: string | null // Nullable: null for company-wide milestones, UUID for vessel-specific
   created_at: string
   updated_at: string
 }

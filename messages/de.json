@@ -267,7 +267,9 @@
     }
   },
   "vesselHistory": {
-    "title": "Schiffsgeschichte",
+    "title": "Schiffshistorie & Meilensteine",
+    "readHistory": "Geschichte lesen",
+    "hideHistory": "Geschichte ausblenden",
     "milestones": "Meilensteine",
     "expandHistory": "Geschichte anzeigen",
     "collapseHistory": "Geschichte ausblenden",

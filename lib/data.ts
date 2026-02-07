@@ -465,6 +465,33 @@ export async function getFleetBySlugs(slugs: string[]): Promise<Fleet[]> {
   }
 }
 
+// Get vessel-specific milestones by yacht ID
+export async function getVesselMilestones(yachtId: string): Promise<JourneyMilestone[]> {
+  if (!yachtId) {
+    return []
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('journey_milestones')
+      .select('*')
+      .eq('yacht_id', yachtId)
+      .eq('is_active', true)
+      .order('year', { ascending: false })
+      .order('order_index', { ascending: true })
+
+    if (error) {
+      console.error('[Data] Error fetching vessel milestones:', error)
+      return []
+    }
+
+    return (data || []) as JourneyMilestone[]
+  } catch (error) {
+    console.error('[Data] Exception fetching vessel milestones:', error)
+    return []
+  }
+}
+
 // Get destination by ID or slug
 export async function getDestinationByIdOrSlug(idOrSlug: string): Promise<Destination | null> {
   if (!idOrSlug) return null

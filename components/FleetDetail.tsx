@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link } from '@/i18n/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import { Users, BedDouble, Snowflake, Droplets, Zap, Ship, Flame, Waves, Table, Refrigerator, Anchor, Sparkles, Home, ChevronRight, Wind, ArrowLeft, TrendingUp, ArrowRight } from 'lucide-react'
-import type { Fleet } from '@/types/database'
+import type { Fleet, JourneyMilestone } from '@/types/database'
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils'
 import { getFleetBySlugs } from '@/lib/data'
 import { getDescriptionForLocaleWithTextColumns } from '@/lib/i18nUtils'
@@ -15,10 +15,12 @@ import AddOnSelector from './AddOnSelector'
 import BoatComparisonTable from './BoatComparisonTable'
 import OptimizedImage from './OptimizedImage'
 import SocialProof from './SocialProof'
+import VesselHistory from './VesselHistory'
 import { calculateEarlyBirdPrice, formatEarlyBirdDeadline } from '@/lib/earlyBirdDiscount'
 
 interface FleetDetailProps {
   yacht: Fleet
+  vesselMilestones?: JourneyMilestone[]
 }
 
 // Helper function to clean spec values (remove "e.g." prefix if present)
@@ -29,7 +31,7 @@ const cleanSpecValue = (value: string | number | null | undefined): string => {
   return str.replace(/^e\.g\.?\s*/i, '').trim()
 }
 
-export default function FleetDetail({ yacht }: FleetDetailProps) {
+export default function FleetDetail({ yacht, vesselMilestones = [] }: FleetDetailProps) {
   const t = useTranslations('fleet')
   const tBreadcrumb = useTranslations('breadcrumb')
   const locale = useLocale()
@@ -760,6 +762,11 @@ export default function FleetDetail({ yacht }: FleetDetailProps) {
                 </table>
               </div>
             </section>
+
+            {/* Vessel History Section - Progressive Disclosure */}
+            {vesselMilestones && vesselMilestones.length > 0 && (
+              <VesselHistory milestones={vesselMilestones} yachtSlug={yacht.slug} />
+            )}
 
             {/* Amenities Section */}
             {yacht.amenities && Object.keys(yacht.amenities).filter(key => yacht.amenities?.[key]).length > 0 && (

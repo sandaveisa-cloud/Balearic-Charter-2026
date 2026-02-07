@@ -267,7 +267,9 @@
     }
   },
   "vesselHistory": {
-    "title": "Vessel History",
+    "title": "Vessel Journey & Milestones",
+    "readHistory": "Read History",
+    "hideHistory": "Hide History",
     "milestones": "Milestones",
     "expandHistory": "View History",
     "collapseHistory": "Hide History",

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { ChevronDown, ChevronUp, Anchor } from 'lucide-react'
+import { ChevronDown, ChevronUp, Clock } from 'lucide-react'
 import type { JourneyMilestone } from '@/types/database'
 
 interface VesselHistoryProps {
@@ -46,44 +46,50 @@ export default function VesselHistory({ milestones = [], yachtSlug }: VesselHist
     return null
   }
 
-  // Show first 2 milestones by default, rest when expanded
-  const displayedMilestones = isExpanded ? activeMilestones : activeMilestones.slice(0, 2)
+  // Progressive disclosure: Start collapsed, show button to expand
+  if (!isExpanded) {
+    return (
+      <section className="py-6 border-t border-gray-200">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <button
+              onClick={() => setIsExpanded(true)}
+              className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#002447] transition-colors group"
+              aria-label={t('readHistory')}
+            >
+              <Clock className="w-4 h-4 text-gray-400 group-hover:text-[#002447] transition-colors" />
+              <span>{t('readHistory')}</span>
+              <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[#002447] transition-colors" />
+            </button>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
+  // Expanded view: Show timeline
   return (
     <section className="py-8 bg-gray-50 border-t border-gray-200">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <Anchor className="w-5 h-5 text-[#002447]" />
-              <h3 className="text-xl md:text-2xl font-bold text-[#002447] font-serif">
-                {t('title')}
-              </h3>
-            </div>
-            {activeMilestones.length > 2 && (
-              <button
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="flex items-center gap-2 text-sm font-medium text-[#002447] hover:text-[#003d6b] transition-colors"
-              >
-                {isExpanded ? (
-                  <>
-                    {t('collapseHistory')}
-                    <ChevronUp className="w-4 h-4" />
-                  </>
-                ) : (
-                  <>
-                    {t('expandHistory')}
-                    <ChevronDown className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-            )}
+            <h3 className="text-xl md:text-2xl font-bold text-[#002447] font-serif">
+              {t('title')}
+            </h3>
+            <button
+              onClick={() => setIsExpanded(false)}
+              className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#002447] transition-colors"
+              aria-label={t('hideHistory')}
+            >
+              <span>{t('hideHistory')}</span>
+              <ChevronUp className="w-4 h-4" />
+            </button>
           </div>
 
           {/* Timeline */}
           <div className="space-y-4">
-            {displayedMilestones.map((milestone, index) => (
+            {activeMilestones.map((milestone) => (
               <div
                 key={milestone.id}
                 className="relative pl-8 pb-6 border-l-2 border-[#002447]/20 last:border-l-0 last:pb-0"

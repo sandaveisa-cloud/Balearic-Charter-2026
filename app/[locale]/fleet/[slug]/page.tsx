@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getFleetBySlug, getSiteContent } from '@/lib/data'
+import { getFleetBySlug, getSiteContent, getVesselMilestones } from '@/lib/data'
 import { getTranslations } from 'next-intl/server'
 import FleetDetail from '@/components/FleetDetail'
 import StructuredData from '@/components/StructuredData'
@@ -132,6 +132,9 @@ export default async function FleetPage({ params }: Props) {
   const settings = siteContent.settings || {}
   const t = await getTranslations({ locale, namespace: 'fleet' })
 
+  // Fetch vessel-specific milestones (lazy-loaded, doesn't block page render)
+  const vesselMilestones = await getVesselMilestones(yacht.id)
+
   return (
     <main className="min-h-screen bg-white pt-20">
       {/* Breadcrumb Navigation */}
@@ -144,7 +147,7 @@ export default async function FleetPage({ params }: Props) {
       
       {/* Structured Data for SEO */}
       <StructuredData type="BoatTrip" settings={settings} yacht={yacht} locale={locale} />
-      <FleetDetail yacht={yacht} />
+      <FleetDetail yacht={yacht} vesselMilestones={vesselMilestones} />
     </main>
   )
 }

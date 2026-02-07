@@ -267,7 +267,9 @@
     }
   },
   "vesselHistory": {
-    "title": "Historial de la Embarcación",
+    "title": "Historia y Hitos del Barco",
+    "readHistory": "Leer Historia",
+    "hideHistory": "Ocultar Historia",
     "milestones": "Hitos",
     "expandHistory": "Ver Historial",
     "collapseHistory": "Ocultar Historial",
