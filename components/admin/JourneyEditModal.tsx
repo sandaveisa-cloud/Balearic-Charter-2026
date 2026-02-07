@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Loader2 } from 'lucide-react'
 import type { JourneyMilestone } from '@/types/database'
+import Toast from './Toast'
 
 interface JourneyEditModalProps {
   isOpen: boolean
@@ -25,6 +26,9 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
     is_active: true,
   })
   const [saving, setSaving] = useState(false)
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState<'success' | 'error'>('success')
 
   useEffect(() => {
     if (milestone) {
@@ -70,11 +74,18 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
         const error = await response.json()
         throw new Error(error.error || 'Failed to save')
       }
+      setToastMessage('Milestone saved successfully!')
+      setToastType('success')
+      setShowToast(true)
       onSave()
-      onClose()
+      setTimeout(() => {
+        onClose()
+      }, 500)
     } catch (error: any) {
       console.error(error)
-      alert(error.message || 'Error saving milestone. Please try again.')
+      setToastMessage(error.message || 'Error saving milestone. Please try again.')
+      setToastType('error')
+      setShowToast(true)
     } finally {
       setSaving(false)
     }
@@ -83,7 +94,14 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
+    <>
+      <Toast
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        type={toastType}
+      />
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto my-auto">
         <div className="bg-gradient-to-r from-[#001F3F] to-[#1B263B] p-6 flex items-center justify-between text-white sticky top-0 z-10">
           <h2 className="text-xl font-bold">{milestone ? 'Edit Milestone' : 'Create New Milestone'}</h2>
@@ -249,5 +267,6 @@ export default function JourneyEditModal({ isOpen, onClose, onSave, milestone }:
         </form>
       </div>
     </div>
+    </>
   )
 }

@@ -16,7 +16,14 @@ export default function JourneyAdminPage() {
       const response = await fetch('/api/admin/journey')
       if (!response.ok) throw new Error('Failed to fetch')
       const data = await response.json()
-      setMilestones(data)
+      // Sort by order_index, then by year
+      const sorted = [...data].sort((a, b) => {
+        if (a.order_index !== b.order_index) {
+          return a.order_index - b.order_index
+        }
+        return a.year - b.year
+      })
+      setMilestones(sorted)
     } catch (error) {
       console.error('Error fetching milestones:', error)
     } finally {
@@ -93,7 +100,14 @@ export default function JourneyAdminPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800">{milestone.title_en}</h3>
-                  <p className="text-sm text-gray-500">Order: {milestone.order_index}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs font-medium text-gray-500">Order:</span>
+                    <span className="px-2 py-0.5 bg-[#C5A059]/10 text-[#C5A059] rounded text-xs font-semibold">
+                      {milestone.order_index}
+                    </span>
+                    <span className="text-xs text-gray-400">•</span>
+                    <span className="text-xs text-gray-500">Year: {milestone.year}</span>
+                  </div>
                 </div>
               </div>
               <div className="flex gap-2">

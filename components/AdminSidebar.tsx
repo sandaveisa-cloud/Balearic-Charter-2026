@@ -50,7 +50,7 @@ const navigationSections: NavSection[] = [
       { name: 'Destinations', href: '/admin/destinations', icon: Globe },
       { name: 'Gallery', href: '/admin/gallery', icon: ImageIcon },
       { name: 'Journey Timeline', href: '/admin/journey', icon: Clock },
-      { name: 'The Promise', href: '/admin/mission', icon: Target },
+      { name: 'Signature Experience', href: '/admin/mission', icon: Target },
     ]
   },
   {

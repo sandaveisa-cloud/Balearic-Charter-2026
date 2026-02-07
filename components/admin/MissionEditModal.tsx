@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Loader2 } from 'lucide-react'
 import type { MissionPromise } from '@/types/database'
+import Toast from './Toast'
 
 interface MissionEditModalProps {
   isOpen: boolean
@@ -34,6 +35,9 @@ export default function MissionEditModal({ isOpen, onClose, onSave, promise }: M
     is_active: true,
   })
   const [saving, setSaving] = useState(false)
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState<'success' | 'error'>('success')
 
   useEffect(() => {
     if (promise) {
@@ -79,11 +83,18 @@ export default function MissionEditModal({ isOpen, onClose, onSave, promise }: M
         const error = await response.json()
         throw new Error(error.error || 'Failed to save')
       }
+      setToastMessage('Promise saved successfully!')
+      setToastType('success')
+      setShowToast(true)
       onSave()
-      onClose()
+      setTimeout(() => {
+        onClose()
+      }, 500)
     } catch (error: any) {
       console.error(error)
-      alert(error.message || 'Error saving promise. Please try again.')
+      setToastMessage(error.message || 'Error saving promise. Please try again.')
+      setToastType('error')
+      setShowToast(true)
     } finally {
       setSaving(false)
     }
@@ -92,7 +103,14 @@ export default function MissionEditModal({ isOpen, onClose, onSave, promise }: M
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
+    <>
+      <Toast
+        message={toastMessage}
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        type={toastType}
+      />
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto my-auto">
         <div className="bg-gradient-to-r from-[#001F3F] to-[#1B263B] p-6 flex items-center justify-between text-white sticky top-0 z-10">
           <h2 className="text-xl font-bold">{promise ? 'Edit Promise' : 'Create New Promise'}</h2>
@@ -260,5 +278,6 @@ export default function MissionEditModal({ isOpen, onClose, onSave, promise }: M
         </form>
       </div>
     </div>
+    </>
   )
 }

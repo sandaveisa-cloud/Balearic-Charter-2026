@@ -70,7 +70,7 @@ export default function MissionAdminPage() {
   return (
     <div className="p-6 md:p-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">The Balearic Promise</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Signature Experience</h1>
         <button
           onClick={handleAdd}
           className="flex items-center gap-2 px-4 py-2 bg-[#001F3F] text-white rounded-lg hover:bg-[#1B263B] transition-colors"

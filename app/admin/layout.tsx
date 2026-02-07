@@ -10,6 +10,7 @@ import { redirect } from 'next/navigation'
 import '../globals.css'
 import LogoutButton from './LogoutButton'
 import AdminSidebar from '@/components/AdminSidebar'
+import ViewSiteButton from '@/components/admin/ViewSiteButton'
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -104,7 +105,10 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
         {/* Admin Top Bar with Logout */}
         <div className="bg-gray-900 text-white p-4 flex justify-between items-center shadow-lg sticky top-0 z-10">
           <span className="font-bold text-lg">Admin Panel</span>
-          <LogoutButton />
+          <div className="flex items-center gap-3">
+            <ViewSiteButton />
+            <LogoutButton />
+          </div>
         </div>
         
         {/* Admin Content */}
