@@ -5,6 +5,7 @@ import FleetDetail from '@/components/FleetDetail'
 import StructuredData from '@/components/StructuredData'
 import Breadcrumb from '@/components/Breadcrumb'
 import { locales } from '@/i18n/routing'
+import type { JourneyMilestone } from '@/types/database'
 
 // Force dynamic rendering to always fetch fresh data from database
 export const dynamic = 'force-dynamic'
@@ -134,7 +135,7 @@ export default async function FleetPage({ params }: Props) {
 
   // Fetch vessel-specific milestones (lazy-loaded, doesn't block page render)
   // Wrap in try-catch to prevent build failures if database is unavailable
-  let vesselMilestones = []
+  let vesselMilestones: JourneyMilestone[] = []
   try {
     vesselMilestones = await getVesselMilestones(yacht.id)
   } catch (error) {
